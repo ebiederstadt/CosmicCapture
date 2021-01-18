@@ -3,7 +3,6 @@
 
 int main()
 {
-	fmt::print("Starting Game");
-
+	fmt::print("Starting Game, {}", 1.2);
 	return 0;
 }

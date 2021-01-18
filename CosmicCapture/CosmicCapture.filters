@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Downloads\fmt-7.1.3\src\format.cc">
+    <ClCompile Include="format.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
