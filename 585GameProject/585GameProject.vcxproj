@@ -145,8 +145,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Downloads\fmt-7.1.3\src\format.cc" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="format.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
