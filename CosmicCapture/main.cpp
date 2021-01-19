@@ -1,4 +1,3 @@
-#include <string>
 #include <fmt/format.h>
 
 #include <GL/glew.h>
@@ -7,9 +6,8 @@
 
 
 int main(int argc, char** args) {
-
 	// TODO: Make the window resizable
-	GLint width = 800, height = 600;
+	const GLint width = 1280, height = 720;
 
 	// Initialize SDL. SDL_Init will return -1 if it fails.
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -17,41 +15,47 @@ int main(int argc, char** args) {
 		return 1;
 	}
 
-	// Use modren OpenGL (deprecated functions disabled)
+	// Use modern OpenGL (deprecated functions disabled)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 	// Create the window and the context to use OpenGL
-	SDL_Window* window = SDL_CreateWindow("Cosmic Capture", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_OPENGL);
+	SDL_Window* window = SDL_CreateWindow("Cosmic Capture", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
 	if (!window) {
 		fmt::print("Error creating window: {}", SDL_GetError());
 		return 1;
 	}
 
 	SDL_GLContext context = SDL_GL_CreateContext(window);
-	glewExperimental = GL_TRUE;
 
 	// Initialize GLEW
-	if (GLEW_OK != glewInit()) {
-		fmt::print("Failed to initialize GLEW!");
+	GLenum err = glewInit();
+	if (GLEW_OK != err) {
+		fmt::print("Error initializing GLEW: {}", glewGetErrorString(err));
 		return 1;
 	}
 
 	glViewport(0, 0, width, height);
 
 	SDL_Event windowEvent;
+	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 
-	// Loop untill the user closes the window
+	// Loop until the user closes the window
 	while (true) {
 		if (SDL_PollEvent(&windowEvent)) {
 			if (windowEvent.type == SDL_QUIT) break;
 		}
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
+		SDL_RenderClear(renderer);
 
-		SDL_GL_SwapWindow(window);
+		//Render red filled quad
+		SDL_Rect fillRect = { width / 4, height / 4, width / 2, height / 2 };
+		SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
+		SDL_RenderFillRect(renderer, &fillRect);
+
+		SDL_RenderPresent(renderer);
 	}
 
 	SDL_GL_DeleteContext(context);
