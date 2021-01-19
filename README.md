@@ -28,4 +28,4 @@ SDL2main.lib
 - Move all physx .dll files located in `physx\bin\win.x86_64.vc142.mt\debug` into the `x64\Debug` folder you created. Move the .dll files located in the release folder into the into the `x64\Release` folder you created.
 - Move all SDL .lib files into `lib\Debug` and `lib\Release`. Move `SDL2.dll` into `x64\Debug` and `x64\Release`. The files you need are on the google drive
 
-4. Check that everything is working by compiling and running in both debug and release mode. You should see no errors.
+3. Check that everything is working by compiling and running in both debug and release mode. You should see no errors.
