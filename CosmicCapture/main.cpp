@@ -1,18 +1,19 @@
 #include <fmt/format.h>
 #include <SDL/SDL.h>
+#include <GL/glew.h>
 
 
 int main(int argc, char** args) {
 
+	GLuint gProgamID = 0;
+
 	// Pointers to our window and surface
-	SDL_Surface* winSurface = NULL;
-	SDL_Window* window = NULL;
+	SDL_Surface* winSurface = nullptr;
+	SDL_Window* window = nullptr;
 
 	// Initialize SDL. SDL_Init will return -1 if it fails.
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 		fmt::print("Error initializing SDL : {} ", SDL_GetError());
-		system("pause");
-		// End the program
 		return 1;
 	}
 
@@ -22,8 +23,6 @@ int main(int argc, char** args) {
 	// Make sure creating the window succeeded
 	if (!window) {
 		fmt::print("Error creating window: {}", SDL_GetError());
-		system("pause");
-		// End the program
 		return 1;
 	}
 
@@ -33,8 +32,6 @@ int main(int argc, char** args) {
 	// Make sure getting the surface succeeded
 	if (!winSurface) {
 		fmt::print("Error getting surface: ", SDL_GetError());
-		system("pause");
-		// End the program
 		return 1;
 	}
 
@@ -43,9 +40,6 @@ int main(int argc, char** args) {
 
 	// Update the window display
 	SDL_UpdateWindowSurface(window);
-
-	// Wait
-	system("pause");
 
 	// Destroy the window. This will also destroy the surface
 	SDL_DestroyWindow(window);
