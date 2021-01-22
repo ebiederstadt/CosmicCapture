@@ -14,18 +14,23 @@
 *.userprefs
 
 # Build results
-[Dd]ebug/
 [Dd]ebugPublic/
-[Rr]elease/
 [Rr]eleases/
-x64/
-x86/
+CosmicCapture/x64/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+
+# Ignore everything
+x64/Debug/*
+x64/Release/*
+
+# Don't ignore .dll files
+!x64/Debug/*.dll
+!x64/Release/*.dll
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
