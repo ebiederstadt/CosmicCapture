@@ -9,6 +9,61 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 
+//PHYSX Stuff----------------------------------------------------------
+#include <ctype.h>
+#include "physx/PxPhysicsAPI.h"
+#include "physx/vehicle/PxVehicleSDK.h"
+
+using namespace physx;
+
+PxDefaultErrorCallback gErrorCallback;
+PxDefaultAllocator gAllocator;
+PxFoundation* gFoundation = NULL;
+PxPhysics* gPhysics = NULL;
+
+PxDefaultCpuDispatcher* gDispatcher = NULL;
+PxScene* gScene = NULL;
+
+PxCooking* gCooking = NULL;
+
+PxMaterial* gMaterial = NULL;
+
+PxPvd* gPvd = NULL;
+
+//VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
+PxBatchQuery* gBatchQuery = NULL;
+
+PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = NULL;
+
+PxRigidStatic* gGroundPlane = NULL;
+PxVehicleDrive4W* gVehicle4W = NULL;
+
+bool					gIsVehicleInAir = true;
+
+
+void initPhysics() {
+	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
+	
+	bool recordMemoryAllocations = true;
+
+	//gPvd = PxCreatePvd(*gFoundation);
+	//PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
+	//gPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+
+	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(), recordMemoryAllocations, gPvd);
+	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(PxTolerancesScale()));
+	printf("Physx initialized\n");
+}
+
+void cleanupPhysics()
+{	
+	gPhysics->release();
+	gCooking->release();
+	gFoundation->release();
+	printf("Physx cleaned up\n");
+} 
+//---------------------------------------------------------------------
+
 
 // TODO: Shaders should be stored in files :)
 const std::string vertexSource = R"glsl(
@@ -32,7 +87,10 @@ const std::string fragmentSource = R"glsl(
 	}
 )glsl";
 
+
 int main(int argc, char** args) {
+	initPhysics(); //MOVE INTO A SPOT THAT MAKES MORE SENSE
+	cleanupPhysics();
 	// TODO: Make the window resizable
 	const GLint width = 1280, height = 720;
 	//imgui
@@ -215,3 +273,5 @@ int main(int argc, char** args) {
 
 	return 0;
 }
+
+
