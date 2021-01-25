@@ -1,7 +1,6 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
-#include <stdio.h>
 #include <string>
 #include <fmt/format.h>
 
@@ -57,7 +56,7 @@ void initPhysics() {
 
 	gScene = gPhysics->createScene(sceneDesc);
 
-	printf("Physx initialized\n");
+	fmt::print("Physx initialized\n");
 }
 
 void cleanupPhysics()
@@ -67,7 +66,7 @@ void cleanupPhysics()
 	PX_RELEASE(gScene);
 	PX_RELEASE(gDispatcher);
 	PX_RELEASE(gPhysics);
-	printf("Physx cleaned up\n");
+	fmt::print("Physx cleaned up\n");
 } 
 //---------------------------------------------------------------------
 
@@ -96,8 +95,6 @@ const std::string fragmentSource = R"glsl(
 
 
 int main(int argc, char** args) {
-	initPhysics(); //MOVE INTO A SPOT THAT MAKES MORE SENSE
-	cleanupPhysics();//MOVE INTO A SPOT THAT MAKES MORE SENSE
 
 	// TODO: Make the window resizable
 	const GLint width = 1280, height = 720;
@@ -217,6 +214,8 @@ int main(int argc, char** args) {
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+	initPhysics();
+
 	// Loop until the user closes the window
 	while (true) {
 		if (SDL_PollEvent(&windowEvent)) {
@@ -265,6 +264,8 @@ int main(int argc, char** args) {
 
 		SDL_GL_SwapWindow(window);
 	}
+
+	cleanupPhysics();
 
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
