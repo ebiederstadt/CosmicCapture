@@ -1,13 +1,74 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
-#include <stdio.h>
 #include <string>
 #include <fmt/format.h>
 
 #include <GL/glew.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
+
+//PHYSX Stuff----------------------------------------------------------
+#include <ctype.h>
+#include "physx/PxPhysicsAPI.h"
+#include "physx/vehicle/PxVehicleSDK.h"
+#define PX_RELEASE(x) if(x){x->release();x=NULL;}
+
+using namespace physx;
+
+PxDefaultErrorCallback gErrorCallback;
+PxDefaultAllocator gAllocator;
+PxFoundation* gFoundation = NULL;
+PxPhysics* gPhysics = NULL;
+
+PxDefaultCpuDispatcher* gDispatcher = NULL;
+PxScene* gScene = NULL;
+
+PxCooking* gCooking = NULL;
+
+PxMaterial* gMaterial = NULL;
+
+PxPvd* gPvd = NULL;
+
+//VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
+PxBatchQuery* gBatchQuery = NULL;
+
+PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = NULL;
+
+PxRigidStatic* gGroundPlane = NULL;
+PxVehicleDrive4W* gVehicle4W = NULL;
+
+bool					gIsVehicleInAir = true;
+
+
+void initPhysics() {
+	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
+	bool recordMemoryAllocations = true;
+	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(), recordMemoryAllocations, gPvd);
+	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(PxTolerancesScale()));
+	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+
+	PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
+	sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
+	PxU32 numWorkers = 1;
+	gDispatcher = PxDefaultCpuDispatcherCreate(numWorkers);
+	sceneDesc.cpuDispatcher = gDispatcher;
+
+	gScene = gPhysics->createScene(sceneDesc);
+
+	fmt::print("Physx initialized\n");
+}
+
+void cleanupPhysics()
+{	
+	PX_RELEASE(gMaterial);
+	PX_RELEASE(gCooking);
+	PX_RELEASE(gScene);
+	PX_RELEASE(gDispatcher);
+	PX_RELEASE(gPhysics);
+	fmt::print("Physx cleaned up\n");
+} 
+//---------------------------------------------------------------------
 
 
 // TODO: Shaders should be stored in files :)
@@ -32,7 +93,9 @@ const std::string fragmentSource = R"glsl(
 	}
 )glsl";
 
+
 int main(int argc, char** args) {
+
 	// TODO: Make the window resizable
 	const GLint width = 1280, height = 720;
 	//imgui
@@ -151,6 +214,8 @@ int main(int argc, char** args) {
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+	initPhysics();
+
 	// Loop until the user closes the window
 	while (true) {
 		if (SDL_PollEvent(&windowEvent)) {
@@ -176,8 +241,9 @@ int main(int argc, char** args) {
 			static float f = 0.0f;
 			static int counter = 0;
 
-			ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
+			ImGui::Begin("Framerate Counter!");                          // Create a window called "Hello, world!" and append into it.
+			
+			/*
 			ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 			ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
 			ImGui::Checkbox("Another Window", &show_another_window);
@@ -189,7 +255,7 @@ int main(int argc, char** args) {
 				counter++;
 			ImGui::SameLine();
 			ImGui::Text("counter = %d", counter);
-
+			*/
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			ImGui::End();
 		}
@@ -198,6 +264,8 @@ int main(int argc, char** args) {
 
 		SDL_GL_SwapWindow(window);
 	}
+
+	cleanupPhysics();
 
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
@@ -215,3 +283,5 @@ int main(int argc, char** args) {
 
 	return 0;
 }
+
+
