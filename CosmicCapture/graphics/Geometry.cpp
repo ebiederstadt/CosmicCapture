@@ -6,19 +6,11 @@
 
 void GpuGeometry::uploadData(const CpuGeometry& cpuGeom)
 {
-#ifdef _DEBUG
-	if (cpuGeom.cols.size() != cpuGeom.vertices.size())
-		throw std::runtime_error(fmt::format(
-			"Number of indices does not match the number of colors ({} != {})",
-			cpuGeom.vertices.size(),
-			cpuGeom.cols.size())
-		);
-#endif
-
 	VAO.bind();
 
 	vertBuffer.uploadData(sizeof(glm::vec3) * cpuGeom.vertices.size(), cpuGeom.vertices.data(), GL_STATIC_DRAW);
 	colBuffer.uploadData(sizeof(glm::vec3) * cpuGeom.cols.size(), cpuGeom.cols.data(), GL_STATIC_DRAW);
+	textureBuffer.uploadData(sizeof(glm::vec2) * cpuGeom.texCoords.size(), cpuGeom.texCoords.data(), GL_STATIC_DRAW);
 
 	EAO.uploadData(sizeof(int) * cpuGeom.indices.size(), (void *) cpuGeom.indices.data(), GL_STATIC_DRAW);
 

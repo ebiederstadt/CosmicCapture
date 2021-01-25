@@ -10,6 +10,7 @@ class VertexBuffer
 {
 public:
 	explicit VertexBuffer(GLuint index);
+	VertexBuffer(GLuint index, int componentSize);
 	~VertexBuffer() { glDeleteBuffers(1, &mID); }
 
 	void bind() const { glBindBuffer(GL_ARRAY_BUFFER, mID); }
@@ -18,5 +19,6 @@ public:
 private:
 	unsigned int mID{};
 	GLuint mIndex; // Corresponds to the location in the shader
+	int mComponentSize{}; // Number of components per vertex attribute
 };
 

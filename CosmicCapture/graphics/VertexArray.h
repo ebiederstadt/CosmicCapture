@@ -15,5 +15,6 @@ public:
 
 private:
 	unsigned int mID{};
+	int mComponentSize = 3;
 };
 

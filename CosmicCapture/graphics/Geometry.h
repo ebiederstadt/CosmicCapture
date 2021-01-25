@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 
 #include "VertexArray.h"
 #include "VertexBuffer.h"
@@ -15,6 +16,7 @@ struct CpuGeometry
 {
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> cols;
+	std::vector<glm::vec2> texCoords;
 
 	std::vector<int> indices;
 };
@@ -31,6 +33,7 @@ private:
 
 	VertexBuffer vertBuffer = VertexBuffer(0);
 	VertexBuffer colBuffer = VertexBuffer(1);
+	VertexBuffer textureBuffer = VertexBuffer(2, 2);
 
 	ElementBuffer EAO;
 

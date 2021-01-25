@@ -1,16 +1,23 @@
 #include "VertexBuffer.h"
 
 
-VertexBuffer::VertexBuffer(const GLuint index) : mIndex(index)
+VertexBuffer::VertexBuffer(const GLuint index)
+	: mIndex(index), mComponentSize(3)
 {
 	glGenBuffers(1, &mID);
 }
 
-void VertexBuffer::uploadData(GLsizeiptr size, const void* data, GLenum usage) const
+VertexBuffer::VertexBuffer(const GLuint index, const int componentSize)
+	: mIndex(index), mComponentSize(componentSize)
+{
+	glGenBuffers(1, &mID);
+}
+
+void VertexBuffer::uploadData(const GLsizeiptr size, const void* data, const GLenum usage) const
 {
 	bind();
 	glBufferData(GL_ARRAY_BUFFER, size, data, usage);
 
-	glVertexAttribPointer(mIndex, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+	glVertexAttribPointer(mIndex, mComponentSize, GL_FLOAT, GL_FALSE, mComponentSize * sizeof(float), nullptr);
 	glEnableVertexAttribArray(mIndex);
 }

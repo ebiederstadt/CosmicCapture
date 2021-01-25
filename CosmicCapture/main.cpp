@@ -2,11 +2,11 @@
 #include <fmt/format.h>
 #include <GL/glew.h>
 #include <SDL/SDL.h>
-#include <glm/vec3.hpp>
 
 #include "graphics/Window.h"
 #include "graphics/Geometry.h"
 #include "graphics/ShaderProgram.h"
+#include "graphics/Texture.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_opengl3.h"
 
@@ -85,16 +85,22 @@ int main(int argc, char** args) {
 
 	CpuGeometry cpuGeom;
 	cpuGeom.vertices = {
-		glm::vec3(0.5f,  0.5f, 0.0f),
-		glm::vec3(0.5f, -0.5f, 0.0f),
-		glm::vec3(-0.5f, -0.5f, 0.0f),
-		glm::vec3(-0.5f,  0.5f, 0.0f)
+		{0.5f,  0.5f, 0.0f},
+		{0.5f, -0.5f, 0.0f},
+		{-0.5f, -0.5f, 0.0f},
+		{-0.5f,  0.5f, 0.0f}
 	};
 	cpuGeom.cols = {
-		glm::vec3(1.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f),
-		glm::vec3(0.0f, 0.0f, 1.0f),
-		glm::vec3(1.0f, 0.0f, 1.0f)
+		{1.0f, 0.0f, 0.0f},
+		{0.0f, 1.0f, 0.0f},
+		{0.0f, 0.0f, 1.0f},
+		{1.0f, 0.0f, 1.0f}
+	};
+	cpuGeom.texCoords = {
+		{1.0f, 1.0f},
+		{1.0f, 0.0f},
+		{0.0f, 0.0f},
+		{0.0f, 1.0f}
 	};
 	cpuGeom.indices = {
 		0, 1, 3,
@@ -103,6 +109,9 @@ int main(int argc, char** args) {
 
 	GpuGeometry gpuGeometry;
 	gpuGeometry.uploadData(cpuGeom);
+
+	const Texture texture("textures/wall.jpg", GL_LINEAR);
+	texture.bind();
 
 	initPhysics();
 
