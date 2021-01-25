@@ -13,6 +13,7 @@
 #include <ctype.h>
 #include "physx/PxPhysicsAPI.h"
 #include "physx/vehicle/PxVehicleSDK.h"
+#define PX_RELEASE(x) if(x){x->release();x=NULL;}
 
 using namespace physx;
 
@@ -43,23 +44,29 @@ bool					gIsVehicleInAir = true;
 
 void initPhysics() {
 	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
-	
 	bool recordMemoryAllocations = true;
-
-	//gPvd = PxCreatePvd(*gFoundation);
-	//PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-	//gPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
-
 	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(), recordMemoryAllocations, gPvd);
 	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(PxTolerancesScale()));
+	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+
+	PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
+	sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
+	PxU32 numWorkers = 1;
+	gDispatcher = PxDefaultCpuDispatcherCreate(numWorkers);
+	sceneDesc.cpuDispatcher = gDispatcher;
+
+	gScene = gPhysics->createScene(sceneDesc);
+
 	printf("Physx initialized\n");
 }
 
 void cleanupPhysics()
 {	
-	gPhysics->release();
-	gCooking->release();
-	gFoundation->release();
+	PX_RELEASE(gMaterial);
+	PX_RELEASE(gCooking);
+	PX_RELEASE(gScene);
+	PX_RELEASE(gDispatcher);
+	PX_RELEASE(gPhysics);
 	printf("Physx cleaned up\n");
 } 
 //---------------------------------------------------------------------
@@ -90,7 +97,8 @@ const std::string fragmentSource = R"glsl(
 
 int main(int argc, char** args) {
 	initPhysics(); //MOVE INTO A SPOT THAT MAKES MORE SENSE
-	cleanupPhysics();
+	cleanupPhysics();//MOVE INTO A SPOT THAT MAKES MORE SENSE
+
 	// TODO: Make the window resizable
 	const GLint width = 1280, height = 720;
 	//imgui
