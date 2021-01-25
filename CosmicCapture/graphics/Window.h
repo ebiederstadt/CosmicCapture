@@ -1,3 +1,6 @@
+// Note: This class is inspired, but not copied from the fall 2020 CPSC 453 OpenGL Boilerplate,
+// which can be found here: https://github.com/Fall-2020-CPSC-453/453-skeleton
+
 #pragma once
 
 #include <string>
@@ -25,7 +28,7 @@ public:
 	void startImGuiFrame() const;
 
 
-	SDL_Event event;
+	SDL_Event event{};
 
 private:
 	std::unique_ptr<SDL_Window, WindowDeleter> mWindow;

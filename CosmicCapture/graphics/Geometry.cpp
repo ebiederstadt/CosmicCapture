@@ -1,8 +1,20 @@
 #include "Geometry.h"
 
+#include <stdexcept>
+#include <fmt/format.h>
+
 
 void GpuGeometry::uploadData(const CpuGeometry& cpuGeom)
 {
+#ifdef _DEBUG
+	if (cpuGeom.cols.size() != cpuGeom.vertices.size())
+		throw std::runtime_error(fmt::format(
+			"Number of indices does not match the number of colors ({} != {})",
+			cpuGeom.vertices.size(),
+			cpuGeom.cols.size())
+		);
+#endif
+
 	VAO.bind();
 
 	vertBuffer.uploadData(sizeof(glm::vec3) * cpuGeom.vertices.size(), cpuGeom.vertices.data(), GL_STATIC_DRAW);

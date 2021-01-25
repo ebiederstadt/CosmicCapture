@@ -28,6 +28,8 @@
     <ClCompile Include="graphics\VertexBuffer.cpp" />
     <ClCompile Include="graphics\ElementBuffer.cpp" />
     <ClCompile Include="graphics\Geometry.cpp" />
+    <ClCompile Include="graphics\Shader.cpp" />
+    <ClCompile Include="graphics\ShaderProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -64,5 +66,11 @@
     <ClInclude Include="graphics\VertexArray.h" />
     <ClInclude Include="graphics\ElementBuffer.h" />
     <ClInclude Include="graphics\Geometry.h" />
+    <ClInclude Include="graphics\ShaderProgram.h" />
+    <ClInclude Include="graphics\Shader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\main.frag" />
+    <None Include="shaders\main.vert" />
   </ItemGroup>
 </Project>
