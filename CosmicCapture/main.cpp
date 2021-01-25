@@ -1,10 +1,11 @@
 #include <string>
 #include <fmt/format.h>
-
 #include <GL/glew.h>
 #include <SDL/SDL.h>
+#include <glm/vec3.hpp>
 
 #include "graphics/Window.h"
+#include "graphics/Geometry.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_opengl3.h"
 
@@ -75,43 +76,36 @@ void cleanupPhysics()
 // TODO: Shaders should be stored in files :)
 const std::string vertexSource = R"glsl(
 	#version 330 core
-
 	layout (location = 0) in vec3 aPos;
+	layout (location = 1) in vec3 aCol;
+
+	out vec3 color;
+
 	void main()
 	{
+		color = aCol;
 		gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
 	}
 )glsl";
 
 const std::string fragmentSource = R"glsl(
 	#version 330 core
+	in vec3 color;
 
 	out vec4 fragColor;
 
 	void main()
 	{
-		fragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);	
+		fragColor = vec4(color, 1.0f);	
 	}
 )glsl";
 
 
 int main(int argc, char** args) {
-
 	// TODO: Make the window resizable
 	const GLint width = 1280, height = 720;
 
 	Window window("Cosmic Capture", width, height);
-
-	float vertices[] = {
-		 0.5f,  0.5f, 0.0f,  // top right
-		 0.5f, -0.5f, 0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f   // top left 	
-	};
-	unsigned int indices[] = {
-		0, 1, 3, // First triangle
-		1, 2, 3  // Second triangle
-	};
 
 	// Vertex shader
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -141,25 +135,26 @@ int main(int argc, char** args) {
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	// Vertex buffer, vertex array, Element buffer
-	unsigned int VBO, VAO, EBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	CpuGeometry cpuGeom;
+	cpuGeom.vertices = {
+		glm::vec3(0.5f,  0.5f, 0.0f),
+		glm::vec3(0.5f, -0.5f, 0.0f),
+		glm::vec3(-0.5f, -0.5f, 0.0f),
+		glm::vec3(-0.5f,  0.5f, 0.0f)
+	};
+	cpuGeom.cols = {
+		glm::vec3(1.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f),
+		glm::vec3(0.0f, 0.0f, 1.0f),
+		glm::vec3(1.0f, 0.0f, 1.0f),
+	};
+	cpuGeom.indices = {
+		0, 1, 3,
+		1, 2, 3
+	};
 
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)nullptr);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	GpuGeometry gpuGeometry;
+	gpuGeometry.uploadData(cpuGeom);
 
 	initPhysics();
 
@@ -171,10 +166,7 @@ int main(int argc, char** args) {
 		window.startImGuiFrame();
 		Window::clear();
 
-		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-		glBindVertexArray(0);
+		gpuGeometry.drawData();
 
 		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 		{
@@ -191,10 +183,6 @@ int main(int argc, char** args) {
 	}
 
 	cleanupPhysics();
-
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteProgram(shaderProgram);
 
 	return 0;
 }

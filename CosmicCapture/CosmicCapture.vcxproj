@@ -151,6 +151,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="graphics\ElementBuffer.cpp" />
+    <ClCompile Include="graphics\Geometry.cpp" />
+    <ClCompile Include="graphics\VertexBuffer.cpp" />
     <ClCompile Include="graphics\Window.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -163,6 +166,10 @@
     <ClCompile Include="format.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="graphics\ElementBuffer.h" />
+    <ClInclude Include="graphics\Geometry.h" />
+    <ClInclude Include="graphics\VertexArray.h" />
+    <ClInclude Include="graphics\VertexBuffer.h" />
     <ClInclude Include="graphics\Window.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />

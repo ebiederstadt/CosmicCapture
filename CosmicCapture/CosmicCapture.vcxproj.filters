@@ -25,6 +25,9 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="graphics\Window.cpp" />
+    <ClCompile Include="graphics\VertexBuffer.cpp" />
+    <ClCompile Include="graphics\ElementBuffer.cpp" />
+    <ClCompile Include="graphics\Geometry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -57,5 +60,9 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="graphics\Window.h" />
+    <ClInclude Include="graphics\VertexBuffer.h" />
+    <ClInclude Include="graphics\VertexArray.h" />
+    <ClInclude Include="graphics\ElementBuffer.h" />
+    <ClInclude Include="graphics\Geometry.h" />
   </ItemGroup>
 </Project>
