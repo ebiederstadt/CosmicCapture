@@ -2,6 +2,8 @@
 #include <fmt/format.h>
 #include <GL/glew.h>
 #include <SDL/SDL.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "graphics/Window.h"
 #include "graphics/Geometry.h"
@@ -79,6 +81,13 @@ int main(int argc, char** args) {
 	// TODO: Make the window resizable
 	const GLint width = 1280, height = 720;
 
+	// View pipeline
+	const auto aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+
+	glm::mat4 model(1.0f);
+	auto view = glm::translate(glm::mat4(1.0f), { 0.0f, 0.0f, -3.0f });
+	auto projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+
 	Window window("Cosmic Capture", width, height);
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
@@ -124,6 +133,17 @@ int main(int argc, char** args) {
 		Window::clear();
 
 		shaderProgram.use();
+
+		// View pipeline
+		const auto modelLoc = glGetUniformLocation(static_cast<unsigned int>(shaderProgram), "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+		const auto viewLoc = glGetUniformLocation(static_cast<unsigned int>(shaderProgram), "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+		const auto projectionLoc = glGetUniformLocation(static_cast<unsigned int>(shaderProgram), "projection");
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
 		gpuGeometry.drawData();
 
 		ImGui::Begin("Framerate Counter!");

@@ -15,6 +15,8 @@ public:
 	ShaderProgram(const char* vertLoc, const char* fragLoc);
 	~ShaderProgram() { glDeleteProgram(mShaderProgram); }
 
+	explicit operator unsigned int() const { return mShaderProgram; }
+
 	void compile();
 	void use() const { glUseProgram(mShaderProgram); }
 

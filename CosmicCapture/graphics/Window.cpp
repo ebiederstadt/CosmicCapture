@@ -35,7 +35,7 @@ Window::Window(const std::string& windowName, const int width, const int height)
 
 	// Initialize GLEW
 	const auto err = glewInit();
-	if (GLEW_OK != err) 
+	if (GLEW_OK != err)
 	{
 		fmt::print("Error initializing GLEW: {}", glewGetErrorString(err));
 		throw std::runtime_error("Failed to initialize GLEW");
