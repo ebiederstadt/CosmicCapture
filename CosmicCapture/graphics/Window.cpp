@@ -3,6 +3,7 @@
 #include <fmt/format.h>
 #include <GL/glew.h>
 
+#include "../GlDebug.h"
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_sdl.h"
 #include "../imgui/imgui_impl_opengl3.h"
@@ -42,6 +43,13 @@ Window::Window(const std::string& windowName, const int width, const int height)
 	}
 
 	glViewport(0, 0, width, height);
+
+	// Turn on openGL debugging messages
+	// (if running in debug mode)
+#ifdef _DEBUG
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+	GLDebug::enable();
+#endif
 
 
 	// Setup Dear ImGui context

@@ -1,6 +1,5 @@
 #include "Geometry.h"
 
-#include <stdexcept>
 #include <fmt/format.h>
 
 

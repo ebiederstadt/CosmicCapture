@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GlDebug.cpp" />
     <ClCompile Include="graphics\ElementBuffer.cpp" />
     <ClCompile Include="graphics\Geometry.cpp" />
     <ClCompile Include="graphics\Shader.cpp" />
@@ -169,6 +170,7 @@
     <ClCompile Include="graphics\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GlDebug.h" />
     <ClInclude Include="graphics\ElementBuffer.h" />
     <ClInclude Include="graphics\Geometry.h" />
     <ClInclude Include="graphics\Shader.h" />

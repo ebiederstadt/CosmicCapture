@@ -31,6 +31,7 @@
     <ClCompile Include="graphics\Shader.cpp" />
     <ClCompile Include="graphics\ShaderProgram.cpp" />
     <ClCompile Include="graphics\Texture.cpp" />
+    <ClCompile Include="GlDebug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -70,6 +71,7 @@
     <ClInclude Include="graphics\ShaderProgram.h" />
     <ClInclude Include="graphics\Shader.h" />
     <ClInclude Include="graphics\Texture.h" />
+    <ClInclude Include="GlDebug.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\main.frag" />
