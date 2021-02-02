@@ -35,6 +35,8 @@
     <ClCompile Include="graphics\Mesh.cpp" />
     <ClCompile Include="graphics\Model.cpp" />
     <ClCompile Include="graphics\VertexArray.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -77,6 +79,8 @@
     <ClInclude Include="GlDebug.h" />
     <ClInclude Include="graphics\Mesh.h" />
     <ClInclude Include="graphics\Model.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\main.frag" />

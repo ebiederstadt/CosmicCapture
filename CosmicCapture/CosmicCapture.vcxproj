@@ -153,6 +153,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GlDebug.cpp" />
     <ClCompile Include="graphics\ElementBuffer.cpp" />
     <ClCompile Include="graphics\Geometry.cpp" />
@@ -173,8 +174,10 @@
     <ClCompile Include="graphics\Texture.cpp" />
     <ClCompile Include="graphics\Mesh.cpp" />
     <ClCompile Include="graphics\Model.cpp" />
+    <ClCompile Include="Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="GlDebug.h" />
     <ClInclude Include="graphics\ElementBuffer.h" />
     <ClInclude Include="graphics\Geometry.h" />
@@ -194,6 +197,7 @@
     <ClInclude Include="graphics\Texture.h" />
     <ClInclude Include="graphics\Mesh.h" />
     <ClInclude Include="graphics\Model.h" />
+    <ClInclude Include="Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="models\monkey.ply" />

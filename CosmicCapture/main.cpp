@@ -1,9 +1,9 @@
 #include <string>
+#include <memory>
+#include <map>
 #include <fmt/format.h>
 #include <GL/glew.h>
 #include <SDL/SDL.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include "graphics/Window.h"
 #include "graphics/ShaderProgram.h"
@@ -75,57 +75,48 @@ void cleanupPhysics()
 //---------------------------------------------------------------------
 
 
+inline void renderGeometry(const Window& window, std::vector<Model>& geometry)
+{
+	window.startImGuiFrame();
+	Window::clear();
+
+	for (auto& model : geometry)
+		model.draw();
+
+	ImGui::Begin("Framerate Counter!");
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	ImGui::End();
+	ImGui::Render();
+
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	window.swap();
+}
+
+
 int main(int argc, char** args) {
-	// TODO: Make the window resizable
+	// Window Initialization
 	const GLint width = 1280, height = 720;
-
-	// View pipeline
-	// TODO: Move
-	const auto aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-	glm::mat4 model(1.0f);
-	auto view = glm::translate(glm::mat4(1.0f), { 0.0f, 0.0f, -3.0f });
-	auto projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
-
 	Window window("Cosmic Capture", width, height);
-	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
-	shaderProgram.compile();
 
+	// Physics initialization
 	initPhysics();
 
-	Model monkey("models/monkey.ply", "textures/camouflage.jpg");
+	// Geometry Initialization
+	const auto shaderProgram = std::make_shared<ShaderProgram>("shaders/main.vert", "shaders/main.frag");
+	const auto camera = std::make_shared<Camera>();
+
+	std::vector<Model> models;
+	models.emplace_back("models/monkey.ply", "textures/camouflage.jpg", shaderProgram, camera);
 
 	// Loop until the user closes the window
 	while (true) {
 		if (SDL_PollEvent(&window.event)) {
 			if (window.event.type == SDL_QUIT) break;
 		}
-		window.startImGuiFrame();
-		Window::clear();
 
-		shaderProgram.use();
-
-		// View pipeline
-		model = glm::rotate(model, 0.01f, { 0.5f, 0.5f, 0.0f });
-		const auto modelLoc = glGetUniformLocation(static_cast<unsigned int>(shaderProgram), "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-		const auto viewLoc = glGetUniformLocation(static_cast<unsigned int>(shaderProgram), "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-		const auto projectionLoc = glGetUniformLocation(static_cast<unsigned int>(shaderProgram), "projection");
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-		// gpuGeometry.drawData();
-		monkey.draw();
-
-		ImGui::Begin("Framerate Counter!");
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::End();
-		ImGui::Render();
-
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		window.swap();
+	 	renderGeometry(window, models);
 	}
+
 
 	cleanupPhysics();
 

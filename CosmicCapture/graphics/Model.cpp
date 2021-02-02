@@ -3,12 +3,21 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <fmt/format.h>
+#include <glm/gtc/type_ptr.hpp>
 
 
-// TODO: May want to add not always use GL_LINEAR for textures
-Model::Model(const std::string& modelPath, const std::string& texturePath) :
-	mTexture(texturePath, GL_LINEAR)
+Model::Model(
+	const char* modelPath,
+	const char* texturePath,
+	std::shared_ptr<ShaderProgram> shaderProgram,
+	std::shared_ptr<Camera> camera
+) :
+	modelMatrix(1.0f),
+	mTexture(texturePath, GL_LINEAR),
+	mShaderPointer(std::move(shaderProgram)),
+	mCameraPointer(std::move(camera))
 {
+	mShaderPointer->compile();
 	mTexture.bind();
 	
 	Assimp::Importer importer;
@@ -24,9 +33,11 @@ Model::Model(const std::string& modelPath, const std::string& texturePath) :
 	processNode(scene->mRootNode, scene);
 }
 
-
 void Model::draw()
 {
+	mShaderPointer->use();
+	viewPipeLine();
+
 	for (const auto& mesh : mMeshes)
 		mesh.draw();
 }
@@ -103,3 +114,18 @@ void Model::processMesh(aiMesh* mesh)
 	// Move into a vector, without copying it
 	mMeshes.emplace_back(geometry, mTexture);
 }
+
+
+void Model::viewPipeLine()
+{
+	modelMatrix = glm::rotate(modelMatrix, 0.01f, { 0.5f, 0.5f, 0.0f });
+	const auto modelLoc = glGetUniformLocation(static_cast<unsigned int>(*mShaderPointer), "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+	const auto viewLoc = glGetUniformLocation(static_cast<unsigned int>(*mShaderPointer), "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->viewMatrix));
+
+	const auto projectionLoc = glGetUniformLocation(static_cast<unsigned int>(*mShaderPointer), "projection");
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->projectionMatrix));
+}
+
