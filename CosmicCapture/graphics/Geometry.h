@@ -15,7 +15,7 @@
 struct CpuGeometry
 {
 	std::vector<glm::vec3> vertices;
-	std::vector<glm::vec3> cols;
+	std::vector<glm::vec3> normals;
 	std::vector<glm::vec2> texCoords;
 
 	std::vector<int> indices;
@@ -25,17 +25,22 @@ struct CpuGeometry
 class GpuGeometry
 {
 public:
+	GpuGeometry();
+	
 	void uploadData(const CpuGeometry& cpuGeom);
 	void drawData() const;
 
 private:
-	VertexArray VAO;
+	VertexArray mVertexArray;
 
-	VertexBuffer vertBuffer = VertexBuffer(0);
-	VertexBuffer colBuffer = VertexBuffer(1);
-	VertexBuffer textureBuffer = VertexBuffer(2, 2);
+	VertexBuffer mVertBuffer;
+	VertexBuffer mNormBuffer;
+	VertexBuffer mTextureBuffer;
 
-	ElementBuffer EAO;
+	ElementBuffer mElementArray;
 
 	int mNumElements = 0;
+
+
+	void bind() const;
 };

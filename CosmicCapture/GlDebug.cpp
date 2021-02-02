@@ -71,9 +71,9 @@ void GLDebug::enable() {
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(GLDebug::debugOutputHandler, nullptr);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-        fmt::print("Enabling debug mode for opengl");
+        fmt::print("Enabling debug mode for opengl\n");
     }
     else {
-        fmt::print("Unable to enable debug mode for opengl");
+        fmt::print("Unable to enable debug mode for opengl\n");
     }
 }

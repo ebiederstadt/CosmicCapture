@@ -8,13 +8,13 @@
 class VertexArray
 {
 public:
-	VertexArray() { glGenBuffers(1, &mID); }
+	VertexArray() { glGenVertexArrays(1, &mID); }
 	~VertexArray() { glDeleteVertexArrays(1, &mID); }
 
 	void bind() const { glBindVertexArray(mID); }
 
 private:
-	unsigned int mID{};
+	unsigned int mID;
 	int mComponentSize = 3;
 };
 

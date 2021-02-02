@@ -99,7 +99,7 @@ int main(int argc, char** args) {
 		{-0.5f, -0.5f, 0.0f},
 		{-0.5f,  0.5f, 0.0f}
 	};
-	cpuGeom.cols = {
+	cpuGeom.normals = {
 		{1.0f, 0.0f, 0.0f},
 		{0.0f, 1.0f, 0.0f},
 		{0.0f, 0.0f, 1.0f},
