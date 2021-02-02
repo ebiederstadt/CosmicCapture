@@ -11,12 +11,19 @@ class ElementBuffer
 public:
 	ElementBuffer() { glGenBuffers(1, &mID); }
 
+	// No copying allowed
+	ElementBuffer(const ElementBuffer&) = delete;
+	ElementBuffer operator=(ElementBuffer other) = delete;
+
+	// Moving is allowed
+	ElementBuffer(ElementBuffer&& other) noexcept;
+
 	explicit operator unsigned int() const { return mID; }
 
 	void bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mID); }
 	void uploadData(GLsizeiptr size, void* data, GLenum usage) const;
 
 private:
-	unsigned int mID;
+	unsigned int mID{};
 };
 

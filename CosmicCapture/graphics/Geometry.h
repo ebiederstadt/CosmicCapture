@@ -41,6 +41,5 @@ private:
 
 	int mNumElements = 0;
 
-
-	void bind() const;
+	void bind() const { mVertexArray.bind(); }
 };

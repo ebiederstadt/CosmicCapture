@@ -13,12 +13,19 @@ public:
 	VertexBuffer(GLuint index, int componentSize);
 	~VertexBuffer() { glDeleteBuffers(1, &mID); }
 
+	// No copying allowed
+	VertexBuffer(const VertexBuffer&) = delete;
+	VertexBuffer operator=(VertexBuffer other) = delete;
+
+	// Moving is allowed
+	VertexBuffer(VertexBuffer&& other) noexcept;
+
 	void bind() const { glBindBuffer(GL_ARRAY_BUFFER, mID); }
 	void uploadData(GLsizeiptr size, const void* data, GLenum usage) const;
 
 private:
 	unsigned int mID{};
 	GLuint mIndex; // Corresponds to the location in the shader
-	int mComponentSize{}; // Number of components per vertex attribute
+	int mComponentSize{}; // Number of components per vertex attribute (must be 1, 2, 3, 4)
 };
 

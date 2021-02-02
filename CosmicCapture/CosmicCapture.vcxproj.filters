@@ -32,6 +32,9 @@
     <ClCompile Include="graphics\ShaderProgram.cpp" />
     <ClCompile Include="graphics\Texture.cpp" />
     <ClCompile Include="GlDebug.cpp" />
+    <ClCompile Include="graphics\Mesh.cpp" />
+    <ClCompile Include="graphics\Model.cpp" />
+    <ClCompile Include="graphics\VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -72,12 +75,16 @@
     <ClInclude Include="graphics\Shader.h" />
     <ClInclude Include="graphics\Texture.h" />
     <ClInclude Include="GlDebug.h" />
+    <ClInclude Include="graphics\Mesh.h" />
+    <ClInclude Include="graphics\Model.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\main.frag" />
     <None Include="shaders\main.vert" />
+    <None Include="models\monkey.ply" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\wall.jpg" />
+    <Image Include="textures\camouflage.jpg" />
   </ItemGroup>
 </Project>

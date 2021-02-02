@@ -25,12 +25,7 @@ void GpuGeometry::uploadData(const CpuGeometry& cpuGeom)
 
 void GpuGeometry::drawData() const
 {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<unsigned int>(mElementArray));
+	bind();
 	glDrawElements(GL_TRIANGLES, mNumElements, GL_UNSIGNED_INT, nullptr);
 }
 
-
-void GpuGeometry::bind() const
-{
-	mVertexArray.bind();
-}

@@ -6,15 +6,13 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "graphics/Window.h"
-#include "graphics/Geometry.h"
 #include "graphics/ShaderProgram.h"
-#include "graphics/Texture.h"
+#include "graphics/Model.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_opengl3.h"
 
 //PHYSX Stuff----------------------------------------------------------
 #include <ctype.h>
-
 
 #include "physx/PxPhysicsAPI.h"
 #include "physx/vehicle/PxVehicleSDK.h"
@@ -82,8 +80,8 @@ int main(int argc, char** args) {
 	const GLint width = 1280, height = 720;
 
 	// View pipeline
+	// TODO: Move
 	const auto aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-
 	glm::mat4 model(1.0f);
 	auto view = glm::translate(glm::mat4(1.0f), { 0.0f, 0.0f, -3.0f });
 	auto projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
@@ -92,37 +90,9 @@ int main(int argc, char** args) {
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
 
-	CpuGeometry cpuGeom;
-	cpuGeom.vertices = {
-		{0.5f,  0.5f, 0.0f},
-		{0.5f, -0.5f, 0.0f},
-		{-0.5f, -0.5f, 0.0f},
-		{-0.5f,  0.5f, 0.0f}
-	};
-	cpuGeom.normals = {
-		{1.0f, 0.0f, 0.0f},
-		{0.0f, 1.0f, 0.0f},
-		{0.0f, 0.0f, 1.0f},
-		{1.0f, 0.0f, 1.0f}
-	};
-	cpuGeom.texCoords = {
-		{1.0f, 1.0f},
-		{1.0f, 0.0f},
-		{0.0f, 0.0f},
-		{0.0f, 1.0f}
-	};
-	cpuGeom.indices = {
-		0, 1, 3,
-		1, 2, 3
-	};
-
-	GpuGeometry gpuGeometry;
-	gpuGeometry.uploadData(cpuGeom);
-
-	const Texture texture("textures/wall.jpg", GL_LINEAR);
-	texture.bind();
-
 	initPhysics();
+
+	Model monkey("models/monkey.ply", "textures/camouflage.jpg");
 
 	// Loop until the user closes the window
 	while (true) {
@@ -135,6 +105,7 @@ int main(int argc, char** args) {
 		shaderProgram.use();
 
 		// View pipeline
+		model = glm::rotate(model, 0.01f, { 0.5f, 0.5f, 0.0f });
 		const auto modelLoc = glGetUniformLocation(static_cast<unsigned int>(shaderProgram), "model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -144,7 +115,8 @@ int main(int argc, char** args) {
 		const auto projectionLoc = glGetUniformLocation(static_cast<unsigned int>(shaderProgram), "projection");
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-		gpuGeometry.drawData();
+		// gpuGeometry.drawData();
+		monkey.draw();
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -159,5 +131,4 @@ int main(int argc, char** args) {
 
 	return 0;
 }
-
 

@@ -46,6 +46,7 @@ void GLDebug::debugOutputHandler(
     switch (severity)
     {
     case GL_DEBUG_SEVERITY_HIGH:
+
         severityStr = "high";
         fmt::print(format, sourceStr, severityStr, id, typeStr, message_str);
         break;

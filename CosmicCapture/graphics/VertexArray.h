@@ -4,17 +4,25 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <fmt/format.h>
+
 
 class VertexArray
 {
 public:
-	VertexArray() { glGenVertexArrays(1, &mID); }
+	VertexArray();
 	~VertexArray() { glDeleteVertexArrays(1, &mID); }
+
+	// No copies allowed (copies of the class don't make sense)
+	VertexArray(const VertexArray&) = delete;
+	VertexArray operator=(const VertexArray) = delete;
+
+	// Moving is allowed
+	VertexArray(VertexArray&& other) noexcept;
 
 	void bind() const { glBindVertexArray(mID); }
 
 private:
-	unsigned int mID;
-	int mComponentSize = 3;
+	unsigned int mID{};
 };
 
