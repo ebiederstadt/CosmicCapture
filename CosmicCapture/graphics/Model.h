@@ -26,6 +26,11 @@ public:
 
 	void draw();
 
+	// Movement and position updates
+	// Add helper functions here if you need them
+	void move(const glm::vec3& amount);
+	void scale(const float amount);
+
 	glm::mat4 modelMatrix;
 
 private:

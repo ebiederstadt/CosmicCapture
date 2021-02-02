@@ -43,6 +43,18 @@ void Model::draw()
 }
 
 
+void Model::move(const glm::vec3& amount)
+{
+	modelMatrix = translate(modelMatrix, amount);
+}
+
+
+void Model::scale(const float amount)
+{
+	modelMatrix = glm::scale(modelMatrix, { amount, amount, amount });
+}
+
+
 void Model::processNode(aiNode* node, const aiScene* scene)
 {
 	// Process all of the the meshes associated with the node
@@ -118,7 +130,6 @@ void Model::processMesh(aiMesh* mesh)
 
 void Model::viewPipeLine()
 {
-	modelMatrix = glm::rotate(modelMatrix, 0.01f, { 0.5f, 0.5f, 0.0f });
 	const auto modelLoc = glGetUniformLocation(static_cast<unsigned int>(*mShaderPointer), "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 

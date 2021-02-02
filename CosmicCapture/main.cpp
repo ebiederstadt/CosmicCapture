@@ -75,7 +75,7 @@ void cleanupPhysics()
 //---------------------------------------------------------------------
 
 
-inline void renderGeometry(const Window& window, std::vector<Model>& geometry)
+void renderGeometry(const Window& window, std::vector<Model>& geometry)
 {
 	window.startImGuiFrame();
 	Window::clear();
@@ -101,19 +101,56 @@ int main(int argc, char** args) {
 	// Physics initialization
 	initPhysics();
 
-	// Geometry Initialization
+	// Shaders are used 1+ times, and shared between all models that use them
 	const auto shaderProgram = std::make_shared<ShaderProgram>("shaders/main.vert", "shaders/main.frag");
+
+	// The camera is used once, and shared between all geometry
 	const auto camera = std::make_shared<Camera>();
 
 	std::vector<Model> models;
 	models.emplace_back("models/monkey.ply", "textures/camouflage.jpg", shaderProgram, camera);
+	models[0].scale(0.5f);
+
+	glm::vec3 movementVector(0.0f);
 
 	// Loop until the user closes the window
-	while (true) {
+	bool shouldClose = false;
+	const char* name;
+	
+	while (!shouldClose) {
 		if (SDL_PollEvent(&window.event)) {
-			if (window.event.type == SDL_QUIT) break;
+			switch (window.event.type)
+			{
+			case SDL_QUIT:
+				shouldClose = true;
+				break;
+
+			case SDL_KEYDOWN:
+				switch (window.event.key.keysym.sym)
+				{
+				case SDLK_LEFT:
+					movementVector.x += -0.03f;
+					break;
+
+				case SDLK_RIGHT:
+					movementVector.x += 0.03f;
+					break;
+
+				case SDLK_UP:
+					movementVector.y += 0.03f;
+					break;
+
+				case SDLK_DOWN:
+					movementVector.y += -0.03f;
+					break;
+
+				case SDLK_MINUS:
+					movementVector = glm::vec3(0.0f);
+				}
+			}
 		}
 
+		models[0].move(movementVector);
 	 	renderGeometry(window, models);
 	}
 
