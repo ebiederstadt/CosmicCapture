@@ -24,6 +24,7 @@
     <ClCompile Include="imgui\imgui_impl_sdl.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="input.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

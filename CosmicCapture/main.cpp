@@ -8,6 +8,8 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 
+#include "./input.h"
+
 //PHYSX Stuff----------------------------------------------------------
 #include <ctype.h>
 #include "physx/PxPhysicsAPI.h"
@@ -215,18 +217,30 @@ int main(int argc, char** args) {
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	initPhysics();
+	
+	// Below lines added with input handling
+
+	/*
+	SDL_Joystick* joystick;
+
+	SDL_JoystickEventState(SDL_ENABLE);
+	joystick = SDL_JoystickOpen(0);
+    */
+
+	Input input;
 
 	// Loop until the user closes the window
 	while (true) {
-		if (SDL_PollEvent(&windowEvent)) {
+		if (SDL_PollEvent(&windowEvent) != 0) {
 			if (windowEvent.type == SDL_QUIT) break;
 		}
+
+		input.HandleEvent(windowEvent);
+
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(window);
 		ImGui::NewFrame();
-
-
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -276,6 +290,8 @@ int main(int argc, char** args) {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
+
+	//SDL_JoystickClose(joystick);
 
 	SDL_GL_DeleteContext(gl_context);
 	SDL_DestroyWindow(window);
