@@ -35,23 +35,12 @@ Model::Model(
 
 void Model::draw()
 {
+	// Note: potential performance issue. Don't need to call use for every mesh
 	mShaderPointer->use();
 	viewPipeLine();
 
 	for (const auto& mesh : mMeshes)
 		mesh.draw();
-}
-
-
-void Model::move(const glm::vec3& amount)
-{
-	modelMatrix = translate(modelMatrix, amount);
-}
-
-
-void Model::scale(const float amount)
-{
-	modelMatrix = glm::scale(modelMatrix, { amount, amount, amount });
 }
 
 
@@ -128,15 +117,17 @@ void Model::processMesh(aiMesh* mesh)
 }
 
 
+// Note: It might make more sense to have this method be in a different class
 void Model::viewPipeLine()
 {
-	const auto modelLoc = glGetUniformLocation(static_cast<unsigned int>(*mShaderPointer), "model");
+	const auto program = static_cast<unsigned int>(*mShaderPointer);
+	const auto modelLoc = glGetUniformLocation(program, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-	const auto viewLoc = glGetUniformLocation(static_cast<unsigned int>(*mShaderPointer), "view");
+	const auto viewLoc = glGetUniformLocation(program, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->viewMatrix));
 
-	const auto projectionLoc = glGetUniformLocation(static_cast<unsigned int>(*mShaderPointer), "projection");
+	const auto projectionLoc = glGetUniformLocation(program, "projection");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->projectionMatrix));
 }
 

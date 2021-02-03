@@ -1,6 +1,5 @@
 #include <string>
 #include <memory>
-#include <map>
 #include <fmt/format.h>
 #include <GL/glew.h>
 #include <SDL/SDL.h>
@@ -75,24 +74,6 @@ void cleanupPhysics()
 //---------------------------------------------------------------------
 
 
-void renderGeometry(const Window& window, std::vector<Model>& geometry)
-{
-	window.startImGuiFrame();
-	Window::clear();
-
-	for (auto& model : geometry)
-		model.draw();
-
-	ImGui::Begin("Framerate Counter!");
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	ImGui::End();
-	ImGui::Render();
-
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	window.swap();
-}
-
-
 int main(int argc, char** args) {
 	// Window Initialization
 	const GLint width = 1280, height = 720;
@@ -107,51 +88,37 @@ int main(int argc, char** args) {
 	// The camera is used once, and shared between all geometry
 	const auto camera = std::make_shared<Camera>();
 
-	std::vector<Model> models;
-	models.emplace_back("models/monkey.ply", "textures/camouflage.jpg", shaderProgram, camera);
-	models[0].scale(0.5f);
+	// Models
+	Model monkey = Model("models/monkey.ply", "textures/camouflage.jpg", shaderProgram, camera);
+	monkey.scale(0.5f);
 
-	glm::vec3 movementVector(0.0f);
+	std::vector<Model> models;
+	models.push_back(std::move(monkey));
+
+	float angle = 0.01f;
 
 	// Loop until the user closes the window
-	bool shouldClose = false;
-	const char* name;
-	
-	while (!shouldClose) {
+	while (true) {
 		if (SDL_PollEvent(&window.event)) {
-			switch (window.event.type)
-			{
-			case SDL_QUIT:
-				shouldClose = true;
+			if (window.event.type == SDL_QUIT)
 				break;
-
-			case SDL_KEYDOWN:
-				switch (window.event.key.keysym.sym)
-				{
-				case SDLK_LEFT:
-					movementVector.x += -0.03f;
-					break;
-
-				case SDLK_RIGHT:
-					movementVector.x += 0.03f;
-					break;
-
-				case SDLK_UP:
-					movementVector.y += 0.03f;
-					break;
-
-				case SDLK_DOWN:
-					movementVector.y += -0.03f;
-					break;
-
-				case SDLK_MINUS:
-					movementVector = glm::vec3(0.0f);
-				}
-			}
 		}
 
-		models[0].move(movementVector);
-	 	renderGeometry(window, models);
+		window.startImGuiFrame();
+		Window::clear();
+
+		models[0].rotateZ(angle);
+
+		for (auto& model : models)
+			model.draw();
+
+		ImGui::Begin("Framerate Counter!");
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::End();
+		ImGui::Render();
+
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		window.swap();
 	}
 
 
