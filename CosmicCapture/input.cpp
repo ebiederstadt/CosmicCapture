@@ -125,6 +125,36 @@ void Input::HandleButtons(SDL_Event& event, int pressed) {
             std::cout << "go (A) \n";
             driving = (pressed == 1);
             break;
+        case SDL_CONTROLLER_BUTTON_B:
+            std::cout << "pressed (B) \n";
+            break;
+        case SDL_CONTROLLER_BUTTON_X:
+            std::cout << "pressed (X) \n";
+            break;
+        case SDL_CONTROLLER_BUTTON_Y:
+            std::cout << "pressed (Y) \n";
+            break;
+        case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+            std::cout << "pressed (DPAD_DOWN) \n";
+            break;
+        case SDL_CONTROLLER_BUTTON_DPAD_UP:
+            std::cout << "pressed (DPAD_UP) \n";
+            break;
+        case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+            std::cout << "pressed (DPAD_LEFT) \n";
+            break;
+        case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+            std::cout << "pressed (DPAD_RIGHT) \n";
+            break;
+        case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
+            std::cout << "pressed (RIGHTSHOULDER) \n";
+            break;
+        case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
+            std::cout << "pressed (LEFTSHOULDER) \n";
+            break;
+        case SDL_CONTROLLER_BUTTON_START:
+            std::cout << "pressed (START) \n";
+            break;
         default:
             std::cout << "irrelevant \n";
             return;
@@ -180,6 +210,12 @@ void Input::HandleJoystick(SDL_Event& event) {
             yDir = 0;
         }
 
+    }
+    else if (event.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT) {
+        std::cout << "pressed (TRIGGERLEFT) \n";
+    }
+    else if (event.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT) {
+        std::cout << "pressed (TRIGGERRIGHT) \n";
     }
     else {
     
