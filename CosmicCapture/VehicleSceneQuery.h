@@ -29,15 +29,17 @@
 
 #pragma once
 
-#include "physx/PxPhysicsAPI.h"
+#include "PxPhysicsAPI.h"
 
 
 using namespace physx;
 
-enum {
+enum
+{
 	DRIVABLE_SURFACE = 0xffff0000,
 	UNDRIVABLE_SURFACE = 0x0000ffff
 };
+
 void setupDrivableSurface(PxFilterData& filterData);
 
 void setupNonDrivableSurface(PxFilterData& filterData);

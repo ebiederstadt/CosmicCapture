@@ -24,6 +24,13 @@
     <ClCompile Include="imgui\imgui_impl_sdl.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="VehicleCreate.cpp" />
+    <ClCompile Include="VehicleSceneQuery.cpp" />
+    <ClCompile Include="VehicleTireFriction.cpp" />
+    <ClCompile Include="VehicleFilterShader.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Render.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -55,5 +62,12 @@
     <ClInclude Include="imgui\imgui_impl_sdl.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="Physics.h" />
+    <ClInclude Include="VehicleCreate.h" />
+    <ClInclude Include="VehicleSceneQuery.h" />
+    <ClInclude Include="VehicleTireFriction.h" />
+    <ClInclude Include="VehicleFilterShader.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Render.h" />
   </ItemGroup>
 </Project>

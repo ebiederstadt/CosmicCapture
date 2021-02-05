@@ -30,7 +30,7 @@
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
 #include <new>
-#include "physx/PxPhysicsAPI.h"
+#include "PxPhysicsAPI.h"
 #include "VehicleTireFriction.h"
 
 

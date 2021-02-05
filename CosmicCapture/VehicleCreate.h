@@ -29,9 +29,29 @@
 
 #pragma once
 
-#include "physx/PxPhysicsAPI.h"
+#include "PxPhysicsAPI.h"
+#include "Physics.h"
+//#include "vehicle/PxVehicleDriveTank.h"
+//#include "vehicle/PxVehicleNoDrive.h"
+
+
 using namespace physx;
 
+////////////////////////////////////////////////
+
+PxRigidStatic* createDrivablePlane(const PxFilterData& simFilterData, PxMaterial* material, PxPhysics* physics);
+
+////////////////////////////////////////////////
+
+PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehDesc, PxPhysics* physics, PxCooking* cooking);
+
+//PxVehicleDriveTank* createVehicleTank(const VehicleDesc& vehDesc, PxPhysics* physics, PxCooking* cooking);
+
+//PxVehicleNoDrive* createVehicleNoDrive(const VehicleDesc& vehDesc, PxPhysics* physics, PxCooking* cooking);
+
+////////////////////////////////////////////////
+
+PxConvexMesh* createChassisMesh(const PxVec3 dims, PxPhysics& physics, PxCooking& cooking);
 
 PxConvexMesh* createWheelMesh(const PxF32 width, const PxF32 radius, PxPhysics& physics, PxCooking& cooking);
 
@@ -41,4 +61,14 @@ void customizeVehicleToLengthScale(const PxReal lengthScale, PxRigidDynamic* rig
 
 void customizeVehicleToLengthScale(const PxReal lengthScale, PxRigidDynamic* rigidDynamic, PxVehicleWheelsSimData* wheelsSimData, PxVehicleDriveSimData4W* driveSimData);
 
+////////////////////////////////////////////////
 
+PxRigidDynamic* createVehicleActor
+(const PxVehicleChassisData& chassisData,
+	PxMaterial** wheelMaterials, PxConvexMesh** wheelConvexMeshes, const PxU32 numWheels, const PxFilterData& wheelSimFilterData,
+	PxMaterial** chassisMaterials, PxConvexMesh** chassisConvexMeshes, const PxU32 numChassisMeshes, const PxFilterData& chassisSimFilterData,
+	PxPhysics& physics);
+
+void configureUserData(PxVehicleWheels* vehicle, ActorUserData* actorUserData, ShapeUserData* shapeUserDatas);
+
+////////////////////////////////////////////////

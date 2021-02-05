@@ -10,6 +10,8 @@
 #include <SDL/SDL_opengl.h>
 
 #include "Physics.h"
+#include "Camera.h"
+#include "Render.h"
 
 
 // TODO: Shaders should be stored in files :)
@@ -34,9 +36,7 @@ const std::string fragmentSource = R"glsl(
 	}
 )glsl";
 
-
 int main(int argc, char** args) {
-
 
 	// TODO: Make the window resizable
 	const GLint width = 1280, height = 720;
@@ -207,6 +207,7 @@ int main(int argc, char** args) {
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		SDL_GL_SwapWindow(window);
+		
 	}
 
 	glDeleteVertexArrays(1, &VAO);
@@ -227,5 +228,7 @@ int main(int argc, char** args) {
 
 	return 0;
 }
+
+
 
 
