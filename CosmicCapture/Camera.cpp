@@ -31,13 +31,15 @@
 
 #include "Camera.h"
 #include <ctype.h>
+
 #include "physx/foundation/PxMat33.h"
 
 using namespace physx;
 
 
 
-Camera::Camera(const PxVec3& eye, const PxVec3& dir)
+Camera::Camera(const PxVec3& eye, const PxVec3& dir, float aspect) :
+	perspectiveMatrix(glm::perspective(glm::radians(60.0f), aspect, 0.1f, 100.0f))
 {
 	mEye = eye;
 	mDir = dir.getNormalized();

@@ -3,7 +3,6 @@
 #include <fmt/format.h>
 #include <GL/glew.h>
 #include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
 
 #include "graphics/Window.h"
 #include "graphics/ShaderProgram.h"
@@ -16,11 +15,8 @@
 #include "Physics.h"
 #include "Camera.h"
 #include "Render.h"
-#include "graphics/GraphicsCamera.h"
 
-//physics stuff
-Camera* sCamera;
-Physics& physics = Physics::Instance();
+/*Physics& physics = Physics::Instance();
 void keyPress(unsigned char key, const PxTransform& camera)
 {
 	PX_UNUSED(camera);
@@ -72,7 +68,7 @@ void exitCallback(void)
 {
 	delete sCamera;
 	physics.CleanupPhysics();
-}
+} */
 
 Input input;
 
@@ -80,11 +76,12 @@ int main(int argc, char** args) {
 	// Window Initialization
 	const GLint width = 1280, height = 720;
 	Window window("Cosmic Capture", width, height);
+	const float aspect = static_cast<float>(width) / static_cast<float>(height);
 
 	//physics
-	/*sCamera = new Camera(PxVec3(10.0f, 10.0f, 10.0f), PxVec3(-0.6f, -0.2f, -0.7f));
+	const auto sCamera = std::make_shared<Camera>(PxVec3(5.0f, 5.0f, 5.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 
-	setupDefaultWindow("PhysX Snippet Vehicle4W");
+	/*setupDefaultWindow("PhysX Snippet Vehicle4W");
 	setupDefaultRenderState();
 
 	glutIdleFunc(idleCallback);
@@ -103,20 +100,11 @@ int main(int argc, char** args) {
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
 
-	// The camera is used once, and shared between all geometry
-	const auto camera = std::make_shared<GraphicsCamera>();
-
-	// Models
-	Model monkey("models/monkey.ply", "textures/camouflage.jpg", shaderProgram, camera);
-	monkey.scale(0.5f);
-
-	Model cube("models/cube.ply", "textures/wall.jpg", shaderProgram, camera);
-	cube.scale(0.5f);
-	cube.move({ 0.0f, 1.0f, 0.0f });
+	// Models (examples, please change)
+	Model monkey("models/monkey.ply", "textures/camouflage.jpg", shaderProgram, sCamera);
 
 	std::vector<Model> models;
 	models.push_back(std::move(monkey));
-	models.push_back(std::move(cube));
 
 	float angle = 0.01f;
 
@@ -134,9 +122,6 @@ int main(int argc, char** args) {
 
 		models[0].rotateZ(angle);
 		
-		models[1].rotateX(angle);
-		models[1].rotateY(angle);
-
 		shaderProgram.use();
 
 		for (auto& model : models)

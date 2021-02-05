@@ -28,14 +28,18 @@
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
 #pragma once
+
 #include <physx/PxPhysicsAPI.h>
-#include "physx/foundation/PxTransform.h"
+#include <physx/foundation/PxTransform.h>
+
+#include <glm/glm.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
 
 
 class Camera
 {
 public:
-	Camera(const physx::PxVec3& eye, const physx::PxVec3& dir);
+	Camera(const physx::PxVec3& eye, const physx::PxVec3& dir, float aspect);
 
 	void				handleMouse(int button, int state, int x, int y);
 	bool				handleKey(unsigned char key, int x, int y, float speed = 1.0f);
@@ -45,6 +49,8 @@ public:
 	[[nodiscard]] physx::PxVec3 getEye() const;
 	[[nodiscard]] physx::PxVec3 getDir() const;
 	[[nodiscard]] physx::PxTransform getTransform() const;
+
+	glm::mat4 perspectiveMatrix;
 
 private:
 	physx::PxVec3	mEye;

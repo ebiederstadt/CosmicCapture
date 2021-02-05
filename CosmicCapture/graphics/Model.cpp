@@ -10,7 +10,7 @@ Model::Model(
 	const char* modelPath,
 	const char* texturePath,
 	const ShaderProgram& shaderProgram,
-	std::shared_ptr<GraphicsCamera> camera
+	std::shared_ptr<Camera> camera
 ) :
 	modelMatrix(1.0f),
 	mTexture(texturePath, GL_LINEAR),
@@ -118,13 +118,20 @@ void Model::processMesh(aiMesh* mesh)
 // Note: It might make more sense to have this method be in a different class
 void Model::viewPipeLine()
 {
+	const auto e = mCameraPointer->getEye();
+	const auto eye = glm::vec3(e.x, e.y, e.z);
+
+	const auto d = mCameraPointer->getDir();
+	const auto center = glm::vec3(e.x + d.x, e.y + d.y, e.z + d.z);
+	
 	const auto modelLoc = glGetUniformLocation(mShaderID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
+	const auto viewMatrix = glm::lookAt(eye, center, { 0.0f, 1.0f, 0.0f });
 	const auto viewLoc = glGetUniformLocation(mShaderID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->viewMatrix));
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 
 	const auto projectionLoc = glGetUniformLocation(mShaderID, "projection");
-	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->projectionMatrix));
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->perspectiveMatrix));
 }
 

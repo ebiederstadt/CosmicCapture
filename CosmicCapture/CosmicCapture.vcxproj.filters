@@ -43,7 +43,6 @@
     <ClCompile Include="graphics\Mesh.cpp" />
     <ClCompile Include="graphics\Model.cpp" />
     <ClCompile Include="graphics\Texture.cpp" />
-    <ClCompile Include="graphics\GraphicsCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -93,7 +92,7 @@
     <ClInclude Include="graphics\VertexBuffer.h" />
     <ClInclude Include="graphics\Window.h" />
     <ClInclude Include="GlDebug.h" />
-    <ClInclude Include="graphics\GraphicsCamera.h" />
+    <ClInclude Include="input.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
