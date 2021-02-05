@@ -54,10 +54,12 @@ void GLDebug::debugOutputHandler(
         severityStr = "medium";
         fmt::print(format, sourceStr, severityStr, id, typeStr, message_str);
         break;
+    /* Note: Currently commented out because it spits out warnings that are not very useful, comment back in if you need it
     case GL_DEBUG_SEVERITY_LOW:
         severityStr = "low";
         fmt::print(format, sourceStr, severityStr, id, typeStr, message_str);
         break;
+     */
     case GL_DEBUG_SEVERITY_NOTIFICATION:
         fmt::print(format, sourceStr, severityStr, id, typeStr, message_str);
         break;

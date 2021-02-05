@@ -9,17 +9,14 @@
 Model::Model(
 	const char* modelPath,
 	const char* texturePath,
-	std::shared_ptr<ShaderProgram> shaderProgram,
+	const ShaderProgram& shaderProgram,
 	std::shared_ptr<GraphicsCamera> camera
 ) :
 	modelMatrix(1.0f),
 	mTexture(texturePath, GL_LINEAR),
-	mShaderPointer(std::move(shaderProgram)),
+	mShaderID(static_cast<unsigned int>(shaderProgram)),
 	mCameraPointer(std::move(camera))
 {
-	mShaderPointer->compile();
-	mTexture.bind();
-	
 	Assimp::Importer importer;
 
 	// TODO: Consider the flags set here. Potential for higher quality or higher performance
@@ -35,12 +32,13 @@ Model::Model(
 
 void Model::draw()
 {
-	// Note: potential performance issue. Don't need to call use for every mesh
-	mShaderPointer->use();
+	mTexture.bind();
 	viewPipeLine();
 
 	for (const auto& mesh : mMeshes)
 		mesh.draw();
+
+	Texture::unbind();
 }
 
 
@@ -120,14 +118,13 @@ void Model::processMesh(aiMesh* mesh)
 // Note: It might make more sense to have this method be in a different class
 void Model::viewPipeLine()
 {
-	const auto program = static_cast<unsigned int>(*mShaderPointer);
-	const auto modelLoc = glGetUniformLocation(program, "model");
+	const auto modelLoc = glGetUniformLocation(mShaderID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
-	const auto viewLoc = glGetUniformLocation(program, "view");
+	const auto viewLoc = glGetUniformLocation(mShaderID, "view");
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->viewMatrix));
 
-	const auto projectionLoc = glGetUniformLocation(program, "projection");
+	const auto projectionLoc = glGetUniformLocation(mShaderID, "projection");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->projectionMatrix));
 }
 

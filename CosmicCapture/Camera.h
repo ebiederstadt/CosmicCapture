@@ -30,6 +30,8 @@
 #pragma once
 #include <physx/PxPhysicsAPI.h>
 #include "physx/foundation/PxTransform.h"
+
+
 class Camera
 {
 public:
@@ -40,9 +42,10 @@ public:
 	void				handleMotion(int x, int y);
 	void				handleAnalogMove(float x, float y);
 
-	physx::PxVec3		getEye()	const;
-	physx::PxVec3		getDir()	const;
-	physx::PxTransform	getTransform() const;
+	[[nodiscard]] physx::PxVec3 getEye() const;
+	[[nodiscard]] physx::PxVec3 getDir() const;
+	[[nodiscard]] physx::PxTransform getTransform() const;
+
 private:
 	physx::PxVec3	mEye;
 	physx::PxVec3	mDir;

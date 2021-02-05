@@ -26,6 +26,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	PX_UNUSED(camera);
 	PX_UNUSED(key);
 }
+
 void motionCallback(int x, int y)
 {
 	sCamera->handleMotion(x, y);
@@ -81,7 +82,7 @@ int main(int argc, char** args) {
 	Window window("Cosmic Capture", width, height);
 
 	//physics
-	sCamera = new Camera(PxVec3(10.0f, 10.0f, 10.0f), PxVec3(-0.6f, -0.2f, -0.7f));
+	/*sCamera = new Camera(PxVec3(10.0f, 10.0f, 10.0f), PxVec3(-0.6f, -0.2f, -0.7f));
 
 	setupDefaultWindow("PhysX Snippet Vehicle4W");
 	setupDefaultRenderState();
@@ -96,21 +97,26 @@ int main(int argc, char** args) {
 	atexit(exitCallback);
 
 	physics.Initialize();
-	glutMainLoop();
+	glutMainLoop(); */
 	///////////////////////////////////////////////
 
-	// Shaders are used 1+ times, and shared between all models that use them
-	const auto shaderProgram = std::make_shared<ShaderProgram>("shaders/main.vert", "shaders/main.frag");
+	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
+	shaderProgram.compile();
 
 	// The camera is used once, and shared between all geometry
 	const auto camera = std::make_shared<GraphicsCamera>();
 
 	// Models
-	Model monkey = Model("models/monkey.ply", "textures/camouflage.jpg", shaderProgram, camera);
+	Model monkey("models/monkey.ply", "textures/camouflage.jpg", shaderProgram, camera);
 	monkey.scale(0.5f);
+
+	Model cube("models/cube.ply", "textures/wall.jpg", shaderProgram, camera);
+	cube.scale(0.5f);
+	cube.move({ 0.0f, 1.0f, 0.0f });
 
 	std::vector<Model> models;
 	models.push_back(std::move(monkey));
+	models.push_back(std::move(cube));
 
 	float angle = 0.01f;
 
@@ -121,12 +127,17 @@ int main(int argc, char** args) {
 				break;
 		}
     
-    input.HandleEvent(window.event);
+		input.HandleEvent(window.event);
 
 		window.startImGuiFrame();
 		Window::clear();
 
 		models[0].rotateZ(angle);
+		
+		models[1].rotateX(angle);
+		models[1].rotateY(angle);
+
+		shaderProgram.use();
 
 		for (auto& model : models)
 			model.draw();

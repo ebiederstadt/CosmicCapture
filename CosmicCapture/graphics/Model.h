@@ -20,7 +20,7 @@ public:
 	Model(
 		const char* modelPath,
 		const char* texturePath,
-		std::shared_ptr<ShaderProgram> shaderProgram,
+		const ShaderProgram& shaderProgram,
 		std::shared_ptr<GraphicsCamera> camera
 	);
 
@@ -44,7 +44,7 @@ public:
 private:
 	std::vector<Mesh> mMeshes; // Each model is made of one or more meshes 
 	Texture mTexture; // Assuming that each texture is unique to each model (may need to rework)
-	std::shared_ptr<ShaderProgram> mShaderPointer; // Shaders can be shared between multiple models
+	unsigned int mShaderID; // Shaders can be shared between multiple models
 	std::shared_ptr<GraphicsCamera> mCameraPointer; // Camera object is shared among all the meshes
 
 	void processNode(aiNode* node, const aiScene* scene);

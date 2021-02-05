@@ -214,6 +214,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
+    <None Include="models\cube.ply" />
     <None Include="models\monkey.ply" />
     <None Include="shaders\main.frag" />
     <None Include="shaders\main.vert" />
