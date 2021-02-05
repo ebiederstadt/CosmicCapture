@@ -34,7 +34,6 @@
 
 
 #if PX_WINDOWS
-	#include <windows.h>
 	#pragma warning(disable: 4505)
 	#include <GL/glut.h>
 #else
