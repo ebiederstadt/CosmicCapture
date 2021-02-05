@@ -1,6 +1,6 @@
 #include <ctype.h>
 #include "Physics.h"
-#include "PxPhysicsAPI.h"
+#include "physx/PxPhysicsAPI.h"
 #include "VehicleTireFriction.h"
 #include "VehicleSceneQuery.h"
 #include "VehicleCreate.h"

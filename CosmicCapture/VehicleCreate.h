@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "PxPhysicsAPI.h"
+#include "physx/PxPhysicsAPI.h"
 #include "Physics.h"
 //#include "vehicle/PxVehicleDriveTank.h"
 //#include "vehicle/PxVehicleNoDrive.h"

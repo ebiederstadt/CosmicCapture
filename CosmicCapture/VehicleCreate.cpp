@@ -29,7 +29,7 @@
 
 #include <new>
 
-#include "PxPhysicsAPI.h"
+#include "physx/PxPhysicsAPI.h"
 #include "VehicleCreate.h"
 #include "VehicleSceneQuery.h"
 #include "VehicleTireFriction.h"

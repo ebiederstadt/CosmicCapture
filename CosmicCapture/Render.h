@@ -29,8 +29,8 @@
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
 
-#include "PxPhysicsAPI.h"
-#include "foundation/PxPreprocessor.h"
+#include "physx/PxPhysicsAPI.h"
+#include "physx/foundation/PxPreprocessor.h"
 
 
 #if PX_WINDOWS

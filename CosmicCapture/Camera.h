@@ -28,7 +28,8 @@
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
 #pragma once
-#include "foundation/PxTransform.h"
+#include <physx/PxPhysicsAPI.h>
+#include "physx/foundation/PxTransform.h"
 class Camera
 {
 public:

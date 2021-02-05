@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ctype.h>
-#include "PxPhysicsAPI.h"
+#include "physx/PxPhysicsAPI.h"
 #include "VehicleSceneQuery.h"
 
 #define PX_RELEASE(x) if(x){x->release();x=NULL;}

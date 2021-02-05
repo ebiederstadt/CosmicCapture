@@ -29,7 +29,7 @@
 
 #include <new>
 #include "VehicleFilterShader.h"
-#include "PxPhysicsAPI.h"
+#include "physx/PxPhysicsAPI.h"
 
 
 using namespace physx;

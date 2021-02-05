@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "PxPhysicsAPI.h"
+#include "physx/PxPhysicsAPI.h"
 
 
 using namespace physx;

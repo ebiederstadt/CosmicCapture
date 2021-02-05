@@ -31,7 +31,7 @@
 
 #include "Camera.h"
 #include <ctype.h>
-#include "foundation/PxMat33.h"
+#include "physx/foundation/PxMat33.h"
 
 using namespace physx;
 
