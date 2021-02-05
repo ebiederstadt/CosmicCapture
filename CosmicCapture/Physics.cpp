@@ -221,6 +221,70 @@ VehicleDesc Physics::initVehicleDesc()
 	return vehicleDesc;
 }
 
+void Physics::stepPhysics()
+{
+	const PxF32 timestep = 1.0f / 60.0f;
+
+	//Cycle through the driving modes to demonstrate how to accelerate/reverse/brake/turn etc.
+	incrementDrivingMode(timestep);
+
+	//Update the control inputs for the vehicle.
+	if (gMimicKeyInputs)
+	{
+		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
+	}
+	else
+	{
+		PxVehicleDrive4WSmoothAnalogRawInputsAndSetAnalogInputs(gPadSmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
+	}
+
+	//Raycasts.
+	PxVehicleWheels* vehicles[1] = { gVehicle4W };
+	PxRaycastQueryResult* raycastResults = gVehicleSceneQueryData->getRaycastQueryResultBuffer(0);
+	const PxU32 raycastResultsSize = gVehicleSceneQueryData->getQueryResultBufferSize();
+	PxVehicleSuspensionRaycasts(gBatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
+
+	//Vehicle update.
+	const PxVec3 grav = gScene->getGravity();
+	PxWheelQueryResult wheelQueryResults[PX_MAX_NB_WHEELS];
+	PxVehicleWheelQueryResult vehicleQueryResults[1] = { {wheelQueryResults, gVehicle4W->mWheelsSimData.getNbWheels()} };
+	PxVehicleUpdates(timestep, grav, *gFrictionPairs, 1, vehicles, vehicleQueryResults);
+
+	//Work out if the vehicle is in the air.
+	//gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
+
+	//Scene update.
+	gScene->simulate(timestep);
+	gScene->fetchResults(true);
+}
+
+
+void Physics::CleanupPhysics()
+{
+	gVehicle4W->getRigidDynamicActor()->release();
+	gVehicle4W->free();
+	PX_RELEASE(gGroundPlane);
+	PX_RELEASE(gBatchQuery);
+	gVehicleSceneQueryData->free(gAllocator);
+	PX_RELEASE(gFrictionPairs);
+	PxCloseVehicleSDK();
+
+	PX_RELEASE(gMaterial);
+	PX_RELEASE(gCooking);
+	PX_RELEASE(gScene);
+	PX_RELEASE(gDispatcher);
+	PX_RELEASE(gPhysics);
+	if (gPvd)
+	{
+		PxPvdTransport* transport = gPvd->getTransport();
+		gPvd->release();	gPvd = NULL;
+		PX_RELEASE(transport);
+	}
+	PX_RELEASE(gFoundation);
+	printf("Physx cleaned up\n");
+}
+
+//Vehicle Input
 void Physics::startAccelerateForwardsMode()
 {
 	if (gMimicKeyInputs)
@@ -394,70 +458,6 @@ void Physics::incrementDrivingMode(const PxF32 timestep)
 		}
 	}
 }
-
-void Physics::stepPhysics()
-{
-	const PxF32 timestep = 1.0f / 60.0f;
-
-	//Cycle through the driving modes to demonstrate how to accelerate/reverse/brake/turn etc.
-	incrementDrivingMode(timestep);
-
-	//Update the control inputs for the vehicle.
-	if (gMimicKeyInputs)
-	{
-		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
-	}
-	else
-	{
-		PxVehicleDrive4WSmoothAnalogRawInputsAndSetAnalogInputs(gPadSmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
-	}
-
-	//Raycasts.
-	PxVehicleWheels* vehicles[1] = { gVehicle4W };
-	PxRaycastQueryResult* raycastResults = gVehicleSceneQueryData->getRaycastQueryResultBuffer(0);
-	const PxU32 raycastResultsSize = gVehicleSceneQueryData->getQueryResultBufferSize();
-	PxVehicleSuspensionRaycasts(gBatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
-
-	//Vehicle update.
-	const PxVec3 grav = gScene->getGravity();
-	PxWheelQueryResult wheelQueryResults[PX_MAX_NB_WHEELS];
-	PxVehicleWheelQueryResult vehicleQueryResults[1] = { {wheelQueryResults, gVehicle4W->mWheelsSimData.getNbWheels()} };
-	PxVehicleUpdates(timestep, grav, *gFrictionPairs, 1, vehicles, vehicleQueryResults);
-
-	//Work out if the vehicle is in the air.
-	//gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
-
-	//Scene update.
-	gScene->simulate(timestep);
-	gScene->fetchResults(true);
-}
-
-
-void Physics::CleanupPhysics()
-{
-	gVehicle4W->getRigidDynamicActor()->release();
-	gVehicle4W->free();
-	PX_RELEASE(gGroundPlane);
-	PX_RELEASE(gBatchQuery);
-	gVehicleSceneQueryData->free(gAllocator);
-	PX_RELEASE(gFrictionPairs);
-	PxCloseVehicleSDK();
-
-	PX_RELEASE(gMaterial);
-	PX_RELEASE(gCooking);
-	PX_RELEASE(gScene);
-	PX_RELEASE(gDispatcher);
-	PX_RELEASE(gPhysics);
-	if (gPvd)
-	{
-		PxPvdTransport* transport = gPvd->getTransport();
-		gPvd->release();	gPvd = NULL;
-		PX_RELEASE(transport);
-	}
-	PX_RELEASE(gFoundation);
-	printf("Physx cleaned up\n");
-}
-
 
 //SnippetVehicle4WCreate
 void Physics::computeWheelCenterActorOffsets4W(const PxF32 wheelFrontZ, const PxF32 wheelRearZ, const PxVec3& chassisDims, const PxF32 wheelWidth, const PxF32 wheelRadius, const PxU32 numWheels, PxVec3* wheelCentreOffsets)

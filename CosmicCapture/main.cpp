@@ -228,6 +228,7 @@ int main(int argc, char** args) {
 
 	physics.Initialize();
 	glutMainLoop();
+	///////////////////////////////////////////////
 
 	// Loop until the user closes the window
 	while (true) {
