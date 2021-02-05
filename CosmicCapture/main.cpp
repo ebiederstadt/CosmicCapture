@@ -3,6 +3,7 @@
 #include <fmt/format.h>
 #include <GL/glew.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
 
 #include "graphics/Window.h"
 #include "graphics/ShaderProgram.h"
@@ -10,83 +11,95 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-//PHYSX Stuff----------------------------------------------------------
-#include <ctype.h>
+#include "Physics.h"
+#include "Camera.h"
+#include "Render.h"
+#include "graphics/GraphicsCamera.h"
 
-#include "physx/PxPhysicsAPI.h"
-#include "physx/vehicle/PxVehicleSDK.h"
-#define PX_RELEASE(x) if(x){x->release();x=NULL;}
-
-using namespace physx;
-
-PxDefaultErrorCallback gErrorCallback;
-PxDefaultAllocator gAllocator;
-PxFoundation* gFoundation = NULL;
-PxPhysics* gPhysics = NULL;
-
-PxDefaultCpuDispatcher* gDispatcher = NULL;
-PxScene* gScene = NULL;
-
-PxCooking* gCooking = NULL;
-
-PxMaterial* gMaterial = NULL;
-
-PxPvd* gPvd = NULL;
-
-//VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
-PxBatchQuery* gBatchQuery = NULL;
-
-PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = NULL;
-
-PxRigidStatic* gGroundPlane = NULL;
-PxVehicleDrive4W* gVehicle4W = NULL;
-
-bool					gIsVehicleInAir = true;
-
-
-void initPhysics() {
-	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
-	bool recordMemoryAllocations = true;
-	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(), recordMemoryAllocations, gPvd);
-	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(PxTolerancesScale()));
-	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
-
-	PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
-	sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
-	PxU32 numWorkers = 1;
-	gDispatcher = PxDefaultCpuDispatcherCreate(numWorkers);
-	sceneDesc.cpuDispatcher = gDispatcher;
-
-	gScene = gPhysics->createScene(sceneDesc);
-
-	fmt::print("Physx initialized\n");
+//physics stuff
+Camera* sCamera;
+Physics& physics = Physics::Instance();
+void keyPress(unsigned char key, const PxTransform& camera)
+{
+	PX_UNUSED(camera);
+	PX_UNUSED(key);
+}
+void motionCallback(int x, int y)
+{
+	sCamera->handleMotion(x, y);
 }
 
-void cleanupPhysics()
-{	
-	PX_RELEASE(gMaterial);
-	PX_RELEASE(gCooking);
-	PX_RELEASE(gScene);
-	PX_RELEASE(gDispatcher);
-	PX_RELEASE(gPhysics);
-	fmt::print("Physx cleaned up\n");
-} 
-//---------------------------------------------------------------------
+void keyboardCallback(unsigned char key, int x, int y)
+{
+	if (key == 27)
+		exit(0);
 
+	if (!sCamera->handleKey(key, x, y))
+		keyPress(key, sCamera->getTransform());
+}
+
+void mouseCallback(int button, int state, int x, int y)
+{
+	sCamera->handleMouse(button, state, x, y);
+}
+
+void idleCallback()
+{
+	glutPostRedisplay();
+}
+
+void renderCallback()
+{
+	physics.stepPhysics();
+
+	startRender(sCamera->getEye(), sCamera->getDir());
+
+	PxU32 nbActors = physics.gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
+	if (nbActors)
+	{
+		std::vector<PxRigidActor*> actors(nbActors);
+		physics.gScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
+		renderActors(&actors[0], static_cast<PxU32>(actors.size()), true);
+	}
+
+	finishRender();
+}
+
+void exitCallback(void)
+{
+	delete sCamera;
+	physics.CleanupPhysics();
+}
 
 int main(int argc, char** args) {
 	// Window Initialization
 	const GLint width = 1280, height = 720;
 	Window window("Cosmic Capture", width, height);
 
-	// Physics initialization
-	initPhysics();
+	//physics
+	sCamera = new Camera(PxVec3(10.0f, 10.0f, 10.0f), PxVec3(-0.6f, -0.2f, -0.7f));
+
+	setupDefaultWindow("PhysX Snippet Vehicle4W");
+	setupDefaultRenderState();
+
+	glutIdleFunc(idleCallback);
+	glutDisplayFunc(renderCallback);
+	glutKeyboardFunc(keyboardCallback);
+	glutMouseFunc(mouseCallback);
+	glutMotionFunc(motionCallback);
+	motionCallback(0, 0);
+
+	atexit(exitCallback);
+
+	physics.Initialize();
+	glutMainLoop();
+	///////////////////////////////////////////////
 
 	// Shaders are used 1+ times, and shared between all models that use them
 	const auto shaderProgram = std::make_shared<ShaderProgram>("shaders/main.vert", "shaders/main.frag");
 
 	// The camera is used once, and shared between all geometry
-	const auto camera = std::make_shared<Camera>();
+	const auto camera = std::make_shared<GraphicsCamera>();
 
 	// Models
 	Model monkey = Model("models/monkey.ply", "textures/camouflage.jpg", shaderProgram, camera);
@@ -121,9 +134,5 @@ int main(int argc, char** args) {
 		window.swap();
 	}
 
-
-	cleanupPhysics();
-
 	return 0;
 }
-

@@ -8,7 +8,7 @@
 
 #include "Mesh.h"
 #include "ShaderProgram.h"
-#include "../Camera.h"
+#include "GraphicsCamera.h"
 
 
 /// <summary>
@@ -21,7 +21,7 @@ public:
 		const char* modelPath,
 		const char* texturePath,
 		std::shared_ptr<ShaderProgram> shaderProgram,
-		std::shared_ptr<Camera> camera
+		std::shared_ptr<GraphicsCamera> camera
 	);
 
 	void draw();
@@ -45,7 +45,7 @@ private:
 	std::vector<Mesh> mMeshes; // Each model is made of one or more meshes 
 	Texture mTexture; // Assuming that each texture is unique to each model (may need to rework)
 	std::shared_ptr<ShaderProgram> mShaderPointer; // Shaders can be shared between multiple models
-	std::shared_ptr<Camera> mCameraPointer; // Camera object is shared among all the meshes
+	std::shared_ptr<GraphicsCamera> mCameraPointer; // Camera object is shared among all the meshes
 
 	void processNode(aiNode* node, const aiScene* scene);
 	void processMesh(aiMesh* mesh);

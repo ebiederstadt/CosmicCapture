@@ -1,3 +1,4 @@
+#pragma once
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -28,91 +29,26 @@
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
 
-
-#include "Camera.h"
-#include <ctype.h>
-#include "physx/foundation/PxMat33.h"
-
-using namespace physx;
+#include "physx/PxPhysicsAPI.h"
+#include "physx/foundation/PxPreprocessor.h"
 
 
+#if PX_WINDOWS
+	#pragma warning(disable: 4505)
+	#include <GL/glut.h>
+#else
+#error platform not supported.
+#endif
 
-Camera::Camera(const PxVec3& eye, const PxVec3& dir)
-{
-	mEye = eye;
-	mDir = dir.getNormalized();
-	mMouseX = 0;
-	mMouseY = 0;
-}
 
-void Camera::handleMouse(int button, int state, int x, int y)
-{
-	PX_UNUSED(state);
-	PX_UNUSED(button);
-	mMouseX = x;
-	mMouseY = y;
-}
 
-bool Camera::handleKey(unsigned char key, int x, int y, float speed)
-{
-	PX_UNUSED(x);
-	PX_UNUSED(y);
+void setupDefaultWindow(const char* name);
+void setupDefaultRenderState();
 
-	PxVec3 viewY = mDir.cross(PxVec3(0, 1, 0)).getNormalized();
-	switch (toupper(key))
-	{
-	case 'W':	mEye += mDir * 2.0f * speed;		break;
-	case 'S':	mEye -= mDir * 2.0f * speed;		break;
-	case 'A':	mEye -= viewY * 2.0f * speed;		break;
-	case 'D':	mEye += viewY * 2.0f * speed;		break;
-	default:							return false;
-	}
-	return true;
-}
+void startRender(const physx::PxVec3& cameraEye, const physx::PxVec3& cameraDir, physx::PxReal nearClip = 1.f, physx::PxReal farClip = 10000.f);
+void finishRender();
 
-void Camera::handleAnalogMove(float x, float y)
-{
-	PxVec3 viewY = mDir.cross(PxVec3(0, 1, 0)).getNormalized();
-	mEye += mDir * y;
-	mEye += viewY * x;
-}
-
-void Camera::handleMotion(int x, int y)
-{
-	int dx = mMouseX - x;
-	int dy = mMouseY - y;
-
-	PxVec3 viewY = mDir.cross(PxVec3(0, 1, 0)).getNormalized();
-
-	PxQuat qx(PxPi * dx / 180.0f, PxVec3(0, 1, 0));
-	mDir = qx.rotate(mDir);
-	PxQuat qy(PxPi * dy / 180.0f, viewY);
-	mDir = qy.rotate(mDir);
-
-	mDir.normalize();
-
-	mMouseX = x;
-	mMouseY = y;
-}
-
-PxTransform Camera::getTransform() const
-{
-	PxVec3 viewY = mDir.cross(PxVec3(0, 1, 0));
-
-	if (viewY.normalize() < 1e-6f)
-		return PxTransform(mEye);
-
-	PxMat33 m(mDir.cross(viewY), viewY, -mDir);
-	return PxTransform(mEye, PxQuat(m));
-}
-
-PxVec3 Camera::getEye() const
-{
-	return mEye;
-}
-
-PxVec3 Camera::getDir() const
-{
-	return mDir;
-}
+void renderActors(physx::PxRigidActor** actors, const physx::PxU32 numActors, bool shadows = false, const physx::PxVec3& color = physx::PxVec3(0.0f, 0.75f, 0.0f));
+//	void renderGeoms(const physx::PxU32 nbGeoms, const physx::PxGeometry* geoms, const physx::PxTransform* poses, bool shadows, const physx::PxVec3& color);
+void renderGeoms(const physx::PxU32 nbGeoms, const physx::PxGeometryHolder* geoms, const physx::PxTransform* poses, bool shadows, const physx::PxVec3& color);
 
