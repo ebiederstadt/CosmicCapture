@@ -10,7 +10,7 @@ Model::Model(
 	const char* modelPath,
 	const char* texturePath,
 	std::shared_ptr<ShaderProgram> shaderProgram,
-	std::shared_ptr<Camera> camera
+	std::shared_ptr<GraphicsCamera> camera
 ) :
 	modelMatrix(1.0f),
 	mTexture(texturePath, GL_LINEAR),

@@ -14,6 +14,7 @@
 #include "Physics.h"
 #include "Camera.h"
 #include "Render.h"
+#include "graphics/GraphicsCamera.h"
 
 //physics stuff
 Camera* sCamera;
@@ -98,7 +99,7 @@ int main(int argc, char** args) {
 	const auto shaderProgram = std::make_shared<ShaderProgram>("shaders/main.vert", "shaders/main.frag");
 
 	// The camera is used once, and shared between all geometry
-	const auto camera = std::make_shared<Camera>();
+	const auto camera = std::make_shared<GraphicsCamera>();
 
 	// Models
 	Model monkey = Model("models/monkey.ply", "textures/camouflage.jpg", shaderProgram, camera);
@@ -132,9 +133,6 @@ int main(int argc, char** args) {
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		window.swap();
 	}
-
-
-	cleanupPhysics();
 
 	return 0;
 }
