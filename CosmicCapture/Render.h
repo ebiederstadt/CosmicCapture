@@ -28,7 +28,7 @@
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
-/*
+
 #include "PxPhysicsAPI.h"
 #include "foundation/PxPreprocessor.h"
 
@@ -36,11 +36,7 @@
 #if PX_WINDOWS
 	#include <windows.h>
 	#pragma warning(disable: 4505)
-	#include <glut.h>
-#elif PX_LINUX_FAMILY
-#include <GL/glut.h>
-#elif PX_OSX
-#include <GLUT/glut.h>
+	#include <GL/glut.h>
 #else
 #error platform not supported.
 #endif
@@ -57,4 +53,3 @@ void renderActors(physx::PxRigidActor** actors, const physx::PxU32 numActors, bo
 //	void renderGeoms(const physx::PxU32 nbGeoms, const physx::PxGeometry* geoms, const physx::PxTransform* poses, bool shadows, const physx::PxVec3& color);
 void renderGeoms(const physx::PxU32 nbGeoms, const physx::PxGeometryHolder* geoms, const physx::PxTransform* poses, bool shadows, const physx::PxVec3& color);
 
-*/

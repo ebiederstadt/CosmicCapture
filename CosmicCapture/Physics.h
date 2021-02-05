@@ -98,11 +98,11 @@ public:
 		const PxVec3& chassisCMOffset, const PxF32 chassisMass,
 		PxVehicleWheelsSimData* wheelsSimData);
 	PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* physics, PxCooking* cooking);
-private:
+
 
 	Physics();
-	
-	
+
+
 	PxDefaultAllocator		gAllocator;
 	PxDefaultErrorCallback	gErrorCallback;
 
@@ -128,5 +128,7 @@ private:
 	PxVehicleDrive4W* gVehicle4W = NULL;
 
 	bool					gIsVehicleInAir = true;
+private:
+
 
 };

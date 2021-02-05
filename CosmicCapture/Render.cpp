@@ -27,7 +27,7 @@
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
-/*
+
 #include "Render.h"
 
 #define MAX_NUM_ACTOR_SHAPES 128
@@ -400,7 +400,7 @@ void renderGeoms(const PxU32 nbGeoms, const PxGeometry* geoms, const PxTransform
 			glPopMatrix();
 		}
 	}
-}
+}*/
 
 void renderGeoms(const PxU32 nbGeoms, const PxGeometryHolder* geoms, const PxTransform* poses, bool shadows, const PxVec3& color)
 {
@@ -437,4 +437,3 @@ void renderGeoms(const PxU32 nbGeoms, const PxGeometryHolder* geoms, const PxTra
 }
 
 
-*/

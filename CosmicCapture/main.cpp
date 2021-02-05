@@ -36,6 +36,61 @@ const std::string fragmentSource = R"glsl(
 	}
 )glsl";
 
+//physics stuff
+Camera* sCamera;
+Physics& physics = Physics::Instance();
+void keyPress(unsigned char key, const PxTransform& camera)
+{
+	PX_UNUSED(camera);
+	PX_UNUSED(key);
+}
+void motionCallback(int x, int y)
+{
+	sCamera->handleMotion(x, y);
+}
+
+void keyboardCallback(unsigned char key, int x, int y)
+{
+	if (key == 27)
+		exit(0);
+
+	if (!sCamera->handleKey(key, x, y))
+		keyPress(key, sCamera->getTransform());
+}
+
+void mouseCallback(int button, int state, int x, int y)
+{
+	sCamera->handleMouse(button, state, x, y);
+}
+
+void idleCallback()
+{
+	glutPostRedisplay();
+}
+
+void renderCallback()
+{
+	physics.stepPhysics();
+
+	startRender(sCamera->getEye(), sCamera->getDir());
+
+	PxU32 nbActors = physics.gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
+	if (nbActors)
+	{
+		std::vector<PxRigidActor*> actors(nbActors);
+		physics.gScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
+		renderActors(&actors[0], static_cast<PxU32>(actors.size()), true);
+	}
+
+	finishRender();
+}
+
+void exitCallback(void)
+{
+	delete sCamera;
+	physics.CleanupPhysics();
+}
+
 int main(int argc, char** args) {
 
 	// TODO: Make the window resizable
@@ -156,9 +211,23 @@ int main(int argc, char** args) {
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	//Physics
-	Physics& physics = Physics::Instance();
+	//physics
+	sCamera = new Camera(PxVec3(10.0f, 10.0f, 10.0f), PxVec3(-0.6f, -0.2f, -0.7f));
+
+	setupDefaultWindow("PhysX Snippet Vehicle4W");
+	setupDefaultRenderState();
+
+	glutIdleFunc(idleCallback);
+	glutDisplayFunc(renderCallback);
+	glutKeyboardFunc(keyboardCallback);
+	glutMouseFunc(mouseCallback);
+	glutMotionFunc(motionCallback);
+	motionCallback(0, 0);
+
+	atexit(exitCallback);
+
 	physics.Initialize();
+	glutMainLoop();
 
 	// Loop until the user closes the window
 	while (true) {
@@ -220,7 +289,7 @@ int main(int argc, char** args) {
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
-	physics.CleanupPhysics();
+	//physics.CleanupPhysics();
 
 	SDL_GL_DeleteContext(gl_context);
 	SDL_DestroyWindow(window);
