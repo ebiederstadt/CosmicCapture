@@ -172,6 +172,7 @@
     <ClCompile Include="imgui\imgui_impl_sdl.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="format.cc" />
     <ClCompile Include="Physics.cpp" />

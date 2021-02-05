@@ -11,6 +11,8 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+#include "./input.h"
+
 #include "Physics.h"
 #include "Camera.h"
 #include "Render.h"
@@ -71,6 +73,8 @@ void exitCallback(void)
 	physics.CleanupPhysics();
 }
 
+Input input;
+
 int main(int argc, char** args) {
 	// Window Initialization
 	const GLint width = 1280, height = 720;
@@ -116,6 +120,8 @@ int main(int argc, char** args) {
 			if (window.event.type == SDL_QUIT)
 				break;
 		}
+    
+    input.HandleEvent(window.event);
 
 		window.startImGuiFrame();
 		Window::clear();
