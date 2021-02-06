@@ -176,6 +176,22 @@ void Physics::Initialize() {
 	gVehicleOrderProgress = 0;
 	startBrakeMode();
 
+	//Collision test objects------------------------------------
+	PxShape* ballShape = gPhysics->createShape(PxSphereGeometry(5.0f), *gMaterial, true); //create shape
+	ballShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
+	PxRigidDynamic* ballBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create dynamic rigid body - will move
+	ballBody->attachShape(*ballShape); //stick shape on rigid body
+	ballShape->release(); //free shape 
+	gScene->addActor(*ballBody); //add rigid body to scene
+
+	PxShape* wallShape = gPhysics->createShape(PxBoxGeometry(20.0f, 20.0f, 0.1f), *gMaterial, true); //create shape
+	wallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
+	PxRigidStatic* wallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 20.f, -30.f))); //create static rigid body - wont move
+	wallBody->attachShape(*wallShape); //stick shape on rigid body
+	wallShape->release(); //free shape 
+	gScene->addActor(*wallBody); //add rigid body to scene
+	//----------------------------------------------------------
+
 	printf("Physx initialized\n");
 	
 }
