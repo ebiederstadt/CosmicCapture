@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <fmt/format.h>
+#include "input.h"
+
 
 /*
   Code sources used in this file:
@@ -12,36 +14,9 @@
 
 */
 
-class Input
+Input::Input(Physics phys)
 {
-public:
-    //--- Constructor
-    Input();
-
-    // Handling all input in one method at the moment, will split up later
-    bool HandleEvent(SDL_Event& event);
-    void HandleKeys(SDL_Event& event, int pressed);
-    void HandleButtons(SDL_Event& event, int pressed);
-    void HandleJoystick(SDL_Event& event);
-    void HandleMouse(SDL_Event& event, int pressed);
-
-    
-    //Analog joystick dead zone
-    const int JOYSTICK_DEAD_ZONE = 8000;
-
-private:
-    // turning movement
-    int xDir;
-    // forwards/back movement
-    int yDir;
-    // driving i.e. foot on the gas
-    bool driving;
-};
-
-
-
-Input:: Input()
-{
+    physics = phys;
     xDir = 0;
     yDir = 0;
     driving = false;
@@ -95,25 +70,30 @@ void Input::HandleKeys(SDL_Event& event, int pressed) {
 
     if (pressed == 1)
         std::cout << "Key pressed: ";
-    else
+    else {
         std::cout << "Key released: ";
-
+        physics.releaseAllControls();
+    }
     switch (event.key.keysym.sym) {
 
     case SDLK_a:
         std::cout << "left \n";
+        physics.startTurnHardRightMode();//some reason physx has these reversed, so turnhardrightmode actually turns left
         xDir = pressed * -1;
         break;
     case SDLK_d:
         std::cout << "right \n";
+        physics.startTurnHardLeftMode();
         xDir = pressed * 1;
         break;
     case SDLK_w:
         std::cout << "up \n";
+        physics.startAccelerateForwardsMode();
         yDir = pressed * 1;
         break;
     case SDLK_s:
         std::cout << "down \n";
+        physics.startBrakeMode();
         yDir = pressed * -1;
         break;
     case SDLK_SPACE:

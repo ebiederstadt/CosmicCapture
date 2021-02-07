@@ -99,7 +99,7 @@ PxF32					gVehicleModeLifetime = 4.0f;
 PxF32					gVehicleModeTimer = 0.0f;
 PxU32					gVehicleOrderProgress = 0;
 bool					gVehicleOrderComplete = false;
-bool					gMimicKeyInputs = false;
+bool					gMimicKeyInputs = true;
 
 
 //Singleton
@@ -226,7 +226,7 @@ void Physics::stepPhysics()
 	const PxF32 timestep = 1.0f / 60.0f;
 
 	//Cycle through the driving modes to demonstrate how to accelerate/reverse/brake/turn etc.
-	incrementDrivingMode(timestep);
+	//incrementDrivingMode(timestep);
 
 	//Update the control inputs for the vehicle.
 	if (gMimicKeyInputs)
@@ -327,7 +327,6 @@ void Physics::startTurnHardLeftMode()
 {
 	if (gMimicKeyInputs)
 	{
-		gVehicleInputData.setDigitalAccel(true);
 		gVehicleInputData.setDigitalSteerLeft(true);
 	}
 	else
@@ -341,7 +340,6 @@ void Physics::startTurnHardRightMode()
 {
 	if (gMimicKeyInputs)
 	{
-		gVehicleInputData.setDigitalAccel(true);
 		gVehicleInputData.setDigitalSteerRight(true);
 	}
 	else

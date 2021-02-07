@@ -69,7 +69,7 @@ void exitCallback(void)
 	physics.CleanupPhysics();
 } */
 
-Input input;
+
 
 int main(int argc, char** args) {
 	// Window Initialization
@@ -77,11 +77,14 @@ int main(int argc, char** args) {
 	Window window("Cosmic Capture", width, height);
 	const float aspect = static_cast<float>(width) / static_cast<float>(height);
 
+	
 	//physics
-	Physics& physics = Physics::Instance();
+	Physics physics = Physics::Instance();
 	const auto sCamera = std::make_shared<Camera>(PxVec3(5.0f, 5.0f, 5.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 	physics.Initialize();
 
+	//input
+	Input input = Input(physics);
 	/*setupDefaultWindow("PhysX Snippet Vehicle4W");
 	setupDefaultRenderState();
 
