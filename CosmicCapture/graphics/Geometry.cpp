@@ -9,15 +9,15 @@ GpuGeometry::GpuGeometry():
 	mTextureBuffer(2, 2)
 {}
 
-void GpuGeometry::uploadData(const CpuGeometry& cpuGeom)
+void GpuGeometry::uploadData(const CpuGeometry& cpuGeom, const unsigned int usage)
 {
 	bind();
 	
-	mVertBuffer.uploadData(sizeof(glm::vec3) * cpuGeom.vertices.size(), cpuGeom.vertices.data(), GL_STATIC_DRAW);
-	mNormBuffer.uploadData(sizeof(glm::vec3) * cpuGeom.normals.size(), cpuGeom.normals.data(), GL_STATIC_DRAW);
-	mTextureBuffer.uploadData(sizeof(glm::vec2) * cpuGeom.texCoords.size(), cpuGeom.texCoords.data(), GL_STATIC_DRAW);
+	mVertBuffer.uploadData(sizeof(glm::vec3) * cpuGeom.vertices.size(), cpuGeom.vertices.data(), usage);
+	mNormBuffer.uploadData(sizeof(glm::vec3) * cpuGeom.normals.size(), cpuGeom.normals.data(), usage);
+	mTextureBuffer.uploadData(sizeof(glm::vec2) * cpuGeom.texCoords.size(), cpuGeom.texCoords.data(), usage);
 
-	mElementArray.uploadData(sizeof(int) * cpuGeom.indices.size(), (void *) cpuGeom.indices.data(), GL_STATIC_DRAW);
+	mElementArray.uploadData(sizeof(int) * cpuGeom.indices.size(), (void *) cpuGeom.indices.data(), usage);
 
 	mNumElements = static_cast<int>(cpuGeom.indices.size());
 }

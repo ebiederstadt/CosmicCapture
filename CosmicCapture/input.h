@@ -11,7 +11,13 @@ public:
 
     // handle controller input
     // Handling all input in one method at the moment, will split up later
-    void HandleEvent(SDL_Event& event);
+
+    /// <summary>
+    /// Handle an input event
+    /// </summary>
+    /// <param name="event">The event to handle</param>
+    /// <returns>True if the user wants to close the window</returns>
+    bool HandleEvent(SDL_Event& event);
     void HandleKeys(SDL_Event& event, int pressed);
     void HandleButtons(SDL_Event& event, int pressed);
     void HandleJoystick(SDL_Event& event);

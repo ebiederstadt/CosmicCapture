@@ -26,6 +26,7 @@ public:
 	void swap() const { SDL_GL_SwapWindow(mWindow.get()); }
 	static void clear();
 	void startImGuiFrame() const;
+	static void renderImGuiFrame();
 
 
 	SDL_Event event{};

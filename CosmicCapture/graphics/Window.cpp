@@ -11,6 +11,13 @@
 
 Window::Window(const std::string& windowName, const int width, const int height)
 {
+	// Initialize SDL
+	if (SDL_Init(SDL_INIT_GAMECONTROLLER) == -1)
+	{
+		fmt::print("Failed to initialize SDL: {}\n", SDL_GetError());
+		throw std::runtime_error("SDL_INIT failed");
+	}
+	
 	// Create the window
 	mWindow = std::unique_ptr<SDL_Window, WindowDeleter>(SDL_CreateWindow(
 		windowName.c_str(), 
@@ -21,7 +28,7 @@ Window::Window(const std::string& windowName, const int width, const int height)
 	if (mWindow == nullptr)
 	{
 		fmt::print("Error creating window: {}", SDL_GetError());
-		throw std::runtime_error("Failed to initialize SDL");
+		throw std::runtime_error("Failed to open the window");
 	}
 
 	// Use modern OpenGL (deprecated functions disabled)
@@ -51,7 +58,6 @@ Window::Window(const std::string& windowName, const int width, const int height)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 	GLDebug::enable();
 #endif
-
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -94,4 +100,10 @@ void Window::startImGuiFrame() const
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(mWindow.get());
 		ImGui::NewFrame();
+}
+
+void Window::renderImGuiFrame()
+{
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

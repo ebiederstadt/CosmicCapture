@@ -16,8 +16,7 @@
 #include "Camera.h"
 #include "Render.h"
 
-/*Physics& physics = Physics::Instance();
-void keyPress(unsigned char key, const PxTransform& camera)
+/*void keyPress(unsigned char key, const PxTransform& camera)
 {
 	PX_UNUSED(camera);
 	PX_UNUSED(key);
@@ -58,7 +57,7 @@ void renderCallback()
 	{
 		std::vector<PxRigidActor*> actors(nbActors);
 		physics.gScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-		renderActors(&actors[0], static_cast<PxU32>(actors.size()), true);
+		generateTransform(&actors[0], static_cast<PxU32>(actors.size()), true);
 	}
 
 	finishRender();
@@ -79,7 +78,9 @@ int main(int argc, char** args) {
 	const float aspect = static_cast<float>(width) / static_cast<float>(height);
 
 	//physics
+	Physics& physics = Physics::Instance();
 	const auto sCamera = std::make_shared<Camera>(PxVec3(5.0f, 5.0f, 5.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+	physics.Initialize();
 
 	/*setupDefaultWindow("PhysX Snippet Vehicle4W");
 	setupDefaultRenderState();
@@ -93,7 +94,6 @@ int main(int argc, char** args) {
 
 	atexit(exitCallback);
 
-	physics.Initialize();
 	glutMainLoop(); */
 	///////////////////////////////////////////////
 
@@ -101,38 +101,65 @@ int main(int argc, char** args) {
 	shaderProgram.compile();
 
 	// Models (examples, please change)
-	Model monkey("models/monkey.ply", "textures/camouflage.jpg", shaderProgram, sCamera);
+	Model wheel1("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model wheel2("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model wheel3("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model wheel4("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model wheel5("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model wheel6("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+
+	Model body("models/cube.ply", "textures/camouflage.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 	std::vector<Model> models;
-	models.push_back(std::move(monkey));
-
-	float angle = 0.01f;
+	models.reserve(10); // Make space for 10 models without the need for copying
+	models.push_back(std::move(wheel1));
+	models.push_back(std::move(wheel2));
+	models.push_back(std::move(wheel3));
+	models.push_back(std::move(wheel4));
+	models.push_back(std::move(wheel5));
+	models.push_back(std::move(wheel6));
+	models.push_back(std::move(body));
 
 	// Loop until the user closes the window
 	while (true) {
+		// Input
 		if (SDL_PollEvent(&window.event)) {
 			if (window.event.type == SDL_QUIT)
 				break;
 		}
-    
 		input.HandleEvent(window.event);
 
+		// Physics simulation
+		physics.stepPhysics();
+
+		PxU32 nbActors = physics.gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
+		std::vector<PxMat44> modelMatrices;
+		if (nbActors)
+		{
+			std::vector<PxRigidActor*> actors(nbActors);
+
+			physics.gScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
+			modelMatrices = generateTransform(&actors[0], static_cast<PxU32>(actors.size()));
+		}
+
+		// Render
 		window.startImGuiFrame();
 		Window::clear();
 
-		models[0].rotateZ(angle);
-		
 		shaderProgram.use();
 
+		auto counter = 1;
 		for (auto& model : models)
-			model.draw();
+		{
+			model.draw(modelMatrices[counter]);
+			++counter;
+		}
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
-		ImGui::Render();
 
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		Window::renderImGuiFrame();
 		window.swap();
 	}
 

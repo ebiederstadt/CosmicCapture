@@ -2,6 +2,7 @@
 #include <SDL/SDL_gamecontroller.h>
 #include <iostream>
 #include <fstream>
+#include <fmt/format.h>
 
 /*
   Code sources used in this file:
@@ -18,10 +19,11 @@ public:
     Input();
 
     // Handling all input in one method at the moment, will split up later
-    void HandleEvent(SDL_Event& event);
+    bool HandleEvent(SDL_Event& event);
     void HandleKeys(SDL_Event& event, int pressed);
     void HandleButtons(SDL_Event& event, int pressed);
     void HandleJoystick(SDL_Event& event);
+    void HandleMouse(SDL_Event& event, int pressed);
 
     
     //Analog joystick dead zone
@@ -45,7 +47,7 @@ Input:: Input()
     driving = false;
 }
 
-void Input::HandleEvent(SDL_Event& event) {
+bool Input::HandleEvent(SDL_Event& event) {
 
     switch (event.type)
     {
@@ -55,6 +57,14 @@ void Input::HandleEvent(SDL_Event& event) {
     case SDL_KEYUP:
         HandleKeys(event, 0);
         break;
+
+    case SDL_MOUSEBUTTONDOWN:
+        HandleMouse(event, 1);
+        break;
+    case SDL_MOUSEBUTTONUP:
+        HandleMouse(event, 0);
+        break;
+    	
     case SDL_CONTROLLERBUTTONDOWN:
         HandleButtons(event, 1);
     case SDL_CONTROLLERBUTTONUP:
@@ -69,10 +79,16 @@ void Input::HandleEvent(SDL_Event& event) {
     case SDL_CONTROLLERDEVICEREMOVED:
         std::cout << "Controller removed \n";
         break;
+
+    case SDL_QUIT:
+        return true;
+
     default:
-        return;
+        return false;
 
     }
+
+    return false;
 }
 
 void Input::HandleKeys(SDL_Event& event, int pressed) {
@@ -222,5 +238,20 @@ void Input::HandleJoystick(SDL_Event& event) {
         std::cout << "Use left joystick \n";
     }
 
+}
+
+void Input::HandleMouse(SDL_Event& event, int pressed)
+{
+    if (pressed == 1)
+        fmt::print("Pressed: ");
+    else
+        fmt::print("Released: ");
+
+    if (event.button.type == SDL_BUTTON_LEFT)
+        fmt::print("Left mouse button\n");
+    else if (event.button.type == SDL_BUTTON_MIDDLE)
+        fmt::print("Middle mouse button\n");
+    else if (event.button.type == SDL_BUTTON_RIGHT)
+        fmt::print("Right mouse button");
 }
 
