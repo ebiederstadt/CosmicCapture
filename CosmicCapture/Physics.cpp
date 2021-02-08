@@ -154,9 +154,9 @@ void Physics::Initialize() {
 	ballShape->release(); //free shape 
 	gScene->addActor(*ballBody); //add rigid body to scene
 
-	PxShape* wallShape = gPhysics->createShape(PxBoxGeometry(20.0f, 20.0f, 0.1f), *gMaterial, true); //create shape
+	PxShape* wallShape = gPhysics->createShape(PxBoxGeometry(10.0f, 10.0f, 0.1f), *gMaterial, true); //create shape
 	wallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	PxRigidStatic* wallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 20.f, -30.f))); //create static rigid body - wont move
+	PxRigidStatic* wallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 10.f, -15.f))); //create static rigid body - wont move
 	wallBody->attachShape(*wallShape); //stick shape on rigid body
 	wallShape->release(); //free shape 
 	gScene->addActor(*wallBody); //add rigid body to scene

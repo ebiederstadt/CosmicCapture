@@ -55,6 +55,9 @@ int main(int argc, char** args) {
 	// The arena model
 	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
+	Model dynamicBall("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model staticWall("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+
 	std::vector<Model> models;
 	models.reserve(10); // Make space for 10 models without the need for copying
 	models.push_back(std::move(wheel1));
@@ -64,6 +67,8 @@ int main(int argc, char** args) {
 	models.push_back(std::move(wheel5));
 	models.push_back(std::move(wheel6));
 	models.push_back(std::move(body));
+	models.push_back(std::move(dynamicBall));
+	models.push_back(std::move(staticWall));
 
 	//event handler;
 	SDL_Event event;
