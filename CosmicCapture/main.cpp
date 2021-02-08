@@ -16,61 +16,6 @@
 #include "Camera.h"
 #include "Render.h"
 
-/*void keyPress(unsigned char key, const PxTransform& camera)
-{
-	PX_UNUSED(camera);
-	PX_UNUSED(key);
-}
-
-void motionCallback(int x, int y)
-{
-	sCamera->handleMotion(x, y);
-}
-
-void keyboardCallback(unsigned char key, int x, int y)
-{
-	if (key == 27)
-		exit(0);
-
-	if (!sCamera->handleKey(key, x, y))
-		keyPress(key, sCamera->getTransform());
-}
-
-void mouseCallback(int button, int state, int x, int y)
-{
-	sCamera->handleMouse(button, state, x, y);
-}
-
-void idleCallback()
-{
-	glutPostRedisplay();
-}
-
-void renderCallback()
-{
-	physics.stepPhysics();
-
-	startRender(sCamera->getEye(), sCamera->getDir());
-
-	PxU32 nbActors = physics.gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
-	if (nbActors)
-	{
-		std::vector<PxRigidActor*> actors(nbActors);
-		physics.gScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-		generateTransform(&actors[0], static_cast<PxU32>(actors.size()), true);
-	}
-
-	finishRender();
-}
-
-void exitCallback(void)
-{
-	delete sCamera;
-	physics.CleanupPhysics();
-} */
-
-
-
 int main(int argc, char** args) {
 	// Window Initialization
 	const GLint width = 1280, height = 720;
@@ -84,21 +29,15 @@ int main(int argc, char** args) {
 	physics.Initialize();
 
 	//input
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) { //initializing SDL with joystick support
+		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+		exit(1);
+	}
+	//querying the number of available joysticks
+	printf("%i joysticks were found.\n\n", SDL_NumJoysticks());
+
+
 	Input input = Input(physics);
-	/*setupDefaultWindow("PhysX Snippet Vehicle4W");
-	setupDefaultRenderState();
-
-	glutIdleFunc(idleCallback);
-	glutDisplayFunc(renderCallback);
-	glutKeyboardFunc(keyboardCallback);
-	glutMouseFunc(mouseCallback);
-	glutMotionFunc(motionCallback);
-	motionCallback(0, 0);
-
-	atexit(exitCallback);
-
-	glutMainLoop(); */
-	///////////////////////////////////////////////
 
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
@@ -126,15 +65,65 @@ int main(int argc, char** args) {
 	models.push_back(std::move(wheel6));
 	models.push_back(std::move(body));
 
-	// Loop until the user closes the window
-	while (true) {
-		// Input
-		if (SDL_PollEvent(&window.event)) {
-			if (window.event.type == SDL_QUIT)
-				break;
-		}
+	//event handler;
+	SDL_Event event;
+	//main loop flag
+	bool quit = false;
 
-		input.HandleEvent(window.event);
+	// Loop until the user closes the window
+	while (!quit) {
+		
+	
+		if (SDL_NumJoysticks() < 1)
+			printf("Warning: No joysticks connected!\n");
+		else{
+			//load joystic
+			input.gGameController = SDL_JoystickOpen(0);
+			if (input.gGameController == NULL) {
+				printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
+			}
+		}
+		// Input
+		while (SDL_PollEvent(&event) != 0) {
+			if (event.type == SDL_QUIT)
+				quit = true;
+			else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
+				if (event.key.keysym.sym == SDLK_ESCAPE) quit = true;
+				input.HandleKeys(event);
+			}
+			else if (event.type == SDL_JOYBUTTONDOWN || event.type == SDL_JOYBUTTONUP) {
+				input.HandleButtons(event);
+			}
+			else if (event.type == SDL_JOYAXISMOTION) {
+				input.HandleJoystick(event);
+			}
+		}
+		//this should probably be moved into physics at some point
+		//should also assign keys to a list and iterate through that to see which keys trigger what event
+		if (input.getDownUp()) {
+			physics.stopBrakeMode();
+		}
+		else {
+			physics.startBrakeMode();
+		}
+		if (input.getUpUp()) {
+			physics.stopAccelerateForwardsMode();
+		}
+		else {
+			physics.startAccelerateForwardsMode();
+		}
+		if (input.getRightUp()) { //for some reason the right/left controls are reversed so it has to be set this way (for now)
+			physics.stopTurnHardLeftMode();
+		}
+		else {
+			physics.startTurnHardLeftMode();
+		}
+		if (input.getLeftUp()) {
+			physics.stopTurnHardRightMode();
+		}
+		else {
+			physics.startTurnHardRightMode();
+		}
 
 		// Physics simulation
 		physics.stepPhysics();
@@ -172,6 +161,10 @@ int main(int argc, char** args) {
 		Window::renderImGuiFrame();
 		window.swap();
 	}
+	//cleanup
+	SDL_JoystickClose(input.gGameController);
+	input.gGameController = NULL;
+	physics.CleanupPhysics();
 
 	return 0;
 }
