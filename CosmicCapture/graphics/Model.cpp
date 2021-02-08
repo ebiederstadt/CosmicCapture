@@ -82,8 +82,8 @@ void Model::drawArena()
 	const auto purpleLightLoc = glGetUniformLocation(mShaderID, "purpleLight");
 	const auto orangeLightLoc = glGetUniformLocation(mShaderID, "orangeLight");
 
-	glUniformMatrix3fv(purpleLightLoc, 1, GL_FALSE, glm::value_ptr(purpleLight));
-	glUniformMatrix3fv(orangeLightLoc, 1, GL_FALSE, glm::value_ptr(orangeLight));
+	glUniform3fv(purpleLightLoc, 1, glm::value_ptr(purpleLight));
+	glUniform3fv(orangeLightLoc, 1, glm::value_ptr(orangeLight));
 
 	bool lit = true;
 	const auto litLoc = glGetUniformLocation(mShaderID, "lit");
