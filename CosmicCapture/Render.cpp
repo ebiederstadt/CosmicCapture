@@ -30,6 +30,8 @@
 
 #include "Render.h"
 
+#include <vector>
+
 #define MAX_NUM_ACTOR_SHAPES 128
 
 using namespace physx;
@@ -306,7 +308,7 @@ void finishRender()
 	glutSwapBuffers();
 }
 
-void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, const PxVec3& color)
+void generate(PxRigidActor** actors, const PxU32 numActors, bool shadows, const PxVec3& color)
 {
 	const PxVec3 shadowDir(0.0f, -0.7071067f, -0.7071067f);
 	const PxReal shadowMat[] = { 1,0,0,0, -shadowDir.x / shadowDir.y,0,-shadowDir.z / shadowDir.y,0, 0,0,1,0, 0,0,0,1 };
@@ -357,50 +359,33 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, co
 	}
 }
 
-/*static const PxU32 gGeomSizes[] = {
-	sizeof(PxSphereGeometry),
-	sizeof(PxPlaneGeometry),
-	sizeof(PxCapsuleGeometry),
-	sizeof(PxBoxGeometry),
-	sizeof(PxConvexMeshGeometry),
-	sizeof(PxTriangleMeshGeometry),
-	sizeof(PxHeightFieldGeometry),
-};
-
-void renderGeoms(const PxU32 nbGeoms, const PxGeometry* geoms, const PxTransform* poses, bool shadows, const PxVec3& color)
+std::vector<PxMat44> generateTransform(PxRigidActor** actors, const PxU32 numActors)
 {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	const PxVec3 shadowDir(0.0f, -0.7071067f, -0.7071067f);
-	const PxReal shadowMat[]={ 1,0,0,0, -shadowDir.x/shadowDir.y,0,-shadowDir.z/shadowDir.y,0, 0,0,1,0, 0,0,0,1 };
+	const PxReal shadowMat[] = { 1,0,0,0, -shadowDir.x / shadowDir.y,0,-shadowDir.z / shadowDir.y,0, 0,0,1,0, 0,0,0,1 };
 
-	const PxU8* stream = reinterpret_cast<const PxU8*>(geoms);
-	for(PxU32 j=0;j<nbGeoms;j++)
+	std::vector<PxMat44> modelMatrices;
+
+	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
+	for (PxU32 i = 0; i < numActors; i++)
 	{
-		const PxMat44 shapePose(poses[j]);
+		const PxU32 nbShapes = actors[i]->getNbShapes();
+		PX_ASSERT(nbShapes <= MAX_NUM_ACTOR_SHAPES);
+		actors[i]->getShapes(shapes, nbShapes);
 
-		const PxGeometry& geom = *reinterpret_cast<const PxGeometry*>(stream);
-		stream += gGeomSizes[geom.getType()];
+		// TODO: Might need this for something? keeping it for now
+		const bool sleeping = actors[i]->is<PxRigidDynamic>() ? actors[i]->is<PxRigidDynamic>()->isSleeping() : false;
 
-		// render object
-		glPushMatrix();
-		glMultMatrixf(&shapePose.column0.x);
-		glColor4f(color.x, color.y, color.z, 1.0f);
-		renderGeometry(geom);
-		glPopMatrix();
-
-		if(shadows)
+		for (PxU32 j = 0; j < nbShapes; j++)
 		{
-			glPushMatrix();
-			glMultMatrixf(shadowMat);
-			glMultMatrixf(&shapePose.column0.x);
-			glDisable(GL_LIGHTING);
-			glColor4f(0.1f, 0.2f, 0.3f, 1.0f);
-			renderGeometry(geom);
-			glEnable(GL_LIGHTING);
-			glPopMatrix();
+			const PxMat44 shapePose(PxShapeExt::getGlobalPose(*shapes[j], *actors[i]));
+			const PxGeometryHolder h = shapes[j]->getGeometry();
+
+			modelMatrices.push_back(shapePose);
 		}
 	}
-}*/
+	return modelMatrices;
+}
 
 void renderGeoms(const PxU32 nbGeoms, const PxGeometryHolder* geoms, const PxTransform* poses, bool shadows, const PxVec3& color)
 {

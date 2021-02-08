@@ -3,7 +3,6 @@
 #include <fmt/format.h>
 #include <GL/glew.h>
 #include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
 
 #include "graphics/Window.h"
 #include "graphics/ShaderProgram.h"
@@ -16,129 +15,151 @@
 #include "Physics.h"
 #include "Camera.h"
 #include "Render.h"
-#include "graphics/GraphicsCamera.h"
-
-//physics stuff
-Camera* sCamera;
-Physics& physics = Physics::Instance();
-void keyPress(unsigned char key, const PxTransform& camera)
-{
-	PX_UNUSED(camera);
-	PX_UNUSED(key);
-}
-void motionCallback(int x, int y)
-{
-	sCamera->handleMotion(x, y);
-}
-
-void keyboardCallback(unsigned char key, int x, int y)
-{
-	if (key == 27)
-		exit(0);
-
-	if (!sCamera->handleKey(key, x, y))
-		keyPress(key, sCamera->getTransform());
-}
-
-void mouseCallback(int button, int state, int x, int y)
-{
-	sCamera->handleMouse(button, state, x, y);
-}
-
-void idleCallback()
-{
-	glutPostRedisplay();
-}
-
-void renderCallback()
-{
-	physics.stepPhysics();
-
-	startRender(sCamera->getEye(), sCamera->getDir());
-
-	PxU32 nbActors = physics.gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
-	if (nbActors)
-	{
-		std::vector<PxRigidActor*> actors(nbActors);
-		physics.gScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-		renderActors(&actors[0], static_cast<PxU32>(actors.size()), true);
-	}
-
-	finishRender();
-}
-
-void exitCallback(void)
-{
-	delete sCamera;
-	physics.CleanupPhysics();
-}
-
-Input input;
 
 int main(int argc, char** args) {
 	// Window Initialization
 	const GLint width = 1280, height = 720;
 	Window window("Cosmic Capture", width, height);
+	const float aspect = static_cast<float>(width) / static_cast<float>(height);
 
+	
 	//physics
-	sCamera = new Camera(PxVec3(10.0f, 10.0f, 10.0f), PxVec3(-0.6f, -0.2f, -0.7f));
-
-	setupDefaultWindow("PhysX Snippet Vehicle4W");
-	setupDefaultRenderState();
-
-	glutIdleFunc(idleCallback);
-	glutDisplayFunc(renderCallback);
-	glutKeyboardFunc(keyboardCallback);
-	glutMouseFunc(mouseCallback);
-	glutMotionFunc(motionCallback);
-	motionCallback(0, 0);
-
-	atexit(exitCallback);
-
+	Physics physics = Physics::Instance();
+	const auto sCamera = std::make_shared<Camera>(PxVec3(5.0f, 5.0f, 5.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 	physics.Initialize();
-	glutMainLoop();
-	///////////////////////////////////////////////
 
-	// Shaders are used 1+ times, and shared between all models that use them
-	const auto shaderProgram = std::make_shared<ShaderProgram>("shaders/main.vert", "shaders/main.frag");
+	//input
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) { //initializing SDL with joystick support
+		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+		exit(1);
+	}
+	//querying the number of available joysticks
+	printf("%i joysticks were found.\n\n", SDL_NumJoysticks());
 
-	// The camera is used once, and shared between all geometry
-	const auto camera = std::make_shared<GraphicsCamera>();
 
-	// Models
-	Model monkey = Model("models/monkey.ply", "textures/camouflage.jpg", shaderProgram, camera);
-	monkey.scale(0.5f);
+	Input input = Input(physics);
+
+	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
+	shaderProgram.compile();
+
+	// Models (examples, please change)
+	Model wheel1("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model wheel2("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model wheel3("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model wheel4("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model wheel5("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model wheel6("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+
+	Model body("models/cube.ply", "textures/camouflage.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 	std::vector<Model> models;
-	models.push_back(std::move(monkey));
+	models.reserve(10); // Make space for 10 models without the need for copying
+	models.push_back(std::move(wheel1));
+	models.push_back(std::move(wheel2));
+	models.push_back(std::move(wheel3));
+	models.push_back(std::move(wheel4));
+	models.push_back(std::move(wheel5));
+	models.push_back(std::move(wheel6));
+	models.push_back(std::move(body));
 
-	float angle = 0.01f;
+	//event handler;
+	SDL_Event event;
+	//main loop flag
+	bool quit = false;
 
 	// Loop until the user closes the window
-	while (true) {
-		if (SDL_PollEvent(&window.event)) {
-			if (window.event.type == SDL_QUIT)
-				break;
+	while (!quit) {
+		
+	
+		if (SDL_NumJoysticks() < 1)
+			printf("Warning: No joysticks connected!\n");
+		else{
+			//load joystic
+			input.gGameController = SDL_JoystickOpen(0);
+			if (input.gGameController == NULL) {
+				printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
+			}
 		}
-    
-    input.HandleEvent(window.event);
+		// Input
+		while (SDL_PollEvent(&event) != 0) {
+			if (event.type == SDL_QUIT)
+				quit = true;
+			else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
+				if (event.key.keysym.sym == SDLK_ESCAPE) quit = true;
+				input.HandleKeys(event);
+			}
+			else if (event.type == SDL_JOYBUTTONDOWN || event.type == SDL_JOYBUTTONUP) {
+				input.HandleButtons(event);
+			}
+			else if (event.type == SDL_JOYAXISMOTION) {
+				input.HandleJoystick(event);
+			}
+		}
+		//this should probably be moved into physics at some point
+		//should also assign keys to a list and iterate through that to see which keys trigger what event
+		if (input.getDownUp()) {
+			physics.stopBrakeMode();
+		}
+		else {
+			physics.startBrakeMode();
+		}
+		if (input.getUpUp()) {
+			physics.stopAccelerateForwardsMode();
+		}
+		else {
+			physics.startAccelerateForwardsMode();
+		}
+		if (input.getRightUp()) { //for some reason the right/left controls are reversed so it has to be set this way (for now)
+			physics.stopTurnHardLeftMode();
+		}
+		else {
+			physics.startTurnHardLeftMode();
+		}
+		if (input.getLeftUp()) {
+			physics.stopTurnHardRightMode();
+		}
+		else {
+			physics.startTurnHardRightMode();
+		}
 
+
+		// Physics simulation
+		physics.stepPhysics();
+
+		PxU32 nbActors = physics.gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
+		std::vector<PxMat44> modelMatrices;
+		if (nbActors)
+		{
+			std::vector<PxRigidActor*> actors(nbActors);
+
+			physics.gScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
+			modelMatrices = generateTransform(&actors[0], static_cast<PxU32>(actors.size()));
+		}
+
+		// Render
 		window.startImGuiFrame();
 		Window::clear();
 
-		models[0].rotateZ(angle);
+		shaderProgram.use();
 
+		auto counter = 1;
 		for (auto& model : models)
-			model.draw();
+		{
+			model.draw(modelMatrices[counter]);
+			++counter;
+		}
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
-		ImGui::Render();
 
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		Window::renderImGuiFrame();
 		window.swap();
 	}
+	//cleanup
+	SDL_JoystickClose(input.gGameController);
+	input.gGameController = NULL;
+	physics.CleanupPhysics();
 
 	return 0;
 }

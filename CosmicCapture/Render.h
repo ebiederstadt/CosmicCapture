@@ -29,6 +29,8 @@
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
 
+#include <vector>
+
 #include "physx/PxPhysicsAPI.h"
 #include "physx/foundation/PxPreprocessor.h"
 
@@ -48,7 +50,7 @@ void setupDefaultRenderState();
 void startRender(const physx::PxVec3& cameraEye, const physx::PxVec3& cameraDir, physx::PxReal nearClip = 1.f, physx::PxReal farClip = 10000.f);
 void finishRender();
 
-void renderActors(physx::PxRigidActor** actors, const physx::PxU32 numActors, bool shadows = false, const physx::PxVec3& color = physx::PxVec3(0.0f, 0.75f, 0.0f));
+std::vector<physx::PxMat44> generateTransform(physx::PxRigidActor** actors, const physx::PxU32 numActors);
 //	void renderGeoms(const physx::PxU32 nbGeoms, const physx::PxGeometry* geoms, const physx::PxTransform* poses, bool shadows, const physx::PxVec3& color);
 void renderGeoms(const physx::PxU32 nbGeoms, const physx::PxGeometryHolder* geoms, const physx::PxTransform* poses, bool shadows, const physx::PxVec3& color);
 

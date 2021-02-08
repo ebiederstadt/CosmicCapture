@@ -3,12 +3,11 @@
 #include <vector>
 #include <memory>
 #include <assimp/scene.h>
-#include <glm/glm.hpp>
-#include <glm/ext/matrix_transform.hpp>
+#include <physx/PxPhysicsAPI.h>
 
 #include "Mesh.h"
 #include "ShaderProgram.h"
-#include "GraphicsCamera.h"
+#include "../Camera.h"
 
 
 /// <summary>
@@ -17,39 +16,33 @@
 class Model
 {
 public:
+	/// <summary>
+	/// Create a model object
+	/// </summary>
+	/// <param name="modelPath">Path to a file representing the 3D model</param>
+	/// <param name="texturePath">Path to the image texture to use with the model</param>
+	/// <param name="shaderProgram">Vertex + fragment shader to use with the model</param>
+	/// <param name="camera">Camera object to use with the model</param>
+	/// <param name="usage">openGL Usage type. Default is GL_STATIC_DRAW</param>
 	Model(
 		const char* modelPath,
 		const char* texturePath,
-		std::shared_ptr<ShaderProgram> shaderProgram,
-		std::shared_ptr<GraphicsCamera> camera
+		const ShaderProgram& shaderProgram,
+		std::shared_ptr<Camera> camera,
+		unsigned int usage = GL_STATIC_DRAW
 	);
 
-	void draw();
-
-	// Movement and position updates
-	// Add helper functions here if you need them
-	void move(const glm::vec3& amount) { modelMatrix = translate(modelMatrix, amount); }
-
-	void scale(const float amount) { modelMatrix = glm::scale(modelMatrix, { amount, amount, amount }); }
-	void scale(const glm::vec3& amount) { modelMatrix = glm::scale(modelMatrix, amount); }
-
-	void rotateX(const float angle) { modelMatrix = rotate(modelMatrix, angle, { 1.0f, 0.0f, 0.0f }); }
-	void rotateY(const float angle) { modelMatrix = rotate(modelMatrix, angle, { 0.0f, 1.0f, 0.0f }); }
-	void rotateZ(const float angle) { modelMatrix = rotate(modelMatrix, angle, { 0.0f, 0.0f, 1.0f }); }
-
-	// Note: Try to avoid manipulating the model matrix directly,
-	// Add helper functions if you can
-	glm::mat4 modelMatrix;
+	void draw(const physx::PxMat44& modelMatrix);
 
 private:
 	std::vector<Mesh> mMeshes; // Each model is made of one or more meshes 
 	Texture mTexture; // Assuming that each texture is unique to each model (may need to rework)
-	std::shared_ptr<ShaderProgram> mShaderPointer; // Shaders can be shared between multiple models
-	std::shared_ptr<GraphicsCamera> mCameraPointer; // Camera object is shared among all the meshes
+	unsigned int mShaderID; // Shaders can be shared between multiple models
+	std::shared_ptr<Camera> mCameraPointer; // Camera object is shared among all the meshes
+
+	unsigned int mUsage;
 
 	void processNode(aiNode* node, const aiScene* scene);
 	void processMesh(aiMesh* mesh);
-
-	void viewPipeLine();
 };
 

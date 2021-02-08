@@ -79,6 +79,7 @@ public:
 	void CleanupPhysics();
 
 	VehicleDesc initVehicleDesc();
+
 	void startAccelerateForwardsMode();
 	void startAccelerateReverseMode();
 	void startBrakeMode();
@@ -86,8 +87,13 @@ public:
 	void startTurnHardRightMode();
 	void startHandbrakeTurnLeftMode();
 	void startHandbrakeTurnRightMode();
+
+	void stopAccelerateForwardsMode();
+	void stopBrakeMode();
+	void stopTurnHardLeftMode();
+	void stopTurnHardRightMode();
+
 	void releaseAllControls();
-	void incrementDrivingMode(const PxF32 timestep);
 	void stepPhysics();
 
 	//SnippetVehicle4WCreate
@@ -127,7 +133,7 @@ public:
 	PxRigidStatic* gGroundPlane = NULL;
 	PxVehicleDrive4W* gVehicle4W = NULL;
 
-	bool					gIsVehicleInAir = true;
+	bool	gIsVehicleInAir = true;
 private:
 
 

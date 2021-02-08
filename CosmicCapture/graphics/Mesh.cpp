@@ -1,9 +1,9 @@
 #include "Mesh.h"
 
-Mesh::Mesh(const CpuGeometry& cpuGeometry, const Texture& texture) :
+Mesh::Mesh(const CpuGeometry& cpuGeometry, const Texture& texture, const unsigned int usage) :
 	mTexture(texture)
 {
-	mGeometry.uploadData(cpuGeometry);
+	mGeometry.uploadData(cpuGeometry, usage);
 }
 
 

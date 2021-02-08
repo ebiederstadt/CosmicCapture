@@ -9,17 +9,15 @@
 Model::Model(
 	const char* modelPath,
 	const char* texturePath,
-	std::shared_ptr<ShaderProgram> shaderProgram,
-	std::shared_ptr<GraphicsCamera> camera
+	const ShaderProgram& shaderProgram,
+	std::shared_ptr<Camera> camera,
+	const unsigned int usage
 ) :
-	modelMatrix(1.0f),
 	mTexture(texturePath, GL_LINEAR),
-	mShaderPointer(std::move(shaderProgram)),
-	mCameraPointer(std::move(camera))
+	mShaderID(static_cast<unsigned int>(shaderProgram)),
+	mCameraPointer(std::move(camera)),
+	mUsage(usage)
 {
-	mShaderPointer->compile();
-	mTexture.bind();
-	
 	Assimp::Importer importer;
 
 	// TODO: Consider the flags set here. Potential for higher quality or higher performance
@@ -33,14 +31,32 @@ Model::Model(
 	processNode(scene->mRootNode, scene);
 }
 
-void Model::draw()
+
+void Model::draw(const physx::PxMat44& modelMatrix)
 {
-	// Note: potential performance issue. Don't need to call use for every mesh
-	mShaderPointer->use();
-	viewPipeLine();
+	mTexture.bind();
+
+	// View pipeline
+	const auto e = mCameraPointer->getEye();
+	const auto eye = glm::vec3(e.x, e.y, e.z);
+
+	const auto d = mCameraPointer->getDir();
+	const auto center = glm::vec3(e.x + d.x, e.y + d.y, e.z + d.z);
+	
+	const auto modelLoc = glGetUniformLocation(mShaderID, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelMatrix.column0.x);
+
+	const auto viewMatrix = glm::lookAt(eye, center, { 0.0f, 1.0f, 0.0f });
+	const auto viewLoc = glGetUniformLocation(mShaderID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+
+	const auto projectionLoc = glGetUniformLocation(mShaderID, "projection");
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->perspectiveMatrix));
 
 	for (const auto& mesh : mMeshes)
 		mesh.draw();
+
+	Texture::unbind();
 }
 
 
@@ -113,21 +129,5 @@ void Model::processMesh(aiMesh* mesh)
 	// TODO: material stuff :)
 
 	// Move into a vector, without copying it
-	mMeshes.emplace_back(geometry, mTexture);
+	mMeshes.emplace_back(geometry, mTexture, mUsage);
 }
-
-
-// Note: It might make more sense to have this method be in a different class
-void Model::viewPipeLine()
-{
-	const auto program = static_cast<unsigned int>(*mShaderPointer);
-	const auto modelLoc = glGetUniformLocation(program, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-
-	const auto viewLoc = glGetUniformLocation(program, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->viewMatrix));
-
-	const auto projectionLoc = glGetUniformLocation(program, "projection");
-	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->projectionMatrix));
-}
-

@@ -27,7 +27,12 @@ class GpuGeometry
 public:
 	GpuGeometry();
 	
-	void uploadData(const CpuGeometry& cpuGeom);
+	/// <summary>
+	/// Upload data to openGL Buffers on the GPU
+	/// </summary>
+	/// <param name="cpuGeom">CPU Geometry to use</param>
+	/// <param name="usage">OpenGL Usage Hint.</param>
+	void uploadData(const CpuGeometry& cpuGeom, unsigned int usage);
 	void drawData() const;
 
 private:

@@ -7,7 +7,7 @@
 class Mesh
 {
 public:
-	Mesh(const CpuGeometry& cpuGeometry, const Texture& texture);
+	Mesh(const CpuGeometry& cpuGeometry, const Texture& texture, unsigned int usage);
 
 	void draw() const;
 
