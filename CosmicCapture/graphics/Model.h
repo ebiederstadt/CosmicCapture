@@ -33,6 +33,7 @@ public:
 	);
 
 	void draw(const physx::PxMat44& modelMatrix);
+	void drawArena();
 
 private:
 	std::vector<Mesh> mMeshes; // Each model is made of one or more meshes 
