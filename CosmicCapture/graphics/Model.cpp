@@ -38,13 +38,59 @@ void Model::draw(const physx::PxMat44& modelMatrix)
 
 	// View pipeline
 	const auto e = mCameraPointer->getEye();
-	const auto eye = glm::vec3(e.x, e.y, e.z);
+	const auto eye = glm::vec3(e.x, e.y + 5.f, e.z + 10.f);
 
 	const auto d = mCameraPointer->getDir();
 	const auto center = glm::vec3(e.x + d.x, e.y + d.y, e.z + d.z);
 	
 	const auto modelLoc = glGetUniformLocation(mShaderID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelMatrix.column0.x);
+
+	const auto viewMatrix = glm::lookAt(eye, center, { 0.0f, 1.0f, 0.0f });
+	const auto viewLoc = glGetUniformLocation(mShaderID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+
+	const auto projectionLoc = glGetUniformLocation(mShaderID, "projection");
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->perspectiveMatrix));
+
+	// Added -> car model not affected by arena lighting yet
+	bool lit = false;
+	const auto litLoc = glGetUniformLocation(mShaderID, "lit");
+	glUniform1i(litLoc, lit);
+
+	for (const auto& mesh : mMeshes)
+		mesh.draw();
+
+	Texture::unbind();
+}
+
+void Model::drawArena()
+{
+	mTexture.bind();
+
+	// View pipeline
+	const auto e = mCameraPointer->getEye();
+	const auto eye = glm::vec3(e.x, e.y + 5.f, e.z + 10.f);
+
+	const auto d = mCameraPointer->getDir();
+	const auto center = glm::vec3(e.x + d.x, e.y + d.y, e.z + d.z);
+
+	// Placing them at opposite ends of x-axis
+	glm::vec3 purpleLight = glm::vec3(-300.0f, 300.0f, 0.0f);
+	glm::vec3 orangeLight = glm::vec3(300.0f, 300.0f, 0.0f);
+
+	const auto purpleLightLoc = glGetUniformLocation(mShaderID, "purpleLight");
+	const auto orangeLightLoc = glGetUniformLocation(mShaderID, "orangeLight");
+
+	glUniform3fv(purpleLightLoc, 1, glm::value_ptr(purpleLight));
+	glUniform3fv(orangeLightLoc, 1, glm::value_ptr(orangeLight));
+
+	bool lit = true;
+	const auto litLoc = glGetUniformLocation(mShaderID, "lit");
+	glUniform1i(litLoc, lit);
+
+    const auto modelLoc = glGetUniformLocation(mShaderID, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
 	const auto viewMatrix = glm::lookAt(eye, center, { 0.0f, 1.0f, 0.0f });
 	const auto viewLoc = glGetUniformLocation(mShaderID, "view");

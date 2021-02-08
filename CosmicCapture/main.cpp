@@ -22,7 +22,7 @@ int main(int argc, char** args) {
 	Window window("Cosmic Capture", width, height);
 	const float aspect = static_cast<float>(width) / static_cast<float>(height);
 
-	
+
 	//physics
 	Physics physics = Physics::Instance();
 	const auto sCamera = std::make_shared<Camera>(PxVec3(5.0f, 5.0f, 5.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
@@ -51,6 +51,9 @@ int main(int argc, char** args) {
 	Model wheel6("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 	Model body("models/cube.ply", "textures/camouflage.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+
+	// The arena model
+	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 	std::vector<Model> models;
 	models.reserve(10); // Make space for 10 models without the need for copying
@@ -122,7 +125,6 @@ int main(int argc, char** args) {
 			physics.startTurnHardRightMode();
 		}
 
-
 		// Physics simulation
 		physics.stepPhysics();
 
@@ -141,6 +143,9 @@ int main(int argc, char** args) {
 		Window::clear();
 
 		shaderProgram.use();
+
+		// Draw arena
+		arena.drawArena();
 
 		auto counter = 1;
 		for (auto& model : models)
