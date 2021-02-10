@@ -16,6 +16,8 @@
 #include "Camera.h"
 #include "Render.h"
 
+#include "ContactModification.h"
+
 int main(int argc, char** args) {
 	// Window Initialization
 	const GLint width = 1280, height = 720;
@@ -55,8 +57,11 @@ int main(int argc, char** args) {
 	// The arena model
 	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
+	//gameplay sample stuff------------------------
 	Model dynamicBall("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 	Model staticWall("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model flag("models/flag.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	//---------------------------------------------
 
 	std::vector<Model> models;
 	models.reserve(10); // Make space for 10 models without the need for copying
@@ -69,6 +74,7 @@ int main(int argc, char** args) {
 	models.push_back(std::move(body));
 	models.push_back(std::move(dynamicBall));
 	models.push_back(std::move(staticWall));
+	models.push_back(std::move(flag));
 
 	//event handler;
 	SDL_Event event;
@@ -76,6 +82,8 @@ int main(int argc, char** args) {
 	bool quit = false;
 
 	// Loop until the user closes the window
+
+
 	while (!quit) {
 		
 	
@@ -107,9 +115,11 @@ int main(int argc, char** args) {
 		//should also assign keys to a list and iterate through that to see which keys trigger what event
 		if (input.getDownUp()) {
 			physics.stopBrakeMode();
+			//physics.stopAccelerateForwardsMode();
 		}
 		else {
 			physics.startBrakeMode();
+			//physics.startAccelerateReverseMode();
 		}
 		if (input.getUpUp()) {
 			physics.stopAccelerateForwardsMode();

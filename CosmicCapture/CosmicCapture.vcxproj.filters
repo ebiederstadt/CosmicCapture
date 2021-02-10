@@ -43,6 +43,7 @@
     <ClCompile Include="graphics\Mesh.cpp" />
     <ClCompile Include="graphics\Model.cpp" />
     <ClCompile Include="graphics\Texture.cpp" />
+    <ClCompile Include="ContactModification.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -93,6 +94,7 @@
     <ClInclude Include="graphics\Window.h" />
     <ClInclude Include="GlDebug.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="ContactModification.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
