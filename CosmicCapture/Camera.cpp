@@ -31,15 +31,18 @@
 
 #include "Camera.h"
 #include <ctype.h>
+#include <glm/ext/matrix_transform.hpp>
 
 #include "physx/foundation/PxMat33.h"
+#include "Conversions.h"
 
 using namespace physx;
 
+extern float angle;
 
 
 Camera::Camera(const PxVec3& eye, const PxVec3& dir, float aspect) :
-	perspectiveMatrix(glm::perspective(glm::radians(60.0f), aspect, 0.1f, 100.0f))
+	perspectiveMatrix(glm::perspective(glm::radians(60.0f), aspect, 0.1f, 1000.0f))
 {
 	mEye = eye;
 	mDir = dir.getNormalized();
@@ -77,6 +80,28 @@ void Camera::handleAnalogMove(float x, float y)
 	PxVec3 viewY = mDir.cross(PxVec3(0, 1, 0)).getNormalized();
 	mEye += mDir * y;
 	mEye += viewY * x;
+}
+
+glm::mat4 Camera::getViewMatrix() const
+{
+	const auto center = mEye + mDir;
+
+	return glm::lookAt(pxVec2glm(mEye), pxVec2glm(center), { 0.0f, 1.0f, 0.0f });
+}
+
+void Camera::updateCamera(const physx::PxMat44& model)
+{
+	const auto modelPos = model.column3.getXYZ();
+	const auto back = model.column2.getXYZ() * -10.0f;
+
+	mEye = modelPos + back;
+	mDir = (modelPos - mEye).getNormalized();
+
+	
+	PxVec3 viewY = mDir.cross(PxVec3(0, 1, 0)).getNormalized();
+
+	PxQuat qy(angle, viewY);
+	mDir = qy.rotate(mDir);
 }
 
 void Camera::handleMotion(int x, int y)

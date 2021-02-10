@@ -46,6 +46,11 @@ public:
 	void				handleMotion(int x, int y);
 	void				handleAnalogMove(float x, float y);
 
+	[[nodiscard]] glm::mat4 getViewMatrix() const;
+	void updateCamera(const physx::PxMat44& model);
+
+	void setEye(const physx::PxVec3& vec) { mEye = vec; }
+
 	[[nodiscard]] physx::PxVec3 getEye() const;
 	[[nodiscard]] physx::PxVec3 getDir() const;
 	[[nodiscard]] physx::PxTransform getTransform() const;
