@@ -241,6 +241,28 @@ void Physics::stepPhysics()
 	gScene->fetchResults(true);
 }
 
+void Physics::processInput(const std::map<MovementFlags, bool>& inputs)
+{
+	for (const auto& [key, keyReleased] : inputs)
+	{
+		switch (key)
+		{
+		case MovementFlags::DOWN:
+			keyReleased ? stopBrakeMode() : startBrakeMode();
+			break;
+		case MovementFlags::UP:
+			keyReleased ? stopAccelerateForwardsMode() : startAccelerateForwardsMode();
+			break;
+		case MovementFlags::RIGHT:
+			keyReleased ? stopTurnHardLeftMode() : startTurnHardLeftMode();
+			break;
+		case MovementFlags::LEFT:
+			keyReleased ? stopTurnHardRightMode() : startTurnHardRightMode();
+			break;
+		}
+	}
+}
+
 
 void Physics::CleanupPhysics()
 {

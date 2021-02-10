@@ -8,7 +8,6 @@
 #include "graphics/ShaderProgram.h"
 #include "graphics/Model.h"
 #include "imgui/imgui.h"
-#include "imgui/imgui_impl_opengl3.h"
 
 #include "./input.h"
 
@@ -16,28 +15,19 @@
 #include "Camera.h"
 #include "Render.h"
 
+
 int main(int argc, char** args) {
 	// Window Initialization
 	const GLint width = 1280, height = 720;
 	Window window("Cosmic Capture", width, height);
 	const float aspect = static_cast<float>(width) / static_cast<float>(height);
 
-
 	//physics
 	Physics physics = Physics::Instance();
 	const auto sCamera = std::make_shared<Camera>(PxVec3(5.0f, 5.0f, 5.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 	physics.Initialize();
 
-	//input
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) { //initializing SDL with joystick support
-		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
-		exit(1);
-	}
-	//querying the number of available joysticks
-	printf("%i joysticks were found.\n\n", SDL_NumJoysticks());
-
-
-	Input input = Input(physics);
+	Input input = Input();
 
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
@@ -65,67 +55,15 @@ int main(int argc, char** args) {
 	models.push_back(std::move(wheel6));
 	models.push_back(std::move(body));
 
-	//event handler;
-	SDL_Event event;
 	//main loop flag
 	bool quit = false;
 
 	// Loop until the user closes the window
 	while (!quit) {
-		
-	
-		if (SDL_NumJoysticks() < 1)
-			printf("Warning: No joysticks connected!\n");
-		else{
-			//load joystic
-			input.gGameController = SDL_JoystickOpen(0);
-			if (input.gGameController == NULL) {
-				printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
-			}
-		}
-		// Input
-		while (SDL_PollEvent(&event) != 0) {
-			if (event.type == SDL_QUIT)
-				quit = true;
-			else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
-				if (event.key.keysym.sym == SDLK_ESCAPE) quit = true;
-				input.HandleKeys(event);
-			}
-			else if (event.type == SDL_JOYBUTTONDOWN || event.type == SDL_JOYBUTTONUP) {
-				input.HandleButtons(event);
-			}
-			else if (event.type == SDL_JOYAXISMOTION) {
-				input.HandleJoystick(event);
-			}
-		}
-		//this should probably be moved into physics at some point
-		//should also assign keys to a list and iterate through that to see which keys trigger what event
-		if (input.getDownUp()) {
-			physics.stopBrakeMode();
-		}
-		else {
-			physics.startBrakeMode();
-		}
-		if (input.getUpUp()) {
-			physics.stopAccelerateForwardsMode();
-		}
-		else {
-			physics.startAccelerateForwardsMode();
-		}
-		if (input.getRightUp()) { //for some reason the right/left controls are reversed so it has to be set this way (for now)
-			physics.stopTurnHardLeftMode();
-		}
-		else {
-			physics.startTurnHardLeftMode();
-		}
-		if (input.getLeftUp()) {
-			physics.stopTurnHardRightMode();
-		}
-		else {
-			physics.startTurnHardRightMode();
-		}
+		quit = input.HandleInput();
 
 		// Physics simulation
+		physics.processInput(input.getInputState());
 		physics.stepPhysics();
 
 		PxU32 nbActors = physics.gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
@@ -162,8 +100,6 @@ int main(int argc, char** args) {
 		window.swap();
 	}
 	//cleanup
-	SDL_JoystickClose(input.gGameController);
-	input.gGameController = NULL;
 	physics.CleanupPhysics();
 
 	return 0;
