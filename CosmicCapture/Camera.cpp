@@ -92,16 +92,15 @@ glm::mat4 Camera::getViewMatrix() const
 void Camera::updateCamera(const physx::PxMat44& model)
 {
 	const auto modelPos = model.column3.getXYZ();
-	const auto back = model.column2.getXYZ() * -10.0f;
+	auto back = model.column2.getXYZ() * -10.0f;
 
-	mEye = modelPos + back;
-	mDir = (modelPos - mEye).getNormalized();
-
-	
 	PxVec3 viewY = mDir.cross(PxVec3(0, 1, 0)).getNormalized();
 
 	PxQuat qy(angle, viewY);
-	mDir = qy.rotate(mDir);
+	back = qy.rotate(back);
+
+	mEye = modelPos + back;
+	mDir = (modelPos - mEye).getNormalized();
 }
 
 void Camera::handleMotion(int x, int y)
