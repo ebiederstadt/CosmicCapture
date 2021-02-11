@@ -137,6 +137,8 @@ public:
 	PxRigidStatic* gGroundPlane = NULL;
 	PxVehicleDrive4W* gVehicle4W = NULL;
 
+	
+
 	bool	gIsVehicleInAir = true;
 private:
 

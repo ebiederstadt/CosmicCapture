@@ -22,7 +22,7 @@ struct CpuGeometry
 };
 
 
-class GpuGeometry
+class GpuGeometry 
 {
 public:
 	GpuGeometry();

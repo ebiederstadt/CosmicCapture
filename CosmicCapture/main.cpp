@@ -15,6 +15,7 @@
 #include "Camera.h"
 #include "Render.h"
 
+
 # define M_PI  3.14159265358979323846
 
 float angle = -0.25f;
@@ -47,9 +48,16 @@ int main(int argc, char** args) {
 	auto wheel6 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 	auto body = std::make_shared<Model>("models/cube.ply", "textures/camouflage.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+  
+  //gameplay sample stuff------------------------
+	auto dynamicBall = std::make_shared<Model>("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	auto staticWall = std::make_shared<Model>("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	auto flag = std::make_shared<Model>("models/flag.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	auto dropoffZone = std::make_shared<Model>("models/dropoff_zone.ply", "textures/dropflaghere.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	//---------------------------------------------
 
 	std::vector<std::shared_ptr<Model>> models;
-	models.reserve(10); // Make space for 10 models without the need for copying
+	models.reserve(11); // Make space for 10 models without the need for copying
 	models.push_back(wheel1);
 	models.push_back(wheel2);
 	models.push_back(wheel3);
@@ -57,12 +65,19 @@ int main(int argc, char** args) {
 	models.push_back(wheel5);
 	models.push_back(wheel6);
 	models.push_back(body);
+  models.push_back(dynamicBall);
+  models.push_back(staticWall);
+  models.push_back(flag);
+  models.push_back(dropoffZone);
 
 	//main loop flag
 	bool quit = false;
 
 	// Loop until the user closes the window
+
+
 	while (!quit) {
+
 		quit = input.HandleInput();
 
 		// Physics simulation
