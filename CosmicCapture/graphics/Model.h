@@ -35,6 +35,8 @@ public:
 	void draw(const physx::PxMat44& modelMatrix);
 	void drawArena();
 
+	[[nodiscard]] physx::PxMat44 getModelMatrix() const { return mModel; }
+
 private:
 	std::vector<Mesh> mMeshes; // Each model is made of one or more meshes 
 	Texture mTexture; // Assuming that each texture is unique to each model (may need to rework)
@@ -42,6 +44,9 @@ private:
 	std::shared_ptr<Camera> mCameraPointer; // Camera object is shared among all the meshes
 
 	unsigned int mUsage;
+
+	physx::PxMat44 mModel;
+	void setModel(const physx::PxMat44& m) { mModel = m; }
 
 	void processNode(aiNode* node, const aiScene* scene);
 	void processMesh(aiMesh* mesh);

@@ -8,7 +8,6 @@
 #include "graphics/ShaderProgram.h"
 #include "graphics/Model.h"
 #include "imgui/imgui.h"
-#include "imgui/imgui_impl_opengl3.h"
 
 #include "./input.h"
 
@@ -16,7 +15,10 @@
 #include "Camera.h"
 #include "Render.h"
 
-#include "ContactModification.h"
+
+# define M_PI  3.14159265358979323846
+
+float angle = -0.25f;
 
 int main(int argc, char** args) {
 	// Window Initialization
@@ -24,59 +26,50 @@ int main(int argc, char** args) {
 	Window window("Cosmic Capture", width, height);
 	const float aspect = static_cast<float>(width) / static_cast<float>(height);
 
-
 	//physics
 	Physics physics = Physics::Instance();
-	const auto sCamera = std::make_shared<Camera>(PxVec3(5.0f, 5.0f, 5.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+	const auto sCamera = std::make_shared<Camera>(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 	physics.Initialize();
 
-	//input
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) { //initializing SDL with joystick support
-		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
-		exit(1);
-	}
-	//querying the number of available joysticks
-	printf("%i joysticks were found.\n\n", SDL_NumJoysticks());
-
-
-	Input input = Input(physics);
+	Input input = Input();
 
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
 
-	// Models (examples, please change)
-	Model wheel1("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	Model wheel2("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	Model wheel3("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	Model wheel4("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	Model wheel5("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	Model wheel6("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-
-	Model body("models/cube.ply", "textures/camouflage.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-
 	// The arena model
 	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
-	//gameplay sample stuff------------------------
-	Model dynamicBall("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	Model staticWall("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	Model flag("models/flag.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	Model dropoffZone("models/dropoff_zone.ply", "textures/dropflaghere.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	//---------------------------------------------
 
-	std::vector<Model> models;
+	auto wheel1 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	auto wheel2 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	auto wheel3 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	auto wheel4 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	auto wheel5 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	auto wheel6 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+
+	auto body = std::make_shared<Model>("models/cube.ply", "textures/camouflage.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+  //gameplay sample stuff------------------------
+  auto dynamicBall = std::male_shared<Model>
+  auto staticWall = std::male_shared<Model>
+  auto flag = std::male_shared<Model>
+  auto dropoffZone std::male_shared<Model>
+  //---------------------------------------------
+  
+	std::vector<std::shared_ptr<Model>> models;
 	models.reserve(11); // Make space for 11 models without the need for copying
-	models.push_back(std::move(wheel1));
-	models.push_back(std::move(wheel2));
-	models.push_back(std::move(wheel3));
-	models.push_back(std::move(wheel4));
-	models.push_back(std::move(wheel5));
-	models.push_back(std::move(wheel6));
-	models.push_back(std::move(body));
-	models.push_back(std::move(dynamicBall));
-	models.push_back(std::move(staticWall));
-	models.push_back(std::move(flag));
-	models.push_back(std::move(dropoffZone));
+	models.push_back(wheel1);
+	models.push_back(wheel2);
+	models.push_back(wheel3);
+	models.push_back(wheel4);
+	models.push_back(wheel5);
+	models.push_back(wheel6);
+	models.push_back(body);
+  models.push_back(dynamicBall);
+  models.push_back(staticWall);
+  models.push_back(flag);
+  models.push_back(dropoffZone);
+
+
 	
 
 	//event handler;
@@ -88,6 +81,9 @@ int main(int argc, char** args) {
 
 
 	while (!quit) {
+
+		quit = input.HandleInput();
+
 		
 	
 		if (SDL_NumJoysticks() < 1)
@@ -144,6 +140,7 @@ int main(int argc, char** args) {
 		}
 
 		// Physics simulation
+		physics.processInput(input.getInputState());
 		physics.stepPhysics();
 
 		PxU32 nbActors = physics.gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
@@ -160,6 +157,9 @@ int main(int argc, char** args) {
 		window.startImGuiFrame();
 		Window::clear();
 
+		// Update camera
+		sCamera->updateCamera(body->getModelMatrix());
+
 		shaderProgram.use();
 
 		// Draw arena
@@ -168,20 +168,20 @@ int main(int argc, char** args) {
 		auto counter = 1;
 		for (auto& model : models)
 		{
-			model.draw(modelMatrices[counter]);
+			model->draw(modelMatrices[counter]);
 			++counter;
 		}
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text("Camera Position");
+		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
 		ImGui::End();
 
 		Window::renderImGuiFrame();
 		window.swap();
 	}
 	//cleanup
-	SDL_JoystickClose(input.gGameController);
-	input.gGameController = NULL;
 	physics.CleanupPhysics();
 
 	return 0;

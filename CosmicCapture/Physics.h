@@ -4,6 +4,8 @@
 #include "physx/PxPhysicsAPI.h"
 #include "VehicleSceneQuery.h"
 
+#include "input.h"
+
 #define PX_RELEASE(x) if(x){x->release();x=NULL;}
 #define PVD_HOST "127.0.0.1"
 
@@ -95,6 +97,8 @@ public:
 
 	void releaseAllControls();
 	void stepPhysics();
+
+	void processInput(const std::map<MovementFlags, bool>& inputs);
 
 	//SnippetVehicle4WCreate
 	void computeWheelCenterActorOffsets4W(const PxF32 wheelFrontZ, const PxF32 wheelRearZ, const PxVec3& chassisDims, const PxF32 wheelWidth, const PxF32 wheelRadius, const PxU32 numWheels, PxVec3* wheelCentreOffsets);
