@@ -17,6 +17,7 @@ Window::Window(const std::string& windowName, const int width, const int height)
 		fmt::print("Failed to initialize SDL: {}\n", SDL_GetError());
 		throw std::runtime_error("SDL_INIT failed");
 	}
+	fmt::format("{} joysticks were found.\n\n", SDL_NumJoysticks());
 	
 	// Create the window
 	mWindow = std::unique_ptr<SDL_Window, WindowDeleter>(SDL_CreateWindow(
