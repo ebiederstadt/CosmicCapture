@@ -394,6 +394,9 @@ void Physics::processInput(const std::map<MovementFlags, bool>& inputs)
 
 void Physics::CleanupPhysics()
 {
+	PX_RELEASE(pickupBox);
+	PX_RELEASE(dropoffBox);
+	PX_RELEASE(flagBody);
 	gVehicle4W->getRigidDynamicActor()->release();
 	gVehicle4W->free();
 	PX_RELEASE(gGroundPlane);
