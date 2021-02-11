@@ -5,12 +5,13 @@
 #include "VehicleSceneQuery.h"
 #include "VehicleCreate.h"
 #include "VehicleFilterShader.h"
+#include "TriggerCallback.h"
 #include <physx/vehicle/PxVehicleUtil.h>
+#include <iostream>
 
 
 using namespace physx;
 using namespace std;
-
 
 
 PxF32 gSteerVsForwardSpeedData[2 * 8] =
@@ -72,12 +73,43 @@ bool					gVehicleOrderComplete = false;
 bool					gMimicKeyInputs = true;
 
 
+
+
 //Singleton
 Physics::Physics() {}
 Physics& Physics::Instance() {
 	static Physics instance;
 	return instance;
 }
+//Milestone2 basic gameplay mechanics------------------
+bool flagPickedUp = false;
+PxRigidStatic* pickupBox = NULL;
+PxRigidStatic* dropoffBox = NULL;
+PxRigidDynamic* flagBody = NULL;
+class ContactReportCallback : public PxSimulationEventCallback
+{
+	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) { PX_UNUSED(constraints); PX_UNUSED(count); }
+	void onWake(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count); }
+	void onSleep(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count); }
+	void onTrigger(PxTriggerPair* pairs, PxU32 count) {
+		for (physx::PxU32 i = 0; i < count; i++)
+		{
+			if (pairs[i].triggerActor == pickupBox && pairs[i].otherActor != flagBody && !flagPickedUp) {
+				cout << "picked up flag" << endl;
+				flagPickedUp = true;
+			}
+			if (pairs[i].triggerActor == dropoffBox && pairs[i].otherActor != flagBody && flagPickedUp) {
+				cout << "dropped off flag" << endl;
+				flagPickedUp = false;
+			}
+		
+		}
+	}
+	void onAdvance(const PxRigidBody* const*, const PxTransform*, const PxU32) {}
+	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) {}
+};
+ContactReportCallback gContactReportCallback;
+//------------------------------------------------------
 
 void Physics::Initialize() {
 	
@@ -95,6 +127,8 @@ void Physics::Initialize() {
 	gDispatcher = PxDefaultCpuDispatcherCreate(numWorkers);
 	sceneDesc.cpuDispatcher = gDispatcher;
 	sceneDesc.filterShader = VehicleFilterShader;
+	sceneDesc.simulationEventCallback = &gContactReportCallback;
+	
 
 	gScene = gPhysics->createScene(sceneDesc);
 	
@@ -110,6 +144,7 @@ void Physics::Initialize() {
 	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
 
 	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(PxTolerancesScale()));
+	
 
 	///////////////////////////////////////////////////
 
@@ -149,17 +184,46 @@ void Physics::Initialize() {
 	//Collision test objects------------------------------------
 	PxShape* ballShape = gPhysics->createShape(PxSphereGeometry(5.0f), *gMaterial, true); //create shape
 	ballShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
-	PxRigidDynamic* ballBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create dynamic rigid body - will move
+	PxRigidDynamic* ballBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(10.f, 0.f, 0.f))); //create dynamic rigid body - will move
 	ballBody->attachShape(*ballShape); //stick shape on rigid body
 	ballShape->release(); //free shape 
 	gScene->addActor(*ballBody); //add rigid body to scene
 
-	PxShape* wallShape = gPhysics->createShape(PxBoxGeometry(20.0f, 20.0f, 0.1f), *gMaterial, true); //create shape
+	PxShape* wallShape = gPhysics->createShape(PxBoxGeometry(10.0f, 10.0f, 0.1f), *gMaterial, true); //create shape
 	wallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	PxRigidStatic* wallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 20.f, -30.f))); //create static rigid body - wont move
+	PxRigidStatic* wallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 10.f, -15.f))); //create static rigid body - wont move
 	wallBody->attachShape(*wallShape); //stick shape on rigid body
 	wallShape->release(); //free shape 
 	gScene->addActor(*wallBody); //add rigid body to scene
+
+	PxShape* flag = gPhysics->createShape(PxBoxGeometry(0.1f,2.f,0.1f), *gMaterial, true); //create flag shape
+	flag->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
+	flagBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(-10.f, 2.f, -12.f))); //create static rigid body - wont move
+	flagBody->attachShape(*flag);
+	flag->release();
+	gScene->addActor(*flagBody);
+
+	PxShape* dropoffZone = gPhysics->createShape(PxBoxGeometry(1.0f, 0.1f, 1.0f), *gMaterial, true); //visual indicator for dropoff zone
+	dropoffZone->setSimulationFilterData(PxFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0));
+	PxRigidStatic* dropoffZoneBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f)));
+	dropoffZoneBody->attachShape(*dropoffZone);
+	dropoffZone->release();
+	gScene->addActor(*dropoffZoneBody);
+	//----------------------------------------------------------
+	//Trigger Shapes--------------------------------------------
+	PxShape* pickupShape = gPhysics->createShape(PxBoxGeometry(1.1f, 2.f, 1.1f), *gMaterial, true); //trigger box for picking up the flag
+	pickupShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+	pickupShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+	pickupBox = gPhysics->createRigidStatic(PxTransform(PxVec3(-10.f, 2.f, -12.f))); 
+	pickupBox->attachShape(*pickupShape);
+	gScene->addActor(*pickupBox);
+
+	PxShape* dropoffShape = gPhysics->createShape(PxBoxGeometry(1.f, 1.f, 1.f), *gMaterial, true); //trigger box for dropping off the flag
+	dropoffShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+	dropoffShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+	dropoffBox = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 1.f, 0.f)));
+	dropoffBox->attachShape(*dropoffShape);
+	gScene->addActor(*dropoffBox);
 	//----------------------------------------------------------
 
 	printf("Physx initialized\n");
@@ -236,6 +300,15 @@ void Physics::stepPhysics()
 	//Work out if the vehicle is in the air.
 	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
 
+	if (flagPickedUp) {
+		
+		
+		flagBody->setGlobalPose(PxTransform(PxVec3(gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.x, gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.y + 2.f, gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.z)));
+	}
+	else {
+		flagBody->setGlobalPose(PxTransform(PxVec3(-10.f, 2.f, -12.f)));
+	}
+
 	//Scene update.
 	gScene->simulate(timestep);
 	gScene->fetchResults(true);
@@ -292,6 +365,8 @@ void Physics::CleanupPhysics()
 //Vehicle Input
 void Physics::startAccelerateForwardsMode()
 {
+	gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
+
 	if (gMimicKeyInputs)
 	{
 		gVehicleInputData.setDigitalAccel(true);
