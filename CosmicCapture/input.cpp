@@ -21,6 +21,7 @@ Input::Input(Physics phys)
     rightup = true;
     downup = true;
     upup = true;
+    reverseup = true;
     //driving = false;
 }
 
@@ -39,6 +40,7 @@ bool Input::getLeftUp() {
 bool Input::getRightUp() {
     return rightup;
 }
+
 
 void Input::HandleKeys(SDL_Event& event) {
 
@@ -78,7 +80,7 @@ void Input::HandleKeys(SDL_Event& event) {
             rightup = true;
             break;
         case SDLK_w:
-            std::cout << "up \n";
+            //std::cout << "up \n";
             upup = true;
             break;
         case SDLK_s:
@@ -191,7 +193,7 @@ void Input::HandleButtons(SDL_Event& event) {
 
 void Input::HandleJoystick(SDL_Event& event) {
 
-    if(event.caxis.value < -JOYSTICK_DEAD_ZONE || event.caxis.value > JOYSTICK_DEAD_ZONE)
+    //if(event.caxis.value < -JOYSTICK_DEAD_ZONE || event.caxis.value > JOYSTICK_DEAD_ZONE)
         //std::cout << "Axis: ";
 
     //X axis motion
@@ -213,11 +215,10 @@ void Input::HandleJoystick(SDL_Event& event) {
             leftup = true;
         }
         //no joystick movement at all, dead center
-        if (event.caxis.value == JOYSTICK_DEAD_ZONE) {
+        if (event.caxis.value <= JOYSTICK_DEAD_ZONE && event.caxis.value >= -JOYSTICK_DEAD_ZONE) {
             leftup = true;
             rightup = true;
         }
-        
 
     } //Y axis motion
 

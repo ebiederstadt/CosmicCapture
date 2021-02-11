@@ -1,11 +1,13 @@
 #include <ctype.h>
 #include "Physics.h"
+#include "input.h"
 #include "physx/PxPhysicsAPI.h"
 #include "VehicleTireFriction.h"
 #include "VehicleSceneQuery.h"
 #include "VehicleCreate.h"
 #include "VehicleFilterShader.h"
 #include <physx/vehicle/PxVehicleUtil.h>
+#include <iostream>
 
 
 using namespace physx;
@@ -80,6 +82,7 @@ Physics& Physics::Instance() {
 }
 
 void Physics::Initialize() {
+	bool inReverseMode = false;
 	
 	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
 	
@@ -236,6 +239,8 @@ void Physics::stepPhysics()
 	//Work out if the vehicle is in the air.
 	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
 
+	//std::cout << gVehicle4W->mDriveDynData.getEngineRotationSpeed() << std::endl;
+	//std::cout << gVehicle4W->mDriveDynData.getCurrentGear() << std::endl;
 	//Scene update.
 	gScene->simulate(timestep);
 	gScene->fetchResults(true);
@@ -282,7 +287,6 @@ void Physics::startAccelerateForwardsMode()
 
 void Physics::startAccelerateReverseMode()
 {
-	gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eREVERSE);
 
 	if (gMimicKeyInputs)
 	{
@@ -298,8 +302,7 @@ void Physics::startBrakeMode()
 {
 	if (gMimicKeyInputs)
 	{
-		gVehicleInputData.setDigitalBrake(true);
-	
+			gVehicleInputData.setDigitalBrake(true);
 	}
 	else
 	{
@@ -373,7 +376,6 @@ void Physics::stopTurnHardLeftMode() {
 void Physics::stopTurnHardRightMode() {
 	gVehicleInputData.setDigitalSteerRight(false);
 }
-
 
 void Physics::releaseAllControls()
 {

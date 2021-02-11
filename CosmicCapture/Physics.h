@@ -73,7 +73,7 @@ struct VehicleDesc
 
 class Physics {
 public:
-
+	bool inReverseMode;
 	static Physics& Instance();
 	void Initialize();
 	void CleanupPhysics();

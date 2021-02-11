@@ -19,6 +19,7 @@ public:
     bool rightup;
     bool upup;
     bool downup;
+    bool reverseup;
 
     //Analog joystick dead zone
     const int JOYSTICK_DEAD_ZONE = 8000;

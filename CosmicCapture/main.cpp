@@ -15,6 +15,7 @@
 #include "Physics.h"
 #include "Camera.h"
 #include "Render.h"
+#include <iostream>
 
 int main(int argc, char** args) {
 	// Window Initialization
@@ -33,12 +34,21 @@ int main(int argc, char** args) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		exit(1);
 	}
+
 	//querying the number of available joysticks
 	printf("%i joysticks were found.\n\n", SDL_NumJoysticks());
 
 
 	Input input = Input(physics);
-
+	if (SDL_NumJoysticks() < 1)
+		printf("Warning: No joysticks connected!\n");
+	else {
+		//load joystic
+		input.gGameController = SDL_JoystickOpen(0);
+		if (input.gGameController == NULL) {
+			printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
+		}
+	}
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
 
@@ -72,17 +82,6 @@ int main(int argc, char** args) {
 
 	// Loop until the user closes the window
 	while (!quit) {
-		
-	
-		if (SDL_NumJoysticks() < 1)
-			printf("Warning: No joysticks connected!\n");
-		else{
-			//load joystic
-			input.gGameController = SDL_JoystickOpen(0);
-			if (input.gGameController == NULL) {
-				printf("Warning: Unable to open game controller! SDL Error: %s\n", SDL_GetError());
-			}
-		}
 		// Input
 		while (SDL_PollEvent(&event) != 0) {
 			if (event.type == SDL_QUIT)
@@ -100,18 +99,30 @@ int main(int argc, char** args) {
 		}
 		//this should probably be moved into physics at some point
 		//should also assign keys to a list and iterate through that to see which keys trigger what event
-		if (input.getDownUp()) {
+		if (input.getUpUp() && input.getDownUp()) { //forward is not pressed and reverse/stop is not pressed
+			physics.inReverseMode = false;
+			physics.stopAccelerateForwardsMode();
 			physics.stopBrakeMode();
 		}
-		else {
-			physics.startBrakeMode();
+		else if (input.getUpUp() && !(input.getDownUp())) { //forward is not pressed and reverse/stop is pressed
+			std::cout<<	physics.gVehicle4W->mDriveDynData.getEngineRotationSpeed() <<std::endl;
+			if ((physics.gVehicle4W->mDriveDynData.getEngineRotationSpeed() <= 0) || (physics.inReverseMode == true)) { //if speed reaches 1 or we are already in reverse mode
+				physics.inReverseMode = true;
+				physics.stopBrakeMode();//stop braking
+				physics.gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eREVERSE); //shift gear for reverse
+				physics.startAccelerateForwardsMode();//start reversing
+			}
+			else {
+				physics.startBrakeMode();//if speed was not yet 0 start braking
+			}
 		}
-		if (input.getUpUp()) {
-			physics.stopAccelerateForwardsMode();
+		else if (!(input.getUpUp()) && (input.getDownUp())) { //forward is pressed and reverse/stop is not pressed
+			physics.inReverseMode = false;
+			physics.gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);//shift gear to move forward
+			physics.startAccelerateForwardsMode();//start driving forward
+
 		}
-		else {
-			physics.startAccelerateForwardsMode();
-		}
+		
 		if (input.getRightUp()) { //for some reason the right/left controls are reversed so it has to be set this way (for now)
 			physics.stopTurnHardLeftMode();
 		}
