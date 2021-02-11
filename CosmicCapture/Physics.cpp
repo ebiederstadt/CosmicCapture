@@ -85,6 +85,7 @@ Physics& Physics::Instance() {
 bool flagPickedUp = false;
 PxRigidStatic* pickupBox = NULL;
 PxRigidStatic* dropoffBox = NULL;
+PxRigidDynamic* flagBody = NULL;
 class ContactReportCallback : public PxSimulationEventCallback
 {
 	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) { PX_UNUSED(constraints); PX_UNUSED(count); }
@@ -93,11 +94,11 @@ class ContactReportCallback : public PxSimulationEventCallback
 	void onTrigger(PxTriggerPair* pairs, PxU32 count) {
 		for (physx::PxU32 i = 0; i < count; i++)
 		{
-			if (pairs[i].triggerActor == pickupBox && !flagPickedUp) {
+			if (pairs[i].triggerActor == pickupBox && pairs[i].otherActor != flagBody && !flagPickedUp) {
 				cout << "picked up flag" << endl;
 				flagPickedUp = true;
 			}
-			if (pairs[i].triggerActor == dropoffBox && flagPickedUp) {
+			if (pairs[i].triggerActor == dropoffBox && pairs[i].otherActor != flagBody && flagPickedUp) {
 				cout << "dropped off flag" << endl;
 				flagPickedUp = false;
 			}
@@ -197,7 +198,7 @@ void Physics::Initialize() {
 
 	PxShape* flag = gPhysics->createShape(PxBoxGeometry(0.1f,2.f,0.1f), *gMaterial, true); //create flag shape
 	flag->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	PxRigidDynamic* flagBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(-10.f, 2.f, -12.f))); //create static rigid body - wont move
+	flagBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(-10.f, 2.f, -12.f))); //create static rigid body - wont move
 	flagBody->attachShape(*flag);
 	flag->release();
 	gScene->addActor(*flagBody);
@@ -298,6 +299,15 @@ void Physics::stepPhysics()
 
 	//Work out if the vehicle is in the air.
 	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
+
+	if (flagPickedUp) {
+		
+		
+		flagBody->setGlobalPose(PxTransform(PxVec3(gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.x, gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.y + 2.f, gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.z)));
+	}
+	else {
+		flagBody->setGlobalPose(PxTransform(PxVec3(-10.f, 2.f, -12.f)));
+	}
 
 	//Scene update.
 	gScene->simulate(timestep);
