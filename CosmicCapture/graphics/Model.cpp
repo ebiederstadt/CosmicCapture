@@ -16,7 +16,8 @@ Model::Model(
 	mTexture(texturePath, GL_LINEAR),
 	mShaderID(static_cast<unsigned int>(shaderProgram)),
 	mCameraPointer(std::move(camera)),
-	mUsage(usage)
+	mUsage(usage),
+	mModel(physx::PxIdentity)
 {
 	Assimp::Importer importer;
 
@@ -34,21 +35,16 @@ Model::Model(
 
 void Model::draw(const physx::PxMat44& modelMatrix)
 {
+	setModel(modelMatrix);
+	
 	mTexture.bind();
 
 	// View pipeline
-	const auto e = mCameraPointer->getEye();
-	const auto eye = glm::vec3(e.x, e.y + 5.f, e.z + 10.f);
-
-	const auto d = mCameraPointer->getDir();
-	const auto center = glm::vec3(e.x + d.x, e.y + d.y, e.z + d.z);
-	
 	const auto modelLoc = glGetUniformLocation(mShaderID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelMatrix.column0.x);
 
-	const auto viewMatrix = glm::lookAt(eye, center, { 0.0f, 1.0f, 0.0f });
 	const auto viewLoc = glGetUniformLocation(mShaderID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->getViewMatrix()));
 
 	const auto projectionLoc = glGetUniformLocation(mShaderID, "projection");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->perspectiveMatrix));
@@ -69,12 +65,6 @@ void Model::drawArena()
 	mTexture.bind();
 
 	// View pipeline
-	const auto e = mCameraPointer->getEye();
-	const auto eye = glm::vec3(e.x, e.y + 5.f, e.z + 10.f);
-
-	const auto d = mCameraPointer->getDir();
-	const auto center = glm::vec3(e.x + d.x, e.y + d.y, e.z + d.z);
-
 	// Placing them at opposite ends of x-axis
 	glm::vec3 purpleLight = glm::vec3(-300.0f, 300.0f, 0.0f);
 	glm::vec3 orangeLight = glm::vec3(300.0f, 300.0f, 0.0f);
@@ -92,9 +82,8 @@ void Model::drawArena()
     const auto modelLoc = glGetUniformLocation(mShaderID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
-	const auto viewMatrix = glm::lookAt(eye, center, { 0.0f, 1.0f, 0.0f });
 	const auto viewLoc = glGetUniformLocation(mShaderID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->getViewMatrix()));
 
 	const auto projectionLoc = glGetUniformLocation(mShaderID, "projection");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->perspectiveMatrix));

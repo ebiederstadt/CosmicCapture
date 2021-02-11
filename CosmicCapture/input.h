@@ -2,43 +2,53 @@
 #define __INPUT_H__
 #pragma once
 ///////////////////////////////
-#include "Physics.h"
+
+#include <map>
+#include <string>
+
+
 #include "SDL/SDL.h"
+
+enum class MovementFlags
+{
+    LEFT, RIGHT, UP, DOWN
+};
+
+
 class Input
 {
 public:
     //--- Constructor
-    Input(Physics physics);
-    // Handling all input in one method at the moment, will split up later
-    void HandleKeys(SDL_Event& event);
-    void HandleButtons(SDL_Event& event);
-    void HandleJoystick(SDL_Event& event);
-    void HandleMouse(SDL_Event& event, int pressed);
+    Input();
 
-    bool leftup;
-    bool rightup;
-    bool upup;
-    bool downup;
+    /// <summary>
+    /// Process input
+    /// </summary>
+    /// <param name="event">The input event to process</param>
+    /// <returns>True if the user wants to quit. False otherwise</returns>
+    bool HandleInput();
+
+    [[nodiscard]] std::map<MovementFlags, bool> getInputState() const { return mInputMap; }
+
+	// Mouse stuff
+    bool mouseHeld = false;
+    int mouseX, mouseY;
+
+
+private:
+	SDL_Event mEvent;
+
+    // Inputs that are currently not held
+    std::map<MovementFlags, bool> mInputMap;
 
     //Analog joystick dead zone
     const int JOYSTICK_DEAD_ZONE = 8000;
 
-    //Game controller 1 handler
-    SDL_Joystick* gGameController = NULL;
-
-    bool getUpUp();
-    bool getDownUp();
-    bool getLeftUp();
-    bool getRightUp();
-
-private:
-    Physics physics;
-    // turning movement
-    //int xDir;
-    // forwards/back movement
-    //int yDir;
-    // driving i.e. foot on the gas
-    //bool driving;
+    void HandleKeys();
+    void HandleButtons();
+    void HandleJoystick();
+    void HandleMouse();
+    void HandleMouseMove();
 };
 ///////////////////////////////
 #endif   //__INPUT_H__
