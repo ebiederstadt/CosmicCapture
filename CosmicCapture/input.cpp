@@ -109,7 +109,7 @@ void Input::HandleButtons()
 
 void Input::HandleJoystick() {
 
-    if(mEvent.caxis.value < -JOYSTICK_DEAD_ZONE || mEvent.caxis.value > JOYSTICK_DEAD_ZONE)
+    //if(mEvent.caxis.value < -JOYSTICK_DEAD_ZONE || mEvent.caxis.value > JOYSTICK_DEAD_ZONE)
 
     //X axis motion
 
