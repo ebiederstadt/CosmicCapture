@@ -5,12 +5,13 @@
 #include "VehicleSceneQuery.h"
 #include "VehicleCreate.h"
 #include "VehicleFilterShader.h"
+#include "TriggerCallback.h"
 #include <physx/vehicle/PxVehicleUtil.h>
+#include <iostream>
 
 
 using namespace physx;
 using namespace std;
-
 
 
 PxF32 gSteerVsForwardSpeedData[2 * 8] =
@@ -72,12 +73,42 @@ bool					gVehicleOrderComplete = false;
 bool					gMimicKeyInputs = true;
 
 
+
+
 //Singleton
 Physics::Physics() {}
 Physics& Physics::Instance() {
 	static Physics instance;
 	return instance;
 }
+//Milestone2 basic gameplay mechanics------------------
+bool flagPickedUp = false;
+PxRigidStatic* pickupBox = NULL;
+PxRigidStatic* dropoffBox = NULL;
+class ContactReportCallback : public PxSimulationEventCallback
+{
+	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) { PX_UNUSED(constraints); PX_UNUSED(count); }
+	void onWake(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count); }
+	void onSleep(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count); }
+	void onTrigger(PxTriggerPair* pairs, PxU32 count) {
+		for (physx::PxU32 i = 0; i < count; i++)
+		{
+			if (pairs[i].triggerActor == pickupBox && !flagPickedUp) {
+				cout << "picked up flag" << endl;
+				flagPickedUp = true;
+			}
+			if (pairs[i].triggerActor == dropoffBox && flagPickedUp) {
+				cout << "dropped off flag" << endl;
+				flagPickedUp = false;
+			}
+		
+		}
+	}
+	void onAdvance(const PxRigidBody* const*, const PxTransform*, const PxU32) {}
+	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) {}
+};
+ContactReportCallback gContactReportCallback;
+//------------------------------------------------------
 
 void Physics::Initialize() {
 	
@@ -95,6 +126,8 @@ void Physics::Initialize() {
 	gDispatcher = PxDefaultCpuDispatcherCreate(numWorkers);
 	sceneDesc.cpuDispatcher = gDispatcher;
 	sceneDesc.filterShader = VehicleFilterShader;
+	sceneDesc.simulationEventCallback = &gContactReportCallback;
+	
 
 	gScene = gPhysics->createScene(sceneDesc);
 	
@@ -168,6 +201,28 @@ void Physics::Initialize() {
 	flagBody->attachShape(*flag);
 	flag->release();
 	gScene->addActor(*flagBody);
+
+	PxShape* dropoffZone = gPhysics->createShape(PxBoxGeometry(1.0f, 0.1f, 1.0f), *gMaterial, true); //visual indicator for dropoff zone
+	dropoffZone->setSimulationFilterData(PxFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0));
+	PxRigidStatic* dropoffZoneBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f)));
+	dropoffZoneBody->attachShape(*dropoffZone);
+	dropoffZone->release();
+	gScene->addActor(*dropoffZoneBody);
+	//----------------------------------------------------------
+	//Trigger Shapes--------------------------------------------
+	PxShape* pickupShape = gPhysics->createShape(PxBoxGeometry(1.1f, 2.f, 1.1f), *gMaterial, true); //trigger box for picking up the flag
+	pickupShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+	pickupShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+	pickupBox = gPhysics->createRigidStatic(PxTransform(PxVec3(-10.f, 2.f, -12.f))); 
+	pickupBox->attachShape(*pickupShape);
+	gScene->addActor(*pickupBox);
+
+	PxShape* dropoffShape = gPhysics->createShape(PxBoxGeometry(1.f, 1.f, 1.f), *gMaterial, true); //trigger box for dropping off the flag
+	dropoffShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+	dropoffShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+	dropoffBox = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 1.f, 0.f)));
+	dropoffBox->attachShape(*dropoffShape);
+	gScene->addActor(*dropoffBox);
 	//----------------------------------------------------------
 
 	printf("Physx initialized\n");

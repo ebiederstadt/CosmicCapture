@@ -61,10 +61,11 @@ int main(int argc, char** args) {
 	Model dynamicBall("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 	Model staticWall("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 	Model flag("models/flag.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model dropoffZone("models/dropoff_zone.ply", "textures/dropflaghere.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 	//---------------------------------------------
 
 	std::vector<Model> models;
-	models.reserve(10); // Make space for 10 models without the need for copying
+	models.reserve(11); // Make space for 11 models without the need for copying
 	models.push_back(std::move(wheel1));
 	models.push_back(std::move(wheel2));
 	models.push_back(std::move(wheel3));
@@ -75,6 +76,8 @@ int main(int argc, char** args) {
 	models.push_back(std::move(dynamicBall));
 	models.push_back(std::move(staticWall));
 	models.push_back(std::move(flag));
+	models.push_back(std::move(dropoffZone));
+	
 
 	//event handler;
 	SDL_Event event;

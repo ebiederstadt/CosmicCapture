@@ -44,6 +44,7 @@
     <ClCompile Include="graphics\Model.cpp" />
     <ClCompile Include="graphics\Texture.cpp" />
     <ClCompile Include="ContactModification.cpp" />
+    <ClCompile Include="TriggerCallback.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -95,6 +96,7 @@
     <ClInclude Include="GlDebug.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="ContactModification.h" />
+    <ClInclude Include="TriggerCallback.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
