@@ -128,7 +128,7 @@ void Input::HandleJoystick() {
             mInputMap[MovementFlags::LEFT] = true;
         }
         //no joystick movement at all, dead center
-        if (mEvent.caxis.value == JOYSTICK_DEAD_ZONE) {
+        if (mEvent.caxis.value <= JOYSTICK_DEAD_ZONE && mEvent.caxis.value >= -JOYSTICK_DEAD_ZONE) {
             mInputMap[MovementFlags::LEFT] = true;
             mInputMap[MovementFlags::RIGHT] = true;
         }

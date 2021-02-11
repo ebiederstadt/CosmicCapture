@@ -112,6 +112,7 @@ ContactReportCallback gContactReportCallback;
 //------------------------------------------------------
 
 void Physics::Initialize() {
+	inReverseMode = false;
 	
 	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
 	
@@ -321,10 +322,64 @@ void Physics::processInput(const std::map<MovementFlags, bool>& inputs)
 		switch (key)
 		{
 		case MovementFlags::DOWN:
-			keyReleased ? stopBrakeMode() : startBrakeMode();
+			if (keyReleased) {
+				for (const auto& [key, keyReleased] : inputs) {
+					switch (key) {
+					case MovementFlags::UP://checks if both up and down are released
+						if (keyReleased) {
+							inReverseMode = false;
+							stopAccelerateForwardsMode();
+							stopBrakeMode();
+						}
+						break;
+					}
+				}
+			}
+			else {
+				for (const auto& [key, keyReleased] : inputs) {
+					switch (key) {
+					case MovementFlags::UP://checks if down is pressed and up is released
+						if (keyReleased) {
+							if ((gVehicle4W->mDriveDynData.getEngineRotationSpeed() <= 0) || (inReverseMode == true)) { //if speed reaches 1 or we are already in reverse mode
+								inReverseMode = true;
+								stopBrakeMode();//stop braking
+								gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eREVERSE); //shift gear for reverse
+								startAccelerateForwardsMode();//start reversing
+							}
+							else {
+								startBrakeMode();//if speed was not yet 0 start braking
+							}
+						}
+						break;
+					}
+				}
+			}
 			break;
 		case MovementFlags::UP:
-			keyReleased ? stopAccelerateForwardsMode() : startAccelerateForwardsMode();
+			if (keyReleased) {
+				for (const auto& [key, keyReleased] : inputs) {
+					switch (key) {
+					case MovementFlags::DOWN://checks if both up and down are released
+						if (keyReleased) {
+							inReverseMode = false;
+							stopAccelerateForwardsMode();
+							stopBrakeMode();
+						}
+					}
+				}
+			}
+			else {
+				for (const auto& [key, keyReleased] : inputs){
+					switch (key) {
+					case MovementFlags::DOWN://checks if up is pressed and down is released
+						if (keyReleased) {
+							inReverseMode = false;
+							gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);//shift gear to move forward
+							startAccelerateForwardsMode();//start driving forward
+						}
+					}
+				}
+			}
 			break;
 		case MovementFlags::RIGHT:
 			keyReleased ? stopTurnHardLeftMode() : startTurnHardLeftMode();
@@ -365,7 +420,6 @@ void Physics::CleanupPhysics()
 //Vehicle Input
 void Physics::startAccelerateForwardsMode()
 {
-	gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
 
 	if (gMimicKeyInputs)
 	{
@@ -379,7 +433,6 @@ void Physics::startAccelerateForwardsMode()
 
 void Physics::startAccelerateReverseMode()
 {
-	gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eREVERSE);
 
 	if (gMimicKeyInputs)
 	{

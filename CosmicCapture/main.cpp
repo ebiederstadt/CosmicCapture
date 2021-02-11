@@ -16,7 +16,7 @@
 #include "Render.h"
 
 
-# define M_PI  3.14159265358979323846
+#define M_PI  3.14159265358979323846
 
 float angle = -0.25f;
 
