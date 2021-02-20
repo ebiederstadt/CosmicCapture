@@ -217,14 +217,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
-    <None Include="models\cube.ply" />
-    <None Include="models\monkey.ply" />
-    <None Include="shaders\main.frag" />
-    <None Include="shaders\main.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="textures\camouflage.jpg" />
-    <Image Include="textures\wall.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -100,13 +100,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
-    <None Include="models\monkey.ply" />
-    <None Include="shaders\main.frag" />
-    <None Include="shaders\main.vert" />
-    <None Include="models\cube.ply" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="textures\camouflage.jpg" />
-    <Image Include="textures\wall.jpg" />
   </ItemGroup>
 </Project>

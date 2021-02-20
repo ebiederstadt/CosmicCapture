@@ -46,8 +46,8 @@ void setupNonDrivableSurface(PxFilterData& filterData)
 
 PxQueryHitType::Enum WheelSceneQueryPreFilterBlocking
 (PxFilterData filterData0, PxFilterData filterData1,
-	const void* constantBlock, PxU32 constantBlockSize,
-	PxHitFlags& queryFlags)
+ const void* constantBlock, PxU32 constantBlockSize,
+ PxHitFlags& queryFlags)
 {
 	//filterData0 is the vehicle suspension query.
 	//filterData1 is the shape potentially hit by the query.
@@ -60,8 +60,8 @@ PxQueryHitType::Enum WheelSceneQueryPreFilterBlocking
 
 PxQueryHitType::Enum WheelSceneQueryPostFilterBlocking
 (PxFilterData filterData0, PxFilterData filterData1,
-	const void* constantBlock, PxU32 constantBlockSize,
-	const PxQueryHit& hit)
+ const void* constantBlock, PxU32 constantBlockSize,
+ const PxQueryHit& hit)
 {
 	PX_UNUSED(filterData0);
 	PX_UNUSED(filterData1);
@@ -74,8 +74,8 @@ PxQueryHitType::Enum WheelSceneQueryPostFilterBlocking
 
 PxQueryHitType::Enum WheelSceneQueryPreFilterNonBlocking
 (PxFilterData filterData0, PxFilterData filterData1,
-	const void* constantBlock, PxU32 constantBlockSize,
-	PxHitFlags& queryFlags)
+ const void* constantBlock, PxU32 constantBlockSize,
+ PxHitFlags& queryFlags)
 {
 	//filterData0 is the vehicle suspension query.
 	//filterData1 is the shape potentially hit by the query.
@@ -88,8 +88,8 @@ PxQueryHitType::Enum WheelSceneQueryPreFilterNonBlocking
 
 PxQueryHitType::Enum WheelSceneQueryPostFilterNonBlocking
 (PxFilterData filterData0, PxFilterData filterData1,
-	const void* constantBlock, PxU32 constantBlockSize,
-	const PxQueryHit& hit)
+ const void* constantBlock, PxU32 constantBlockSize,
+ const PxQueryHit& hit)
 {
 	PX_UNUSED(filterData0);
 	PX_UNUSED(filterData1);
@@ -102,22 +102,19 @@ PxQueryHitType::Enum WheelSceneQueryPostFilterNonBlocking
 
 VehicleSceneQueryData::VehicleSceneQueryData()
 	: mNumQueriesPerBatch(0),
-	mNumHitResultsPerQuery(0),
-	mRaycastResults(NULL),
-	mRaycastHitBuffer(NULL),
-	mPreFilterShader(NULL),
-	mPostFilterShader(NULL)
-{
-}
-
-VehicleSceneQueryData::~VehicleSceneQueryData()
+	  mNumHitResultsPerQuery(0),
+	  mRaycastResults(nullptr),
+	  mRaycastHitBuffer(nullptr),
+	  mPreFilterShader(nullptr),
+	  mPostFilterShader(nullptr)
 {
 }
 
 VehicleSceneQueryData* VehicleSceneQueryData::allocate
-(const PxU32 maxNumVehicles, const PxU32 maxNumWheelsPerVehicle, const PxU32 maxNumHitPointsPerWheel, const PxU32 numVehiclesInBatch,
-	PxBatchQueryPreFilterShader preFilterShader, PxBatchQueryPostFilterShader postFilterShader,
-	PxAllocatorCallback& allocator)
+(const PxU32 maxNumVehicles, const PxU32 maxNumWheelsPerVehicle, const PxU32 maxNumHitPointsPerWheel,
+ const PxU32 numVehiclesInBatch,
+ PxBatchQueryPreFilterShader preFilterShader, PxBatchQueryPostFilterShader postFilterShader,
+ PxAllocatorCallback& allocator)
 {
 	const PxU32 sqDataSize = ((sizeof(VehicleSceneQueryData) + 15) & ~15);
 
@@ -130,7 +127,7 @@ VehicleSceneQueryData* VehicleSceneQueryData::allocate
 	const PxU32 sweepHitSize = ((sizeof(PxSweepHit) * maxNumHitPoints + 15) & ~15);
 
 	const PxU32 size = sqDataSize + raycastResultSize + raycastHitSize + sweepResultSize + sweepHitSize;
-	PxU8* buffer = static_cast<PxU8*>(allocator.allocate(size, NULL, NULL, 0));
+	PxU8* buffer = static_cast<PxU8*>(allocator.allocate(size, nullptr, nullptr, 0));
 
 	VehicleSceneQueryData* sqData = new(buffer) VehicleSceneQueryData();
 	sqData->mNumQueriesPerBatch = numVehiclesInBatch * maxNumWheelsPerVehicle;
@@ -172,15 +169,19 @@ void VehicleSceneQueryData::free(PxAllocatorCallback& allocator)
 	allocator.deallocate(this);
 }
 
-PxBatchQuery* VehicleSceneQueryData::setUpBatchedSceneQuery(const PxU32 batchId, const VehicleSceneQueryData& vehicleSceneQueryData, PxScene* scene)
+PxBatchQuery* VehicleSceneQueryData::setUpBatchedSceneQuery(const PxU32 batchId,
+                                                            const VehicleSceneQueryData& vehicleSceneQueryData,
+                                                            PxScene* scene)
 {
 	const PxU32 maxNumQueriesInBatch = vehicleSceneQueryData.mNumQueriesPerBatch;
-	const PxU32 maxNumHitResultsInBatch = vehicleSceneQueryData.mNumQueriesPerBatch * vehicleSceneQueryData.mNumHitResultsPerQuery;
+	const PxU32 maxNumHitResultsInBatch = vehicleSceneQueryData.mNumQueriesPerBatch * vehicleSceneQueryData.
+		mNumHitResultsPerQuery;
 
 	PxBatchQueryDesc sqDesc(maxNumQueriesInBatch, maxNumQueriesInBatch, 0);
 
 	sqDesc.queryMemory.userRaycastResultBuffer = vehicleSceneQueryData.mRaycastResults + batchId * maxNumQueriesInBatch;
-	sqDesc.queryMemory.userRaycastTouchBuffer = vehicleSceneQueryData.mRaycastHitBuffer + batchId * maxNumHitResultsInBatch;
+	sqDesc.queryMemory.userRaycastTouchBuffer = vehicleSceneQueryData.mRaycastHitBuffer + batchId *
+		maxNumHitResultsInBatch;
 	sqDesc.queryMemory.raycastTouchBufferSize = maxNumHitResultsInBatch;
 
 	sqDesc.queryMemory.userSweepResultBuffer = vehicleSceneQueryData.mSweepResults + batchId * maxNumQueriesInBatch;
@@ -194,14 +195,14 @@ PxBatchQuery* VehicleSceneQueryData::setUpBatchedSceneQuery(const PxU32 batchId,
 	return scene->createBatchQuery(sqDesc);
 }
 
-PxRaycastQueryResult* VehicleSceneQueryData::getRaycastQueryResultBuffer(const PxU32 batchId)
+PxRaycastQueryResult* VehicleSceneQueryData::getRaycastQueryResultBuffer(const PxU32 batchId) const
 {
-	return (mRaycastResults + batchId * mNumQueriesPerBatch);
+	return (mRaycastResults + mNumQueriesPerBatch * batchId);
 }
 
-PxSweepQueryResult* VehicleSceneQueryData::getSweepQueryResultBuffer(const PxU32 batchId)
+PxSweepQueryResult* VehicleSceneQueryData::getSweepQueryResultBuffer(const PxU32 batchId) const
 {
-	return (mSweepResults + batchId * mNumQueriesPerBatch);
+	return (mSweepResults + mNumQueriesPerBatch * batchId);
 }
 
 

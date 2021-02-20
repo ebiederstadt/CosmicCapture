@@ -1,25 +1,25 @@
-#include <ctype.h>
 #include "Physics.h"
-#include "physx/PxPhysicsAPI.h"
+
+#include <iostream>
+#include <physx/vehicle/PxVehicleUtil.h>
+#include <physx/PxPhysicsAPI.h>
+
 #include "VehicleTireFriction.h"
 #include "VehicleSceneQuery.h"
 #include "VehicleCreate.h"
 #include "VehicleFilterShader.h"
 #include "TriggerCallback.h"
-#include <physx/vehicle/PxVehicleUtil.h>
-#include <iostream>
 
 
 using namespace physx;
-using namespace std;
 
 
 PxF32 gSteerVsForwardSpeedData[2 * 8] =
 {
-	0.0f,		0.75f,
-	5.0f,		0.75f,
-	30.0f,		0.125f,
-	120.0f,		0.1f,
+	0.0f, 0.75f,
+	5.0f, 0.75f,
+	30.0f, 0.125f,
+	120.0f, 0.1f,
 	PX_MAX_F32, PX_MAX_F32,
 	PX_MAX_F32, PX_MAX_F32,
 	PX_MAX_F32, PX_MAX_F32,
@@ -30,96 +30,125 @@ PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedData, 4)
 PxVehicleKeySmoothingData gKeySmoothingData =
 {
 	{
-		6.0f,	//rise rate eANALOG_INPUT_ACCEL
-		6.0f,	//rise rate eANALOG_INPUT_BRAKE		
-		6.0f,	//rise rate eANALOG_INPUT_HANDBRAKE	
-		2.5f,	//rise rate eANALOG_INPUT_STEER_LEFT
-		2.5f,	//rise rate eANALOG_INPUT_STEER_RIGHT
+		6.0f, //rise rate eANALOG_INPUT_ACCEL
+		6.0f, //rise rate eANALOG_INPUT_BRAKE		
+		6.0f, //rise rate eANALOG_INPUT_HANDBRAKE	
+		2.5f, //rise rate eANALOG_INPUT_STEER_LEFT
+		2.5f, //rise rate eANALOG_INPUT_STEER_RIGHT
 	},
 	{
-		10.0f,	//fall rate eANALOG_INPUT_ACCEL
-		10.0f,	//fall rate eANALOG_INPUT_BRAKE		
-		10.0f,	//fall rate eANALOG_INPUT_HANDBRAKE	
-		5.0f,	//fall rate eANALOG_INPUT_STEER_LEFT
-		5.0f	//fall rate eANALOG_INPUT_STEER_RIGHT
+		10.0f, //fall rate eANALOG_INPUT_ACCEL
+		10.0f, //fall rate eANALOG_INPUT_BRAKE		
+		10.0f, //fall rate eANALOG_INPUT_HANDBRAKE	
+		5.0f, //fall rate eANALOG_INPUT_STEER_LEFT
+		5.0f //fall rate eANALOG_INPUT_STEER_RIGHT
 	}
 };
 
 PxVehiclePadSmoothingData gPadSmoothingData =
 {
 	{
-		6.0f,	//rise rate eANALOG_INPUT_ACCEL
-		6.0f,	//rise rate eANALOG_INPUT_BRAKE		
-		6.0f,	//rise rate eANALOG_INPUT_HANDBRAKE	
-		2.5f,	//rise rate eANALOG_INPUT_STEER_LEFT
-		2.5f,	//rise rate eANALOG_INPUT_STEER_RIGHT
+		6.0f, //rise rate eANALOG_INPUT_ACCEL
+		6.0f, //rise rate eANALOG_INPUT_BRAKE		
+		6.0f, //rise rate eANALOG_INPUT_HANDBRAKE	
+		2.5f, //rise rate eANALOG_INPUT_STEER_LEFT
+		2.5f, //rise rate eANALOG_INPUT_STEER_RIGHT
 	},
 	{
-		10.0f,	//fall rate eANALOG_INPUT_ACCEL
-		10.0f,	//fall rate eANALOG_INPUT_BRAKE		
-		10.0f,	//fall rate eANALOG_INPUT_HANDBRAKE	
-		5.0f,	//fall rate eANALOG_INPUT_STEER_LEFT
-		5.0f	//fall rate eANALOG_INPUT_STEER_RIGHT
+		10.0f, //fall rate eANALOG_INPUT_ACCEL
+		10.0f, //fall rate eANALOG_INPUT_BRAKE		
+		10.0f, //fall rate eANALOG_INPUT_HANDBRAKE	
+		5.0f, //fall rate eANALOG_INPUT_STEER_LEFT
+		5.0f //fall rate eANALOG_INPUT_STEER_RIGHT
 	}
 };
 
 
 PxVehicleDrive4WRawInputData gVehicleInputData;
 
-PxF32					gVehicleModeLifetime = 4.0f;
-PxF32					gVehicleModeTimer = 0.0f;
-PxU32					gVehicleOrderProgress = 0;
-bool					gVehicleOrderComplete = false;
-bool					gMimicKeyInputs = true;
-
-
+PxF32 gVehicleModeLifetime = 4.0f;
+PxF32 gVehicleModeTimer = 0.0f;
+PxU32 gVehicleOrderProgress = 0;
+bool gVehicleOrderComplete = false;
+bool gMimicKeyInputs = true;
 
 
 //Singleton
-Physics::Physics() {}
-Physics& Physics::Instance() {
+Physics::Physics()
+{
+}
+
+Physics& Physics::Instance()
+{
 	static Physics instance;
 	return instance;
 }
+
 //Milestone2 basic gameplay mechanics------------------
 bool flagPickedUp = false;
-PxRigidStatic* pickupBox = NULL;
-PxRigidStatic* dropoffBox = NULL;
-PxRigidDynamic* flagBody = NULL;
+PxRigidStatic* pickupBox = nullptr;
+PxRigidStatic* dropoffBox = nullptr;
+PxRigidDynamic* flagBody = nullptr;
+
 class ContactReportCallback : public PxSimulationEventCallback
 {
-	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) { PX_UNUSED(constraints); PX_UNUSED(count); }
-	void onWake(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count); }
-	void onSleep(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count); }
-	void onTrigger(PxTriggerPair* pairs, PxU32 count) {
-		for (physx::PxU32 i = 0; i < count; i++)
+	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) override
+	{
+		PX_UNUSED(constraints);
+		PX_UNUSED(count);
+	}
+
+	void onWake(PxActor** actors, PxU32 count) override
+	{
+		PX_UNUSED(actors);
+		PX_UNUSED(count);
+	}
+
+	void onSleep(PxActor** actors, PxU32 count) override
+	{
+		PX_UNUSED(actors);
+		PX_UNUSED(count);
+	}
+
+	void onTrigger(PxTriggerPair* pairs, PxU32 count) override
+	{
+		for (PxU32 i = 0; i < count; i++)
 		{
-			if (pairs[i].triggerActor == pickupBox && pairs[i].otherActor != flagBody && !flagPickedUp) {
-				cout << "picked up flag" << endl;
+			if (pairs[i].triggerActor == pickupBox && pairs[i].otherActor != flagBody && !flagPickedUp)
+			{
+				std::cout << "picked up flag" << std::endl;
 				flagPickedUp = true;
 			}
-			if (pairs[i].triggerActor == dropoffBox && pairs[i].otherActor != flagBody && flagPickedUp) {
-				cout << "dropped off flag" << endl;
+			if (pairs[i].triggerActor == dropoffBox && pairs[i].otherActor != flagBody && flagPickedUp)
+			{
+				std::cout << "dropped off flag" << std::endl;
 				flagPickedUp = false;
 			}
-		
 		}
 	}
-	void onAdvance(const PxRigidBody* const*, const PxTransform*, const PxU32) {}
-	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) {}
+
+	void onAdvance(const PxRigidBody* const*, const PxTransform*, const PxU32) override
+	{
+	}
+
+	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override
+	{
+	}
 };
+
 ContactReportCallback gContactReportCallback;
 //------------------------------------------------------
 
-void Physics::Initialize() {
+void Physics::Initialize()
+{
 	inReverseMode = false;
-	
+
 	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
-	
+
 	gPvd = PxCreatePvd(*gFoundation);
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
 	gPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
-	
+
 	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(), true, gPvd);
 
 	PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
@@ -129,11 +158,11 @@ void Physics::Initialize() {
 	sceneDesc.cpuDispatcher = gDispatcher;
 	sceneDesc.filterShader = VehicleFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
-	
+
 
 	gScene = gPhysics->createScene(sceneDesc);
-	
-	
+
+
 	PxPvdSceneClient* pvdClient = gScene->getScenePvdClient();
 	if (pvdClient)
 	{
@@ -141,11 +170,11 @@ void Physics::Initialize() {
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
-	
+
 	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
 
 	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(PxTolerancesScale()));
-	
+
 
 	///////////////////////////////////////////////////
 
@@ -154,7 +183,8 @@ void Physics::Initialize() {
 	PxVehicleSetUpdateMode(PxVehicleUpdateMode::eVELOCITY_CHANGE);
 
 	//Create the batched scene queries for the suspension raycasts.
-	gVehicleSceneQueryData = VehicleSceneQueryData::allocate(1, PX_MAX_NB_WHEELS, 1, 1, WheelSceneQueryPreFilterBlocking, NULL, gAllocator);
+	gVehicleSceneQueryData = VehicleSceneQueryData::allocate(1, PX_MAX_NB_WHEELS, 1, 1,
+	                                                         WheelSceneQueryPreFilterBlocking, nullptr, gAllocator);
 	gBatchQuery = VehicleSceneQueryData::setUpBatchedSceneQuery(0, *gVehicleSceneQueryData, gScene);
 
 	//Create the friction table for each combination of tire and surface type.
@@ -168,7 +198,8 @@ void Physics::Initialize() {
 	//Create a vehicle that will drive on the plane.
 	VehicleDesc vehicleDesc = initVehicleDesc();
 	gVehicle4W = createVehicle4W(vehicleDesc, gPhysics, gCooking);
-	PxTransform startTransform(PxVec3(0, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 0), PxQuat(PxIdentity));
+	PxTransform startTransform(PxVec3(0, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 0),
+	                           PxQuat(PxIdentity));
 	gVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
 	gScene->addActor(*gVehicle4W->getRigidDynamicActor());
 
@@ -184,27 +215,32 @@ void Physics::Initialize() {
 
 	//Collision test objects------------------------------------
 	PxShape* ballShape = gPhysics->createShape(PxSphereGeometry(5.0f), *gMaterial, true); //create shape
-	ballShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
-	PxRigidDynamic* ballBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(10.f, 0.f, 0.f))); //create dynamic rigid body - will move
+	ballShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
+	//set filter data for collisions
+	PxRigidDynamic* ballBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(10.f, 0.f, 0.f)));
+	//create dynamic rigid body - will move
 	ballBody->attachShape(*ballShape); //stick shape on rigid body
 	ballShape->release(); //free shape 
 	gScene->addActor(*ballBody); //add rigid body to scene
 
 	PxShape* wallShape = gPhysics->createShape(PxBoxGeometry(10.0f, 10.0f, 0.1f), *gMaterial, true); //create shape
 	wallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	PxRigidStatic* wallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 10.f, -15.f))); //create static rigid body - wont move
+	PxRigidStatic* wallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 10.f, -15.f)));
+	//create static rigid body - wont move
 	wallBody->attachShape(*wallShape); //stick shape on rigid body
 	wallShape->release(); //free shape 
 	gScene->addActor(*wallBody); //add rigid body to scene
 
-	PxShape* flag = gPhysics->createShape(PxBoxGeometry(0.1f,2.f,0.1f), *gMaterial, true); //create flag shape
+	PxShape* flag = gPhysics->createShape(PxBoxGeometry(0.1f, 2.f, 0.1f), *gMaterial, true); //create flag shape
 	flag->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	flagBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(-10.f, 2.f, -12.f))); //create static rigid body - wont move
+	flagBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(-10.f, 2.f, -12.f)));
+	//create static rigid body - wont move
 	flagBody->attachShape(*flag);
 	flag->release();
 	gScene->addActor(*flagBody);
 
-	PxShape* dropoffZone = gPhysics->createShape(PxBoxGeometry(1.0f, 0.1f, 1.0f), *gMaterial, true); //visual indicator for dropoff zone
+	PxShape* dropoffZone = gPhysics->createShape(PxBoxGeometry(1.0f, 0.1f, 1.0f), *gMaterial, true);
+	//visual indicator for dropoff zone
 	dropoffZone->setSimulationFilterData(PxFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0));
 	PxRigidStatic* dropoffZoneBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f)));
 	dropoffZoneBody->attachShape(*dropoffZone);
@@ -212,14 +248,16 @@ void Physics::Initialize() {
 	gScene->addActor(*dropoffZoneBody);
 	//----------------------------------------------------------
 	//Trigger Shapes--------------------------------------------
-	PxShape* pickupShape = gPhysics->createShape(PxBoxGeometry(1.1f, 2.f, 1.1f), *gMaterial, true); //trigger box for picking up the flag
+	PxShape* pickupShape = gPhysics->createShape(PxBoxGeometry(1.1f, 2.f, 1.1f), *gMaterial, true);
+	//trigger box for picking up the flag
 	pickupShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	pickupShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	pickupBox = gPhysics->createRigidStatic(PxTransform(PxVec3(-10.f, 2.f, -12.f))); 
+	pickupBox = gPhysics->createRigidStatic(PxTransform(PxVec3(-10.f, 2.f, -12.f)));
 	pickupBox->attachShape(*pickupShape);
 	gScene->addActor(*pickupBox);
 
-	PxShape* dropoffShape = gPhysics->createShape(PxBoxGeometry(1.f, 1.f, 1.f), *gMaterial, true); //trigger box for dropping off the flag
+	PxShape* dropoffShape = gPhysics->createShape(PxBoxGeometry(1.f, 1.f, 1.f), *gMaterial, true);
+	//trigger box for dropping off the flag
 	dropoffShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	dropoffShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 	dropoffBox = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 1.f, 0.f)));
@@ -228,7 +266,6 @@ void Physics::Initialize() {
 	//----------------------------------------------------------
 
 	printf("Physx initialized\n");
-	
 }
 
 VehicleDesc Physics::initVehicleDesc()
@@ -240,8 +277,8 @@ VehicleDesc Physics::initVehicleDesc()
 	const PxVec3 chassisDims(2.5f, 2.0f, 5.0f);
 	const PxVec3 chassisMOI
 	((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * chassisMass / 12.0f,
-		(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * 0.8f * chassisMass / 12.0f,
-		(chassisDims.x * chassisDims.x + chassisDims.y * chassisDims.y) * chassisMass / 12.0f);
+	 (chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * 0.8f * chassisMass / 12.0f,
+	 (chassisDims.x * chassisDims.x + chassisDims.y * chassisDims.y) * chassisMass / 12.0f);
 	const PxVec3 chassisCMOffset(0.0f, -chassisDims.y * 0.5f + 0.65f, 0.25f);
 
 	//Set up the wheel mass, radius, width, moment of inertia, and number of wheels.
@@ -279,15 +316,19 @@ void Physics::stepPhysics()
 	//Update the control inputs for the vehicle.
 	if (gMimicKeyInputs)
 	{
-		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
+		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable,
+		                                                         gVehicleInputData, timestep, gIsVehicleInAir,
+		                                                         *gVehicle4W);
 	}
 	else
 	{
-		PxVehicleDrive4WSmoothAnalogRawInputsAndSetAnalogInputs(gPadSmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
+		PxVehicleDrive4WSmoothAnalogRawInputsAndSetAnalogInputs(gPadSmoothingData, gSteerVsForwardSpeedTable,
+		                                                        gVehicleInputData, timestep, gIsVehicleInAir,
+		                                                        *gVehicle4W);
 	}
 
 	//Raycasts.
-	PxVehicleWheels* vehicles[1] = { gVehicle4W };
+	PxVehicleWheels* vehicles[1] = {gVehicle4W};
 	PxRaycastQueryResult* raycastResults = gVehicleSceneQueryData->getRaycastQueryResultBuffer(0);
 	const PxU32 raycastResultsSize = gVehicleSceneQueryData->getQueryResultBufferSize();
 	PxVehicleSuspensionRaycasts(gBatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
@@ -295,18 +336,22 @@ void Physics::stepPhysics()
 	//Vehicle update.
 	const PxVec3 grav = gScene->getGravity();
 	PxWheelQueryResult wheelQueryResults[PX_MAX_NB_WHEELS];
-	PxVehicleWheelQueryResult vehicleQueryResults[1] = { {wheelQueryResults, gVehicle4W->mWheelsSimData.getNbWheels()} };
+	PxVehicleWheelQueryResult vehicleQueryResults[1] = {{wheelQueryResults, gVehicle4W->mWheelsSimData.getNbWheels()}};
 	PxVehicleUpdates(timestep, grav, *gFrictionPairs, 1, vehicles, vehicleQueryResults);
 
 	//Work out if the vehicle is in the air.
-	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
+	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping()
+		                  ? false
+		                  : PxVehicleIsInAir(vehicleQueryResults[0]);
 
-	if (flagPickedUp) {
-		
-		
-		flagBody->setGlobalPose(PxTransform(PxVec3(gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.x, gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.y + 2.f, gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.z)));
+	if (flagPickedUp)
+	{
+		flagBody->setGlobalPose(PxTransform(PxVec3(gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.x,
+		                                           gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.y + 2.f,
+		                                           gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.z)));
 	}
-	else {
+	else
+	{
 		flagBody->setGlobalPose(PxTransform(PxVec3(-10.f, 2.f, -12.f)));
 	}
 
@@ -322,39 +367,50 @@ void Physics::processInput(const std::map<MovementFlags, bool>& inputs)
 		switch (key)
 		{
 		case MovementFlags::DOWN:
-			if (keyReleased) {
-				if (inReverseMode) {
+			if (keyReleased)
+			{
+				if (inReverseMode)
+				{
 					stopAccelerateForwardsMode();
 				}
-				else {
+				else
+				{
 					stopBrakeMode();
 				}
 			}
-			else {
-				if ((gVehicle4W->mDriveDynData.getEngineRotationSpeed() <= 0) || (inReverseMode == true)) { //if speed reaches 1 or we are already in reverse mode
+			else
+			{
+				if ((gVehicle4W->mDriveDynData.getEngineRotationSpeed() <= 0) || (inReverseMode == true))
+				{
+					//if speed reaches 1 or we are already in reverse mode
 					inReverseMode = true;
-					stopBrakeMode();//stop braking
+					stopBrakeMode(); //stop braking
 					gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eREVERSE); //shift gear for reverse
-					startAccelerateForwardsMode();//start reversing
+					startAccelerateForwardsMode(); //start reversing
 				}
-				else {
-					startBrakeMode();//if speed was not yet 0 start braking
+				else
+				{
+					startBrakeMode(); //if speed was not yet 0 start braking
 				}
 			}
 			break;
 		case MovementFlags::UP:
-			if (keyReleased) {
-				if (inReverseMode) {
+			if (keyReleased)
+			{
+				if (inReverseMode)
+				{
 					stopBrakeMode();
 				}
-				else {
+				else
+				{
 					stopAccelerateForwardsMode();
 				}
 			}
-			else {
+			else
+			{
 				inReverseMode = false;
-				gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);//shift gear to move forward
-				startAccelerateForwardsMode();//start driving forward
+				gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST); //shift gear to move forward
+				startAccelerateForwardsMode(); //start driving forward
 			}
 			break;
 		case MovementFlags::RIGHT:
@@ -389,7 +445,8 @@ void Physics::CleanupPhysics()
 	if (gPvd)
 	{
 		PxPvdTransport* transport = gPvd->getTransport();
-		gPvd->release();	gPvd = NULL;
+		gPvd->release();
+		gPvd = nullptr;
 		PX_RELEASE(transport);
 	}
 	PX_RELEASE(gFoundation);
@@ -399,7 +456,6 @@ void Physics::CleanupPhysics()
 //Vehicle Input
 void Physics::startAccelerateForwardsMode()
 {
-
 	if (gMimicKeyInputs)
 	{
 		gVehicleInputData.setDigitalAccel(true);
@@ -412,7 +468,6 @@ void Physics::startAccelerateForwardsMode()
 
 void Physics::startAccelerateReverseMode()
 {
-
 	if (gMimicKeyInputs)
 	{
 		gVehicleInputData.setDigitalAccel(true);
@@ -428,7 +483,6 @@ void Physics::startBrakeMode()
 	if (gMimicKeyInputs)
 	{
 		gVehicleInputData.setDigitalBrake(true);
-	
 	}
 	else
 	{
@@ -490,16 +544,23 @@ void Physics::startHandbrakeTurnRightMode()
 	}
 }
 
-void Physics::stopAccelerateForwardsMode() {
+void Physics::stopAccelerateForwardsMode()
+{
 	gVehicleInputData.setDigitalAccel(false);
 }
-void Physics::stopBrakeMode(){
+
+void Physics::stopBrakeMode()
+{
 	gVehicleInputData.setDigitalBrake(false);
 }
-void Physics::stopTurnHardLeftMode() {
+
+void Physics::stopTurnHardLeftMode()
+{
 	gVehicleInputData.setDigitalSteerLeft(false);
 }
-void Physics::stopTurnHardRightMode() {
+
+void Physics::stopTurnHardRightMode()
+{
 	gVehicleInputData.setDigitalSteerRight(false);
 }
 
@@ -524,7 +585,10 @@ void Physics::releaseAllControls()
 }
 
 //SnippetVehicle4WCreate
-void Physics::computeWheelCenterActorOffsets4W(const PxF32 wheelFrontZ, const PxF32 wheelRearZ, const PxVec3& chassisDims, const PxF32 wheelWidth, const PxF32 wheelRadius, const PxU32 numWheels, PxVec3* wheelCentreOffsets)
+void Physics::computeWheelCenterActorOffsets4W(const PxF32 wheelFrontZ, const PxF32 wheelRearZ,
+                                               const PxVec3& chassisDims, const PxF32 wheelWidth,
+                                               const PxF32 wheelRadius, const PxU32 numWheels,
+                                               PxVec3* wheelCentreOffsets)
 {
 	//chassisDims.z is the distance from the rear of the chassis to the front of the chassis.
 	//The front has z = 0.5*chassisDims.z and the rear has z = -0.5*chassisDims.z.
@@ -535,23 +599,32 @@ void Physics::computeWheelCenterActorOffsets4W(const PxF32 wheelFrontZ, const Px
 	//Set the outside of the left and right wheels to be flush with the chassis.
 	//Set the top of the wheel to be just touching the underside of the chassis.
 	//Begin by setting the rear-left/rear-right/front-left,front-right wheels.
-	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eREAR_LEFT] = PxVec3((-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + 0 * deltaZ * 0.5f);
-	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = PxVec3((+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + 0 * deltaZ * 0.5f);
-	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = PxVec3((-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + (numLeftWheels - 1) * deltaZ);
-	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = PxVec3((+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + (numLeftWheels - 1) * deltaZ);
+	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eREAR_LEFT] = PxVec3((-chassisDims.x + wheelWidth) * 0.5f,
+	                                                                    -(chassisDims.y / 2 + wheelRadius),
+	                                                                    wheelRearZ + 0 * deltaZ * 0.5f);
+	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = PxVec3(
+		(+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + 0 * deltaZ * 0.5f);
+	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = PxVec3(
+		(-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius),
+		wheelRearZ + (numLeftWheels - 1) * deltaZ);
+	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = PxVec3(
+		(+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius),
+		wheelRearZ + (numLeftWheels - 1) * deltaZ);
 	//Set the remaining wheels.
 	for (PxU32 i = 2, wheelCount = 4; i < numWheels - 2; i += 2, wheelCount += 2)
 	{
-		wheelCentreOffsets[wheelCount + 0] = PxVec3((-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + i * deltaZ * 0.5f);
-		wheelCentreOffsets[wheelCount + 1] = PxVec3((+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + i * deltaZ * 0.5f);
+		wheelCentreOffsets[wheelCount + 0] = PxVec3((-chassisDims.x + wheelWidth) * 0.5f,
+		                                            -(chassisDims.y / 2 + wheelRadius), wheelRearZ + i * deltaZ * 0.5f);
+		wheelCentreOffsets[wheelCount + 1] = PxVec3((+chassisDims.x - wheelWidth) * 0.5f,
+		                                            -(chassisDims.y / 2 + wheelRadius), wheelRearZ + i * deltaZ * 0.5f);
 	}
 }
 
 void Physics::setupWheelsSimulationData
 (const PxF32 wheelMass, const PxF32 wheelMOI, const PxF32 wheelRadius, const PxF32 wheelWidth,
-	const PxU32 numWheels, const PxVec3* wheelCenterActorOffsets,
-	const PxVec3& chassisCMOffset, const PxF32 chassisMass,
-	PxVehicleWheelsSimData* wheelsSimData)
+ const PxU32 numWheels, const PxVec3* wheelCenterActorOffsets,
+ const PxVec3& chassisCMOffset, const PxF32 chassisMass,
+ PxVehicleWheelsSimData* wheelsSimData)
 {
 	//Set up the wheels.
 	PxVehicleWheelData wheels[PX_MAX_NB_WHEELS];
@@ -590,7 +663,7 @@ void Physics::setupWheelsSimulationData
 		PxF32 suspSprungMasses[PX_MAX_NB_WHEELS];
 		PxVehicleComputeSprungMasses
 		(numWheels, wheelCenterActorOffsets,
-			chassisCMOffset, chassisMass, 1, suspSprungMasses);
+		 chassisCMOffset, chassisMass, 1, suspSprungMasses);
 
 		//Set the suspension data.
 		for (PxU32 i = 0; i < numWheels; i++)
@@ -662,7 +735,7 @@ void Physics::setupWheelsSimulationData
 		wheelsSimData->setSuspForceAppPointOffset(i, suspForceAppCMOffsets[i]);
 		wheelsSimData->setTireForceAppPointOffset(i, tireForceAppCMOffsets[i]);
 		wheelsSimData->setSceneQueryFilterData(i, qryFilterData);
-		wheelsSimData->setWheelShapeMapping(i, PxI32(i));
+		wheelsSimData->setWheelShapeMapping(i, static_cast<PxI32>(i));
 	}
 
 	//Add a front and rear anti-roll bar
@@ -679,7 +752,6 @@ void Physics::setupWheelsSimulationData
 }
 
 
-
 PxVehicleDrive4W* Physics::createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* physics, PxCooking* cooking)
 {
 	const PxVec3 chassisDims = vehicle4WDesc.chassisDims;
@@ -692,7 +764,7 @@ PxVehicleDrive4W* Physics::createVehicle4W(const VehicleDesc& vehicle4WDesc, PxP
 
 	//Construct a physx actor with shapes for the chassis and wheels.
 	//Set the rigid body mass, moment of inertia, and center of mass offset.
-	PxRigidDynamic* veh4WActor = NULL;
+	PxRigidDynamic* veh4WActor = nullptr;
 	{
 		//Construct a convex mesh for a cylindrical wheel.
 		PxConvexMesh* wheelMesh = createWheelMesh(wheelWidth, wheelRadius, *physics, *cooking);
@@ -715,8 +787,8 @@ PxVehicleDrive4W* Physics::createVehicle4W(const VehicleDesc& vehicle4WDesc, PxP
 
 		//Chassis just has a single convex shape for simplicity.
 		PxConvexMesh* chassisConvexMesh = createChassisMesh(chassisDims, *physics, *cooking);
-		PxConvexMesh* chassisConvexMeshes[1] = { chassisConvexMesh };
-		PxMaterial* chassisMaterials[1] = { vehicle4WDesc.chassisMaterial };
+		PxConvexMesh* chassisConvexMeshes[1] = {chassisConvexMesh};
+		PxMaterial* chassisMaterials[1] = {vehicle4WDesc.chassisMaterial};
 
 		//Rigid body data.
 		PxVehicleChassisData rigidBodyData;
@@ -726,9 +798,9 @@ PxVehicleDrive4W* Physics::createVehicle4W(const VehicleDesc& vehicle4WDesc, PxP
 
 		veh4WActor = createVehicleActor
 		(rigidBodyData,
-			wheelMaterials, wheelConvexMeshes, numWheels, wheelSimFilterData,
-			chassisMaterials, chassisConvexMeshes, 1, chassisSimFilterData,
-			*physics);
+		 wheelMaterials, wheelConvexMeshes, numWheels, wheelSimFilterData,
+		 chassisMaterials, chassisConvexMeshes, 1, chassisSimFilterData,
+		 *physics);
 	}
 
 	//Set up the sim data for the wheels.
@@ -738,14 +810,15 @@ PxVehicleDrive4W* Physics::createVehicle4W(const VehicleDesc& vehicle4WDesc, PxP
 		PxVec3 wheelCenterActorOffsets[PX_MAX_NB_WHEELS];
 		const PxF32 frontZ = chassisDims.z * 0.3f;
 		const PxF32 rearZ = -chassisDims.z * 0.3f;
-		computeWheelCenterActorOffsets4W(frontZ, rearZ, chassisDims, wheelWidth, wheelRadius, numWheels, wheelCenterActorOffsets);
+		computeWheelCenterActorOffsets4W(frontZ, rearZ, chassisDims, wheelWidth, wheelRadius, numWheels,
+		                                 wheelCenterActorOffsets);
 
 		//Set up the simulation data for all wheels.
 		setupWheelsSimulationData
 		(vehicle4WDesc.wheelMass, vehicle4WDesc.wheelMOI, wheelRadius, wheelWidth,
-			numWheels, wheelCenterActorOffsets,
-			vehicle4WDesc.chassisCMOffset, vehicle4WDesc.chassisMass,
-			wheelsSimData);
+		 numWheels, wheelCenterActorOffsets,
+		 vehicle4WDesc.chassisCMOffset, vehicle4WDesc.chassisMass,
+		 wheelsSimData);
 	}
 
 	//Set up the sim data for the vehicle drive model.
@@ -759,7 +832,7 @@ PxVehicleDrive4W* Physics::createVehicle4W(const VehicleDesc& vehicle4WDesc, PxP
 		//Engine
 		PxVehicleEngineData engine;
 		engine.mPeakTorque = 500.0f;
-		engine.mMaxOmega = 600.0f;//approx 6000 rpm
+		engine.mMaxOmega = 600.0f; //approx 6000 rpm
 		driveSimData.setEngineData(engine);
 
 		//Gears

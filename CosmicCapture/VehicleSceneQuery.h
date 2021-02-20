@@ -47,23 +47,23 @@ void setupNonDrivableSurface(PxFilterData& filterData);
 
 PxQueryHitType::Enum WheelSceneQueryPreFilterBlocking
 (PxFilterData filterData0, PxFilterData filterData1,
-	const void* constantBlock, PxU32 constantBlockSize,
-	PxHitFlags& queryFlags);
+ const void* constantBlock, PxU32 constantBlockSize,
+ PxHitFlags& queryFlags);
 
 PxQueryHitType::Enum WheelSceneQueryPostFilterBlocking
 (PxFilterData queryFilterData, PxFilterData objectFilterData,
-	const void* constantBlock, PxU32 constantBlockSize,
-	const PxQueryHit& hit);
+ const void* constantBlock, PxU32 constantBlockSize,
+ const PxQueryHit& hit);
 
 PxQueryHitType::Enum WheelSceneQueryPreFilterNonBlocking
 (PxFilterData filterData0, PxFilterData filterData1,
-	const void* constantBlock, PxU32 constantBlockSize,
-	PxHitFlags& queryFlags);
+ const void* constantBlock, PxU32 constantBlockSize,
+ PxHitFlags& queryFlags);
 
 PxQueryHitType::Enum WheelSceneQueryPostFilterNonBlocking
 (PxFilterData queryFilterData, PxFilterData objectFilterData,
-	const void* constantBlock, PxU32 constantBlockSize,
-	const PxQueryHit& hit);
+ const void* constantBlock, PxU32 constantBlockSize,
+ const PxQueryHit& hit);
 
 
 //Data structure for quick setup of scene queries for suspension queries.
@@ -71,28 +71,29 @@ class VehicleSceneQueryData
 {
 public:
 	VehicleSceneQueryData();
-	~VehicleSceneQueryData();
+	~VehicleSceneQueryData() = default;
 
 	//Allocate scene query data for up to maxNumVehicles and up to maxNumWheelsPerVehicle with numVehiclesInBatch per batch query.
 	static VehicleSceneQueryData* allocate
-	(const PxU32 maxNumVehicles, const PxU32 maxNumWheelsPerVehicle, const PxU32 maxNumHitPointsPerWheel, const PxU32 numVehiclesInBatch,
-		PxBatchQueryPreFilterShader preFilterShader, PxBatchQueryPostFilterShader postFilterShader,
-		PxAllocatorCallback& allocator);
+	(PxU32 maxNumVehicles, PxU32 maxNumWheelsPerVehicle, PxU32 maxNumHitPointsPerWheel, PxU32 numVehiclesInBatch,
+	 PxBatchQueryPreFilterShader preFilterShader, PxBatchQueryPostFilterShader postFilterShader,
+	 PxAllocatorCallback& allocator);
 
 	//Free allocated buffers.
 	void free(PxAllocatorCallback& allocator);
 
 	//Create a PxBatchQuery instance that will be used for a single specified batch.
-	static PxBatchQuery* setUpBatchedSceneQuery(const PxU32 batchId, const VehicleSceneQueryData& vehicleSceneQueryData, PxScene* scene);
+	static PxBatchQuery* setUpBatchedSceneQuery(PxU32 batchId, const VehicleSceneQueryData& vehicleSceneQueryData,
+	                                            PxScene* scene);
 
 	//Return an array of scene query results for a single specified batch.
-	PxRaycastQueryResult* getRaycastQueryResultBuffer(const PxU32 batchId);
+	[[nodiscard]] PxRaycastQueryResult* getRaycastQueryResultBuffer(PxU32 batchId) const;
 
 	//Return an array of scene query results for a single specified batch.
-	PxSweepQueryResult* getSweepQueryResultBuffer(const PxU32 batchId);
+	[[nodiscard]] PxSweepQueryResult* getSweepQueryResultBuffer(PxU32 batchId) const;
 
 	//Get the number of scene query results that have been allocated for a single batch.
-	PxU32 getQueryResultBufferSize() const;
+	[[nodiscard]] PxU32 getQueryResultBufferSize() const;
 
 private:
 
@@ -115,5 +116,4 @@ private:
 
 	//Filter shader used to reject hit shapes that initially overlap sweeps.
 	PxBatchQueryPostFilterShader mPostFilterShader;
-
 };

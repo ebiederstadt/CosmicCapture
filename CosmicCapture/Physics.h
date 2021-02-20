@@ -1,6 +1,5 @@
 #pragma once
 
-#include <ctype.h>
 #include "physx/PxPhysicsAPI.h"
 #include "VehicleSceneQuery.h"
 
@@ -14,8 +13,8 @@ using namespace physx;
 struct ActorUserData
 {
 	ActorUserData()
-		: vehicle(NULL),
-		actor(NULL)
+		: vehicle(nullptr),
+		  actor(nullptr)
 	{
 	}
 
@@ -27,7 +26,7 @@ struct ShapeUserData
 {
 	ShapeUserData()
 		: isWheel(false),
-		wheelId(0xffffffff)
+		  wheelId(0xffffffff)
 	{
 	}
 
@@ -39,17 +38,17 @@ struct VehicleDesc
 {
 	VehicleDesc()
 		: chassisMass(0.0f),
-		chassisDims(PxVec3(0.0f, 0.0f, 0.0f)),
-		chassisMOI(PxVec3(0.0f, 0.0f, 0.0f)),
-		chassisCMOffset(PxVec3(0.0f, 0.0f, 0.0f)),
-		chassisMaterial(NULL),
-		wheelMass(0.0f),
-		wheelWidth(0.0f),
-		wheelRadius(0.0f),
-		wheelMOI(0.0f),
-		wheelMaterial(NULL),
-		actorUserData(NULL),
-		shapeUserDatas(NULL)
+		  chassisDims(PxVec3(0.0f, 0.0f, 0.0f)),
+		  chassisMOI(PxVec3(0.0f, 0.0f, 0.0f)),
+		  chassisCMOffset(PxVec3(0.0f, 0.0f, 0.0f)),
+		  chassisMaterial(nullptr),
+		  wheelMass(0.0f),
+		  wheelWidth(0.0f),
+		  wheelRadius(0.0f),
+		  wheelMOI(0.0f),
+		  wheelMaterial(nullptr),
+		  actorUserData(nullptr),
+		  shapeUserDatas(nullptr)
 	{
 	}
 
@@ -58,7 +57,7 @@ struct VehicleDesc
 	PxVec3 chassisMOI;
 	PxVec3 chassisCMOffset;
 	PxMaterial* chassisMaterial;
-	PxFilterData chassisSimFilterData;  //word0 = collide type, word1 = collide against types, word2 = PxPairFlags
+	PxFilterData chassisSimFilterData; //word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 
 	PxF32 wheelMass;
 	PxF32 wheelWidth;
@@ -66,14 +65,15 @@ struct VehicleDesc
 	PxF32 wheelMOI;
 	PxMaterial* wheelMaterial;
 	PxU32 numWheels;
-	PxFilterData wheelSimFilterData;	//word0 = collide type, word1 = collide against types, word2 = PxPairFlags
+	PxFilterData wheelSimFilterData; //word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 
 	ActorUserData* actorUserData;
 	ShapeUserData* shapeUserDatas;
 };
 
 
-class Physics {
+class Physics
+{
 public:
 	bool inReverseMode;
 	static Physics& Instance();
@@ -82,65 +82,64 @@ public:
 
 	VehicleDesc initVehicleDesc();
 
-	void startAccelerateForwardsMode();
-	void startAccelerateReverseMode();
-	void startBrakeMode();
-	void startTurnHardLeftMode();
-	void startTurnHardRightMode();
-	void startHandbrakeTurnLeftMode();
-	void startHandbrakeTurnRightMode();
+	static void startAccelerateForwardsMode();
+	static void startAccelerateReverseMode();
+	static void startBrakeMode();
+	static void startTurnHardLeftMode();
+	static void startTurnHardRightMode();
+	static void startHandbrakeTurnLeftMode();
+	static void startHandbrakeTurnRightMode();
 
-	void stopAccelerateForwardsMode();
-	void stopBrakeMode();
-	void stopTurnHardLeftMode();
-	void stopTurnHardRightMode();
+	static void stopAccelerateForwardsMode();
+	static void stopBrakeMode();
+	static void stopTurnHardLeftMode();
+	static void stopTurnHardRightMode();
 
-	void releaseAllControls();
+	static void releaseAllControls();
 	void stepPhysics();
 
 	void processInput(const std::map<MovementFlags, bool>& inputs);
 
 	//SnippetVehicle4WCreate
-	void computeWheelCenterActorOffsets4W(const PxF32 wheelFrontZ, const PxF32 wheelRearZ, const PxVec3& chassisDims, const PxF32 wheelWidth, const PxF32 wheelRadius, const PxU32 numWheels, PxVec3* wheelCentreOffsets);
-	void setupWheelsSimulationData
-	(const PxF32 wheelMass, const PxF32 wheelMOI, const PxF32 wheelRadius, const PxF32 wheelWidth,
-		const PxU32 numWheels, const PxVec3* wheelCenterActorOffsets,
-		const PxVec3& chassisCMOffset, const PxF32 chassisMass,
-		PxVehicleWheelsSimData* wheelsSimData);
-	PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* physics, PxCooking* cooking);
+	static void computeWheelCenterActorOffsets4W(PxF32 wheelFrontZ, PxF32 wheelRearZ, const PxVec3& chassisDims,
+	                                             PxF32 wheelWidth, PxF32 wheelRadius, PxU32 numWheels,
+	                                             PxVec3* wheelCentreOffsets);
+	static void setupWheelsSimulationData
+	(PxF32 wheelMass, PxF32 wheelMOI, PxF32 wheelRadius, PxF32 wheelWidth,
+	 PxU32 numWheels, const PxVec3* wheelCenterActorOffsets,
+	 const PxVec3& chassisCMOffset, PxF32 chassisMass,
+	 PxVehicleWheelsSimData* wheelsSimData);
+	static PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* physics, PxCooking* cooking);
 
 
 	Physics();
 
 
-	PxDefaultAllocator		gAllocator;
-	PxDefaultErrorCallback	gErrorCallback;
+	PxDefaultAllocator gAllocator;
+	PxDefaultErrorCallback gErrorCallback;
 
-	PxFoundation* gFoundation = NULL;
-	PxPhysics* gPhysics = NULL;
+	PxFoundation* gFoundation = nullptr;
+	PxPhysics* gPhysics = nullptr;
 
-	PxDefaultCpuDispatcher* gDispatcher = NULL;
-	PxScene* gScene = NULL;
+	PxDefaultCpuDispatcher* gDispatcher = nullptr;
+	PxScene* gScene = nullptr;
 
 
-	PxCooking* gCooking = NULL;
+	PxCooking* gCooking = nullptr;
 
-	PxMaterial* gMaterial = NULL;
+	PxMaterial* gMaterial = nullptr;
 
-	PxPvd* gPvd = NULL;
+	PxPvd* gPvd = nullptr;
 
-	VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
-	PxBatchQuery* gBatchQuery = NULL;
+	VehicleSceneQueryData* gVehicleSceneQueryData = nullptr;
+	PxBatchQuery* gBatchQuery = nullptr;
 
-	PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = NULL;
+	PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = nullptr;
 
-	PxRigidStatic* gGroundPlane = NULL;
-	PxVehicleDrive4W* gVehicle4W = NULL;
+	PxRigidStatic* gGroundPlane = nullptr;
+	PxVehicleDrive4W* gVehicle4W = nullptr;
 
-	
 
-	bool	gIsVehicleInAir = true;
+	bool gIsVehicleInAir = true;
 private:
-
-
 };
