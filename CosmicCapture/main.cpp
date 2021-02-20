@@ -9,11 +9,11 @@
 #include "graphics/Model.h"
 #include "imgui/imgui.h"
 
-#include "./input.h"
+#include "input.h"
 
-#include "Physics.h"
+#include "physics/Physics.h"
+#include "physics/Render.h"
 #include "Camera.h"
-#include "Render.h"
 
 
 #define M_PI  3.14159265358979323846

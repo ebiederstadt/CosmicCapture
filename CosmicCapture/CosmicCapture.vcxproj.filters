@@ -25,13 +25,7 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="input.cpp" />
-    <ClCompile Include="Physics.cpp" />
-    <ClCompile Include="VehicleCreate.cpp" />
-    <ClCompile Include="VehicleSceneQuery.cpp" />
-    <ClCompile Include="VehicleTireFriction.cpp" />
-    <ClCompile Include="VehicleFilterShader.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Render.cpp" />
     <ClCompile Include="GlDebug.cpp" />
     <ClCompile Include="graphics\ElementBuffer.cpp" />
     <ClCompile Include="graphics\Geometry.cpp" />
@@ -43,8 +37,14 @@
     <ClCompile Include="graphics\Mesh.cpp" />
     <ClCompile Include="graphics\Model.cpp" />
     <ClCompile Include="graphics\Texture.cpp" />
-    <ClCompile Include="ContactModification.cpp" />
-    <ClCompile Include="TriggerCallback.cpp" />
+    <ClCompile Include="physics\Physics.cpp" />
+    <ClCompile Include="physics\Render.cpp" />
+    <ClCompile Include="physics\TriggerCallback.cpp" />
+    <ClCompile Include="physics\VehicleCreate.cpp" />
+    <ClCompile Include="physics\VehicleFilterShader.cpp" />
+    <ClCompile Include="physics\VehicleSceneQuery.cpp" />
+    <ClCompile Include="physics\VehicleTireFriction.cpp" />
+    <ClCompile Include="physics\ContactModification.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -76,12 +76,6 @@
     <ClInclude Include="imgui\imgui_impl_sdl.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Physics.h" />
-    <ClInclude Include="VehicleCreate.h" />
-    <ClInclude Include="VehicleSceneQuery.h" />
-    <ClInclude Include="VehicleTireFriction.h" />
-    <ClInclude Include="VehicleFilterShader.h" />
-    <ClInclude Include="Render.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="graphics\ElementBuffer.h" />
     <ClInclude Include="graphics\Geometry.h" />
@@ -95,8 +89,15 @@
     <ClInclude Include="graphics\Window.h" />
     <ClInclude Include="GlDebug.h" />
     <ClInclude Include="input.h" />
-    <ClInclude Include="ContactModification.h" />
-    <ClInclude Include="TriggerCallback.h" />
+    <ClInclude Include="physics\Physics.h" />
+    <ClInclude Include="physics\Render.h" />
+    <ClInclude Include="physics\TriggerCallback.h" />
+    <ClInclude Include="physics\VehicleCreate.h" />
+    <ClInclude Include="physics\VehicleFilterShader.h" />
+    <ClInclude Include="physics\VehicleSceneQuery.h" />
+    <ClInclude Include="physics\VehicleTireFriction.h" />
+    <ClInclude Include="Conversions.h" />
+    <ClInclude Include="physics\ContactModification.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
