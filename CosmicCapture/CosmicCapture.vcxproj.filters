@@ -45,6 +45,7 @@
     <ClCompile Include="physics\VehicleSceneQuery.cpp" />
     <ClCompile Include="physics\VehicleTireFriction.cpp" />
     <ClCompile Include="physics\ContactModification.cpp" />
+    <ClCompile Include="physics\VehicleMovement.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -98,6 +99,7 @@
     <ClInclude Include="physics\VehicleTireFriction.h" />
     <ClInclude Include="Conversions.h" />
     <ClInclude Include="physics\ContactModification.h" />
+    <ClInclude Include="physics\VehicleMovement.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

@@ -2,6 +2,7 @@
 
 #include "physx/PxPhysicsAPI.h"
 #include "VehicleSceneQuery.h"
+#include "ContactReportCallback.h"
 
 #include "../input.h"
 
@@ -77,25 +78,12 @@ class Physics
 public:
 	bool inReverseMode;
 	static Physics& Instance();
+	void createVehicle();
 	void Initialize();
 	void CleanupPhysics();
 
 	VehicleDesc initVehicleDesc();
 
-	static void startAccelerateForwardsMode();
-	static void startAccelerateReverseMode();
-	static void startBrakeMode();
-	static void startTurnHardLeftMode();
-	static void startTurnHardRightMode();
-	static void startHandbrakeTurnLeftMode();
-	static void startHandbrakeTurnRightMode();
-
-	static void stopAccelerateForwardsMode();
-	static void stopBrakeMode();
-	static void stopTurnHardLeftMode();
-	static void stopTurnHardRightMode();
-
-	static void releaseAllControls();
 	void stepPhysics();
 
 	void processInput(const std::map<MovementFlags, bool>& inputs);
@@ -109,10 +97,9 @@ public:
 	 PxU32 numWheels, const PxVec3* wheelCenterActorOffsets,
 	 const PxVec3& chassisCMOffset, PxF32 chassisMass,
 	 PxVehicleWheelsSimData* wheelsSimData);
-	static PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* physics, PxCooking* cooking);
 
-
-	Physics();
+	// Singleton
+	Physics() {}
 
 
 	PxDefaultAllocator gAllocator;
@@ -139,7 +126,8 @@ public:
 	PxRigidStatic* gGroundPlane = nullptr;
 	PxVehicleDrive4W* gVehicle4W = nullptr;
 
-
 	bool gIsVehicleInAir = true;
+
+	ContactReportCallback gContactReportCallback;
 private:
 };

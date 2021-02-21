@@ -183,6 +183,7 @@
     <ClCompile Include="physics\VehicleFilterShader.cpp" />
     <ClCompile Include="physics\VehicleSceneQuery.cpp" />
     <ClCompile Include="physics\VehicleTireFriction.cpp" />
+    <ClCompile Include="physics\VehicleMovement.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -215,6 +216,7 @@
     <ClInclude Include="physics\VehicleFilterShader.h" />
     <ClInclude Include="physics\VehicleSceneQuery.h" />
     <ClInclude Include="physics\VehicleTireFriction.h" />
+    <ClInclude Include="physics\VehicleMovement.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
