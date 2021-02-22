@@ -104,6 +104,8 @@
     <None Include="shaders\main.frag" />
     <None Include="shaders\main.vert" />
     <None Include="models\cube.ply" />
+    <None Include="shaders\simple.frag" />
+    <None Include="shaders\simple.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\camouflage.jpg" />
