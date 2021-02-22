@@ -2,9 +2,6 @@
 
 #include "physx/PxPhysicsAPI.h"
 #include "VehicleSceneQuery.h"
-#include "ContactReportCallback.h"
-
-#include "../input.h"
 
 #define PX_RELEASE(x) if(x){x->release();x=NULL;}
 #define PVD_HOST "127.0.0.1"
@@ -78,15 +75,12 @@ class Physics
 public:
 	bool inReverseMode;
 	static Physics& Instance();
-	void createVehicle();
 	void Initialize();
 	void CleanupPhysics();
 
-	VehicleDesc initVehicleDesc();
+	[[nodiscard]] VehicleDesc initVehicleDesc() const;
 
-	void stepPhysics();
-
-	void processInput(const std::map<MovementFlags, bool>& inputs);
+	void stepPhysics() const;
 
 	//SnippetVehicle4WCreate
 	static void computeWheelCenterActorOffsets4W(PxF32 wheelFrontZ, PxF32 wheelRearZ, const PxVec3& chassisDims,
@@ -124,10 +118,12 @@ public:
 	PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = nullptr;
 
 	PxRigidStatic* gGroundPlane = nullptr;
-	PxVehicleDrive4W* gVehicle4W = nullptr;
 
-	bool gIsVehicleInAir = true;
+	PxF32 gVehicleModeLifetime = 4.0f;
+	PxF32 gVehicleModeTimer = 0.0f;
+	PxU32 gVehicleOrderProgress = 0;
+	bool gVehicleOrderComplete = false;
 
-	ContactReportCallback gContactReportCallback;
+	static constexpr PxF32 timestep = 1.0f / 60.0f;
 private:
 };

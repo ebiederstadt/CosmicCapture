@@ -9,66 +9,10 @@
 #include "VehicleCreate.h"
 #include "VehicleFilterShader.h"
 #include "TriggerCallback.h"
-#include "VehicleMovement.h"
 
 
 using namespace physx;
 
-
-PxF32 gSteerVsForwardSpeedData[2 * 8] =
-{
-	0.0f, 0.75f,
-	5.0f, 0.75f,
-	30.0f, 0.125f,
-	120.0f, 0.1f,
-	PX_MAX_F32, PX_MAX_F32,
-	PX_MAX_F32, PX_MAX_F32,
-	PX_MAX_F32, PX_MAX_F32,
-	PX_MAX_F32, PX_MAX_F32
-};
-PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedData, 4);
-
-PxVehicleKeySmoothingData gKeySmoothingData =
-{
-	{
-		6.0f, //rise rate eANALOG_INPUT_ACCEL
-		6.0f, //rise rate eANALOG_INPUT_BRAKE		
-		6.0f, //rise rate eANALOG_INPUT_HANDBRAKE	
-		2.5f, //rise rate eANALOG_INPUT_STEER_LEFT
-		2.5f, //rise rate eANALOG_INPUT_STEER_RIGHT
-	},
-	{
-		10.0f, //fall rate eANALOG_INPUT_ACCEL
-		10.0f, //fall rate eANALOG_INPUT_BRAKE		
-		10.0f, //fall rate eANALOG_INPUT_HANDBRAKE	
-		5.0f, //fall rate eANALOG_INPUT_STEER_LEFT
-		5.0f //fall rate eANALOG_INPUT_STEER_RIGHT
-	}
-};
-
-PxVehiclePadSmoothingData gPadSmoothingData =
-{
-	{
-		6.0f, //rise rate eANALOG_INPUT_ACCEL
-		6.0f, //rise rate eANALOG_INPUT_BRAKE		
-		6.0f, //rise rate eANALOG_INPUT_HANDBRAKE	
-		2.5f, //rise rate eANALOG_INPUT_STEER_LEFT
-		2.5f, //rise rate eANALOG_INPUT_STEER_RIGHT
-	},
-	{
-		10.0f, //fall rate eANALOG_INPUT_ACCEL
-		10.0f, //fall rate eANALOG_INPUT_BRAKE		
-		10.0f, //fall rate eANALOG_INPUT_HANDBRAKE	
-		5.0f, //fall rate eANALOG_INPUT_STEER_LEFT
-		5.0f //fall rate eANALOG_INPUT_STEER_RIGHT
-	}
-};
-
-
-PxF32 gVehicleModeLifetime = 4.0f;
-PxF32 gVehicleModeTimer = 0.0f;
-PxU32 gVehicleOrderProgress = 0;
-bool gVehicleOrderComplete = false;
 
 Physics& Physics::Instance()
 {
@@ -131,30 +75,8 @@ class ContactReportCallback : public PxSimulationEventCallback
 ContactReportCallback gContactReportCallback;
 //------------------------------------------------------
 
-void Physics::createVehicle()
-{
-	const VehicleDesc vehicleDesc = initVehicleDesc();
-	gVehicle4W = createVehicle4W(vehicleDesc, gPhysics, gCooking);
-	const PxTransform startTransform(PxVec3(0, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 0),
-	                                 PxQuat(PxIdentity));
-	gVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
-	gScene->addActor(*gVehicle4W->getRigidDynamicActor());
-
-	//Set the vehicle to rest in first gear.
-	//Set the vehicle to use auto-gears.
-	gVehicle4W->setToRestState();
-	gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
-	gVehicle4W->mDriveDynData.setUseAutoGears(true);
-
-	gVehicleModeTimer = 0.0f;
-	gVehicleOrderProgress = 0;
-	VehicleMovement::startBrakeMode();
-}
-
 void Physics::Initialize()
 {
-	inReverseMode = false;
-
 	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
 
 	gPvd = PxCreatePvd(*gFoundation);
@@ -195,7 +117,7 @@ void Physics::Initialize()
 	PxVehicleSetUpdateMode(PxVehicleUpdateMode::eVELOCITY_CHANGE);
 
 	//Create the batched scene queries for the suspension raycasts.
-	gVehicleSceneQueryData = VehicleSceneQueryData::allocate(1, PX_MAX_NB_WHEELS, 1, 1,
+	gVehicleSceneQueryData = VehicleSceneQueryData::allocate(4, PX_MAX_NB_WHEELS, 1, 1,
 	                                                         WheelSceneQueryPreFilterBlocking, nullptr, gAllocator);
 	gBatchQuery = VehicleSceneQueryData::setUpBatchedSceneQuery(0, *gVehicleSceneQueryData, gScene);
 
@@ -206,9 +128,6 @@ void Physics::Initialize()
 	PxFilterData groundPlaneSimFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0);
 	gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
 	gScene->addActor(*gGroundPlane);
-
-	//Create a vehicle that will drive on the plane.
-	createVehicle();
 
 	//Collision test objects------------------------------------
 	PxShape* ballShape = gPhysics->createShape(PxSphereGeometry(5.0f), *gMaterial, true); //create shape
@@ -265,7 +184,7 @@ void Physics::Initialize()
 	printf("Physx initialized\n");
 }
 
-VehicleDesc Physics::initVehicleDesc()
+VehicleDesc Physics::initVehicleDesc() const
 {
 	//Set up the chassis mass, dimensions, moment of inertia, and center of mass offset.
 	//The moment of inertia is just the moment of inertia of a cuboid but modified for easier steering.
@@ -306,128 +225,17 @@ VehicleDesc Physics::initVehicleDesc()
 	return vehicleDesc;
 }
 
-void Physics::stepPhysics()
+void Physics::stepPhysics() const
 {
-	const PxF32 timestep = 1.0f / 60.0f;
-
-	//Update the control inputs for the vehicle.
-	if (VehicleMovement::gMimicKeyInputs)
-	{
-		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable,
-		                                                         VehicleMovement::gVehicleInputData, timestep, gIsVehicleInAir,
-		                                                         *gVehicle4W);
-	}
-	else
-	{
-		PxVehicleDrive4WSmoothAnalogRawInputsAndSetAnalogInputs(gPadSmoothingData, gSteerVsForwardSpeedTable,
-		                                                        VehicleMovement::gVehicleInputData, timestep, gIsVehicleInAir,
-		                                                        *gVehicle4W);
-	}
-
-	//Raycasts.
-	PxVehicleWheels* vehicles[1] = {gVehicle4W};
-	PxRaycastQueryResult* raycastResults = gVehicleSceneQueryData->getRaycastQueryResultBuffer(0);
-	const PxU32 raycastResultsSize = gVehicleSceneQueryData->getQueryResultBufferSize();
-	PxVehicleSuspensionRaycasts(gBatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
-
-	//Vehicle update.
-	const PxVec3 grav = gScene->getGravity();
-	PxWheelQueryResult wheelQueryResults[PX_MAX_NB_WHEELS];
-	PxVehicleWheelQueryResult vehicleQueryResults[1] = {{wheelQueryResults, gVehicle4W->mWheelsSimData.getNbWheels()}};
-	PxVehicleUpdates(timestep, grav, *gFrictionPairs, 1, vehicles, vehicleQueryResults);
-
-	//Work out if the vehicle is in the air.
-	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping()
-		                  ? false
-		                  : PxVehicleIsInAir(vehicleQueryResults[0]);
-
-	if (flagPickedUp)
-	{
-		flagBody->setGlobalPose(PxTransform(PxVec3(gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.x,
-		                                           gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.y + 2.f,
-		                                           gVehicle4W->getRigidDynamicActor()->getGlobalPose().p.z)));
-	}
-	else
-	{
-		flagBody->setGlobalPose(PxTransform(PxVec3(-10.f, 2.f, -12.f)));
-	}
-
-	//Scene update.
 	gScene->simulate(timestep);
 	gScene->fetchResults(true);
 }
-
-void Physics::processInput(const std::map<MovementFlags, bool>& inputs)
-{
-	for (const auto& [key, keyReleased] : inputs)
-	{
-		switch (key)
-		{
-		case MovementFlags::DOWN:
-			if (keyReleased)
-			{
-				if (inReverseMode)
-				{
-					VehicleMovement::stopAccelerateForwardsMode();
-				}
-				else
-				{
-					VehicleMovement::stopBrakeMode();
-				}
-			}
-			else
-			{
-				if ((gVehicle4W->mDriveDynData.getEngineRotationSpeed() <= 0) || (inReverseMode == true))
-				{
-					//if speed reaches 1 or we are already in reverse mode
-					inReverseMode = true;
-					VehicleMovement::stopBrakeMode(); //stop braking
-					gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eREVERSE); //shift gear for reverse
-					VehicleMovement::startAccelerateForwardsMode(); //start reversing
-				}
-				else
-				{
-					VehicleMovement::startBrakeMode(); //if speed was not yet 0 start braking
-				}
-			}
-			break;
-		case MovementFlags::UP:
-			if (keyReleased)
-			{
-				if (inReverseMode)
-				{
-					VehicleMovement::stopBrakeMode();
-				}
-				else
-				{
-					VehicleMovement::stopAccelerateForwardsMode();
-				}
-			}
-			else
-			{
-				inReverseMode = false;
-				gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST); //shift gear to move forward
-				VehicleMovement::startAccelerateForwardsMode(); //start driving forward
-			}
-			break;
-		case MovementFlags::RIGHT:
-			keyReleased ? VehicleMovement::stopTurnHardLeftMode() : VehicleMovement::startTurnHardLeftMode();
-			break;
-		case MovementFlags::LEFT:
-			keyReleased ? VehicleMovement::stopTurnHardRightMode() : VehicleMovement::startTurnHardRightMode();
-			break;
-		}
-	}
-}
-
 
 void Physics::CleanupPhysics()
 {
 	PX_RELEASE(pickupBox);
 	PX_RELEASE(dropoffBox);
 	PX_RELEASE(flagBody);
-	gVehicle4W->getRigidDynamicActor()->release();
-	gVehicle4W->free();
 	PX_RELEASE(gGroundPlane);
 	PX_RELEASE(gBatchQuery);
 	gVehicleSceneQueryData->free(gAllocator);

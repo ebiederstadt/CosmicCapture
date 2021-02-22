@@ -12,8 +12,8 @@
 #include "input.h"
 
 #include "physics/Physics.h"
-#include "physics/Render.h"
 #include "Camera.h"
+#include "Vehicle.h"
 
 
 #define M_PI  3.14159265358979323846
@@ -47,7 +47,7 @@ int main(int argc, char** args) {
 	auto wheel5 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 	auto wheel6 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
-	auto body = std::make_shared<Model>("models/cube.ply", "textures/camouflage.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	auto body = std::make_unique<Model>("models/cube.ply", "textures/camouflage.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
   
   //gameplay sample stuff------------------------
 	auto dynamicBall = std::make_shared<Model>("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
@@ -64,7 +64,6 @@ int main(int argc, char** args) {
 	models.push_back(wheel4);
 	models.push_back(wheel5);
 	models.push_back(wheel6);
-	models.push_back(body);
   models.push_back(dynamicBall);
   models.push_back(staticWall);
   models.push_back(flag);
@@ -73,45 +72,36 @@ int main(int argc, char** args) {
 	//main loop flag
 	bool quit = false;
 
+	Vehicle car(std::move(body));
+	car.attachPhysics(physics);
+
 	// Loop until the user closes the window
-
-
 	while (!quit) {
 
 		quit = input.HandleInput();
 
 		// Physics simulation
-		physics.processInput(input.getInputState());
+		auto inputState = input.getInputState();
+
+		// Repeat for all vehicles eventually...
+		car.processInput(inputState);
+		car.simulate(physics);
+		
 		physics.stepPhysics();
-
-		PxU32 nbActors = physics.gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
-		std::vector<PxMat44> modelMatrices;
-		if (nbActors)
-		{
-			std::vector<PxRigidActor*> actors(nbActors);
-
-			physics.gScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-			modelMatrices = generateTransform(&actors[0], static_cast<PxU32>(actors.size()));
-		}
 
 		// Render
 		window.startImGuiFrame();
 		Window::clear();
 
 		// Update camera
-		sCamera->updateCamera(body->getModelMatrix());
+		sCamera->updateCamera(car.mGeometry->getModelMatrix());
 
 		shaderProgram.use();
 
 		// Draw arena
 		arena.drawArena();
 
-		auto counter = 1;
-		for (auto& model : models)
-		{
-			model->draw(modelMatrices[counter]);
-			++counter;
-		}
+		car.draw(physics);
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
