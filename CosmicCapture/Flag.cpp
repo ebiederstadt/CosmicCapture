@@ -67,7 +67,7 @@ void Flag::simulate(Physics& instance)
 			throw std::runtime_error("Error: Must provide at least one vehicle for the flag to collide with");
 
 		PxVec3 pos = mVehicles[0]->getRigidDynamicActor()->getGlobalPose().p;
-		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y, pos.z)));
+		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else {
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(-10.f, 2.f, -12.f)));

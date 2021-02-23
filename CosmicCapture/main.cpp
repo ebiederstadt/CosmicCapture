@@ -41,40 +41,29 @@ int main(int argc, char** args) {
 	// The arena model
 	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera);
 
-	auto wheel1 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera);
-	auto wheel2 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera);
-	auto wheel3 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera);
-	auto wheel4 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera);
-	auto wheel5 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera);
-	auto wheel6 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera);
-
-	auto body = std::make_unique<Model>("models/cube.ply", "textures/camouflage.jpg", shaderProgram, sCamera);
-  
   //gameplay sample stuff------------------------
 	auto dynamicBall = std::make_shared<Model>("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera);
 	auto staticWall = std::make_shared<Model>("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera);
 	//---------------------------------------------
 
 	std::vector<std::shared_ptr<Model>> models;
-	models.reserve(11); // Make space for 10 models without the need for copying
-	models.push_back(wheel1);
-	models.push_back(wheel2);
-	models.push_back(wheel3);
-	models.push_back(wheel4);
-	models.push_back(wheel5);
-	models.push_back(wheel6);
-  models.push_back(dynamicBall);
-  models.push_back(staticWall);
+	models.push_back(dynamicBall);
+	models.push_back(staticWall);
 
 	//main loop flag
 	bool quit = false;
 
-	Vehicle car(std::move(body));
+	// Entities
+	Vehicle car(shaderProgram, sCamera);
 	car.attachPhysics(physics);
 
 	Flag flag(shaderProgram, sCamera);
 	flag.attachPhysics(physics);
 	flag.attachVehicle(car.getVehicle());
+
+	std::vector<Entity*> entities;
+	entities.push_back(&car);
+	entities.push_back(&flag);
 
 	// Loop until the user closes the window
 	while (!quit) {
@@ -86,8 +75,9 @@ int main(int argc, char** args) {
 
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
-		car.simulate(physics);
-		flag.simulate(physics);
+
+		for (const auto& entity : entities)
+			entity->simulate(physics);
 		
 		physics.stepPhysics();
 
@@ -103,8 +93,8 @@ int main(int argc, char** args) {
 		// Draw arena
 		arena.drawArena();
 
-		car.draw(physics);
-		flag.draw(physics);
+		for (const auto& entity : entities)
+			entity->draw(physics);
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

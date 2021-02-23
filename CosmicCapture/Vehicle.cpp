@@ -4,6 +4,10 @@
 #include "physics/VehicleMovement.h"
 #include <physx/vehicle/PxVehicleUtil.h>
 
+Vehicle::Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera) :
+	Entity("models/carJoined.obj", "textures/blank.jpg", shaderProgram, camera)
+{}
+
 void Vehicle::attachPhysics(Physics& instance)
 {
 	const VehicleDesc vehicleDesc = instance.initVehicleDesc();
@@ -140,4 +144,10 @@ void Vehicle::processInput(const std::map<MovementFlags, bool>& inputs)
 			break;
 		}
 	}
+}
+
+void Vehicle::cleanUpPhysics()
+{
+	mVehicle4W->getRigidDynamicActor()->release();
+	mVehicle4W->free();
 }

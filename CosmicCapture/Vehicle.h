@@ -60,7 +60,7 @@ inline PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedD
 class Vehicle : public Entity
 {
 public:
-	Vehicle(std::unique_ptr<Model> model) : Entity(std::move(model)) {}
+	Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera);
 	void attachPhysics(Physics& instance) override;
 
 	void draw(Physics& instance) override;
@@ -75,10 +75,3 @@ private:
 	bool mIsVehicleInAir = true;
 	bool mInReverseMode = false;
 };
-
-inline void Vehicle::cleanUpPhysics()
-{
-	mVehicle4W->getRigidDynamicActor()->release();
-	mVehicle4W->free();
-}
-
