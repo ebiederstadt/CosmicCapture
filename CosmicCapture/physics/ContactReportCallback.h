@@ -27,15 +27,7 @@ public:
 	}
 
 	void onTrigger(PxTriggerPair* pairs, PxU32 count) override;
-
 	void onAdvance(const PxRigidBody* const*, const PxTransform*, const PxU32) override {}
-
 	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override {}
-
-	//Milestone2 basic gameplay mechanics------------------
-	bool flagPickedUp = false;
-	PxRigidStatic* pickupBox = nullptr;
-	PxRigidStatic* dropoffBox = nullptr;
-	PxRigidDynamic* flagBody = nullptr;
 };
 

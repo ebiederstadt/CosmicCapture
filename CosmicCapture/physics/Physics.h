@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ContactReportCallback.h"
 #include "physx/PxPhysicsAPI.h"
 #include "VehicleSceneQuery.h"
 
@@ -123,6 +124,8 @@ public:
 	PxF32 gVehicleModeTimer = 0.0f;
 	PxU32 gVehicleOrderProgress = 0;
 	bool gVehicleOrderComplete = false;
+
+	ContactReportCallback gContactReportCallback{};
 
 	static constexpr PxF32 timestep = 1.0f / 60.0f;
 private:

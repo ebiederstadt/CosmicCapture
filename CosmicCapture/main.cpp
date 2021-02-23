@@ -14,6 +14,7 @@
 #include "physics/Physics.h"
 #include "Camera.h"
 #include "Vehicle.h"
+#include "Flag.h"
 
 
 #define M_PI  3.14159265358979323846
@@ -52,8 +53,6 @@ int main(int argc, char** args) {
   //gameplay sample stuff------------------------
 	auto dynamicBall = std::make_shared<Model>("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera);
 	auto staticWall = std::make_shared<Model>("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera);
-	auto flag = std::make_shared<Model>("models/flag.ply", "textures/blank.jpg", shaderProgram, sCamera);
-	auto dropoffZone = std::make_shared<Model>("models/dropoff_zone.ply", "textures/dropflaghere.jpg", shaderProgram, sCamera);
 	//---------------------------------------------
 
 	std::vector<std::shared_ptr<Model>> models;
@@ -66,14 +65,16 @@ int main(int argc, char** args) {
 	models.push_back(wheel6);
   models.push_back(dynamicBall);
   models.push_back(staticWall);
-  models.push_back(flag);
-  models.push_back(dropoffZone);
 
 	//main loop flag
 	bool quit = false;
 
 	Vehicle car(std::move(body));
 	car.attachPhysics(physics);
+
+	Flag flag(shaderProgram, sCamera);
+	flag.attachPhysics(physics);
+	flag.attachVehicle(car.getVehicle());
 
 	// Loop until the user closes the window
 	while (!quit) {
@@ -86,6 +87,7 @@ int main(int argc, char** args) {
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
 		car.simulate(physics);
+		flag.simulate(physics);
 		
 		physics.stepPhysics();
 
@@ -102,6 +104,7 @@ int main(int argc, char** args) {
 		arena.drawArena();
 
 		car.draw(physics);
+		flag.draw(physics);
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -114,6 +117,7 @@ int main(int argc, char** args) {
 	}
 	//cleanup
 	car.cleanUpPhysics();
+	flag.cleanUpPhysics();
 	physics.CleanupPhysics();
 
 	return 0;

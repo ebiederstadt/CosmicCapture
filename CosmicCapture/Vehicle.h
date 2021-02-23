@@ -68,6 +68,7 @@ public:
 	void processInput(const std::map<MovementFlags, bool>& inputs);
 
 	void cleanUpPhysics() override;
+	[[nodiscard]] PxVehicleDrive4W* getVehicle() const { return mVehicle4W; }
 
 private:
 	PxVehicleDrive4W* mVehicle4W;

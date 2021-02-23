@@ -8,7 +8,6 @@
 #include "VehicleSceneQuery.h"
 #include "VehicleCreate.h"
 #include "VehicleFilterShader.h"
-#include "ContactReportCallback.h"
 
 
 using namespace physx;
@@ -20,7 +19,6 @@ Physics& Physics::Instance()
 	return instance;
 }
 
-ContactReportCallback gContactReportCallback;
 //------------------------------------------------------
 
 void Physics::Initialize()
@@ -95,38 +93,6 @@ void Physics::Initialize()
 	wallShape->release(); //free shape 
 	gScene->addActor(*wallBody); //add rigid body to scene
 
-	PxShape* flag = gPhysics->createShape(PxBoxGeometry(0.1f, 2.f, 0.1f), *gMaterial, true); //create flag shape
-	flag->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	gContactReportCallback.flagBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(-10.f, 2.f, -12.f)));
-	//create static rigid body - wont move
-	gContactReportCallback.flagBody->attachShape(*flag);
-	flag->release();
-	gScene->addActor(*gContactReportCallback.flagBody);
-
-	PxShape* dropoffZone = gPhysics->createShape(PxBoxGeometry(1.0f, 0.1f, 1.0f), *gMaterial, true);
-	//visual indicator for dropoff zone
-	dropoffZone->setSimulationFilterData(PxFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0));
-	PxRigidStatic* dropoffZoneBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f)));
-	dropoffZoneBody->attachShape(*dropoffZone);
-	dropoffZone->release();
-	gScene->addActor(*dropoffZoneBody);
-	//----------------------------------------------------------
-	//Trigger Shapes--------------------------------------------
-	PxShape* pickupShape = gPhysics->createShape(PxBoxGeometry(1.1f, 2.f, 1.1f), *gMaterial, true);
-	//trigger box for picking up the flag
-	pickupShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
-	pickupShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	gContactReportCallback.pickupBox = gPhysics->createRigidStatic(PxTransform(PxVec3(-10.f, 2.f, -12.f)));
-	gContactReportCallback.pickupBox->attachShape(*pickupShape);
-	gScene->addActor(*gContactReportCallback.pickupBox);
-
-	PxShape* dropoffShape = gPhysics->createShape(PxBoxGeometry(1.f, 1.f, 1.f), *gMaterial, true);
-	//trigger box for dropping off the flag
-	dropoffShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
-	dropoffShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	gContactReportCallback.dropoffBox = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 1.f, 0.f)));
-	gContactReportCallback.dropoffBox->attachShape(*dropoffShape);
-	gScene->addActor(*gContactReportCallback.dropoffBox);
 	//----------------------------------------------------------
 
 	printf("Physx initialized\n");
@@ -181,9 +147,6 @@ void Physics::stepPhysics() const
 
 void Physics::CleanupPhysics()
 {
-	PX_RELEASE(gContactReportCallback.pickupBox);
-	PX_RELEASE(gContactReportCallback.dropoffBox);
-	PX_RELEASE(gContactReportCallback.flagBody);
 	PX_RELEASE(gGroundPlane);
 	PX_RELEASE(gBatchQuery);
 	gVehicleSceneQueryData->free(gAllocator);
