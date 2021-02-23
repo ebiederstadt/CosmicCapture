@@ -8,7 +8,7 @@
 #include "VehicleSceneQuery.h"
 #include "VehicleCreate.h"
 #include "VehicleFilterShader.h"
-#include "TriggerCallback.h"
+#include "ContactReportCallback.h"
 
 
 using namespace physx;
@@ -19,58 +19,6 @@ Physics& Physics::Instance()
 	static Physics instance;
 	return instance;
 }
-
-//Milestone2 basic gameplay mechanics------------------
-bool flagPickedUp = false;
-PxRigidStatic* pickupBox = nullptr;
-PxRigidStatic* dropoffBox = nullptr;
-PxRigidDynamic* flagBody = nullptr;
-
-class ContactReportCallback : public PxSimulationEventCallback
-{
-	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) override
-	{
-		PX_UNUSED(constraints);
-		PX_UNUSED(count);
-	}
-
-	void onWake(PxActor** actors, PxU32 count) override
-	{
-		PX_UNUSED(actors);
-		PX_UNUSED(count);
-	}
-
-	void onSleep(PxActor** actors, PxU32 count) override
-	{
-		PX_UNUSED(actors);
-		PX_UNUSED(count);
-	}
-
-	void onTrigger(PxTriggerPair* pairs, PxU32 count) override
-	{
-		for (PxU32 i = 0; i < count; i++)
-		{
-			if (pairs[i].triggerActor == pickupBox && pairs[i].otherActor != flagBody && !flagPickedUp)
-			{
-				std::cout << "picked up flag" << std::endl;
-				flagPickedUp = true;
-			}
-			if (pairs[i].triggerActor == dropoffBox && pairs[i].otherActor != flagBody && flagPickedUp)
-			{
-				std::cout << "dropped off flag" << std::endl;
-				flagPickedUp = false;
-			}
-		}
-	}
-
-	void onAdvance(const PxRigidBody* const*, const PxTransform*, const PxU32) override
-	{
-	}
-
-	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override
-	{
-	}
-};
 
 ContactReportCallback gContactReportCallback;
 //------------------------------------------------------
@@ -149,11 +97,11 @@ void Physics::Initialize()
 
 	PxShape* flag = gPhysics->createShape(PxBoxGeometry(0.1f, 2.f, 0.1f), *gMaterial, true); //create flag shape
 	flag->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	flagBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(-10.f, 2.f, -12.f)));
+	gContactReportCallback.flagBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(-10.f, 2.f, -12.f)));
 	//create static rigid body - wont move
-	flagBody->attachShape(*flag);
+	gContactReportCallback.flagBody->attachShape(*flag);
 	flag->release();
-	gScene->addActor(*flagBody);
+	gScene->addActor(*gContactReportCallback.flagBody);
 
 	PxShape* dropoffZone = gPhysics->createShape(PxBoxGeometry(1.0f, 0.1f, 1.0f), *gMaterial, true);
 	//visual indicator for dropoff zone
@@ -168,17 +116,17 @@ void Physics::Initialize()
 	//trigger box for picking up the flag
 	pickupShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	pickupShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	pickupBox = gPhysics->createRigidStatic(PxTransform(PxVec3(-10.f, 2.f, -12.f)));
-	pickupBox->attachShape(*pickupShape);
-	gScene->addActor(*pickupBox);
+	gContactReportCallback.pickupBox = gPhysics->createRigidStatic(PxTransform(PxVec3(-10.f, 2.f, -12.f)));
+	gContactReportCallback.pickupBox->attachShape(*pickupShape);
+	gScene->addActor(*gContactReportCallback.pickupBox);
 
 	PxShape* dropoffShape = gPhysics->createShape(PxBoxGeometry(1.f, 1.f, 1.f), *gMaterial, true);
 	//trigger box for dropping off the flag
 	dropoffShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	dropoffShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	dropoffBox = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 1.f, 0.f)));
-	dropoffBox->attachShape(*dropoffShape);
-	gScene->addActor(*dropoffBox);
+	gContactReportCallback.dropoffBox = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 1.f, 0.f)));
+	gContactReportCallback.dropoffBox->attachShape(*dropoffShape);
+	gScene->addActor(*gContactReportCallback.dropoffBox);
 	//----------------------------------------------------------
 
 	printf("Physx initialized\n");
@@ -233,9 +181,9 @@ void Physics::stepPhysics() const
 
 void Physics::CleanupPhysics()
 {
-	PX_RELEASE(pickupBox);
-	PX_RELEASE(dropoffBox);
-	PX_RELEASE(flagBody);
+	PX_RELEASE(gContactReportCallback.pickupBox);
+	PX_RELEASE(gContactReportCallback.dropoffBox);
+	PX_RELEASE(gContactReportCallback.flagBody);
 	PX_RELEASE(gGroundPlane);
 	PX_RELEASE(gBatchQuery);
 	gVehicleSceneQueryData->free(gAllocator);

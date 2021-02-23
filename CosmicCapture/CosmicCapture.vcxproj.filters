@@ -47,6 +47,7 @@
     <ClCompile Include="physics\VehicleMovement.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Vehicle.cpp" />
+    <ClCompile Include="physics\ContactReportCallback.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -102,6 +103,7 @@
     <ClInclude Include="physics\VehicleMovement.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Vehicle.h" />
+    <ClInclude Include="physics\ContactReportCallback.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
