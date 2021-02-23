@@ -4,12 +4,6 @@
 #include "physics/VehicleMovement.h"
 #include <physx/vehicle/PxVehicleUtil.h>
 
-Vehicle::~Vehicle()
-{
-	mVehicle4W->getRigidDynamicActor()->release();
-	mVehicle4W->free();
-}
-
 void Vehicle::attachPhysics(Physics& instance)
 {
 	const VehicleDesc vehicleDesc = instance.initVehicleDesc();

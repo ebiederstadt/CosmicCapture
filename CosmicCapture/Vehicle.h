@@ -61,16 +61,23 @@ class Vehicle : public Entity
 {
 public:
 	Vehicle(std::unique_ptr<Model> model) : Entity(std::move(model)) {}
-	~Vehicle();
 	void attachPhysics(Physics& instance) override;
 
 	void draw(Physics& instance) override;
 	void simulate(Physics& instance) override;
 	void processInput(const std::map<MovementFlags, bool>& inputs);
 
+	void cleanUpPhysics() override;
+
 private:
 	PxVehicleDrive4W* mVehicle4W;
 	bool mIsVehicleInAir = true;
 	bool mInReverseMode = false;
 };
+
+inline void Vehicle::cleanUpPhysics()
+{
+	mVehicle4W->getRigidDynamicActor()->release();
+	mVehicle4W->free();
+}
 
