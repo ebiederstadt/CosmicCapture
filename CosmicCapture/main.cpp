@@ -67,7 +67,6 @@ int main(int argc, char** args) {
 
 	// Loop until the user closes the window
 	while (!quit) {
-
 		quit = input.HandleInput();
 
 		// Physics simulation
@@ -106,8 +105,8 @@ int main(int argc, char** args) {
 		window.swap();
 	}
 	//cleanup
-	car.cleanUpPhysics();
-	flag.cleanUpPhysics();
+	for (const auto& entity : entities)
+		entity->cleanUpPhysics();
 	physics.CleanupPhysics();
 
 	return 0;

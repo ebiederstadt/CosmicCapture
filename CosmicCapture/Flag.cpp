@@ -48,8 +48,7 @@ void Flag::attachPhysics(Physics& instance)
 void Flag::draw(Physics& instance)
 {
 	// Draw the flag
-	PxTransform transform;
-	transform = State::flagBody->getGlobalPose();
+	PxTransform transform = State::flagBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
 	mGeometry->draw(modelMatrix);
 
