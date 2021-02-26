@@ -219,6 +219,8 @@
     <None Include="imgui.ini" />
     <None Include="models\cube.ply" />
     <None Include="models\monkey.ply" />
+    <None Include="shaders\debugDepth.frag" />
+    <None Include="shaders\debugDepth.vert" />
     <None Include="shaders\main.frag" />
     <None Include="shaders\main.vert" />
     <None Include="shaders\simple.frag" />

@@ -32,8 +32,8 @@ public:
 	);
 
 	//void draw(const physx::PxMat44& modelMatrix);
-	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, bool depth, const unsigned int& depthMap);
-	void drawArena(const ShaderProgram& shaderProgram, bool depth, const unsigned int & depthMap);
+	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, bool depth, const unsigned int& depthMap, float ortho);
+	void drawArena(const ShaderProgram& shaderProgram, bool depth, const unsigned int & depthMap, float ortho);
 
 	[[nodiscard]] physx::PxMat44 getModelMatrix() const { return mModel; }
 
