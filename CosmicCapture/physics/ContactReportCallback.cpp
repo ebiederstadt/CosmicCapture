@@ -17,5 +17,10 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			fmt::print("dropped off flag\n");
 			State::flagPickedUp = false;
 		}
+		if (pairs[i].triggerActor == State::projectilePickupTriggerBody && !State::projectilePickedUp) {
+			fmt::print("projectile picked up\n");
+			State::projectilePickedUp = true;
+		}
+
 	}
 }

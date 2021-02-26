@@ -17,6 +17,7 @@ Input::Input()
     mInputMap[MovementFlags::RIGHT] = true;
     mInputMap[MovementFlags::DOWN] = true;
     mInputMap[MovementFlags::UP] = true;
+    mInputMap[MovementFlags::ACTION] = true;
 }
 
 bool Input::HandleInput()
@@ -67,6 +68,9 @@ void Input::HandleKeys()
 	case SDLK_s:
         mInputMap[MovementFlags::DOWN] = keyReleased;
 		break;
+    case SDLK_SPACE:
+        mInputMap[MovementFlags::ACTION] = keyReleased;
+        break;
 	default:
 		break;
 	}
@@ -84,6 +88,7 @@ void Input::HandleButtons()
         mInputMap[MovementFlags::DOWN] = buttonReleased;
 		break;
 	case SDL_CONTROLLER_BUTTON_X:
+        mInputMap[MovementFlags::ACTION] = buttonReleased;
 		break;
 	case SDL_CONTROLLER_BUTTON_Y:
 		break;

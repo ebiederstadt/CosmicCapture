@@ -60,7 +60,7 @@ inline PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedD
 class Vehicle : public Entity
 {
 public:
-	Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera);
+	Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, int playerNum);
 	void attachPhysics(Physics& instance) override;
 
 	void draw(Physics& instance) override;

@@ -3,17 +3,22 @@
 #include "physics/VehicleCreate.h"
 #include "physics/VehicleMovement.h"
 #include <physx/vehicle/PxVehicleUtil.h>
+int player;
+VehicleMovement movement;
 
-Vehicle::Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera) :
-	Entity("models/carJoined.obj", "textures/blank.jpg", shaderProgram, camera)
-{}
+Vehicle::Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, int playerNum) :
+	Entity("models/carJoined.obj", (playerNum == 0) ? "textures/blank.jpg" : "textures/blue.jpg", shaderProgram, camera)
+{
+	player = playerNum;
+	movement = VehicleMovement();
+}
 
 void Vehicle::attachPhysics(Physics& instance)
 {
 	const VehicleDesc vehicleDesc = instance.initVehicleDesc();
 	mVehicle4W = createVehicle4W(vehicleDesc, instance.gPhysics, instance.gCooking);
-	const PxTransform startTransform(PxVec3(0, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 0),
-	                                 PxQuat(PxIdentity));
+	const PxTransform startTransform(PxVec3((player == 0) ? 0 : 10, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), (player == 0) ? 0 : 10),
+	                                 PxQuat(PxIdentity)); //inline ternary operators are probably not the best choice but they work for now
 	mVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
 	instance.gScene->addActor(*mVehicle4W->getRigidDynamicActor());
 
@@ -25,7 +30,7 @@ void Vehicle::attachPhysics(Physics& instance)
 
 	instance.gVehicleModeTimer = 0.0f;
 	instance.gVehicleOrderProgress = 0;
-	VehicleMovement::startBrakeMode();
+	movement.startBrakeMode();
 }
 
 void Vehicle::draw(Physics& instance)
@@ -52,16 +57,16 @@ void Vehicle::draw(Physics& instance)
 void Vehicle::simulate(Physics& instance)
 {
 	//Update the control inputs for the vehicle.
-	if (VehicleMovement::gMimicKeyInputs)
+	if (movement.gMimicKeyInputs)
 	{
 		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable,
-		                                                         VehicleMovement::gVehicleInputData, Physics::timestep, mIsVehicleInAir,
+																movement.gVehicleInputData, Physics::timestep, mIsVehicleInAir,
 		                                                         *mVehicle4W);
 	}
 	else
 	{
 		PxVehicleDrive4WSmoothAnalogRawInputsAndSetAnalogInputs(gPadSmoothingData, gSteerVsForwardSpeedTable,
-		                                                        VehicleMovement::gVehicleInputData, Physics::timestep, mIsVehicleInAir,
+			movement.gVehicleInputData, Physics::timestep, mIsVehicleInAir,
 		                                                        *mVehicle4W);
 	}
 
@@ -94,11 +99,11 @@ void Vehicle::processInput(const std::map<MovementFlags, bool>& inputs)
 			{
 				if (mInReverseMode)
 				{
-					VehicleMovement::stopAccelerateForwardsMode();
+					movement.stopAccelerateForwardsMode();
 				}
 				else
 				{
-					VehicleMovement::stopBrakeMode();
+					movement.stopBrakeMode();
 				}
 			}
 			else
@@ -107,13 +112,13 @@ void Vehicle::processInput(const std::map<MovementFlags, bool>& inputs)
 				{
 					//if speed reaches 1 or we are already in reverse mode
 					mInReverseMode = true;
-					VehicleMovement::stopBrakeMode(); //stop braking
+					movement.stopBrakeMode(); //stop braking
 					mVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eREVERSE); //shift gear for reverse
-					VehicleMovement::startAccelerateForwardsMode(); //start reversing
+					movement.startAccelerateForwardsMode(); //start reversing
 				}
 				else
 				{
-					VehicleMovement::startBrakeMode(); //if speed was not yet 0 start braking
+					movement.startBrakeMode(); //if speed was not yet 0 start braking
 				}
 			}
 			break;
@@ -122,25 +127,25 @@ void Vehicle::processInput(const std::map<MovementFlags, bool>& inputs)
 			{
 				if (mInReverseMode)
 				{
-					VehicleMovement::stopBrakeMode();
+					movement.stopBrakeMode();
 				}
 				else
 				{
-					VehicleMovement::stopAccelerateForwardsMode();
+					movement.stopAccelerateForwardsMode();
 				}
 			}
 			else
 			{
 				mInReverseMode = false;
 				mVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST); //shift gear to move forward
-				VehicleMovement::startAccelerateForwardsMode(); //start driving forward
+				movement.startAccelerateForwardsMode(); //start driving forward
 			}
 			break;
 		case MovementFlags::RIGHT:
-			keyReleased ? VehicleMovement::stopTurnHardLeftMode() : VehicleMovement::startTurnHardLeftMode();
+			keyReleased ? movement.stopTurnHardLeftMode() : movement.startTurnHardLeftMode();
 			break;
 		case MovementFlags::LEFT:
-			keyReleased ? VehicleMovement::stopTurnHardRightMode() : VehicleMovement::startTurnHardRightMode();
+			keyReleased ? movement.stopTurnHardRightMode() : movement.startTurnHardRightMode();
 			break;
 		}
 	}

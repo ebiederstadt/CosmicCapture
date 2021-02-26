@@ -186,6 +186,8 @@
     <ClCompile Include="physics\VehicleSceneQuery.cpp" />
     <ClCompile Include="physics\VehicleTireFriction.cpp" />
     <ClCompile Include="physics\VehicleMovement.cpp" />
+    <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="ProjectilePickupZone.cpp" />
     <ClCompile Include="Vehicle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +225,8 @@
     <ClInclude Include="physics\VehicleSceneQuery.h" />
     <ClInclude Include="physics\VehicleTireFriction.h" />
     <ClInclude Include="physics\VehicleMovement.h" />
+    <ClInclude Include="Projectile.h" />
+    <ClInclude Include="ProjectilePickupZone.h" />
     <ClInclude Include="Vehicle.h" />
   </ItemGroup>
   <ItemGroup>

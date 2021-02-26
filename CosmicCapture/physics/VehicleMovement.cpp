@@ -1,4 +1,5 @@
 #include "VehicleMovement.h"
+VehicleMovement::VehicleMovement() {}
 
 void VehicleMovement::startAccelerateForwardsMode()
 {

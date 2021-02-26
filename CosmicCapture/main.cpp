@@ -15,6 +15,8 @@
 #include "Camera.h"
 #include "Vehicle.h"
 #include "Flag.h"
+#include "Projectile.h"
+#include "ProjectilePickupZone.h"
 
 
 #define M_PI  3.14159265358979323846
@@ -41,29 +43,32 @@ int main(int argc, char** args) {
 	// The arena model
 	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera);
 
-  //gameplay sample stuff------------------------
-	auto dynamicBall = std::make_shared<Model>("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera);
-	auto staticWall = std::make_shared<Model>("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera);
-	//---------------------------------------------
-
-	std::vector<std::shared_ptr<Model>> models;
-	models.push_back(dynamicBall);
-	models.push_back(staticWall);
 
 	//main loop flag
 	bool quit = false;
 
 	// Entities
-	Vehicle car(shaderProgram, sCamera);
+	Vehicle car(shaderProgram, sCamera, 0);
 	car.attachPhysics(physics);
 
+	//Vehicle opponentCar1(shaderProgram, sCamera, 1);
+	//opponentCar1.attachPhysics(physics);
+	ProjectilePickupZone projPickupZone(shaderProgram, sCamera);
+	projPickupZone.attachPhysics(physics);
+	
 	Flag flag(shaderProgram, sCamera);
 	flag.attachPhysics(physics);
 	flag.attachVehicle(car.getVehicle());
 
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
-	entities.push_back(&flag);
+	entities.push_back(&flag);	
+	entities.push_back(&projPickupZone);
+	//entities.push_back(&opponentCar1);
+
+	//projectile prototype stuff----------------------
+	Projectile testProj(shaderProgram, sCamera);
+	//------------------------------------------------
 
 	// Loop until the user closes the window
 	while (!quit) {
@@ -71,9 +76,28 @@ int main(int argc, char** args) {
 
 		// Physics simulation
 		auto inputState = input.getInputState();
+		
 
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
+		
+		if (inputState[MovementFlags::ACTION] == false && State::projectilePickedUp) {
+			testProj.attachVehicle(car.getVehicle());
+			testProj.attachPhysics(physics);			
+			entities.push_back(&testProj);
+			
+			State::projectilePickedUp = false;
+		}
+
+		/*//forgive me--------------------
+		std::map<MovementFlags, bool> testInputMap;
+		testInputMap[MovementFlags::LEFT] = true;
+		testInputMap[MovementFlags::RIGHT] = true;
+		testInputMap[MovementFlags::DOWN] = true;
+		testInputMap[MovementFlags::UP] = true;
+		opponentCar1.processInput(testInputMap);
+		//------------------------------*/
+		
 
 		for (const auto& entity : entities)
 			entity->simulate(physics);
