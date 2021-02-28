@@ -3,21 +3,26 @@
 #include "physics/VehicleCreate.h"
 #include "physics/VehicleMovement.h"
 #include <physx/vehicle/PxVehicleUtil.h>
-int player;
-VehicleMovement movement;
 
-Vehicle::Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, int playerNum) :
-	Entity("models/carJoined.obj", (playerNum == 0) ? "textures/blank.jpg" : "textures/blue.jpg", shaderProgram, camera)
+
+Vehicle::Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, int playerNum, std::string texturePath) :
+	Entity("models/carJoined.obj", texturePath.c_str(), shaderProgram, camera)
 {
 	player = playerNum;
-	movement = VehicleMovement();
+	if (player >= 0) {
+		movement = VehicleMovement(true);
+	}
+	else {
+		movement = VehicleMovement(false);
+	}
+	
 }
 
 void Vehicle::attachPhysics(Physics& instance)
 {
 	const VehicleDesc vehicleDesc = instance.initVehicleDesc();
 	mVehicle4W = createVehicle4W(vehicleDesc, instance.gPhysics, instance.gCooking);
-	const PxTransform startTransform(PxVec3((player == 0) ? 0 : 10, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), (player == 0) ? 0 : 10),
+	const PxTransform startTransform(PxVec3((player == 0) ? -155 : 10, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), (player == 0) ? -155 : 10),
 	                                 PxQuat(PxIdentity)); //inline ternary operators are probably not the best choice but they work for now
 	mVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
 	instance.gScene->addActor(*mVehicle4W->getRigidDynamicActor());

@@ -154,6 +154,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Flag.cpp" />
+    <ClCompile Include="FlagDropoffZone.cpp" />
     <ClCompile Include="physics\ContactReportCallback.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="physics\ContactModification.cpp" />
@@ -193,6 +194,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Flag.h" />
+    <ClInclude Include="FlagDropoffZone.h" />
     <ClInclude Include="GlobalState.h" />
     <ClInclude Include="physics\ContactReportCallback.h" />
     <ClInclude Include="Entity.h" />

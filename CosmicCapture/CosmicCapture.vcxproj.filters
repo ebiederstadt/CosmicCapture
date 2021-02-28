@@ -51,6 +51,7 @@
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="ProjectilePickupZone.cpp" />
+    <ClCompile Include="FlagDropoffZone.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -111,6 +112,7 @@
     <ClInclude Include="GlobalState.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="ProjectilePickupZone.h" />
+    <ClInclude Include="FlagDropoffZone.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

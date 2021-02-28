@@ -15,6 +15,7 @@
 #include "Camera.h"
 #include "Vehicle.h"
 #include "Flag.h"
+#include "FlagDropoffZone.h"
 #include "Projectile.h"
 #include "ProjectilePickupZone.h"
 
@@ -48,27 +49,34 @@ int main(int argc, char** args) {
 	bool quit = false;
 
 	// Entities
-	Vehicle car(shaderProgram, sCamera, 0);
+	Vehicle car(shaderProgram, sCamera, 0, "textures/blank.jpg");
 	car.attachPhysics(physics);
 
-	//Vehicle opponentCar1(shaderProgram, sCamera, 1);
-	//opponentCar1.attachPhysics(physics);
+	Vehicle opponentCar1(shaderProgram, sCamera, 1, "textures/blue.jpg");
+	opponentCar1.attachPhysics(physics);
+
+	//projectile prototype stuff----------------------
+	Projectile testProj(shaderProgram, sCamera);
 	ProjectilePickupZone projPickupZone(shaderProgram, sCamera);
 	projPickupZone.attachPhysics(physics);
+	//------------------------------------------------
 	
 	Flag flag(shaderProgram, sCamera);
 	flag.attachPhysics(physics);
 	flag.attachVehicle(car.getVehicle());
 
+	FlagDropoffZone flagDropoffZone(shaderProgram, sCamera, 0);
+	flagDropoffZone.attachPhysics(physics);
+	flagDropoffZone.attachVehicle(car.getVehicle());
+
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
-	entities.push_back(&flag);	
+	entities.push_back(&flag);
+	entities.push_back(&flagDropoffZone);
 	entities.push_back(&projPickupZone);
-	//entities.push_back(&opponentCar1);
+	entities.push_back(&opponentCar1);
 
-	//projectile prototype stuff----------------------
-	Projectile testProj(shaderProgram, sCamera);
-	//------------------------------------------------
+	
 
 	// Loop until the user closes the window
 	while (!quit) {
@@ -89,12 +97,12 @@ int main(int argc, char** args) {
 			State::projectilePickedUp = false;
 		}
 
-		/*//forgive me--------------------
+		//forgive me--------------------
 		std::map<MovementFlags, bool> testInputMap;
-		testInputMap[MovementFlags::LEFT] = true;
+		testInputMap[MovementFlags::LEFT] = false;
 		testInputMap[MovementFlags::RIGHT] = true;
 		testInputMap[MovementFlags::DOWN] = true;
-		testInputMap[MovementFlags::UP] = true;
+		testInputMap[MovementFlags::UP] = false;
 		opponentCar1.processInput(testInputMap);
 		//------------------------------*/
 		
@@ -118,6 +126,10 @@ int main(int argc, char** args) {
 
 		for (const auto& entity : entities)
 			entity->draw(physics);
+		
+		//player pos
+		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		printf("%f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z);
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
