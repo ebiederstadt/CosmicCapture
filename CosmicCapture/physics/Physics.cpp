@@ -101,7 +101,6 @@ void Physics::Initialize()
 #include <vector>
 std::vector<PxVec3> vectorList;
 std::vector<unsigned int> indicesList;
-
 void Physics::processNodeS(aiNode* node, const aiScene* scene)
 {
 	// Process all of the the meshes associated with the node
@@ -140,7 +139,7 @@ void Physics::processVerticesIndices(aiMesh* mesh)
 
 
 }
-void Physics::readMesh(string modelPath){
+void Physics::readMesh(std::string modelPath){
 	Assimp::Importer importer;
 	const auto* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)

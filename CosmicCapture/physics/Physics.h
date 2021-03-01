@@ -3,6 +3,11 @@
 #include "ContactReportCallback.h"
 #include "physx/PxPhysicsAPI.h"
 #include "VehicleSceneQuery.h"
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <fmt/format.h>
+#include <assimp/mesh.h>
+#include <assimp/scene.h>
 
 #define PX_RELEASE(x) if(x){x->release();x=NULL;}
 #define PVD_HOST "127.0.0.1"

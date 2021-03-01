@@ -110,5 +110,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
+    <None Include="arenaTest.mtl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="arenaTest.obj" />
   </ItemGroup>
 </Project>

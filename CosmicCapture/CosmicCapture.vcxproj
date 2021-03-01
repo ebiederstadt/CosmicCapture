@@ -226,7 +226,11 @@
     <ClInclude Include="Vehicle.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="arenaTest.mtl" />
     <None Include="imgui.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="arenaTest.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
