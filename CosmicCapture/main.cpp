@@ -39,7 +39,7 @@ int main(int argc, char** args) {
 	shaderProgram.compile();
 
 	// The arena model
-	Model arena("models/arenaTest.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 
   //gameplay sample stuff------------------------

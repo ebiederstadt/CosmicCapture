@@ -92,7 +92,7 @@ void Physics::Initialize()
 	wallBody->attachShape(*wallShape); //stick shape on rigid body
 	wallShape->release(); //free shape 
 	gScene->addActor(*wallBody); //add rigid body to scene
-	readMesh("./models/arenaTest.obj");
+	readMesh("./models/walls_joined.obj");
 
 	//----------------------------------------------------------
 
@@ -151,9 +151,9 @@ void Physics::readMesh(std::string modelPath){
 	
 	std::cout << vectorList.size() << std::endl;
 	std::cout << indicesList.size() << std::endl;
-	const int vectorListSize = 8588;
+	const int vectorListSize = 2400;
 	PxVec3* convexVerts = new PxVec3[vectorListSize];
-	const int indicesListSize = 13529;
+	const int indicesListSize = 3600;
 	int* indicesVerts = new int[indicesListSize];
 	for (int i = 0; i < vectorListSize; i++) {
 		convexVerts[i] = vectorList.at(i);
@@ -165,11 +165,11 @@ void Physics::readMesh(std::string modelPath){
 	std::cout << sizeof(indicesVerts) << std::endl;
 
 	PxTriangleMeshDesc meshDesc;
-	meshDesc.points.count = 8588;
+	meshDesc.points.count = 2400;
 	meshDesc.points.stride = sizeof(PxVec3);
 	meshDesc.points.data = convexVerts;
 
-	meshDesc.triangles.count = 13529;
+	meshDesc.triangles.count = 3600;
 	meshDesc.triangles.stride = 3 * sizeof(PxU32);
 	meshDesc.triangles.data = indicesVerts;
 
@@ -256,7 +256,7 @@ void Physics::CleanupPhysics()
 }
 
 //Vehicle Input
-//SnippetVehicle4WCreate
+//SnippetCreate
 void Physics::computeWheelCenterActorOffsets4W(const PxF32 wheelFrontZ, const PxF32 wheelRearZ,
                                                const PxVec3& chassisDims, const PxF32 wheelWidth,
                                                const PxF32 wheelRadius, const PxU32 numWheels,
