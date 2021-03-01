@@ -92,7 +92,7 @@ void Physics::Initialize()
 	wallBody->attachShape(*wallShape); //stick shape on rigid body
 	wallShape->release(); //free shape 
 	gScene->addActor(*wallBody); //add rigid body to scene
-	readMesh("arenaTest.obj");
+	readMesh("./models/arenaTest.obj");
 
 	//----------------------------------------------------------
 
