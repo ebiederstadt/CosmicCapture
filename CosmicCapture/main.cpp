@@ -9,11 +9,12 @@
 #include "graphics/Model.h"
 #include "imgui/imgui.h"
 
-#include "./input.h"
+#include "input.h"
 
-#include "Physics.h"
+#include "physics/Physics.h"
 #include "Camera.h"
-#include "Render.h"
+#include "Vehicle.h"
+#include "Flag.h"
 
 
 #define M_PI  3.14159265358979323846
@@ -40,76 +41,65 @@ int main(int argc, char** args) {
 	// The arena model
 	Model arena("models/arenaTest.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
-	auto wheel1 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	auto wheel2 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	auto wheel3 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	auto wheel4 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	auto wheel5 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	auto wheel6 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
-	auto body = std::make_shared<Model>("models/cube.ply", "textures/camouflage.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-  
   //gameplay sample stuff------------------------
-	auto dynamicBall = std::make_shared<Model>("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	auto staticWall = std::make_shared<Model>("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	auto flag = std::make_shared<Model>("models/flag.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
-	auto dropoffZone = std::make_shared<Model>("models/dropoff_zone.ply", "textures/dropflaghere.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	auto dynamicBall = std::make_shared<Model>("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera);
+	auto staticWall = std::make_shared<Model>("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera);
 	//---------------------------------------------
 
 	std::vector<std::shared_ptr<Model>> models;
-	models.reserve(11); // Make space for 10 models without the need for copying
-	models.push_back(wheel1);
-	models.push_back(wheel2);
-	models.push_back(wheel3);
-	models.push_back(wheel4);
-	models.push_back(wheel5);
-	models.push_back(wheel6);
-	models.push_back(body);
+
 	models.push_back(dynamicBall);
 	models.push_back(staticWall);
-	models.push_back(flag);
-	models.push_back(dropoffZone);
+
 
 	//main loop flag
 	bool quit = false;
 
+
+	// Entities
+	Vehicle car(shaderProgram, sCamera);
+	car.attachPhysics(physics);
+
+	Flag flag(shaderProgram, sCamera);
+	flag.attachPhysics(physics);
+	flag.attachVehicle(car.getVehicle());
+
+	std::vector<Entity*> entities;
+	entities.push_back(&car);
+	entities.push_back(&flag);
+
+
 	// Loop until the user closes the window
 	while (!quit) {
-
 		quit = input.HandleInput();
 
 		// Physics simulation
-		physics.processInput(input.getInputState());
+		auto inputState = input.getInputState();
+
+
+		// Repeat for all vehicles eventually...
+		car.processInput(inputState);
+
+		for (const auto& entity : entities)
+			entity->simulate(physics);
+		
 		physics.stepPhysics();
 
-
-		PxU32 nbActors = physics.gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
-		std::vector<PxMat44> modelMatrices;
-		if (nbActors)
-		{
-			std::vector<PxRigidActor*> actors(nbActors);
-
-			physics.gScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-			modelMatrices = generateTransform(&actors[0], static_cast<PxU32>(actors.size()));
-		}
 		// Render
 		window.startImGuiFrame();
 		Window::clear();
 
 		// Update camera
-		sCamera->updateCamera(body->getModelMatrix());
+		sCamera->updateCamera(car.mGeometry->getModelMatrix());
 
 		shaderProgram.use();
 
 		// Draw arena
 		arena.drawArena();
 
-		auto counter = 1;
-		for (auto& model : models)
-		{
-			model->draw(modelMatrices[counter]);
-			++counter;
-		}
+		for (const auto& entity : entities)
+			entity->draw(physics);
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -121,6 +111,8 @@ int main(int argc, char** args) {
 		window.swap();
 	}
 	//cleanup
+	for (const auto& entity : entities)
+		entity->cleanUpPhysics();
 	physics.CleanupPhysics();
 
 	return 0;
