@@ -92,11 +92,98 @@ void Physics::Initialize()
 	wallBody->attachShape(*wallShape); //stick shape on rigid body
 	wallShape->release(); //free shape 
 	gScene->addActor(*wallBody); //add rigid body to scene
+	readMesh("arenaTest.obj");
 
 	//----------------------------------------------------------
 
 	printf("Physx initialized\n");
 }
+#include <vector>
+std::vector<PxVec3> vectorList;
+std::vector<unsigned int> indicesList;
+
+void Physics::processNodeS(aiNode* node, const aiScene* scene)
+{
+	// Process all of the the meshes associated with the node
+	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
+	{
+		auto* const mesh = scene->mMeshes[node->mMeshes[i]];
+		processVerticesIndices(mesh);
+	}
+
+	// Repeat for all children
+	for (unsigned int i = 0; i < node->mNumChildren; ++i)
+	{
+		processNodeS(node->mChildren[i], scene);
+	}
+}
+
+void Physics::processVerticesIndices(aiMesh* mesh)
+{
+
+	// Process all of the vertices
+	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
+	{
+		auto vertex = mesh->mVertices[i];
+		vectorList.push_back(PxVec3(vertex.x, vertex.y, vertex.z));
+	}
+
+	// Process indices
+	for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
+	{
+		const auto face = mesh->mFaces[i];
+		for (unsigned int j = 0; j < face.mNumIndices; ++j) {
+			
+			indicesList.push_back(face.mIndices[j]);
+		}
+	}
+
+
+}
+void Physics::readMesh(string modelPath){
+	Assimp::Importer importer;
+	const auto* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+	{
+		fmt::print("ERROR::ASSIMP::{}\n", importer.GetErrorString());
+		throw std::runtime_error("Failed to load model");
+	}
+	processNodeS(scene->mRootNode, scene);
+	
+	std::cout << vectorList.size() << std::endl;
+	std::cout << indicesList.size() << std::endl;
+	const int vectorListSize = 8588;
+	PxVec3* convexVerts = new PxVec3[vectorListSize];
+	const int indicesListSize = 13529;
+	int* indicesVerts = new int[indicesListSize];
+	for (int i = 0; i < vectorListSize; i++) {
+		convexVerts[i] = vectorList.at(i);
+	}
+	for (int i = 0; i < indicesListSize; i++) {
+		indicesVerts[i] = indicesList.at(i);
+	}
+	std::cout << sizeof(convexVerts) << std::endl;
+	std::cout << sizeof(indicesVerts) << std::endl;
+
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count = 8588;
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = convexVerts;
+
+	meshDesc.triangles.count = 13529;
+	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	meshDesc.triangles.data = indicesVerts;
+
+	PxTriangleMesh* convexMesh = gCooking->createTriangleMesh(meshDesc, gPhysics->getPhysicsInsertionCallback());
+
+	PxShape* awallShape = gPhysics->createShape(PxTriangleMeshGeometry(convexMesh), *gMaterial, true); //create shape
+	awallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
+	PxRigidStatic* awallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create static rigid body - wont move
+	awallBody->attachShape(*awallShape); //stick shape on rigid body
+	awallShape->release(); //free shape 
+	gScene->addActor(*awallBody); //add rigid body to scene
+}
+
 
 VehicleDesc Physics::initVehicleDesc() const
 {
