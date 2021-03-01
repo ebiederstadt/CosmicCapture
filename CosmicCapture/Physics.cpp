@@ -8,6 +8,9 @@
 #include "TriggerCallback.h"
 #include <physx/vehicle/PxVehicleUtil.h>
 #include <iostream>
+#include <fstream>
+#include <string>
+
 
 
 using namespace physx;
@@ -27,10 +30,11 @@ PxF32 gSteerVsForwardSpeedData[2 * 8] =
 };
 PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedData, 4);
 
+
 PxVehicleKeySmoothingData gKeySmoothingData =
 {
 	{
-		6.0f,	//rise rate eANALOG_INPUT_ACCEL
+		100.0f,	//rise rate eANALOG_INPUT_ACCEL
 		6.0f,	//rise rate eANALOG_INPUT_BRAKE		
 		6.0f,	//rise rate eANALOG_INPUT_HANDBRAKE	
 		2.5f,	//rise rate eANALOG_INPUT_STEER_LEFT
@@ -66,10 +70,9 @@ PxVehiclePadSmoothingData gPadSmoothingData =
 
 PxVehicleDrive4WRawInputData gVehicleInputData;
 
-PxF32					gVehicleModeLifetime = 4.0f;
-PxF32					gVehicleModeTimer = 0.0f;
-PxU32					gVehicleOrderProgress = 0;
-bool					gVehicleOrderComplete = false;
+//PxF32					gVehicleModeLifetime = 4.0f;
+//PxF32					gVehicleModeTimer = 0.0f;
+//bool					gVehicleOrderComplete = false;
 bool					gMimicKeyInputs = true;
 
 
@@ -113,7 +116,7 @@ ContactReportCallback gContactReportCallback;
 
 void Physics::Initialize() {
 	inReverseMode = false;
-	
+
 	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
 	
 	gPvd = PxCreatePvd(*gFoundation);
@@ -130,10 +133,8 @@ void Physics::Initialize() {
 	sceneDesc.filterShader = VehicleFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	
-
 	gScene = gPhysics->createScene(sceneDesc);
-	
-	
+
 	PxPvdSceneClient* pvdClient = gScene->getScenePvdClient();
 	if (pvdClient)
 	{
@@ -178,10 +179,23 @@ void Physics::Initialize() {
 	gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
 	gVehicle4W->mDriveDynData.setUseAutoGears(true);
 
-	gVehicleModeTimer = 0.0f;
-	gVehicleOrderProgress = 0;
 	startBrakeMode();
 
+	//Create a vehicle that will drive on the plane.
+	VehicleDesc vehicleDesc2 = initVehicleDesc();
+	gVehicle4W2 = createVehicle4W(vehicleDesc2, gPhysics, gCooking);
+	PxTransform startTransform2(PxVec3(-30, (vehicleDesc2.chassisDims.y * 0.5f + vehicleDesc2.wheelRadius + 1.0f), -30), PxQuat(PxIdentity));
+	gVehicle4W2->getRigidDynamicActor()->setGlobalPose(startTransform2);
+	gScene->addActor(*gVehicle4W2->getRigidDynamicActor());
+
+	//Set the vehicle to rest in first gear.
+	//Set the vehicle to use auto-gears.
+	gVehicle4W2->setToRestState();
+	gVehicle4W2->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
+	gVehicle4W2->mDriveDynData.setUseAutoGears(true);
+
+	startBrakeMode();
+	
 	//Collision test objects------------------------------------
 	PxShape* ballShape = gPhysics->createShape(PxSphereGeometry(5.0f), *gMaterial, true); //create shape
 	ballShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
@@ -189,7 +203,7 @@ void Physics::Initialize() {
 	ballBody->attachShape(*ballShape); //stick shape on rigid body
 	ballShape->release(); //free shape 
 	gScene->addActor(*ballBody); //add rigid body to scene
-
+	
 	PxShape* wallShape = gPhysics->createShape(PxBoxGeometry(10.0f, 10.0f, 0.1f), *gMaterial, true); //create shape
 	wallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
 	PxRigidStatic* wallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 10.f, -15.f))); //create static rigid body - wont move
@@ -225,11 +239,98 @@ void Physics::Initialize() {
 	dropoffBox = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 1.f, 0.f)));
 	dropoffBox->attachShape(*dropoffShape);
 	gScene->addActor(*dropoffBox);
-	//----------------------------------------------------------
+	readMesh("arenaTest.obj");
 
 	printf("Physx initialized\n");
 	
 }
+
+#include <vector>
+std::vector<PxVec3> vectorList;
+std::vector<unsigned int> indicesList;
+
+void Physics::processNodeS(aiNode* node, const aiScene* scene)
+{
+	// Process all of the the meshes associated with the node
+	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
+	{
+		auto* const mesh = scene->mMeshes[node->mMeshes[i]];
+		processVerticesIndices(mesh);
+	}
+
+	// Repeat for all children
+	for (unsigned int i = 0; i < node->mNumChildren; ++i)
+	{
+		processNodeS(node->mChildren[i], scene);
+	}
+}
+
+void Physics::processVerticesIndices(aiMesh* mesh)
+{
+
+	// Process all of the vertices
+	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
+	{
+		auto vertex = mesh->mVertices[i];
+		vectorList.push_back(PxVec3(vertex.x, vertex.y, vertex.z));
+	}
+
+	// Process indices
+	for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
+	{
+		const auto face = mesh->mFaces[i];
+		for (unsigned int j = 0; j < face.mNumIndices; ++j) {
+			
+			indicesList.push_back(face.mIndices[j]);
+		}
+	}
+
+
+}
+void Physics::readMesh(string modelPath){
+	Assimp::Importer importer;
+	const auto* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+	{
+		fmt::print("ERROR::ASSIMP::{}\n", importer.GetErrorString());
+		throw std::runtime_error("Failed to load model");
+	}
+	processNodeS(scene->mRootNode, scene);
+	
+	std::cout << vectorList.size() << std::endl;
+	std::cout << indicesList.size() << std::endl;
+	const int vectorListSize = 8588;
+	PxVec3* convexVerts = new PxVec3[vectorListSize];
+	const int indicesListSize = 13529;
+	int* indicesVerts = new int[indicesListSize];
+	for (int i = 0; i < vectorListSize; i++) {
+		convexVerts[i] = vectorList.at(i);
+	}
+	for (int i = 0; i < indicesListSize; i++) {
+		indicesVerts[i] = indicesList.at(i);
+	}
+	std::cout << sizeof(convexVerts) << std::endl;
+	std::cout << sizeof(indicesVerts) << std::endl;
+
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count = 8588;
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = convexVerts;
+
+	meshDesc.triangles.count = 13529;
+	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	meshDesc.triangles.data = indicesVerts;
+
+	PxTriangleMesh* convexMesh = gCooking->createTriangleMesh(meshDesc, gPhysics->getPhysicsInsertionCallback());
+
+	PxShape* awallShape = gPhysics->createShape(PxTriangleMeshGeometry(convexMesh), *gMaterial, true); //create shape
+	awallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
+	PxRigidStatic* awallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create static rigid body - wont move
+	awallBody->attachShape(*awallShape); //stick shape on rigid body
+	awallShape->release(); //free shape 
+	gScene->addActor(*awallBody); //add rigid body to scene
+}
+
 
 VehicleDesc Physics::initVehicleDesc()
 {
@@ -287,19 +388,21 @@ void Physics::stepPhysics()
 	}
 
 	//Raycasts.
-	PxVehicleWheels* vehicles[1] = { gVehicle4W };
+	PxVehicleWheels* vehicles[2] = { gVehicle4W, gVehicle4W2 };
 	PxRaycastQueryResult* raycastResults = gVehicleSceneQueryData->getRaycastQueryResultBuffer(0);
 	const PxU32 raycastResultsSize = gVehicleSceneQueryData->getQueryResultBufferSize();
-	PxVehicleSuspensionRaycasts(gBatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
+	PxVehicleSuspensionRaycasts(gBatchQuery, 2, vehicles, raycastResultsSize, raycastResults);
 
 	//Vehicle update.
 	const PxVec3 grav = gScene->getGravity();
 	PxWheelQueryResult wheelQueryResults[PX_MAX_NB_WHEELS];
-	PxVehicleWheelQueryResult vehicleQueryResults[1] = { {wheelQueryResults, gVehicle4W->mWheelsSimData.getNbWheels()} };
-	PxVehicleUpdates(timestep, grav, *gFrictionPairs, 1, vehicles, vehicleQueryResults);
+	PxVehicleWheelQueryResult vehicleQueryResults[2] = { {wheelQueryResults, gVehicle4W->mWheelsSimData.getNbWheels()}, {wheelQueryResults, gVehicle4W2->mWheelsSimData.getNbWheels()} };
+	PxVehicleUpdates(timestep, grav, *gFrictionPairs, 2, vehicles, vehicleQueryResults);
 
 	//Work out if the vehicle is in the air.
 	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
+	gIsVehicleInAir = gVehicle4W2->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[1]);
+
 
 	if (flagPickedUp) {
 		

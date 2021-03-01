@@ -20,7 +20,6 @@
 
 float angle = -0.25f;
 
-
 int main(int argc, char** args) {
 	// Window Initialization
 	const GLint width = 1280, height = 720;
@@ -32,13 +31,14 @@ int main(int argc, char** args) {
 	const auto sCamera = std::make_shared<Camera>(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 	physics.Initialize();
 
+	
 	Input input = Input();
 
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
 
 	// The arena model
-	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/arenaTest.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 	auto wheel1 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 	auto wheel2 = std::make_shared<Model>("models/cube.ply", "textures/wall.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
@@ -65,17 +65,15 @@ int main(int argc, char** args) {
 	models.push_back(wheel5);
 	models.push_back(wheel6);
 	models.push_back(body);
-  models.push_back(dynamicBall);
-  models.push_back(staticWall);
-  models.push_back(flag);
-  models.push_back(dropoffZone);
+	models.push_back(dynamicBall);
+	models.push_back(staticWall);
+	models.push_back(flag);
+	models.push_back(dropoffZone);
 
 	//main loop flag
 	bool quit = false;
 
 	// Loop until the user closes the window
-
-
 	while (!quit) {
 
 		quit = input.HandleInput();
@@ -83,6 +81,7 @@ int main(int argc, char** args) {
 		// Physics simulation
 		physics.processInput(input.getInputState());
 		physics.stepPhysics();
+
 
 		PxU32 nbActors = physics.gScene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
 		std::vector<PxMat44> modelMatrices;
@@ -93,7 +92,6 @@ int main(int argc, char** args) {
 			physics.gScene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
 			modelMatrices = generateTransform(&actors[0], static_cast<PxU32>(actors.size()));
 		}
-
 		// Render
 		window.startImGuiFrame();
 		Window::clear();

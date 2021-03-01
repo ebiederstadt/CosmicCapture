@@ -6,6 +6,15 @@
 
 #include "input.h"
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include "graphics/Geometry.h"
+
 #define PX_RELEASE(x) if(x){x->release();x=NULL;}
 #define PVD_HOST "127.0.0.1"
 
@@ -75,6 +84,7 @@ struct VehicleDesc
 
 class Physics {
 public:
+	
 	bool inReverseMode;
 	static Physics& Instance();
 	void Initialize();
@@ -99,6 +109,10 @@ public:
 	void stepPhysics();
 
 	void processInput(const std::map<MovementFlags, bool>& inputs);
+
+	void readMesh(std::string modelPath);
+	void processNodeS(aiNode* node, const aiScene* scene);
+	void processVerticesIndices(aiMesh* mesh);
 
 	//SnippetVehicle4WCreate
 	void computeWheelCenterActorOffsets4W(const PxF32 wheelFrontZ, const PxF32 wheelRearZ, const PxVec3& chassisDims, const PxF32 wheelWidth, const PxF32 wheelRadius, const PxU32 numWheels, PxVec3* wheelCentreOffsets);
@@ -136,11 +150,9 @@ public:
 
 	PxRigidStatic* gGroundPlane = NULL;
 	PxVehicleDrive4W* gVehicle4W = NULL;
-
-	
+	PxVehicleDrive4W* gVehicle4W2 = NULL;
 
 	bool	gIsVehicleInAir = true;
+	
 private:
-
-
 };
