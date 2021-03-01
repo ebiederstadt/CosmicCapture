@@ -1,7 +1,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_gamecontroller.h>
 #include "input.h"
-#include "Physics.h"
+
 
 
 /*
@@ -11,7 +11,7 @@
   https://www.falukdevelop.com/2016/11/02/sdl2-controller-implementation/
 
 */
-Physics physics = Physics::Instance();
+
 Input::Input()
 {
     mInputMap[MovementFlags::LEFT] = true;
