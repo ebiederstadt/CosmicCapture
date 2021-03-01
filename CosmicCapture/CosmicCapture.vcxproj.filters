@@ -45,6 +45,8 @@
     <ClCompile Include="graphics\Texture.cpp" />
     <ClCompile Include="ContactModification.cpp" />
     <ClCompile Include="TriggerCallback.cpp" />
+    <ClCompile Include="audio\AudioEngine.cpp" />
+    <ClCompile Include="audio\AudioInstance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -97,6 +99,8 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="ContactModification.h" />
     <ClInclude Include="TriggerCallback.h" />
+    <ClInclude Include="audio\AudioEngine.h" />
+    <ClInclude Include="audio\AudioInstance.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
@@ -104,6 +108,8 @@
     <None Include="shaders\main.frag" />
     <None Include="shaders\main.vert" />
     <None Include="models\cube.ply" />
+    <None Include="shaders\simple.frag" />
+    <None Include="shaders\simple.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\camouflage.jpg" />

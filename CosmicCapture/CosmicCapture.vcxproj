@@ -78,13 +78,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)lib\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\Debug\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)lib\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\Release\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnabled>false</VcpkgEnabled>
@@ -129,7 +129,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXTask_static_64.lib;PhysXVehicle_static_64.lib;PhysXPvdSDK_static_64.lib;opengl32.lib;glew32.lib;SDL2.lib;SDL2main.lib;SnippetRender_static_64.lib;SnippetUtils_static_64.lib;SimulationController_static_64.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXTask_static_64.lib;PhysXVehicle_static_64.lib;PhysXPvdSDK_static_64.lib;opengl32.lib;glew32.lib;SDL2.lib;SDL2main.lib;SnippetRender_static_64.lib;SnippetUtils_static_64.lib;SimulationController_static_64.lib;assimp-vc142-mtd.lib;common.lib;ex-common.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -148,11 +148,13 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXTask_static_64.lib;PhysXVehicle_static_64.lib;PhysXPvdSDK_static_64.lib;opengl32.lib;glew32.lib;SDL2.lib;SDL2main.lib;SnippetRender_static_64.lib;SnippetUtils_static_64.lib;SimulationController_static_64.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXTask_static_64.lib;PhysXVehicle_static_64.lib;PhysXPvdSDK_static_64.lib;opengl32.lib;glew32.lib;SDL2.lib;SDL2main.lib;SnippetRender_static_64.lib;SnippetUtils_static_64.lib;SimulationController_static_64.lib;assimp-vc142-mtd.lib;common.lib;ex-common.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="audio\AudioEngine.cpp" />
+    <ClCompile Include="audio\AudioInstance.cpp" />
     <ClCompile Include="ContactModification.cpp" />
     <ClCompile Include="GlDebug.cpp" />
     <ClCompile Include="graphics\ElementBuffer.cpp" />
@@ -185,6 +187,8 @@
     <ClCompile Include="VehicleTireFriction.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="audio\AudioEngine.h" />
+    <ClInclude Include="audio\AudioInstance.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ContactModification.h" />
     <ClInclude Include="GlDebug.h" />
@@ -221,6 +225,8 @@
     <None Include="models\monkey.ply" />
     <None Include="shaders\main.frag" />
     <None Include="shaders\main.vert" />
+    <None Include="shaders\simple.frag" />
+    <None Include="shaders\simple.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\camouflage.jpg" />

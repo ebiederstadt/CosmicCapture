@@ -16,6 +16,8 @@
 #include "Render.h"
 
 
+
+
 #define M_PI  3.14159265358979323846
 
 float angle = -0.25f;
@@ -33,6 +35,12 @@ int main(int argc, char** args) {
 	physics.Initialize();
 
 	Input input = Input();
+
+	// Enable depth testing and set up related shader for shhadows
+	glEnable(GL_DEPTH_TEST);
+
+	ShaderProgram simpleDepthShader("shaders/simple.vert", "shaders/simple.frag");
+	simpleDepthShader.compile();
 
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
@@ -70,6 +78,45 @@ int main(int argc, char** args) {
   models.push_back(flag);
   models.push_back(dropoffZone);
 
+  // Shadow setup start ---------------------------------------------------------------------
+
+  // Configure depth map FBO
+  unsigned int depthMapFBO;
+  glGenFramebuffers(1, &depthMapFBO);
+  const unsigned int SHADOW_WIDTH = 1024 * 4, SHADOW_HEIGHT = 1024 * 4;
+
+  // create depth texture
+  unsigned int depthMap;
+  glGenTextures(1, &depthMap);
+  glBindTexture(GL_TEXTURE_2D, depthMap);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+	  SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+  float borderColor[] = { 1.0, 1.0, 1.0, 1.0, 1.0 };
+  glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+  // attach depth texture as FBO's depth buffer
+  glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+  glDrawBuffer(GL_NONE);
+  glReadBuffer(GL_NONE);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  // Set sampler aliases
+  shaderProgram.use();
+
+  auto mShaderID = static_cast<unsigned int>(shaderProgram);
+  auto samplerLoc = glGetUniformLocation(mShaderID, "textureSampler");
+  glUniform1i(samplerLoc, 0);
+  samplerLoc = glGetUniformLocation(mShaderID, "shadowMap");
+  glUniform1i(samplerLoc, 1);
+
+  // Shadow setup end ---------------------------------------------------------------------
+
+
 	//main loop flag
 	bool quit = false;
 
@@ -101,15 +148,57 @@ int main(int argc, char** args) {
 		// Update camera
 		sCamera->updateCamera(body->getModelMatrix());
 
-		shaderProgram.use();
+		auto counter = 1;
+
+		// first render to depth map ---------------
+
+		simpleDepthShader.use();
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
 
 		// Draw arena
-		arena.drawArena();
+		arena.drawArena(simpleDepthShader, true, depthMapFBO);
 
-		auto counter = 1;
 		for (auto& model : models)
 		{
-			model->draw(modelMatrices[counter]);
+			model->draw(modelMatrices[counter], simpleDepthShader, true, depthMapFBO);
+			++counter;
+		}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, width, height);
+		//glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Now standard rendering -----------------
+
+		shaderProgram.use();
+
+		float near_plane = 200.f, far_plane = 600.f;
+
+		auto nearLoc = glGetUniformLocation(mShaderID, "near_plane");
+		glUniform1f(nearLoc, near_plane);
+
+		auto farLoc = glGetUniformLocation(mShaderID, "far_plane");
+		glUniform1f(farLoc, far_plane);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+
+		glActiveTexture(GL_TEXTURE0);
+
+		// Draw arena
+		arena.drawArena(shaderProgram, false, depthMap);
+
+		counter = 1;
+		for (auto& model : models)
+		{
+			model->draw(modelMatrices[counter], shaderProgram, false, depthMap);
 			++counter;
 		}
 
