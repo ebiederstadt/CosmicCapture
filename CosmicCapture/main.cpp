@@ -156,6 +156,19 @@ int main(int argc, char** args) {
 		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
 		//printf("%f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z);
 
+		if (State::scores[0] == 3) {
+			fmt::print("You win ");
+		}
+		else if (State::scores[1] == 3) {
+			fmt::print("Opponent 1 wins");
+		}
+		else if (State::scores[2] == 3) {
+			fmt::print("Opponent 2 wins");
+		}
+		else if (State::scores[3] == 3) {
+			fmt::print("Opponent 3 wins");
+		}
+
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Text("Camera Position");

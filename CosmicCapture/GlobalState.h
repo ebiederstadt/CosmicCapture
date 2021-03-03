@@ -16,6 +16,8 @@ struct State
 
 	inline static PxRigidDynamic* vehicleRDs[4] = { nullptr, nullptr, nullptr, nullptr };
 
+	inline static int scores[4] = {0, 0, 0, 0};
+
 	inline static PxRigidDynamic* projectileBody = nullptr;
 	inline static PxRigidStatic* projectilePickupMarkerBody = nullptr;
 	inline static PxRigidStatic* projectilePickupTriggerBody = nullptr;
