@@ -11,10 +11,7 @@ public:
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
 
-	void attachVehicle(PxVehicleDrive4W* vehicle) { mVehicles.push_back(vehicle); }
-
 private:
-	std::vector<PxVehicleDrive4W*> mVehicles;
 	int playerNum;
 };
 

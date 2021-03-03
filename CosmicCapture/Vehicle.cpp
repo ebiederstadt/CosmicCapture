@@ -22,8 +22,26 @@ void Vehicle::attachPhysics(Physics& instance)
 {
 	const VehicleDesc vehicleDesc = instance.initVehicleDesc();
 	mVehicle4W = createVehicle4W(vehicleDesc, instance.gPhysics, instance.gCooking);
-	const PxTransform startTransform(PxVec3((player == 0) ? -155 : 10, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), (player == 0) ? -155 : 10),
-	                                 PxQuat(PxIdentity)); //inline ternary operators are probably not the best choice but they work for now
+	float x = 0; 
+	float z = 0;
+	if (player == 0) {
+		x = 65.f;
+		z = 65.f;
+	}
+	else if (player == 1) {
+		x = -65.f;
+		z = 65.f;
+	}
+	else if (player == 2) {
+		x = 65.f;
+		z = -65.f;
+	}
+	else {
+		x = -65.f;
+		z = -65.f;
+	}
+	const PxTransform startTransform(PxVec3(x, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), z),
+		PxQuat(PxIdentity)); //inline ternary operators are probably not the best choice but they work for now
 	mVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
 	instance.gScene->addActor(*mVehicle4W->getRigidDynamicActor());
 

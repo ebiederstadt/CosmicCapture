@@ -40,11 +40,20 @@ void Flag::draw(Physics& instance)
 void Flag::simulate(Physics& instance)
 {
 	// TODO: Assuming that there is only one vehicle, should change that at some point
-	if (State::flagPickedUp) {
-		if (mVehicles.empty())
-			throw std::runtime_error("Error: Must provide at least one vehicle for the flag to collide with");
-
-		PxVec3 pos = mVehicles[0]->getRigidDynamicActor()->getGlobalPose().p;
+	if (State::flagPickedUp[0]) {
+		PxVec3 pos = State::vehicleRDs[0]->getGlobalPose().p;
+		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
+	}
+	else if (State::flagPickedUp[1]) {
+		PxVec3 pos = State::vehicleRDs[1]->getGlobalPose().p;
+		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
+	}
+	else if (State::flagPickedUp[2]) {
+		PxVec3 pos = State::vehicleRDs[2]->getGlobalPose().p;
+		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
+	}
+	else if (State::flagPickedUp[3]) {
+		PxVec3 pos = State::vehicleRDs[3]->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else {

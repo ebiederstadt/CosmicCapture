@@ -19,6 +19,8 @@
 #include "Projectile.h"
 #include "ProjectilePickupZone.h"
 
+#include "GlobalState.h"
+
 
 #define M_PI  3.14159265358979323846
 
@@ -51,9 +53,19 @@ int main(int argc, char** args) {
 	// Entities
 	Vehicle car(shaderProgram, sCamera, 0, "textures/blank.jpg");
 	car.attachPhysics(physics);
+	State::vehicleRDs[0] = car.getVehicle()->getRigidDynamicActor();
 
 	Vehicle opponentCar1(shaderProgram, sCamera, 1, "textures/blue.jpg");
 	opponentCar1.attachPhysics(physics);
+	State::vehicleRDs[1] = opponentCar1.getVehicle()->getRigidDynamicActor();
+
+	Vehicle opponentCar2(shaderProgram, sCamera, 2, "textures/pink.jpg");
+	opponentCar2.attachPhysics(physics);
+	State::vehicleRDs[2] = opponentCar2.getVehicle()->getRigidDynamicActor();
+
+	Vehicle opponentCar3(shaderProgram, sCamera, 3, "textures/green.jpg");
+	opponentCar3.attachPhysics(physics);
+	State::vehicleRDs[3] = opponentCar3.getVehicle()->getRigidDynamicActor();
 
 	//projectile prototype stuff----------------------
 	Projectile testProj(shaderProgram, sCamera);
@@ -63,18 +75,31 @@ int main(int argc, char** args) {
 	
 	Flag flag(shaderProgram, sCamera);
 	flag.attachPhysics(physics);
-	flag.attachVehicle(car.getVehicle());
 
-	FlagDropoffZone flagDropoffZone(shaderProgram, sCamera, 0);
-	flagDropoffZone.attachPhysics(physics);
-	flagDropoffZone.attachVehicle(car.getVehicle());
+	FlagDropoffZone flagDropoffZone0(shaderProgram, sCamera, 0);
+	flagDropoffZone0.attachPhysics(physics);
+
+	FlagDropoffZone flagDropoffZone1(shaderProgram, sCamera, 1);
+	flagDropoffZone1.attachPhysics(physics);
+
+	FlagDropoffZone flagDropoffZone2(shaderProgram, sCamera, 2);
+	flagDropoffZone2.attachPhysics(physics);
+
+	FlagDropoffZone flagDropoffZone3(shaderProgram, sCamera, 3);
+	flagDropoffZone3.attachPhysics(physics);
+
 
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
 	entities.push_back(&flag);
-	entities.push_back(&flagDropoffZone);
+	entities.push_back(&flagDropoffZone0);
+	entities.push_back(&flagDropoffZone1);
+	entities.push_back(&flagDropoffZone2);
+	entities.push_back(&flagDropoffZone3);
 	entities.push_back(&projPickupZone);
 	entities.push_back(&opponentCar1);
+	entities.push_back(&opponentCar2);
+	entities.push_back(&opponentCar3);
 
 	
 
@@ -99,10 +124,10 @@ int main(int argc, char** args) {
 
 		//forgive me--------------------
 		std::map<MovementFlags, bool> testInputMap;
-		testInputMap[MovementFlags::LEFT] = false;
+		testInputMap[MovementFlags::LEFT] = true;
 		testInputMap[MovementFlags::RIGHT] = true;
 		testInputMap[MovementFlags::DOWN] = true;
-		testInputMap[MovementFlags::UP] = false;
+		testInputMap[MovementFlags::UP] = true;
 		opponentCar1.processInput(testInputMap);
 		//------------------------------*/
 		
@@ -128,8 +153,8 @@ int main(int argc, char** args) {
 			entity->draw(physics);
 		
 		//player pos
-		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		printf("%f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z);
+		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		//printf("%f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z);
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
