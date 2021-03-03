@@ -3,6 +3,11 @@
 #include "ContactReportCallback.h"
 #include "physx/PxPhysicsAPI.h"
 #include "VehicleSceneQuery.h"
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <fmt/format.h>
+#include <assimp/mesh.h>
+#include <assimp/scene.h>
 
 #define PX_RELEASE(x) if(x){x->release();x=NULL;}
 #define PVD_HOST "127.0.0.1"
@@ -82,6 +87,9 @@ public:
 	[[nodiscard]] VehicleDesc initVehicleDesc() const;
 
 	void stepPhysics() const;
+	void readMesh(std::string modelPath);
+	void processNodeS(aiNode* node, const aiScene* scene);
+	void processVerticesIndices(aiMesh* mesh);
 
 	//SnippetVehicle4WCreate
 	static void computeWheelCenterActorOffsets4W(PxF32 wheelFrontZ, PxF32 wheelRearZ, const PxVec3& chassisDims,

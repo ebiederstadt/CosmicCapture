@@ -1,5 +1,3 @@
-
-
 // This code contains NVIDIA Confidential Information and is disclosed to you
 // under a form of NVIDIA software license agreement provided separately to you.
 //
@@ -39,7 +37,7 @@ using namespace physx;
 static PxF32 gTireFrictionMultipliers[MAX_NUM_SURFACE_TYPES][MAX_NUM_TIRE_TYPES] =
 {
 	//NORMAL,	WORN
-	{1.00f,		0.1f}//TARMAC
+	{3.00f,		0.1f}//TARMAC
 };
 
 PxVehicleDrivableSurfaceToTireFrictionPairs* createFrictionPairs(const PxMaterial* defaultMaterial)

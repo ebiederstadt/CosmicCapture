@@ -26,7 +26,6 @@
 
 float angle = -0.25f;
 
-
 int main(int argc, char** args) {
 	// Window Initialization
 	const GLint width = 1280, height = 720;
@@ -38,17 +37,19 @@ int main(int argc, char** args) {
 	const auto sCamera = std::make_shared<Camera>(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 	physics.Initialize();
 
+	
 	Input input = Input();
 
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
 
 	// The arena model
-	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera);
+	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 
 	//main loop flag
 	bool quit = false;
+
 
 	// Entities
 	Vehicle car(shaderProgram, sCamera, 0, "textures/blank.jpg");
@@ -103,6 +104,7 @@ int main(int argc, char** args) {
 
 	
 
+
 	// Loop until the user closes the window
 	while (!quit) {
 		quit = input.HandleInput();
@@ -110,6 +112,7 @@ int main(int argc, char** args) {
 		// Physics simulation
 		auto inputState = input.getInputState();
 		
+
 
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);

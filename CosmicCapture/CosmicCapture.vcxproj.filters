@@ -116,5 +116,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
+    <None Include="arenaTest.mtl" />
   </ItemGroup>
 </Project>
