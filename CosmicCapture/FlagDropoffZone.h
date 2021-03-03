@@ -1,18 +1,17 @@
-#pragma once
-
 #include "Entity.h"
 #include "GlobalState.h"
 #include "physics/VehicleFilterShader.h"
-
-class Flag : public Entity
+class FlagDropoffZone : public Entity
 {
 public:
-	Flag(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera);
+	FlagDropoffZone(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, int playerNum);
 
 	void attachPhysics(Physics& instance) override;
 	void draw(Physics& instance) override;
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
 
+private:
+	int playerNum;
 };
 

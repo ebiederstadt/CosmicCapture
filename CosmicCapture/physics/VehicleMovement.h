@@ -8,23 +8,26 @@ using namespace physx;
 class VehicleMovement
 {
 public:
-	static void startAccelerateForwardsMode();
-	static void startAccelerateReverseMode();
-	static void startBrakeMode();
-	static void startTurnHardLeftMode();
-	static void startTurnHardRightMode();
-	static void startHandbrakeTurnLeftMode();
-	static void startHandbrakeTurnRightMode();
+	VehicleMovement();
+	VehicleMovement(bool flag);
 
-	static void stopAccelerateForwardsMode();
-	static void stopBrakeMode();
-	static void stopTurnHardLeftMode();
-	static void stopTurnHardRightMode();
+	void startAccelerateForwardsMode();
+	void startAccelerateReverseMode();
+	void startBrakeMode();
+	void startTurnHardLeftMode();
+	void startTurnHardRightMode();
+	void startHandbrakeTurnLeftMode();
+	void startHandbrakeTurnRightMode();
 
-	static void releaseAllControls();
+	void stopAccelerateForwardsMode();
+	void stopBrakeMode();
+	void stopTurnHardLeftMode();
+	void stopTurnHardRightMode();
+
+	void releaseAllControls();
 
 	
-	static inline PxVehicleDrive4WRawInputData gVehicleInputData;
-	constexpr static bool gMimicKeyInputs = true;
+	PxVehicleDrive4WRawInputData gVehicleInputData;
+	bool gMimicKeyInputs = true;
 };
 

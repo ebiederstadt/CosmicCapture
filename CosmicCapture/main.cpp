@@ -15,6 +15,11 @@
 #include "Camera.h"
 #include "Vehicle.h"
 #include "Flag.h"
+#include "FlagDropoffZone.h"
+#include "Projectile.h"
+#include "ProjectilePickupZone.h"
+
+#include "GlobalState.h"
 
 
 #define M_PI  3.14159265358979323846
@@ -42,32 +47,62 @@ int main(int argc, char** args) {
 	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 
-  //gameplay sample stuff------------------------
-	auto dynamicBall = std::make_shared<Model>("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera);
-	auto staticWall = std::make_shared<Model>("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera);
-	//---------------------------------------------
-
-	std::vector<std::shared_ptr<Model>> models;
-
-	models.push_back(dynamicBall);
-	models.push_back(staticWall);
-
-
 	//main loop flag
 	bool quit = false;
 
 
 	// Entities
-	Vehicle car(shaderProgram, sCamera);
+	Vehicle car(shaderProgram, sCamera, 0, "textures/blank.jpg");
 	car.attachPhysics(physics);
+	State::vehicleRDs[0] = car.getVehicle()->getRigidDynamicActor();
 
+	Vehicle opponentCar1(shaderProgram, sCamera, 1, "textures/blue.jpg");
+	opponentCar1.attachPhysics(physics);
+	State::vehicleRDs[1] = opponentCar1.getVehicle()->getRigidDynamicActor();
+
+	Vehicle opponentCar2(shaderProgram, sCamera, 2, "textures/pink.jpg");
+	opponentCar2.attachPhysics(physics);
+	State::vehicleRDs[2] = opponentCar2.getVehicle()->getRigidDynamicActor();
+
+	Vehicle opponentCar3(shaderProgram, sCamera, 3, "textures/green.jpg");
+	opponentCar3.attachPhysics(physics);
+	State::vehicleRDs[3] = opponentCar3.getVehicle()->getRigidDynamicActor();
+
+	//projectile prototype stuff----------------------
+	Projectile testProj(shaderProgram, sCamera);
+	ProjectilePickupZone projPickupZone(shaderProgram, sCamera);
+	projPickupZone.attachPhysics(physics);
+	//------------------------------------------------
+	
 	Flag flag(shaderProgram, sCamera);
 	flag.attachPhysics(physics);
-	flag.attachVehicle(car.getVehicle());
+
+	FlagDropoffZone flagDropoffZone0(shaderProgram, sCamera, 0);
+	flagDropoffZone0.attachPhysics(physics);
+
+	FlagDropoffZone flagDropoffZone1(shaderProgram, sCamera, 1);
+	flagDropoffZone1.attachPhysics(physics);
+
+	FlagDropoffZone flagDropoffZone2(shaderProgram, sCamera, 2);
+	flagDropoffZone2.attachPhysics(physics);
+
+	FlagDropoffZone flagDropoffZone3(shaderProgram, sCamera, 3);
+	flagDropoffZone3.attachPhysics(physics);
+
 
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
 	entities.push_back(&flag);
+	entities.push_back(&flagDropoffZone0);
+	entities.push_back(&flagDropoffZone1);
+	entities.push_back(&flagDropoffZone2);
+	entities.push_back(&flagDropoffZone3);
+	entities.push_back(&projPickupZone);
+	entities.push_back(&opponentCar1);
+	entities.push_back(&opponentCar2);
+	entities.push_back(&opponentCar3);
+
+	
 
 
 	// Loop until the user closes the window
@@ -76,10 +111,29 @@ int main(int argc, char** args) {
 
 		// Physics simulation
 		auto inputState = input.getInputState();
+		
 
 
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
+		
+		if (inputState[MovementFlags::ACTION] == false && State::projectilePickedUp) {
+			testProj.attachVehicle(car.getVehicle());
+			testProj.attachPhysics(physics);			
+			entities.push_back(&testProj);
+			
+			State::projectilePickedUp = false;
+		}
+
+		//forgive me--------------------
+		std::map<MovementFlags, bool> testInputMap;
+		testInputMap[MovementFlags::LEFT] = true;
+		testInputMap[MovementFlags::RIGHT] = true;
+		testInputMap[MovementFlags::DOWN] = true;
+		testInputMap[MovementFlags::UP] = true;
+		opponentCar1.processInput(testInputMap);
+		//------------------------------*/
+		
 
 		for (const auto& entity : entities)
 			entity->simulate(physics);
@@ -100,6 +154,23 @@ int main(int argc, char** args) {
 
 		for (const auto& entity : entities)
 			entity->draw(physics);
+		
+		//player pos
+		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		//printf("%f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z);
+
+		if (State::scores[0] == 3) {
+			fmt::print("You win ");
+		}
+		else if (State::scores[1] == 3) {
+			fmt::print("Opponent 1 wins");
+		}
+		else if (State::scores[2] == 3) {
+			fmt::print("Opponent 2 wins");
+		}
+		else if (State::scores[3] == 3) {
+			fmt::print("Opponent 3 wins");
+		}
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
