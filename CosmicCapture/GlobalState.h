@@ -8,8 +8,7 @@ using namespace physx;
 
 struct State 
 {
-	inline static int theWorld[100][100];
-
+	inline static int worldGrid[25][25];
 
 	inline static bool flagPickedUp = false;
 	inline static bool flagPickedUpBy[4] = { false, false, false, false };

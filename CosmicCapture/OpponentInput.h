@@ -1,5 +1,7 @@
 #pragma once
 #include "Input.h"
+#include "Pathfinding.h"
+#include "GlobalState.h"
 
 class OpponentInput
 {

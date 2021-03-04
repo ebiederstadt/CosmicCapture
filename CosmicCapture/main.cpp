@@ -39,6 +39,13 @@ int main(int argc, char** args) {
 	const auto sCamera = std::make_shared<Camera>(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 	physics.Initialize();
 
+	//initialize world grid temp ----------------------------
+	for (int i = 0; i < 25; i++) {
+		for (int j = 0; j < 25; j++) {
+			State::worldGrid[i][j] = 1;
+		}
+	}
+	//-------------------------------------------------------
 	
 	Input input = Input();
 
@@ -154,8 +161,8 @@ int main(int argc, char** args) {
 			entity->draw(physics);
 		
 		//player pos for testing
-		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		printf("%f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z);
+		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		//printf("%f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z);
 
 		if (State::scores[0] == 3) {
 			fmt::print("You win ");

@@ -8,21 +8,11 @@ OpponentInput::OpponentInput(int playerNumber)
 
 std::map<MovementFlags, bool> OpponentInput::getInput() {
 	std::map<MovementFlags, bool> inputMap;
-	if (counter % 3 == 0) {
-		inputMap[MovementFlags::LEFT] = true;
-		inputMap[MovementFlags::RIGHT] = true;
-		inputMap[MovementFlags::DOWN] = true;
-		inputMap[MovementFlags::UP] = false;
-	}
-	else {
-		inputMap[MovementFlags::LEFT] = false;
-		inputMap[MovementFlags::RIGHT] = true;
-		inputMap[MovementFlags::DOWN] = true;
-		inputMap[MovementFlags::UP] = false;
-	}
+	inputMap[MovementFlags::LEFT] = true;
+	inputMap[MovementFlags::RIGHT] = true;
+	inputMap[MovementFlags::DOWN] = true;
+	inputMap[MovementFlags::UP] = true;
 	counter++;
-	if (counter > 100000)
-		counter = 0;
 
 	return inputMap;
 }

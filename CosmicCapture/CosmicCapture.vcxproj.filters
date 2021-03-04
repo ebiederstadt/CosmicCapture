@@ -53,6 +53,7 @@
     <ClCompile Include="ProjectilePickupZone.cpp" />
     <ClCompile Include="FlagDropoffZone.cpp" />
     <ClCompile Include="OpponentInput.cpp" />
+    <ClCompile Include="Pathfinding.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -115,6 +116,7 @@
     <ClInclude Include="ProjectilePickupZone.h" />
     <ClInclude Include="FlagDropoffZone.h" />
     <ClInclude Include="OpponentInput.h" />
+    <ClInclude Include="Pathfinding.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

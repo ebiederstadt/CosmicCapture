@@ -156,6 +156,7 @@
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="FlagDropoffZone.cpp" />
     <ClCompile Include="OpponentInput.cpp" />
+    <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="physics\ContactReportCallback.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="physics\ContactModification.cpp" />
@@ -198,6 +199,7 @@
     <ClInclude Include="FlagDropoffZone.h" />
     <ClInclude Include="GlobalState.h" />
     <ClInclude Include="OpponentInput.h" />
+    <ClInclude Include="Pathfinding.h" />
     <ClInclude Include="physics\ContactReportCallback.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="physics\ContactModification.h" />
