@@ -162,7 +162,8 @@ int main(int argc, char** args) {
 		
 		//player pos for testing
 		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		//printf("%f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z);
+		//PxVec3 playerDir = car.getVehicle()->getRigidDynamicActor()->getLinearVelocity();
+		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
 
 		if (State::scores[0] == 3) {
 			fmt::print("You win ");

@@ -23,13 +23,13 @@ class Pathfinding
 {
 public:
 	Pathfinding();
-	void ehStarSearch(int grid[][COL], Pair src, Pair dest);
+	std::stack<Pair> ehStarSearch(int grid[][COL], Pair src, Pair dest);
 private:
 	bool isValid(int row, int col);
 	bool isUnBlocked(int grid[][COL], int row, int col);
 	bool isDestination(int row, int col, Pair dest);
 	double calculateHValue(int row, int col, Pair dest);
-	void tracePath(Cell cellDetails[][COL], Pair dest);
+	std::stack<Pair> tracePath(Cell cellDetails[][COL], Pair dest);
 };
 
 

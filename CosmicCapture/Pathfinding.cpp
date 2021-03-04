@@ -31,9 +31,8 @@ double Pathfinding::calculateHValue(int row, int col, Pair dest)
     return ((double)sqrt(pow(sqrt(row - dest.first), 2) + pow(sqrt(col - dest.second), 2))); //euclidean distance
 }
 
-void Pathfinding::tracePath(Cell cellDetails[][COL], Pair dest)
+std::stack<Pair> Pathfinding::tracePath(Cell cellDetails[][COL], Pair dest)
 {
-    printf("\nThe Path is ");
     int row = dest.first;
     int col = dest.second;
 
@@ -47,29 +46,25 @@ void Pathfinding::tracePath(Cell cellDetails[][COL], Pair dest)
         row = temp_row;
         col = temp_col;
     }
-
     Path.push(std::make_pair(row, col));
-    while (!Path.empty()) {
-        std::pair<int, int> p = Path.top();
-        Path.pop();
-        printf("-> (%d,%d) ", p.first, p.second);
-    }
 
-    return;
+    return Path;
 }
 
-void Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
+std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
 {
     // If the source is out of range
     if (isValid(src.first, src.second) == false) {
         printf("Source is invalid\n");
-        return;
+        std::stack<Pair> dummy;
+        return dummy;
     }
 
     // If the destination is out of range
     if (isValid(dest.first, dest.second) == false) {
         printf("Destination is invalid\n");
-        return;
+        std::stack<Pair> dummy;
+        return dummy;
     }
 
     // Either the source or the destination is blocked
@@ -77,14 +72,16 @@ void Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
         || isUnBlocked(grid, dest.first, dest.second)
         == false) {
         printf("Source or the destination is blocked\n");
-        return;
+        std::stack<Pair> dummy;
+        return dummy;
     }
 
     // If the destination cell is the same as source cell
     if (isDestination(src.first, src.second, dest)
         == true) {
         printf("We are already at the destination\n");
-        return;
+        std::stack<Pair> dummy;
+        return dummy;
     }
 
     bool closedList[ROW][COL];
@@ -138,9 +135,8 @@ void Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
                 cellDetails[i - 1][j].parent_i = i;
                 cellDetails[i - 1][j].parent_j = j;
                 printf("The destination cell is found\n");
-                //tracePath(cellDetails, dest);   
                 foundDest = true;
-                return;
+                return tracePath(cellDetails, dest); 
             }
 
             else if (closedList[i - 1][j] == false
@@ -174,9 +170,8 @@ void Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
                 cellDetails[i + 1][j].parent_i = i;
                 cellDetails[i + 1][j].parent_j = j;
                 printf("The destination cell is found\n");
-                //tracePath(cellDetails, dest);
                 foundDest = true;
-                return;
+                return tracePath(cellDetails, dest);
             }
 
             else if (closedList[i + 1][j] == false
@@ -210,9 +205,8 @@ void Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
                 cellDetails[i][j + 1].parent_i = i;
                 cellDetails[i][j + 1].parent_j = j;
                 printf("The destination cell is found\n");
-                //tracePath(cellDetails, dest);
                 foundDest = true;
-                return;
+                return tracePath(cellDetails, dest);
             }
 
             else if (closedList[i][j + 1] == false
@@ -244,9 +238,8 @@ void Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
                 cellDetails[i][j - 1].parent_i = i;
                 cellDetails[i][j - 1].parent_j = j;
                 printf("The destination cell is found\n");
-                //tracePath(cellDetails, dest);
                 foundDest = true;
-                return;
+                return tracePath(cellDetails, dest);
             }
 
 
@@ -280,9 +273,8 @@ void Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
                 cellDetails[i - 1][j + 1].parent_i = i;
                 cellDetails[i - 1][j + 1].parent_j = j;
                 printf("The destination cell is found\n");
-                //tracePath(cellDetails, dest);
                 foundDest = true;
-                return;
+                return tracePath(cellDetails, dest);
             }
 
             else if (closedList[i - 1][j + 1] == false
@@ -317,9 +309,8 @@ void Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
                 cellDetails[i - 1][j - 1].parent_i = i;
                 cellDetails[i - 1][j - 1].parent_j = j;
                 printf("The destination cell is found\n");
-                //tracePath(cellDetails, dest);
                 foundDest = true;
-                return;
+                return tracePath(cellDetails, dest);
             }
 
 
@@ -354,9 +345,8 @@ void Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
                 cellDetails[i + 1][j + 1].parent_i = i;
                 cellDetails[i + 1][j + 1].parent_j = j;
                 printf("The destination cell is found\n");
-                //tracePath(cellDetails, dest);
                 foundDest = true;
-                return;
+                return tracePath(cellDetails, dest);
             }
 
             else if (closedList[i + 1][j + 1] == false
@@ -390,9 +380,8 @@ void Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
                 cellDetails[i + 1][j - 1].parent_i = i;
                 cellDetails[i + 1][j - 1].parent_j = j;
                 printf("The destination cell is found\n");
-                //tracePath(cellDetails, dest);
                 foundDest = true;
-                return;
+                return tracePath(cellDetails, dest);
             }
 
 
@@ -423,5 +412,6 @@ void Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
     if (foundDest == false)
         printf("Failed to find the Destination Cell\n");
 
-    return;
+    std::stack<Pair> dummy;
+    return dummy;
 }
