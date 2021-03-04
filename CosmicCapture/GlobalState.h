@@ -8,8 +8,11 @@ using namespace physx;
 
 struct State 
 {
-	// Flag state
-	inline static bool flagPickedUp[4] = { false, false, false, false };
+	inline static int theWorld[100][100];
+
+
+	inline static bool flagPickedUp = false;
+	inline static bool flagPickedUpBy[4] = { false, false, false, false };
 	inline static PxRigidStatic* pickupBox = nullptr; //For flag -- Todo: Rename
 	inline static PxRigidDynamic* flagBody = nullptr;
 	inline static PxRigidStatic* flagDropoffBoxes[4] = { nullptr, nullptr, nullptr, nullptr };

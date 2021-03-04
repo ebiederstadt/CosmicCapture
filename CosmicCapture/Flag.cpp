@@ -40,19 +40,19 @@ void Flag::draw(Physics& instance)
 void Flag::simulate(Physics& instance)
 {
 	// TODO: Assuming that there is only one vehicle, should change that at some point
-	if (State::flagPickedUp[0]) {
+	if (State::flagPickedUpBy[0]) {
 		PxVec3 pos = State::vehicleRDs[0]->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
-	else if (State::flagPickedUp[1]) {
+	else if (State::flagPickedUpBy[1]) {
 		PxVec3 pos = State::vehicleRDs[1]->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
-	else if (State::flagPickedUp[2]) {
+	else if (State::flagPickedUpBy[2]) {
 		PxVec3 pos = State::vehicleRDs[2]->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
-	else if (State::flagPickedUp[3]) {
+	else if (State::flagPickedUpBy[3]) {
 		PxVec3 pos = State::vehicleRDs[3]->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}

@@ -19,6 +19,8 @@
 #include "Projectile.h"
 #include "ProjectilePickupZone.h"
 
+#include "OpponentInput.h"
+
 #include "GlobalState.h"
 
 
@@ -39,6 +41,9 @@ int main(int argc, char** args) {
 
 	
 	Input input = Input();
+
+	OpponentInput opponentBrains(1);
+
 
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
@@ -102,8 +107,6 @@ int main(int argc, char** args) {
 	entities.push_back(&opponentCar2);
 	entities.push_back(&opponentCar3);
 
-	
-
 
 	// Loop until the user closes the window
 	while (!quit) {
@@ -126,12 +129,7 @@ int main(int argc, char** args) {
 		}
 
 		//forgive me--------------------
-		std::map<MovementFlags, bool> testInputMap;
-		testInputMap[MovementFlags::LEFT] = true;
-		testInputMap[MovementFlags::RIGHT] = true;
-		testInputMap[MovementFlags::DOWN] = true;
-		testInputMap[MovementFlags::UP] = true;
-		opponentCar1.processInput(testInputMap);
+		opponentCar1.processInput(opponentBrains.getInput());
 		//------------------------------*/
 		
 
@@ -155,9 +153,9 @@ int main(int argc, char** args) {
 		for (const auto& entity : entities)
 			entity->draw(physics);
 		
-		//player pos
-		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		//printf("%f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z);
+		//player pos for testing
+		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		printf("%f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z);
 
 		if (State::scores[0] == 3) {
 			fmt::print("You win ");
