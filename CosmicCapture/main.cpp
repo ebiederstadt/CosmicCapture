@@ -45,6 +45,13 @@ int main(int argc, char** args) {
 			State::worldGrid[i][j] = 1;
 		}
 	}
+
+	for (int i = 1; i < 25; i++) {
+		State::worldGrid[i][13] = 0;
+	}
+	for (int i = 0; i < 24; i++) {
+		State::worldGrid[i][16] = 0;
+	}
 	//-------------------------------------------------------
 	
 	Input input = Input();
@@ -136,7 +143,12 @@ int main(int argc, char** args) {
 		}
 
 		//forgive me--------------------
-		opponentCar1.processInput(opponentBrains.getInput());
+		//opponentCar1.processInput(opponentBrains.getInput());
+		PxMat44 playerMat = car.mGeometry->getModelMatrix();
+		PxVec3 playerDir = playerMat.column2.getXYZ();
+		//PxMat44 op1Mat = opponentCar1.mGeometry->getModelMatrix();
+		//PxMat44 op2Mat = opponentCar2.mGeometry->getModelMatrix();
+		//PxMat44 op3Mat = opponentCar3.mGeometry->getModelMatrix();
 		//------------------------------*/
 		
 
@@ -164,6 +176,7 @@ int main(int argc, char** args) {
 		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
 		//PxVec3 playerDir = car.getVehicle()->getRigidDynamicActor()->getLinearVelocity();
 		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
+		printf("%f, %f, %f\n", playerDir.x, playerDir.y, playerDir.z);
 
 		if (State::scores[0] == 3) {
 			fmt::print("You win ");
