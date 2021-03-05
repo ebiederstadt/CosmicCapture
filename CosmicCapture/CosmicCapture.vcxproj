@@ -154,6 +154,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Flag.cpp" />
+    <ClCompile Include="FlagDropoffZone.cpp" />
+    <ClCompile Include="OpponentInput.cpp" />
+    <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="physics\ContactReportCallback.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="physics\ContactModification.cpp" />
@@ -188,6 +191,10 @@
     <ClCompile Include="physics\VehicleSceneQuery.cpp" />
     <ClCompile Include="physics\VehicleTireFriction.cpp" />
     <ClCompile Include="physics\VehicleMovement.cpp" />
+    <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="ProjectilePickupZone.cpp" />
+    <ClCompile Include="SpeedBoost.cpp" />
+    <ClCompile Include="SpeedBoostPickupZone.cpp" />
     <ClCompile Include="Vehicle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -195,7 +202,10 @@
     <ClInclude Include="audio\AudioInstance.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Flag.h" />
+    <ClInclude Include="FlagDropoffZone.h" />
     <ClInclude Include="GlobalState.h" />
+    <ClInclude Include="OpponentInput.h" />
+    <ClInclude Include="Pathfinding.h" />
     <ClInclude Include="physics\ContactReportCallback.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="physics\ContactModification.h" />
@@ -227,6 +237,10 @@
     <ClInclude Include="physics\VehicleSceneQuery.h" />
     <ClInclude Include="physics\VehicleTireFriction.h" />
     <ClInclude Include="physics\VehicleMovement.h" />
+    <ClInclude Include="Projectile.h" />
+    <ClInclude Include="ProjectilePickupZone.h" />
+    <ClInclude Include="SpeedBoost.h" />
+    <ClInclude Include="SpeedBoostPickupZone.h" />
     <ClInclude Include="Vehicle.h" />
   </ItemGroup>
   <ItemGroup>

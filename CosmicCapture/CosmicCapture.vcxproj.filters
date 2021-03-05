@@ -49,6 +49,13 @@
     <ClCompile Include="Vehicle.cpp" />
     <ClCompile Include="physics\ContactReportCallback.cpp" />
     <ClCompile Include="Flag.cpp" />
+    <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="ProjectilePickupZone.cpp" />
+    <ClCompile Include="FlagDropoffZone.cpp" />
+    <ClCompile Include="OpponentInput.cpp" />
+    <ClCompile Include="Pathfinding.cpp" />
+    <ClCompile Include="SpeedBoost.cpp" />
+    <ClCompile Include="SpeedBoostPickupZone.cpp" />
     <ClCompile Include="audio\AudioEngine.cpp" />
     <ClCompile Include="audio\AudioInstance.cpp" />
   </ItemGroup>
@@ -109,6 +116,13 @@
     <ClInclude Include="physics\ContactReportCallback.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="GlobalState.h" />
+    <ClInclude Include="Projectile.h" />
+    <ClInclude Include="ProjectilePickupZone.h" />
+    <ClInclude Include="FlagDropoffZone.h" />
+    <ClInclude Include="OpponentInput.h" />
+    <ClInclude Include="Pathfinding.h" />
+    <ClInclude Include="SpeedBoost.h" />
+    <ClInclude Include="SpeedBoostPickupZone.h" />
     <ClInclude Include="audio\AudioEngine.h" />
     <ClInclude Include="audio\AudioInstance.h" />
   </ItemGroup>

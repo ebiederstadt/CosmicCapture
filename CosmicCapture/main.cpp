@@ -14,6 +14,15 @@
 #include "Camera.h"
 #include "Vehicle.h"
 #include "Flag.h"
+#include "FlagDropoffZone.h"
+#include "Projectile.h"
+#include "ProjectilePickupZone.h"
+#include "SpeedBoost.h"
+#include "SpeedBoostPickupZone.h"
+
+#include "OpponentInput.h"
+
+#include "GlobalState.h"
 
 
 #define M_PI  3.14159265358979323846
@@ -31,8 +40,19 @@ int main(int argc, char** args) {
 	const auto sCamera = std::make_shared<Camera>(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 	physics.Initialize();
 
+	//initialize world grid temp ----------------------------
+	for (int i = 0; i < 25; i++) {
+		for (int j = 0; j < 25; j++) {
+			State::worldGrid[i][j] = 1;
+		}
+	}
+	//-------------------------------------------------------
 	
 	Input input = Input();
+
+
+	OpponentInput opponentBrains(1);
+
 
 	// Enable depth testing and set up related shader for shhadows
 	glEnable(GL_DEPTH_TEST);
@@ -40,22 +60,13 @@ int main(int argc, char** args) {
 	ShaderProgram simpleDepthShader("shaders/simple.vert", "shaders/simple.frag");
 	simpleDepthShader.compile();
 
+
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
 
 	// The arena model
 	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera);
 
-
-  //gameplay sample stuff------------------------
-	auto dynamicBall = std::make_shared<Model>("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera);
-	auto staticWall = std::make_shared<Model>("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera);
-	//---------------------------------------------
-
-	std::vector<std::shared_ptr<Model>> models;
-
-	models.push_back(dynamicBall);
-	models.push_back(staticWall);
 
 
   // Shadow setup start ---------------------------------------------------------------------
@@ -102,16 +113,61 @@ int main(int argc, char** args) {
 
 
 	// Entities
-	Vehicle car(shaderProgram, sCamera);
+	Vehicle car(shaderProgram, sCamera, 0, "textures/blank.jpg");
 	car.attachPhysics(physics);
+	State::vehicleRDs[0] = car.getVehicle()->getRigidDynamicActor();
 
+	Vehicle opponentCar1(shaderProgram, sCamera, 1, "textures/blue.jpg");
+	opponentCar1.attachPhysics(physics);
+	State::vehicleRDs[1] = opponentCar1.getVehicle()->getRigidDynamicActor();
+
+	Vehicle opponentCar2(shaderProgram, sCamera, 2, "textures/pink.jpg");
+	opponentCar2.attachPhysics(physics);
+	State::vehicleRDs[2] = opponentCar2.getVehicle()->getRigidDynamicActor();
+
+	Vehicle opponentCar3(shaderProgram, sCamera, 3, "textures/green.jpg");
+	opponentCar3.attachPhysics(physics);
+	State::vehicleRDs[3] = opponentCar3.getVehicle()->getRigidDynamicActor();
+
+	//projectile prototype stuff----------------------
+	Projectile testProj(shaderProgram, sCamera);
+	ProjectilePickupZone projPickupZone(shaderProgram, sCamera);
+	projPickupZone.attachPhysics(physics);
+	//------------------------------------------------
+
+	//speedboost powerup
+	SpeedBoost testSpeedBoost(shaderProgram, sCamera);
+	SpeedBoostPickupZone speedboostPickupZone(shaderProgram, sCamera);
+	speedboostPickupZone.attachPhysics(physics);
+	
 	Flag flag(shaderProgram, sCamera);
 	flag.attachPhysics(physics);
-	flag.attachVehicle(car.getVehicle());
+
+	FlagDropoffZone flagDropoffZone0(shaderProgram, sCamera, 0);
+	flagDropoffZone0.attachPhysics(physics);
+
+	FlagDropoffZone flagDropoffZone1(shaderProgram, sCamera, 1);
+	flagDropoffZone1.attachPhysics(physics);
+
+	FlagDropoffZone flagDropoffZone2(shaderProgram, sCamera, 2);
+	flagDropoffZone2.attachPhysics(physics);
+
+	FlagDropoffZone flagDropoffZone3(shaderProgram, sCamera, 3);
+	flagDropoffZone3.attachPhysics(physics);
+
 
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
 	entities.push_back(&flag);
+	entities.push_back(&flagDropoffZone0);
+	entities.push_back(&flagDropoffZone1);
+	entities.push_back(&flagDropoffZone2);
+	entities.push_back(&flagDropoffZone3);
+	entities.push_back(&projPickupZone);
+	entities.push_back(&speedboostPickupZone);
+	entities.push_back(&opponentCar1);
+	entities.push_back(&opponentCar2);
+	entities.push_back(&opponentCar3);
 
 
 	// Loop until the user closes the window
@@ -120,10 +176,29 @@ int main(int argc, char** args) {
 
 		// Physics simulation
 		auto inputState = input.getInputState();
+		
 
 
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
+		
+		if (inputState[MovementFlags::ACTION] == false && State::projectilePickedUp) {
+			testProj.attachVehicle(car.getVehicle());
+			testProj.attachPhysics(physics);			
+			entities.push_back(&testProj);
+			
+			State::projectilePickedUp = false;
+		}
+
+		if (inputState[MovementFlags::ACTION] == false && State::speedboostPickedUp) {
+			testSpeedBoost.attachVehicle(car.getVehicle());
+			testSpeedBoost.attachPhysics(physics);
+			State::speedboostPickedUp = false;
+		}
+		//forgive me--------------------
+		opponentCar1.processInput(opponentBrains.getInput());
+		//------------------------------*/
+		
 
 		for (const auto& entity : entities)
 			entity->simulate(physics);
@@ -182,7 +257,28 @@ int main(int argc, char** args) {
 		arena.drawArena(shaderProgram, false, depthMap);
 
 		for (const auto& entity : entities)
+
+
+		//player pos for testing
+		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		//PxVec3 playerDir = car.getVehicle()->getRigidDynamicActor()->getLinearVelocity();
+		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
+
+		if (State::scores[0] == 3) {
+			fmt::print("You win ");
+		}
+		else if (State::scores[1] == 3) {
+			fmt::print("Opponent 1 wins");
+		}
+		else if (State::scores[2] == 3) {
+			fmt::print("Opponent 2 wins");
+		}
+		else if (State::scores[3] == 3) {
+			fmt::print("Opponent 3 wins");
+		}
+
 			entity->draw(physics, shaderProgram, false, depthMap);
+
 
 
 		ImGui::Begin("Framerate Counter!");

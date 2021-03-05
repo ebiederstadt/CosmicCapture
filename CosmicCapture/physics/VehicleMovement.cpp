@@ -1,5 +1,8 @@
 #include "VehicleMovement.h"
-
+VehicleMovement::VehicleMovement() {}
+VehicleMovement::VehicleMovement(bool flag) {
+	gMimicKeyInputs = flag;
+}
 void VehicleMovement::startAccelerateForwardsMode()
 {
 	if (gMimicKeyInputs)

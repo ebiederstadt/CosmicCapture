@@ -75,7 +75,7 @@ void Physics::Initialize()
 	gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
 	gScene->addActor(*gGroundPlane);
 
-	//Collision test objects------------------------------------
+	/*//Collision test objects------------------------------------
 	PxShape* ballShape = gPhysics->createShape(PxSphereGeometry(5.0f), *gMaterial, true); //create shape
 	ballShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
 	//set filter data for collisions
@@ -94,7 +94,7 @@ void Physics::Initialize()
 	gScene->addActor(*wallBody); //add rigid body to scene
 	readMesh("./models/walls_joined.obj");
 
-	//----------------------------------------------------------
+	//----------------------------------------------------------*/
 
 	printf("Physx initialized\n");
 }

@@ -11,7 +11,7 @@
 
 enum class MovementFlags
 {
-    LEFT, RIGHT, UP, DOWN
+    LEFT, RIGHT, UP, DOWN, ACTION
 };
 
 
