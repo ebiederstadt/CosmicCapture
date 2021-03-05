@@ -49,6 +49,8 @@
     <ClCompile Include="Vehicle.cpp" />
     <ClCompile Include="physics\ContactReportCallback.cpp" />
     <ClCompile Include="Flag.cpp" />
+    <ClCompile Include="audio\AudioEngine.cpp" />
+    <ClCompile Include="audio\AudioInstance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -107,9 +109,20 @@
     <ClInclude Include="physics\ContactReportCallback.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="GlobalState.h" />
+    <ClInclude Include="audio\AudioEngine.h" />
+    <ClInclude Include="audio\AudioInstance.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
-    <None Include="arenaTest.mtl" />
+    <None Include="models\monkey.ply" />
+    <None Include="shaders\main.frag" />
+    <None Include="shaders\main.vert" />
+    <None Include="models\cube.ply" />
+    <None Include="shaders\simple.frag" />
+    <None Include="shaders\simple.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="textures\camouflage.jpg" />
+    <Image Include="textures\wall.jpg" />
   </ItemGroup>
 </Project>
