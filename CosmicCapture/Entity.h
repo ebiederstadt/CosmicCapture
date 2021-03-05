@@ -9,13 +9,14 @@
 class Entity
 {
 public:
+	Entity(std::unique_ptr<Model> model) : mGeometry(std::move(model)) {}
 	Entity(const char* modelPath, const char* texturePath, const ShaderProgram& shader, std::shared_ptr<Camera> camera);
 
 	virtual ~Entity() = default;
 
 	virtual void attachPhysics(Physics& instance) = 0;
 
-	virtual void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) = 0;
+	virtual void draw(Physics& instance) = 0;
 	virtual void simulate(Physics& instance) = 0;
 
 	virtual void cleanUpPhysics() = 0;
