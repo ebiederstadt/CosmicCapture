@@ -5,6 +5,8 @@
 #include "Entity.h"
 #include "physics/Physics.h"
 #include "input.h"
+#include "physics/VehicleMovement.h"
+
 
 // TODO: Might want to think about a better place to store these definitions (so they are not longer globals)
 inline PxVehicleKeySmoothingData gKeySmoothingData =
@@ -60,10 +62,10 @@ inline PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedD
 class Vehicle : public Entity
 {
 public:
-	Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera);
+	Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, int playerNum, std::string texturePath);
 	void attachPhysics(Physics& instance) override;
 
-	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) override;
+	void draw(Physics& instance) override;
 	void simulate(Physics& instance) override;
 	void processInput(const std::map<MovementFlags, bool>& inputs);
 
@@ -74,4 +76,6 @@ private:
 	PxVehicleDrive4W* mVehicle4W;
 	bool mIsVehicleInAir = true;
 	bool mInReverseMode = false;
+	int player;
+	VehicleMovement movement;
 };

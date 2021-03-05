@@ -1,3 +1,4 @@
+#include <string>
 #include <memory>
 #include <fmt/format.h>
 #include <GL/glew.h>
@@ -10,10 +11,20 @@
 
 #include "input.h"
 
-#include "physics/Physics.h"
+#include "./audio/AudioEngine.h"
+
 #include "Camera.h"
 #include "Vehicle.h"
 #include "Flag.h"
+#include "FlagDropoffZone.h"
+#include "Projectile.h"
+#include "ProjectilePickupZone.h"
+#include "SpeedBoost.h"
+#include "SpeedBoostPickupZone.h"
+
+#include "OpponentInput.h"
+
+#include "GlobalState.h"
 
 
 #define M_PI  3.14159265358979323846
@@ -31,70 +42,24 @@ int main(int argc, char** args) {
 	const auto sCamera = std::make_shared<Camera>(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 	physics.Initialize();
 
+	//initialize world grid temp ----------------------------
+	for (int i = 0; i < 25; i++) {
+		for (int j = 0; j < 25; j++) {
+			State::worldGrid[i][j] = 1;
+		}
+	}
+	//-------------------------------------------------------
 	
 	Input input = Input();
 
-	// Enable depth testing and set up related shader for shhadows
-	glEnable(GL_DEPTH_TEST);
+	OpponentInput opponentBrains(1);
 
-	ShaderProgram simpleDepthShader("shaders/simple.vert", "shaders/simple.frag");
-	simpleDepthShader.compile();
 
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
 
 	// The arena model
-	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera);
-
-
-  //gameplay sample stuff------------------------
-	auto dynamicBall = std::make_shared<Model>("models/ball.ply", "textures/blue.jpg", shaderProgram, sCamera);
-	auto staticWall = std::make_shared<Model>("models/static_wall.ply", "textures/wall.jpg", shaderProgram, sCamera);
-	//---------------------------------------------
-
-	std::vector<std::shared_ptr<Model>> models;
-
-	models.push_back(dynamicBall);
-	models.push_back(staticWall);
-
-
-  // Shadow setup start ---------------------------------------------------------------------
-
-  // Configure depth map FBO
-  unsigned int depthMapFBO;
-  glGenFramebuffers(1, &depthMapFBO);
-  const unsigned int SHADOW_WIDTH = 1024 * 4, SHADOW_HEIGHT = 1024 * 4;
-
-  // create depth texture
-  unsigned int depthMap;
-  glGenTextures(1, &depthMap);
-  glBindTexture(GL_TEXTURE_2D, depthMap);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-	  SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-  float borderColor[] = { 1.0, 1.0, 1.0, 1.0, 1.0 };
-  glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-
-  // attach depth texture as FBO's depth buffer
-  glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-  glDrawBuffer(GL_NONE);
-  glReadBuffer(GL_NONE);
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-  // Set sampler aliases
-  shaderProgram.use();
-
-  auto mShaderID = static_cast<unsigned int>(shaderProgram);
-  auto samplerLoc = glGetUniformLocation(mShaderID, "textureSampler");
-  glUniform1i(samplerLoc, 0);
-  samplerLoc = glGetUniformLocation(mShaderID, "shadowMap");
-  glUniform1i(samplerLoc, 1);
-
-  // Shadow setup end ---------------------------------------------------------------------
+	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 
 	//main loop flag
@@ -102,16 +67,71 @@ int main(int argc, char** args) {
 
 
 	// Entities
-	Vehicle car(shaderProgram, sCamera);
+	Vehicle car(shaderProgram, sCamera, 0, "textures/blank.jpg");
 	car.attachPhysics(physics);
+	State::vehicleRDs[0] = car.getVehicle()->getRigidDynamicActor();
 
+	Vehicle opponentCar1(shaderProgram, sCamera, 1, "textures/blue.jpg");
+	opponentCar1.attachPhysics(physics);
+	State::vehicleRDs[1] = opponentCar1.getVehicle()->getRigidDynamicActor();
+
+	Vehicle opponentCar2(shaderProgram, sCamera, 2, "textures/pink.jpg");
+	opponentCar2.attachPhysics(physics);
+	State::vehicleRDs[2] = opponentCar2.getVehicle()->getRigidDynamicActor();
+
+	Vehicle opponentCar3(shaderProgram, sCamera, 3, "textures/green.jpg");
+	opponentCar3.attachPhysics(physics);
+	State::vehicleRDs[3] = opponentCar3.getVehicle()->getRigidDynamicActor();
+
+	//projectile prototype stuff----------------------
+	Projectile testProj(shaderProgram, sCamera);
+	ProjectilePickupZone projPickupZone(shaderProgram, sCamera);
+	projPickupZone.attachPhysics(physics);
+	//------------------------------------------------
+
+	//speedboost powerup
+	SpeedBoost testSpeedBoost(shaderProgram, sCamera);
+	SpeedBoostPickupZone speedboostPickupZone(shaderProgram, sCamera);
+	speedboostPickupZone.attachPhysics(physics);
+	
 	Flag flag(shaderProgram, sCamera);
 	flag.attachPhysics(physics);
-	flag.attachVehicle(car.getVehicle());
+
+	FlagDropoffZone flagDropoffZone0(shaderProgram, sCamera, 0);
+	flagDropoffZone0.attachPhysics(physics);
+
+	FlagDropoffZone flagDropoffZone1(shaderProgram, sCamera, 1);
+	flagDropoffZone1.attachPhysics(physics);
+
+  // setup audio
+  AudioEngine soundSystem = AudioEngine();
+  soundSystem.initialize();
+  soundSystem.initializeBuffers();
+  AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
+  music.loop();
+  music.playSound();
+  //AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
+  //engine.loop();
+  //engine.playSound();
+	FlagDropoffZone flagDropoffZone2(shaderProgram, sCamera, 2);
+	flagDropoffZone2.attachPhysics(physics);
+
+	FlagDropoffZone flagDropoffZone3(shaderProgram, sCamera, 3);
+	flagDropoffZone3.attachPhysics(physics);
+
 
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
 	entities.push_back(&flag);
+	entities.push_back(&flagDropoffZone0);
+	entities.push_back(&flagDropoffZone1);
+	entities.push_back(&flagDropoffZone2);
+	entities.push_back(&flagDropoffZone3);
+	entities.push_back(&projPickupZone);
+	entities.push_back(&speedboostPickupZone);
+	entities.push_back(&opponentCar1);
+	entities.push_back(&opponentCar2);
+	entities.push_back(&opponentCar3);
 
 
 	// Loop until the user closes the window
@@ -120,10 +140,29 @@ int main(int argc, char** args) {
 
 		// Physics simulation
 		auto inputState = input.getInputState();
+		
 
 
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
+		
+		if (inputState[MovementFlags::ACTION] == false && State::projectilePickedUp) {
+			testProj.attachVehicle(car.getVehicle());
+			testProj.attachPhysics(physics);			
+			entities.push_back(&testProj);
+			
+			State::projectilePickedUp = false;
+		}
+
+		if (inputState[MovementFlags::ACTION] == false && State::speedboostPickedUp) {
+			testSpeedBoost.attachVehicle(car.getVehicle());
+			testSpeedBoost.attachPhysics(physics);
+			State::speedboostPickedUp = false;
+		}
+		//forgive me--------------------
+		opponentCar1.processInput(opponentBrains.getInput());
+		//------------------------------*/
+		
 
 		for (const auto& entity : entities)
 			entity->simulate(physics);
@@ -137,53 +176,31 @@ int main(int argc, char** args) {
 		// Update camera
 		sCamera->updateCamera(car.mGeometry->getModelMatrix());
 
-		auto counter = 1;
-
-		// first render to depth map ---------------
-
-		simpleDepthShader.use();
-
-		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-		glClear(GL_DEPTH_BUFFER_BIT);
-
-		// First pass
-		arena.drawArena(simpleDepthShader, true, depthMapFBO);
-
-		for (const auto& entity : entities)
-			entity->draw(physics, simpleDepthShader, true, depthMapFBO);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0, 0, width, height);
-		//glClearColor(0.0, 0.0, 0.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Now standard rendering -----------------
-
 		shaderProgram.use();
 
-		float near_plane = 200.f, far_plane = 600.f;
-
-		auto nearLoc = glGetUniformLocation(mShaderID, "near_plane");
-		glUniform1f(nearLoc, near_plane);
-
-		auto farLoc = glGetUniformLocation(mShaderID, "far_plane");
-		glUniform1f(farLoc, far_plane);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-
-		glActiveTexture(GL_TEXTURE0);
-
-		// Second pass
-		arena.drawArena(shaderProgram, false, depthMap);
+		// Draw arena
+		arena.drawArena();
 
 		for (const auto& entity : entities)
-			entity->draw(physics, shaderProgram, false, depthMap);
+			entity->draw(physics);
+		
+		//player pos for testing
+		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		//PxVec3 playerDir = car.getVehicle()->getRigidDynamicActor()->getLinearVelocity();
+		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
 
+		if (State::scores[0] == 3) {
+			fmt::print("You win ");
+		}
+		else if (State::scores[1] == 3) {
+			fmt::print("Opponent 1 wins");
+		}
+		else if (State::scores[2] == 3) {
+			fmt::print("Opponent 2 wins");
+		}
+		else if (State::scores[3] == 3) {
+			fmt::print("Opponent 3 wins");
+		}
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -198,6 +215,7 @@ int main(int argc, char** args) {
 	for (const auto& entity : entities)
 		entity->cleanUpPhysics();
 	physics.CleanupPhysics();
+	soundSystem.killSources();
 
 	return 0;
 }

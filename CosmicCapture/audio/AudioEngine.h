@@ -11,14 +11,13 @@
 
 namespace audioConstants
 {
-
 	// effects
-	const int SOUND_FILE_ENGINE = 0;
-	const int SOUND_FILE_TIRES = 1;
-	const int SOUND_FILE_TIG_COLLISION = 2;
+	const int SOUND_FILE_ENGINE = 1;
+	const int SOUND_FILE_TIRES = 2;
+	const int SOUND_FILE_TIG_COLLISION = 3;
 
 	//music tracks
-	const int SOUND_FILE_RACE_TRACK = 0;
+	const int SOUND_FILE_MAIN_TRACK = 0;
 
 }
 
@@ -44,6 +43,7 @@ class AudioEngine
 		const char* musicTracks[NUM_TRACKS];
 
 		ALuint bufferArray[NUM_TOTAL];
+		ALuint sources[NUM_TOTAL];
 		std::vector<std::unique_ptr<AudioInstance>> listOfSources;
 
 		ALCdevice* device;

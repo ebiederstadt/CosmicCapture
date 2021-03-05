@@ -75,26 +75,9 @@ void Physics::Initialize()
 	gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
 	gScene->addActor(*gGroundPlane);
 
-	//Collision test objects------------------------------------
-	PxShape* ballShape = gPhysics->createShape(PxSphereGeometry(5.0f), *gMaterial, true); //create shape
-	ballShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	//set filter data for collisions
-	PxRigidDynamic* ballBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(10.f, 0.f, 0.f)));
-	//create dynamic rigid body - will move
-	ballBody->attachShape(*ballShape); //stick shape on rigid body
-	ballShape->release(); //free shape 
-	gScene->addActor(*ballBody); //add rigid body to scene
-
-	PxShape* wallShape = gPhysics->createShape(PxBoxGeometry(10.0f, 10.0f, 0.1f), *gMaterial, true); //create shape
-	wallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	PxRigidStatic* wallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 10.f, -15.f)));
-	//create static rigid body - wont move
-	wallBody->attachShape(*wallShape); //stick shape on rigid body
-	wallShape->release(); //free shape 
-	gScene->addActor(*wallBody); //add rigid body to scene
 	readMesh("./models/walls_joined.obj");
 
-	//----------------------------------------------------------
+	//----------------------------------------------------------*/
 
 	printf("Physx initialized\n");
 }
@@ -149,17 +132,29 @@ void Physics::readMesh(std::string modelPath){
 	}
 	processNodeS(scene->mRootNode, scene);
 	
-	//std::cout << vectorList.size() << std::endl;
-	//std::cout << indicesList.size() << std::endl;
+	std::cout << vectorList.size() << std::endl;
+	std::cout << indicesList.size() << std::endl;
+	const int vectorListSize = 2400;
+	PxVec3* convexVerts = new PxVec3[vectorListSize];
+	const int indicesListSize = 3600;
+	int* indicesVerts = new int[indicesListSize];
+	for (int i = 0; i < vectorListSize; i++) {
+		convexVerts[i] = vectorList.at(i);
+	}
+	for (int i = 0; i < indicesListSize; i++) {
+		indicesVerts[i] = indicesList.at(i);
+	}
+	std::cout << sizeof(convexVerts) << std::endl;
+	std::cout << sizeof(indicesVerts) << std::endl;
 
 	PxTriangleMeshDesc meshDesc;
-	meshDesc.points.count = vectorList.size();
+	meshDesc.points.count = 2400;
 	meshDesc.points.stride = sizeof(PxVec3);
-	meshDesc.points.data = reinterpret_cast<const void*>(vectorList.data());
+	meshDesc.points.data = convexVerts;
 
-	meshDesc.triangles.count = indicesList.size();
+	meshDesc.triangles.count = 3600;
 	meshDesc.triangles.stride = 3 * sizeof(PxU32);
-	meshDesc.triangles.data = reinterpret_cast<const void*>(indicesList.data());
+	meshDesc.triangles.data = indicesVerts;
 
 	PxTriangleMesh* convexMesh = gCooking->createTriangleMesh(meshDesc, gPhysics->getPhysicsInsertionCallback());
 

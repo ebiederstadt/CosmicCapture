@@ -9,6 +9,7 @@ public:
 	AudioInstance(ALuint* buffer);
 	~AudioInstance();
 	void initialize();
+	void loop();
 	void playSound();
 	void stopSound();
 	bool isSoundPlaying();
