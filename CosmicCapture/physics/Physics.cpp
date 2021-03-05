@@ -75,23 +75,6 @@ void Physics::Initialize()
 	gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
 	gScene->addActor(*gGroundPlane);
 
-	/*//Collision test objects------------------------------------
-	PxShape* ballShape = gPhysics->createShape(PxSphereGeometry(5.0f), *gMaterial, true); //create shape
-	ballShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	//set filter data for collisions
-	PxRigidDynamic* ballBody = gPhysics->createRigidDynamic(PxTransform(PxVec3(10.f, 0.f, 0.f)));
-	//create dynamic rigid body - will move
-	ballBody->attachShape(*ballShape); //stick shape on rigid body
-	ballShape->release(); //free shape 
-	gScene->addActor(*ballBody); //add rigid body to scene
-
-	PxShape* wallShape = gPhysics->createShape(PxBoxGeometry(10.0f, 10.0f, 0.1f), *gMaterial, true); //create shape
-	wallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	PxRigidStatic* wallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 10.f, -15.f)));
-	//create static rigid body - wont move
-	wallBody->attachShape(*wallShape); //stick shape on rigid body
-	wallShape->release(); //free shape 
-	gScene->addActor(*wallBody); //add rigid body to scene
 	readMesh("./models/walls_joined.obj");
 
 	//----------------------------------------------------------*/
