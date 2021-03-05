@@ -11,7 +11,7 @@ void SpeedBoost::attachPhysics(Physics& instance) {
 	std::cout << mVehicles[0]->mDriveDynData.getEngineRotationSpeed() << std::endl;
 }
 
-void SpeedBoost::draw(Physics& instance) {
+void SpeedBoost::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) {
 }
 
 void SpeedBoost::simulate(Physics& instance) {

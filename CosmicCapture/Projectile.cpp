@@ -19,10 +19,10 @@ void Projectile::attachPhysics(Physics& instance) {
 	instance.gScene->addActor(*State::projectileBody);
 }
 
-void Projectile::draw(Physics& instance) {
+void Projectile::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) {
 	PxTransform transform = State::projectileBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix);
+	mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
 }
 void Projectile::simulate(Physics& instance) {
 }
