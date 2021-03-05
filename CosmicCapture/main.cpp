@@ -11,7 +11,8 @@
 
 #include "input.h"
 
-#include "physics/Physics.h"
+#include "./audio/AudioEngine.h"
+
 #include "Camera.h"
 #include "Vehicle.h"
 #include "Flag.h"
@@ -102,6 +103,16 @@ int main(int argc, char** args) {
 	FlagDropoffZone flagDropoffZone1(shaderProgram, sCamera, 1);
 	flagDropoffZone1.attachPhysics(physics);
 
+  // setup audio
+  AudioEngine soundSystem = AudioEngine();
+  soundSystem.initialize();
+  soundSystem.initializeBuffers();
+  AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
+  music.loop();
+  music.playSound();
+  //AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
+  //engine.loop();
+  //engine.playSound();
 	FlagDropoffZone flagDropoffZone2(shaderProgram, sCamera, 2);
 	flagDropoffZone2.attachPhysics(physics);
 
@@ -204,6 +215,7 @@ int main(int argc, char** args) {
 	for (const auto& entity : entities)
 		entity->cleanUpPhysics();
 	physics.CleanupPhysics();
+	soundSystem.killSources();
 
 	return 0;
 }

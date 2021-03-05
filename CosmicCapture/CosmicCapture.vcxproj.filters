@@ -56,6 +56,8 @@
     <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="SpeedBoost.cpp" />
     <ClCompile Include="SpeedBoostPickupZone.cpp" />
+    <ClCompile Include="audio\AudioEngine.cpp" />
+    <ClCompile Include="audio\AudioInstance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -121,6 +123,8 @@
     <ClInclude Include="Pathfinding.h" />
     <ClInclude Include="SpeedBoost.h" />
     <ClInclude Include="SpeedBoostPickupZone.h" />
+    <ClInclude Include="audio\AudioEngine.h" />
+    <ClInclude Include="audio\AudioInstance.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
