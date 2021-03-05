@@ -51,7 +51,7 @@ float shadowCalc(float dotLightNormal)
 		}	
 	}
 
-	return shadow / 9.0;
+	return shadow / 10.0;
 
 	//return (depth + bias) < pos.z ? 0.0 : 1.0;
 

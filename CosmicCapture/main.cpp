@@ -11,17 +11,16 @@
 
 #include "./input.h"
 
+#include "./audio/AudioEngine.h"
+
 #include "Physics.h"
 #include "Camera.h"
 #include "Render.h"
 
 
-
-
 #define M_PI  3.14159265358979323846
 
 float angle = -0.25f;
-
 
 int main(int argc, char** args) {
 	// Window Initialization
@@ -116,6 +115,16 @@ int main(int argc, char** args) {
 
   // Shadow setup end ---------------------------------------------------------------------
 
+  // setup audio
+  AudioEngine soundSystem = AudioEngine();
+  soundSystem.initialize();
+  soundSystem.initializeBuffers();
+  AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
+  music.loop();
+  music.playSound();
+  //AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
+  //engine.loop();
+  //engine.playSound();
 
 	//main loop flag
 	bool quit = false;
@@ -213,6 +222,7 @@ int main(int argc, char** args) {
 	}
 	//cleanup
 	physics.CleanupPhysics();
+	soundSystem.killSources();
 
 	return 0;
 }
