@@ -29,12 +29,19 @@ void Flag::attachPhysics(Physics& instance)
 
 }
 
-void Flag::draw(Physics& instance)
+void Flag::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap)
 {
 	// Draw the flag
 	PxTransform transform = State::flagBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix);
+
+	mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
+
+	// Draw the drop-off box
+	transform = State::dropoffBox->getGlobalPose();
+	modelMatrix = PxMat44(transform);
+	mDropOffZone->draw(modelMatrix, depthTexture, depth, depthMap);
+
 }
 
 void Flag::simulate(Physics& instance)

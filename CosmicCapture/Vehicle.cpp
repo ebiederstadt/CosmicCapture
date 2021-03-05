@@ -56,7 +56,7 @@ void Vehicle::attachPhysics(Physics& instance)
 	movement.startBrakeMode();
 }
 
-void Vehicle::draw(Physics& instance)
+void Vehicle::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap)
 {
 	std::vector<PxMat44> modelMatrices;
 	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
@@ -74,7 +74,7 @@ void Vehicle::draw(Physics& instance)
 		modelMatrices.push_back(shapePose);
 	}
 
-	mGeometry->draw(modelMatrices[6]);
+	mGeometry->draw(modelMatrices[6], depthTexture, depth, depthMap);
 }
 
 void Vehicle::simulate(Physics& instance)
