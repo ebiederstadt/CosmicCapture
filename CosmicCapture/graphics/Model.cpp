@@ -39,6 +39,8 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 
 	setModel(modelMatrix);
 
+	unsigned int shaderID = static_cast<unsigned int>(shaderProgram);
+
 	if (!depth) {
 		glActiveTexture(GL_TEXTURE0);
 		mTexture.bind();
@@ -51,21 +53,20 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 	if (!depth) {
 
 		// View pipeline
-
-		const auto purpleLightLoc = glGetUniformLocation(mShaderID, "purpleLight");
-		const auto orangeLightLoc = glGetUniformLocation(mShaderID, "orangeLight");
+		const auto purpleLightLoc = glGetUniformLocation(shaderID, "purpleLight");
+		const auto orangeLightLoc = glGetUniformLocation(shaderID, "orangeLight");
 
 		glUniform3fv(purpleLightLoc, 1, glm::value_ptr(purpleLight));
 		glUniform3fv(orangeLightLoc, 1, glm::value_ptr(orangeLight));
 
 		bool lit = true;
-		const auto litLoc = glGetUniformLocation(mShaderID, "lit");
+		const auto litLoc = glGetUniformLocation(shaderID, "lit");
 		glUniform1i(litLoc, lit);
 
-		const auto viewLoc = glGetUniformLocation(mShaderID, "view");
+		const auto viewLoc = glGetUniformLocation(shaderID, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->getViewMatrix()));
 
-		const auto projectionLoc = glGetUniformLocation(mShaderID, "projection");
+		const auto projectionLoc = glGetUniformLocation(shaderID, "projection");
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->perspectiveMatrix));
 
 	}
@@ -80,10 +81,10 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 
-	auto lightSpaceLoc = glGetUniformLocation(mShaderID, "lightSpaceMatrix");
+	auto lightSpaceLoc = glGetUniformLocation(shaderID, "lightSpaceMatrix");
 	glUniformMatrix4fv(lightSpaceLoc, 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
 
-	const auto modelLoc = glGetUniformLocation(mShaderID, "model");
+	const auto modelLoc = glGetUniformLocation(shaderID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelMatrix.column0.x);
 
 	for (const auto& mesh : mMeshes)
