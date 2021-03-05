@@ -1,4 +1,3 @@
-#include <string>
 #include <memory>
 #include <fmt/format.h>
 #include <GL/glew.h>
@@ -15,8 +14,6 @@
 #include "Camera.h"
 #include "Vehicle.h"
 #include "Flag.h"
-
-
 
 
 #define M_PI  3.14159265358979323846
@@ -47,7 +44,7 @@ int main(int argc, char** args) {
 	shaderProgram.compile();
 
 	// The arena model
-	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera);
 
 
   //gameplay sample stuff------------------------
@@ -150,14 +147,11 @@ int main(int argc, char** args) {
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		// Draw arena
+		// First pass
 		arena.drawArena(simpleDepthShader, true, depthMapFBO);
 
-		for (auto& model : models)
-		{
-			model->draw(modelMatrices[counter], simpleDepthShader, true, depthMapFBO);
-			++counter;
-		}
+		for (const auto& entity : entities)
+			entity->draw(physics, simpleDepthShader, true, depthMapFBO);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, width, height);
@@ -184,11 +178,11 @@ int main(int argc, char** args) {
 
 		glActiveTexture(GL_TEXTURE0);
 
-		// Draw arena
+		// Second pass
 		arena.drawArena(shaderProgram, false, depthMap);
 
 		for (const auto& entity : entities)
-			entity->draw(physics);
+			entity->draw(physics, shaderProgram, false, depthMap);
 
 
 		ImGui::Begin("Framerate Counter!");

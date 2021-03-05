@@ -34,12 +34,10 @@ Model::Model(
 
 
 
-void Model::draw(const physx::PxMat44& modelMatrix)
+void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, bool depth, const unsigned int& depthMap)
 {
 
 	setModel(modelMatrix);
-
-	mShaderID = static_cast<unsigned int>(shaderProgram);
 
 	if (!depth) {
 		glActiveTexture(GL_TEXTURE0);
