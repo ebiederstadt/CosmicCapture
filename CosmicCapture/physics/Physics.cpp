@@ -149,29 +149,17 @@ void Physics::readMesh(std::string modelPath){
 	}
 	processNodeS(scene->mRootNode, scene);
 	
-	std::cout << vectorList.size() << std::endl;
-	std::cout << indicesList.size() << std::endl;
-	const int vectorListSize = 2400;
-	PxVec3* convexVerts = new PxVec3[vectorListSize];
-	const int indicesListSize = 3600;
-	int* indicesVerts = new int[indicesListSize];
-	for (int i = 0; i < vectorListSize; i++) {
-		convexVerts[i] = vectorList.at(i);
-	}
-	for (int i = 0; i < indicesListSize; i++) {
-		indicesVerts[i] = indicesList.at(i);
-	}
-	std::cout << sizeof(convexVerts) << std::endl;
-	std::cout << sizeof(indicesVerts) << std::endl;
+	//std::cout << vectorList.size() << std::endl;
+	//std::cout << indicesList.size() << std::endl;
 
 	PxTriangleMeshDesc meshDesc;
-	meshDesc.points.count = 2400;
+	meshDesc.points.count = vectorList.size();
 	meshDesc.points.stride = sizeof(PxVec3);
-	meshDesc.points.data = convexVerts;
+	meshDesc.points.data = reinterpret_cast<const void*>(vectorList.data());
 
-	meshDesc.triangles.count = 3600;
+	meshDesc.triangles.count = indicesList.size();
 	meshDesc.triangles.stride = 3 * sizeof(PxU32);
-	meshDesc.triangles.data = indicesVerts;
+	meshDesc.triangles.data = reinterpret_cast<const void*>(indicesList.data());
 
 	PxTriangleMesh* convexMesh = gCooking->createTriangleMesh(meshDesc, gPhysics->getPhysicsInsertionCallback());
 
