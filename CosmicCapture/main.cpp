@@ -18,6 +18,8 @@
 #include "FlagDropoffZone.h"
 #include "Projectile.h"
 #include "ProjectilePickupZone.h"
+#include "SpeedBoost.h"
+#include "SpeedBoostPickupZone.h"
 
 #include "OpponentInput.h"
 
@@ -85,6 +87,11 @@ int main(int argc, char** args) {
 	ProjectilePickupZone projPickupZone(shaderProgram, sCamera);
 	projPickupZone.attachPhysics(physics);
 	//------------------------------------------------
+
+	//speedboost powerup
+	SpeedBoost testSpeedBoost(shaderProgram, sCamera);
+	SpeedBoostPickupZone speedboostPickupZone(shaderProgram, sCamera);
+	speedboostPickupZone.attachPhysics(physics);
 	
 	Flag flag(shaderProgram, sCamera);
 	flag.attachPhysics(physics);
@@ -110,6 +117,7 @@ int main(int argc, char** args) {
 	entities.push_back(&flagDropoffZone2);
 	entities.push_back(&flagDropoffZone3);
 	entities.push_back(&projPickupZone);
+	entities.push_back(&speedboostPickupZone);
 	entities.push_back(&opponentCar1);
 	entities.push_back(&opponentCar2);
 	entities.push_back(&opponentCar3);
@@ -135,6 +143,11 @@ int main(int argc, char** args) {
 			State::projectilePickedUp = false;
 		}
 
+		if (inputState[MovementFlags::ACTION] == false && State::speedboostPickedUp) {
+			testSpeedBoost.attachVehicle(car.getVehicle());
+			testSpeedBoost.attachPhysics(physics);
+			State::speedboostPickedUp = false;
+		}
 		//forgive me--------------------
 		opponentCar1.processInput(opponentBrains.getInput());
 		//------------------------------*/

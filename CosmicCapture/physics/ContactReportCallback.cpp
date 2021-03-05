@@ -59,6 +59,10 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			fmt::print("projectile picked up\n");
 			State::projectilePickedUp = true;
 		}
+		else if (pairs[i].triggerActor == State::speedboostPickupTriggerBody && !State::speedboostPickedUp) {
+			fmt::print("speed boost picked up\n");
+			State::speedboostPickedUp = true;
+		}
 
 	}
 }

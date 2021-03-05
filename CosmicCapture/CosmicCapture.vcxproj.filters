@@ -54,6 +54,8 @@
     <ClCompile Include="FlagDropoffZone.cpp" />
     <ClCompile Include="OpponentInput.cpp" />
     <ClCompile Include="Pathfinding.cpp" />
+    <ClCompile Include="SpeedBoost.cpp" />
+    <ClCompile Include="SpeedBoostPickupZone.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -117,6 +119,8 @@
     <ClInclude Include="FlagDropoffZone.h" />
     <ClInclude Include="OpponentInput.h" />
     <ClInclude Include="Pathfinding.h" />
+    <ClInclude Include="SpeedBoost.h" />
+    <ClInclude Include="SpeedBoostPickupZone.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

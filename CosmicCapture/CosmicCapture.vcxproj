@@ -191,6 +191,8 @@
     <ClCompile Include="physics\VehicleMovement.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="ProjectilePickupZone.cpp" />
+    <ClCompile Include="SpeedBoost.cpp" />
+    <ClCompile Include="SpeedBoostPickupZone.cpp" />
     <ClCompile Include="Vehicle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -233,6 +235,8 @@
     <ClInclude Include="physics\VehicleMovement.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="ProjectilePickupZone.h" />
+    <ClInclude Include="SpeedBoost.h" />
+    <ClInclude Include="SpeedBoostPickupZone.h" />
     <ClInclude Include="Vehicle.h" />
   </ItemGroup>
   <ItemGroup>
