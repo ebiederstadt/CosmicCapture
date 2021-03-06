@@ -104,7 +104,6 @@ int main(int argc, char** args) {
 	//main loop flag
 	bool quit = false;
 
-
 	// Entities
 	Vehicle car(shaderProgram, sCamera, 0, "textures/blank.jpg");
 	car.attachPhysics(physics);

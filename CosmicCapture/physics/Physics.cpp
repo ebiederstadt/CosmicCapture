@@ -183,10 +183,10 @@ VehicleDesc Physics::initVehicleDesc() const
 	//Set up the wheel mass, radius, width, moment of inertia, and number of wheels.
 	//Moment of inertia is just the moment of inertia of a cylinder.
 	const PxF32 wheelMass = 20.0f;
-	const PxF32 wheelRadius = 0.5f;
-	const PxF32 wheelWidth = 0.4f;
+	const PxF32 wheelRadius = 0.9f;
+	const PxF32 wheelWidth = 0.5f;
 	const PxF32 wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
-	const PxU32 nbWheels = 6;
+	const PxU32 nbWheels = 4;
 
 	VehicleDesc vehicleDesc;
 
@@ -250,20 +250,20 @@ void Physics::computeWheelCenterActorOffsets4W(const PxF32 wheelFrontZ, const Px
 	//Compute a position for the front wheel and the rear wheel along the z-axis.
 	//Compute the separation between each wheel along the z-axis.
 	const PxF32 numLeftWheels = numWheels / 2.0f;
-	const PxF32 deltaZ = (wheelFrontZ - wheelRearZ) / (numLeftWheels - 1.0f);
+	const PxF32 deltaZ = (wheelFrontZ - wheelRearZ) / (numLeftWheels - 0.65f);
 	//Set the outside of the left and right wheels to be flush with the chassis.
 	//Set the top of the wheel to be just touching the underside of the chassis.
 	//Begin by setting the rear-left/rear-right/front-left,front-right wheels.
 	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eREAR_LEFT] = PxVec3((-chassisDims.x + wheelWidth) * 0.5f,
-	                                                                    -(chassisDims.y / 2 + wheelRadius),
+	                                                                    -(chassisDims.y / 4 + wheelRadius),
 	                                                                    wheelRearZ + 0 * deltaZ * 0.5f);
 	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = PxVec3(
-		(+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), wheelRearZ + 0 * deltaZ * 0.5f);
+		(+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 4 + wheelRadius), wheelRearZ + 0 * deltaZ * 0.5f);
 	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = PxVec3(
-		(-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius),
+		(-chassisDims.x + wheelWidth + 0.2f) * 0.5f, -(chassisDims.y / 3 + wheelRadius),
 		wheelRearZ + (numLeftWheels - 1) * deltaZ);
 	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = PxVec3(
-		(+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius),
+		(+chassisDims.x - wheelWidth - 0.2f) * 0.5f, -(chassisDims.y / 3 + wheelRadius),
 		wheelRearZ + (numLeftWheels - 1) * deltaZ);
 	//Set the remaining wheels.
 	for (PxU32 i = 2, wheelCount = 4; i < numWheels - 2; i += 2, wheelCount += 2)

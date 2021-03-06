@@ -6,7 +6,7 @@
 
 
 Vehicle::Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, int playerNum, std::string texturePath) :
-	Entity("models/carJoined.obj", texturePath.c_str(), shaderProgram, camera)
+	Entity("models/car_body.obj", texturePath.c_str(), shaderProgram, camera)
 {
 	player = playerNum;
 	if (player >= 0) {
@@ -15,7 +15,11 @@ Vehicle::Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> cam
 	else {
 		movement = VehicleMovement(false);
 	}
-	
+
+	wheel1 = std::make_unique<Model>("models/frontRight.obj", texturePath.c_str(), shaderProgram, camera);
+	wheel2 = std::make_unique<Model>("models/frontLeft.obj", texturePath.c_str(), shaderProgram, camera);
+	wheel3 = std::make_unique<Model>("models/backRight.obj", texturePath.c_str(), shaderProgram, camera);
+	wheel4 = std::make_unique<Model>("models/backLeft.obj", texturePath.c_str(), shaderProgram, camera);
 }
 
 void Vehicle::attachPhysics(Physics& instance)
@@ -74,7 +78,11 @@ void Vehicle::draw(Physics& instance, const ShaderProgram& depthTexture, bool de
 		modelMatrices.push_back(shapePose);
 	}
 
-	mGeometry->draw(modelMatrices[6], depthTexture, depth, depthMap);
+	wheel1->draw(modelMatrices[0], depthTexture, depth, depthMap);
+	wheel2->draw(modelMatrices[1], depthTexture, depth, depthMap);
+	wheel3->draw(modelMatrices[2], depthTexture, depth, depthMap);
+	wheel4->draw(modelMatrices[3], depthTexture, depth, depthMap);
+	mGeometry->draw(modelMatrices[4], depthTexture, depth, depthMap);
 }
 
 void Vehicle::simulate(Physics& instance)
