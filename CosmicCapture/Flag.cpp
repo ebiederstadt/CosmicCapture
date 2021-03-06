@@ -39,7 +39,6 @@ void Flag::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth
 
 void Flag::simulate(Physics& instance)
 {
-	// TODO: Assuming that there is only one vehicle, should change that at some point
 	if (State::flagPickedUpBy[0]) {
 		PxVec3 pos = State::vehicleRDs[0]->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));

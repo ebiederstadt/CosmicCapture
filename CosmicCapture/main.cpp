@@ -1,4 +1,3 @@
-#include <string>
 #include <memory>
 #include <fmt/format.h>
 #include <GL/glew.h>
@@ -21,6 +20,8 @@
 #include "ProjectilePickupZone.h"
 #include "SpeedBoost.h"
 #include "SpeedBoostPickupZone.h"
+#include "SpikeTrap.h"
+#include "SpikeTrapPickupZone.h"
 
 #include "OpponentInput.h"
 
@@ -131,6 +132,11 @@ int main(int argc, char** args) {
 	SpeedBoost testSpeedBoost(shaderProgram, sCamera);
 	SpeedBoostPickupZone speedboostPickupZone(shaderProgram, sCamera);
 	speedboostPickupZone.attachPhysics(physics);
+
+	// Spike trap powerup
+	SpikeTrap testSpikeTrap(shaderProgram, sCamera);
+	SpikeTrapPickupZone spikeTrapPickupZone(shaderProgram, sCamera);
+	spikeTrapPickupZone.attachPhysics(physics);
 	
 	Flag flag(shaderProgram, sCamera);
 	flag.attachPhysics(physics);
@@ -170,6 +176,7 @@ int main(int argc, char** args) {
 	entities.push_back(&opponentCar1);
 	entities.push_back(&opponentCar2);
 	entities.push_back(&opponentCar3);
+	entities.push_back(&spikeTrapPickupZone);
 
 
 	// Loop until the user closes the window
@@ -179,10 +186,11 @@ int main(int argc, char** args) {
 		// Physics simulation
 		auto inputState = input.getInputState();
 		
-
-
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
+
+		if (State::spikeTrapPickedUp && testSpikeTrap.hasOwningVehicle())
+			testSpikeTrap.processInput(inputState, physics);
 		
 		if (inputState[MovementFlags::ACTION] == false && State::projectilePickedUp) {
 			testProj.attachVehicle(car.getVehicle());
@@ -197,10 +205,44 @@ int main(int argc, char** args) {
 			testSpeedBoost.attachPhysics(physics);
 			State::speedboostPickedUp = false;
 		}
+
+		// Pickup spike trap
+		if (State::spikeTrapPickedUp && !testSpikeTrap.hasOwningVehicle()) {
+			testSpikeTrap.attachOwningVehicle(car.getVehicle());
+			entities.push_back(&testSpikeTrap);
+		}
+
+		// Run into spike trap
+		if (State::spikeTrackInUse && !testSpikeTrap.hasAffectedVehicle())
+		{
+			switch (State::spikeTrapActingUpon)
+			{
+			case 0:
+				testSpikeTrap.attachAffectedVehicle(car.getVehicle());
+				break;
+			case 1:
+				testSpikeTrap.attachAffectedVehicle(opponentCar1.getVehicle());
+				break;
+			case 2:
+				testSpikeTrap.attachAffectedVehicle(opponentCar2.getVehicle());
+				break;
+			case 3:
+				testSpikeTrap.attachAffectedVehicle(opponentCar3.getVehicle());
+				break;
+			}
+		}
+
+		// Delete spike trap once it is finished
+		if (State::spikeTrapFinished)
+		{
+			State::spikeTrapFinished = false;
+			auto loc = std::find(entities.begin(), entities.end(), &testSpikeTrap);
+			entities.erase(loc);
+		}
+		
 		//forgive me--------------------
 		opponentCar1.processInput(opponentBrains.getInput());
 		//------------------------------*/
-		
 
 		for (const auto& entity : entities)
 			entity->simulate(physics);
