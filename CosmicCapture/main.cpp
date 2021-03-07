@@ -319,23 +319,47 @@ int main(int argc, char** args) {
 		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
 		printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//printf("%d\n", State::worldGrid[17][6]);
-		if (State::scores[0] == 3) {
-			fmt::print("You win ");
-		}
-		else if (State::scores[1] == 3) {
-			fmt::print("Opponent 1 wins");
-		}
-		else if (State::scores[2] == 3) {
-			fmt::print("Opponent 2 wins");
-		}
-		else if (State::scores[3] == 3) {
-			fmt::print("Opponent 3 wins");
-		}
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Text("Camera Position");
 		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
+
+		// Game State information
+		ImGui::Text("Score: %d", State::scores[0]);
+		if (State::scores[0] == 3) {
+			ImGui::Text("You win");
+			if (ImGui::Button("Restart?"))
+			{
+				for (int i = 0; i < 4; ++i)
+					State::scores[i] = 0;
+			}
+		}
+		else if (State::scores[1] == 3) {
+			ImGui::Text("Opponent 1 wins");
+			if (ImGui::Button("Restart?"))
+			{
+				for (int i = 0; i < 4; ++i)
+					State::scores[i] = 0;
+			}
+		}
+		else if (State::scores[2] == 3) {
+			ImGui::Text("Opponent 2 wins");
+			if (ImGui::Button("Restart?"))
+			{
+				for (int i = 0; i < 4; ++i)
+					State::scores[i] = 0;
+			}
+		}
+		else if (State::scores[3] == 3) {
+			ImGui::Text("Opponent 3 wins");
+			if (ImGui::Button("Restart?"))
+			{
+				for (int i = 0; i < 4; ++i)
+					State::scores[i] = 0;
+			}
+		}
+		
 		ImGui::End();
 
 		Window::renderImGuiFrame();
