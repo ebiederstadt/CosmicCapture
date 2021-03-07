@@ -42,14 +42,6 @@ int main(int argc, char** args) {
 	Physics physics = Physics::Instance();
 	const auto sCamera = std::make_shared<Camera>(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 	physics.Initialize();
-
-	//initialize world grid temp ----------------------------
-	for (int i = 0; i < 20; i++) {
-		for (int j = 0; j < 20; j++) {
-			State::worldGrid[i][j] = 1;
-		}
-	}
-	//-------------------------------------------------------
 	
 	Input input = Input();
 
@@ -180,6 +172,8 @@ int main(int argc, char** args) {
 	gm1.attachPhysics(physics);
 	entities.push_back(&gm1);	
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
+	opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p); //get Initial path
+	int counter = 0;
 
 	// Loop until the user closes the window
 	while (!quit) {
@@ -207,7 +201,10 @@ int main(int argc, char** args) {
 			State::speedboostPickedUp = false;
 		}
 		//forgive me--------------------
-		opponentCar1.processInput(opponentBrains.getInput());
+		if (counter % 10 == 0) {
+			opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+		}
+		opponentCar3.processInput(opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 		//------------------------------*/
 		
 
@@ -273,13 +270,13 @@ int main(int argc, char** args) {
 
 		//player pos for testing
 		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		int xIndex = (int)((playerPosition.x + 100.f) / 10.f);
-		int zIndex = (int)((playerPosition.z + 100.f) / 10.f);
 		PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
+		int xIndex = (int)((playerPosition.x + 100.f) / 10.f);
+		int zIndex = (int)((playerPosition.z + 100.f) / 10.f);;
 		int dir = opponentBrains.getOrientation(playerDir);
 		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
 		printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
-
+		//printf("%d\n", State::worldGrid[17][6]);
 		if (State::scores[0] == 3) {
 			fmt::print("You win ");
 		}

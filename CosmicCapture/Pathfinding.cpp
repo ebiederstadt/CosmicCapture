@@ -134,7 +134,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             if (isDestination(i - 1, j, dest) == true) {
                 cellDetails[i - 1][j].parent_i = i;
                 cellDetails[i - 1][j].parent_j = j;
-                printf("The destination cell is found\n");
+                //printf("The destination cell is found\n");
                 foundDest = true;
                 return tracePath(cellDetails, dest); 
             }
@@ -169,7 +169,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             if (isDestination(i + 1, j, dest) == true) {
                 cellDetails[i + 1][j].parent_i = i;
                 cellDetails[i + 1][j].parent_j = j;
-                printf("The destination cell is found\n");
+                //printf("The destination cell is found\n");
                 foundDest = true;
                 return tracePath(cellDetails, dest);
             }
@@ -204,7 +204,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             if (isDestination(i, j + 1, dest) == true) {
                 cellDetails[i][j + 1].parent_i = i;
                 cellDetails[i][j + 1].parent_j = j;
-                printf("The destination cell is found\n");
+                //printf("The destination cell is found\n");
                 foundDest = true;
                 return tracePath(cellDetails, dest);
             }
@@ -237,7 +237,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             if (isDestination(i, j - 1, dest) == true) {
                 cellDetails[i][j - 1].parent_i = i;
                 cellDetails[i][j - 1].parent_j = j;
-                printf("The destination cell is found\n");
+                //printf("The destination cell is found\n");
                 foundDest = true;
                 return tracePath(cellDetails, dest);
             }
@@ -271,7 +271,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             if (isDestination(i - 1, j + 1, dest) == true) {
                 cellDetails[i - 1][j + 1].parent_i = i;
                 cellDetails[i - 1][j + 1].parent_j = j;
-                printf("The destination cell is found\n");
+                //printf("The destination cell is found\n");
                 foundDest = true;
                 return tracePath(cellDetails, dest);
             }
@@ -306,7 +306,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
 
                 cellDetails[i - 1][j - 1].parent_i = i;
                 cellDetails[i - 1][j - 1].parent_j = j;
-                printf("The destination cell is found\n");
+                //printf("The destination cell is found\n");
                 foundDest = true;
                 return tracePath(cellDetails, dest);
             }
@@ -341,7 +341,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
                 // Set the Parent of the destination cell
                 cellDetails[i + 1][j + 1].parent_i = i;
                 cellDetails[i + 1][j + 1].parent_j = j;
-                printf("The destination cell is found\n");
+                //printf("The destination cell is found\n");
                 foundDest = true;
                 return tracePath(cellDetails, dest);
             }
@@ -374,7 +374,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             if (isDestination(i + 1, j - 1, dest) == true) {
                 cellDetails[i + 1][j - 1].parent_i = i;
                 cellDetails[i + 1][j - 1].parent_j = j;
-                printf("The destination cell is found\n");
+                //printf("The destination cell is found\n");
                 foundDest = true;
                 return tracePath(cellDetails, dest);
             }

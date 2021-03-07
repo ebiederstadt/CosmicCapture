@@ -5,8 +5,8 @@
 #include <math.h>
 #include <fmt/format.h>
 
-#define ROW 39
-#define COL 39
+#define ROW 20
+#define COL 20
 
 // Creating a shortcut for int, int pair type
 typedef std::pair<int, int> Pair;
