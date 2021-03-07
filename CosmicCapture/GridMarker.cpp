@@ -8,9 +8,9 @@ GridMarker::GridMarker(const ShaderProgram& shaderProgram, std::shared_ptr<Camer
 void GridMarker::attachPhysics(Physics& instance)
 {
 	int counter = 0;
-	for (int i = 0; i < 20; i++) {
-		for (int j = 0; j < 20; j++) {
-			PxVec3 p(100.f - 10.f * i, 2.f, 100.f - 10.f * j);
+	for (int i = 0; i < 30; i++) {
+		for (int j = 0; j < 30; j++) {
+			PxVec3 p(150.f - 10.f * i, 2.f, 150.f - 10.f * j);
 			PxShape* marker = instance.gPhysics->createShape(PxBoxGeometry(0.1f, 2.f, 0.1f), *instance.gMaterial, true); //create flag shape
 			marker->setSimulationFilterData(PxFilterData(COLLISION_FLAG_SCENERY, COLLISION_FLAG_SCENERY_AGAINST, 0, 0));
 			markerBody[counter] = instance.gPhysics->createRigidStatic(PxTransform(p));

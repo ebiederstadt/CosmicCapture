@@ -56,7 +56,7 @@ int main(int argc, char** args) {
 	simpleDepthShader.compile();
 
 	// The arena model
-	Model arena("models/basic_arena_center.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/untitled.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 	// Shadow setup start ---------------------------------------------------------------------
 
@@ -144,9 +144,9 @@ int main(int argc, char** args) {
 	AudioEngine soundSystem = AudioEngine();
 	soundSystem.initialize();
 	soundSystem.initializeBuffers();
-	AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
-	music.loop();
-	 music.playSound();
+	//AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
+	//music.loop();
+	 //music.playSound();
 	//AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
 	//engine.loop();
 	//engine.playSound();
@@ -178,7 +178,7 @@ int main(int argc, char** args) {
 	gm1.attachPhysics(physics);
 	entities.push_back(&gm1);	
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
-	opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p); //get Initial path
+	//opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p); //get Initial path
 	int counter = 0;
 
 	// Loop until the user closes the window
@@ -244,10 +244,10 @@ int main(int argc, char** args) {
 		}
 		
 		//forgive me--------------------
-		if (counter % 10 == 0) {
-			opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
-		}
-		opponentCar3.processInput(opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
+		//if (counter % 10 == 0) {
+		//	opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+		//}
+		//opponentCar3.processInput(opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 		//------------------------------*/
 
 		for (const auto& entity : entities)
