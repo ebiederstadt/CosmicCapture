@@ -75,7 +75,7 @@ void Physics::Initialize()
 	gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
 	gScene->addActor(*gGroundPlane);
 
-	readMesh("./models/walls_joined.obj");
+	readMesh("./models/walls_joined_center.obj");
 
 	//----------------------------------------------------------*/
 

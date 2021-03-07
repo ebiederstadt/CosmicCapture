@@ -1,6 +1,6 @@
 #include "Pathfinding.h"
 
-
+// https://www.geeksforgeeks.org/a-search-algorithm/ <---- slightly modified this implementation
 
 Pathfinding::Pathfinding() {};
 
@@ -266,7 +266,6 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
         }
 
         //----------- 5th Successor (North-East)
-        //------------
 
         if (isValid(i - 1, j + 1) == true) {
             if (isDestination(i - 1, j + 1, dest) == true) {
@@ -299,7 +298,6 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
         }
 
         //----------- 6th Successor (North-West)
-        //------------
 
 
         if (isValid(i - 1, j - 1) == true) {
@@ -336,7 +334,6 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
         }
 
         //----------- 7th Successor (South-East)
-        //------------
 
         if (isValid(i + 1, j + 1) == true) {
 
@@ -371,8 +368,6 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
         }
 
         //----------- 8th Successor (South-West)
-        //------------
-
 
         if (isValid(i + 1, j - 1) == true) {
 

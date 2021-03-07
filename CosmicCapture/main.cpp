@@ -23,6 +23,7 @@
 #include "SpeedBoostPickupZone.h"
 
 #include "OpponentInput.h"
+#include "GridMarker.h"
 
 #include "GlobalState.h"
 
@@ -43,8 +44,8 @@ int main(int argc, char** args) {
 	physics.Initialize();
 
 	//initialize world grid temp ----------------------------
-	for (int i = 0; i < 25; i++) {
-		for (int j = 0; j < 25; j++) {
+	for (int i = 0; i < 20; i++) {
+		for (int j = 0; j < 20; j++) {
 			State::worldGrid[i][j] = 1;
 		}
 	}
@@ -62,7 +63,7 @@ int main(int argc, char** args) {
 	simpleDepthShader.compile();
 
 	// The arena model
-	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/basic_arena_center.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 	// Shadow setup start ---------------------------------------------------------------------
 
@@ -142,16 +143,17 @@ int main(int argc, char** args) {
 	FlagDropoffZone flagDropoffZone1(shaderProgram, sCamera, 1);
 	flagDropoffZone1.attachPhysics(physics);
 
-  // setup audio
-  AudioEngine soundSystem = AudioEngine();
-  soundSystem.initialize();
-  soundSystem.initializeBuffers();
-  AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
-  music.loop();
-  music.playSound();
-  //AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
-  //engine.loop();
-  //engine.playSound();
+	// setup audio
+	AudioEngine soundSystem = AudioEngine();
+	soundSystem.initialize();
+	soundSystem.initializeBuffers();
+	AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
+	music.loop();
+	 music.playSound();
+	//AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
+	//engine.loop();
+	//engine.playSound();
+
 	FlagDropoffZone flagDropoffZone2(shaderProgram, sCamera, 2);
 	flagDropoffZone2.attachPhysics(physics);
 
@@ -172,6 +174,12 @@ int main(int argc, char** args) {
 	entities.push_back(&opponentCar2);
 	entities.push_back(&opponentCar3);
 
+	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
+	PxVec3 position1(100.f, 2.0f, 100.0f);
+	GridMarker gm1(shaderProgram, sCamera, position1);
+	gm1.attachPhysics(physics);
+	entities.push_back(&gm1);	
+	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
 
 	// Loop until the user closes the window
 	while (!quit) {
@@ -264,9 +272,13 @@ int main(int argc, char** args) {
 			entity->draw(physics, shaderProgram, false, depthMap);
 
 		//player pos for testing
-		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		//PxVec3 playerDir = car.getVehicle()->getRigidDynamicActor()->getLinearVelocity();
+		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		int xIndex = (int)((playerPosition.x + 100.f) / 10.f);
+		int zIndex = (int)((playerPosition.z + 100.f) / 10.f);
+		PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
+		int dir = opponentBrains.getOrientation(playerDir);
 		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
+		printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 
 		if (State::scores[0] == 3) {
 			fmt::print("You win ");

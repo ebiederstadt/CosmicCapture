@@ -58,6 +58,7 @@
     <ClCompile Include="SpeedBoostPickupZone.cpp" />
     <ClCompile Include="audio\AudioEngine.cpp" />
     <ClCompile Include="audio\AudioInstance.cpp" />
+    <ClCompile Include="GridMarker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -125,6 +126,7 @@
     <ClInclude Include="SpeedBoostPickupZone.h" />
     <ClInclude Include="audio\AudioEngine.h" />
     <ClInclude Include="audio\AudioInstance.h" />
+    <ClInclude Include="GridMarker.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
