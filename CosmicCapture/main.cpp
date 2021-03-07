@@ -238,6 +238,7 @@ int main(int argc, char** args) {
 			State::spikeTrapFinished = false;
 			auto loc = std::find(entities.begin(), entities.end(), &testSpikeTrap);
 			entities.erase(loc);
+			testSpikeTrap.cleanUpPhysics();
 		}
 		
 		//forgive me--------------------
