@@ -196,6 +196,8 @@
     <ClCompile Include="ProjectilePickupZone.cpp" />
     <ClCompile Include="SpeedBoost.cpp" />
     <ClCompile Include="SpeedBoostPickupZone.cpp" />
+    <ClCompile Include="SpikeTrap.cpp" />
+    <ClCompile Include="SpikeTrapPickupZone.cpp" />
     <ClCompile Include="Vehicle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -243,6 +245,8 @@
     <ClInclude Include="ProjectilePickupZone.h" />
     <ClInclude Include="SpeedBoost.h" />
     <ClInclude Include="SpeedBoostPickupZone.h" />
+    <ClInclude Include="SpikeTrap.h" />
+    <ClInclude Include="SpikeTrapPickupZone.h" />
     <ClInclude Include="Vehicle.h" />
   </ItemGroup>
   <ItemGroup>

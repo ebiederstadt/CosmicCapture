@@ -52,4 +52,14 @@ struct State
 	inline static PxRigidStatic* speedboostPickupMarkerBody = nullptr;
 	inline static PxRigidStatic* speedboostPickupTriggerBody = nullptr;
 	inline static bool speedboostPickedUp = false;
+
+	inline static PxRigidStatic* spikeTrapPickupTriggerBody = nullptr;
+	inline static bool spikeTrapPickedUp = false;
+
+	inline static PxRigidStatic* spikeTrapTriggerBody = nullptr;
+	inline static bool spikeTrapActive = false; // Active: The trap is ready for use
+	inline static bool spikeTrapInUse = false; // In use: The trap is acting on a car
+	inline static int spikeTrapActingUpon = 0; // Which car the spike trap is affecting
+
+	inline static bool spikeTrapFinished = false; // Use when the trap is finished and should be removed
 };

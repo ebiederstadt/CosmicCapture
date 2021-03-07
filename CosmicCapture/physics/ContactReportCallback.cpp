@@ -7,6 +7,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 {
 	for (PxU32 i = 0; i < count; i++)
 	{
+		// Flag pickups
 		if (pairs[i].triggerActor == State::pickupBox && pairs[i].otherActor != State::flagBody)
 		{		
 			if (pairs[i].otherActor == State::vehicleRDs[0] && !State::flagPickedUpBy[0] && State::flagPickedUp) {
@@ -27,6 +28,8 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			}
 			State::flagPickedUp = true;
 		}
+
+		// Flag dropoffs
 		else if (pairs[i].triggerActor == State::flagDropoffBoxes[0] && pairs[i].otherActor == State::vehicleRDs[0] && State::flagPickedUpBy[0])
 		{
 			fmt::print("player 0 dropped off flag\n");
@@ -55,6 +58,8 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			State::flagPickedUp = false;
 			State::scores[3]++;
 		}
+
+		// Powerups
 		else if (pairs[i].triggerActor == State::projectilePickupTriggerBody && !State::projectilePickedUp) {
 			fmt::print("projectile picked up\n");
 			State::projectilePickedUp = true;
@@ -62,6 +67,25 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		else if (pairs[i].triggerActor == State::speedboostPickupTriggerBody && !State::speedboostPickedUp) {
 			fmt::print("speed boost picked up\n");
 			State::speedboostPickedUp = true;
+		}
+		else if (pairs[i].triggerActor == State::spikeTrapPickupTriggerBody && !State::spikeTrapPickedUp) {
+			fmt::print("Spike trap picked up\n");
+			State::spikeTrapPickedUp = true;
+		}
+		else if (pairs[i].triggerActor == State::spikeTrapTriggerBody && State::spikeTrapActive) {
+			fmt::print("Ran into spike trap!\n");
+			State::spikeTrapActive = false;
+			State::spikeTrapInUse = true;
+
+			for (int j = 0; j < 4; ++j)
+			{
+				if (pairs[i].otherActor == State::vehicleRDs[j])
+				{
+					State::spikeTrapActingUpon = j;
+					break;
+				}
+					
+			}
 		}
 
 	}

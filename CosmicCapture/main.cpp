@@ -1,4 +1,3 @@
-#include <string>
 #include <memory>
 #include <fmt/format.h>
 #include <GL/glew.h>
@@ -21,6 +20,8 @@
 #include "ProjectilePickupZone.h"
 #include "SpeedBoost.h"
 #include "SpeedBoostPickupZone.h"
+#include "SpikeTrap.h"
+#include "SpikeTrapPickupZone.h"
 
 #include "OpponentInput.h"
 #include "GridMarker.h"
@@ -97,7 +98,6 @@ int main(int argc, char** args) {
 	//main loop flag
 	bool quit = false;
 
-
 	// Entities
 	Vehicle car(shaderProgram, sCamera, 0, "textures/blank.jpg");
 	car.attachPhysics(physics);
@@ -125,6 +125,11 @@ int main(int argc, char** args) {
 	SpeedBoost testSpeedBoost(shaderProgram, sCamera);
 	SpeedBoostPickupZone speedboostPickupZone(shaderProgram, sCamera);
 	speedboostPickupZone.attachPhysics(physics);
+
+	// Spike trap powerup
+	SpikeTrap testSpikeTrap(shaderProgram, sCamera);
+	SpikeTrapPickupZone spikeTrapPickupZone(shaderProgram, sCamera);
+	spikeTrapPickupZone.attachPhysics(physics);
 	
 	Flag flag(shaderProgram, sCamera);
 	flag.attachPhysics(physics);
@@ -165,6 +170,7 @@ int main(int argc, char** args) {
 	entities.push_back(&opponentCar1);
 	entities.push_back(&opponentCar2);
 	entities.push_back(&opponentCar3);
+	entities.push_back(&spikeTrapPickupZone);
 
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
 	PxVec3 position1(100.f, 2.0f, 100.0f);
@@ -182,10 +188,11 @@ int main(int argc, char** args) {
 		// Physics simulation
 		auto inputState = input.getInputState();
 		
-
-
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
+
+		if (State::spikeTrapPickedUp && testSpikeTrap.hasOwningVehicle())
+			testSpikeTrap.processInput(inputState, physics);
 		
 		if (inputState[MovementFlags::ACTION] == false && State::projectilePickedUp) {
 			testProj.attachVehicle(car.getVehicle());
@@ -200,13 +207,48 @@ int main(int argc, char** args) {
 			testSpeedBoost.attachPhysics(physics);
 			State::speedboostPickedUp = false;
 		}
+
+		// Pickup spike trap
+		if (State::spikeTrapPickedUp && !testSpikeTrap.hasOwningVehicle()) {
+			testSpikeTrap.attachOwningVehicle(car.getVehicle());
+			entities.push_back(&testSpikeTrap);
+		}
+
+		// Run into spike trap
+		if (State::spikeTrapInUse && !testSpikeTrap.hasAffectedVehicle())
+		{
+			switch (State::spikeTrapActingUpon)
+			{
+			case 0:
+				testSpikeTrap.attachAffectedVehicle(car.getVehicle());
+				break;
+			case 1:
+				testSpikeTrap.attachAffectedVehicle(opponentCar1.getVehicle());
+				break;
+			case 2:
+				testSpikeTrap.attachAffectedVehicle(opponentCar2.getVehicle());
+				break;
+			case 3:
+				testSpikeTrap.attachAffectedVehicle(opponentCar3.getVehicle());
+				break;
+			}
+		}
+
+		// Delete spike trap once it is finished
+		if (State::spikeTrapFinished)
+		{
+			State::spikeTrapFinished = false;
+			auto loc = std::find(entities.begin(), entities.end(), &testSpikeTrap);
+			entities.erase(loc);
+			testSpikeTrap.cleanUpPhysics();
+		}
+		
 		//forgive me--------------------
 		if (counter % 10 == 0) {
 			opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 		}
 		opponentCar3.processInput(opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 		//------------------------------*/
-		
 
 		for (const auto& entity : entities)
 			entity->simulate(physics);
