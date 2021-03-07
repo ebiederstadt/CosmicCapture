@@ -1,12 +1,17 @@
 #include "Flag.h"
 
 #include <memory>
+#include "GlobalState.h"
+#include "physics/VehicleFilterShader.h"
 
 
 
 Flag::Flag(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera) :
-	Entity("models/flag.ply", "textures/blank.jpg", shaderProgram, camera)
-{}
+	Entity("models/flag.obj", "textures/blank.jpg", shaderProgram, camera)
+{
+
+	mFlagBody = std::make_unique<Model>("models/flag_body.obj", "textures/blank.jpg", shaderProgram, camera);
+}
 
 void Flag::attachPhysics(Physics& instance)
 {
@@ -34,12 +39,12 @@ void Flag::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth
 	// Draw the flag
 	PxTransform transform = State::flagBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
+	mFlagBody->draw(modelMatrix, depthTexture, depth, depthMap);
 	mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
 }
 
 void Flag::simulate(Physics& instance)
 {
-	// TODO: Assuming that there is only one vehicle, should change that at some point
 	if (State::flagPickedUpBy[0]) {
 		PxVec3 pos = State::vehicleRDs[0]->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));

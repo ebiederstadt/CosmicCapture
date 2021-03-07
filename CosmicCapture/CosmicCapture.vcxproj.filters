@@ -58,6 +58,8 @@
     <ClCompile Include="SpeedBoostPickupZone.cpp" />
     <ClCompile Include="audio\AudioEngine.cpp" />
     <ClCompile Include="audio\AudioInstance.cpp" />
+    <ClCompile Include="SpikeTrap.cpp" />
+    <ClCompile Include="SpikeTrapPickupZone.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -125,6 +127,8 @@
     <ClInclude Include="SpeedBoostPickupZone.h" />
     <ClInclude Include="audio\AudioEngine.h" />
     <ClInclude Include="audio\AudioInstance.h" />
+    <ClInclude Include="SpikeTrap.h" />
+    <ClInclude Include="SpikeTrapPickupZone.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
