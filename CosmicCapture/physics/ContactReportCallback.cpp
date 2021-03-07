@@ -72,10 +72,10 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			fmt::print("Spike trap picked up\n");
 			State::spikeTrapPickedUp = true;
 		}
-		else if (pairs[i].triggerActor == State::spikeTrapTriggerBody && State::spikeTrackActive) {
+		else if (pairs[i].triggerActor == State::spikeTrapTriggerBody && State::spikeTrapActive) {
 			fmt::print("Ran into spike trap!\n");
-			State::spikeTrackActive = false;
-			State::spikeTrackInUse = true;
+			State::spikeTrapActive = false;
+			State::spikeTrapInUse = true;
 
 			for (int j = 0; j < 4; ++j)
 			{

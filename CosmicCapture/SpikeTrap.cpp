@@ -22,25 +22,25 @@ void SpikeTrap::simulate(Physics& instance)
 {
 	// Waiting for global activation
 	// (gives some time for the player that placed the spike trap to move out of the way)
-	if (active && !State::spikeTrackActive)
+	if (active && !State::spikeTrapActive)
 	{
 		activationTimer += 1.0f;
 		if (activationTimer >= ACTIVATION_TIME)
 		{
-			State::spikeTrackActive = true;
+			State::spikeTrapActive = true;
 			activationTimer = 0.0f;
 			active = false;
 		}
 	}
 
 	// Prevent the vehicle from moving while caught in the spike trap
-	if (State::spikeTrackInUse && hasAffectedVehicle())
+	if (State::spikeTrapInUse && hasAffectedVehicle())
 	{
 		mAffectedVehicle.value()->setToRestState();
 		affectionTimer += 1.0f;
 		if (affectionTimer > AFFECTION_TIME)
 		{
-			State::spikeTrackInUse = false;
+			State::spikeTrapInUse = false;
 			mAffectedVehicle.reset();
 			affectionTimer = 0.0f;
 			State::spikeTrapFinished = true;

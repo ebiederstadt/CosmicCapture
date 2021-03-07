@@ -213,7 +213,7 @@ int main(int argc, char** args) {
 		}
 
 		// Run into spike trap
-		if (State::spikeTrackInUse && !testSpikeTrap.hasAffectedVehicle())
+		if (State::spikeTrapInUse && !testSpikeTrap.hasAffectedVehicle())
 		{
 			switch (State::spikeTrapActingUpon)
 			{
