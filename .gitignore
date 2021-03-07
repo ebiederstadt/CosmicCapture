@@ -93,6 +93,9 @@ StyleCopReport.xml
 *.svclog
 *.scc
 
+# Don't ignore obj files in models
+!CosmicCapture\models\*.obj
+
 # Chutzpah Test files
 _Chutzpah*
 

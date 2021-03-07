@@ -78,4 +78,8 @@ private:
 	bool mInReverseMode = false;
 	int player;
 	VehicleMovement movement;
+	std::unique_ptr<Model> wheel1;
+	std::unique_ptr<Model> wheel2;
+	std::unique_ptr<Model> wheel3;
+	std::unique_ptr<Model> wheel4;
 };
