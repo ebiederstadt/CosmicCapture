@@ -179,8 +179,12 @@ int main(int argc, char** args) {
 	//entities.push_back(&gm1);	
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
 	opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p); //get Initial path
-	int counter = 0;
-
+	std::pair<int, int> tempOld = State::lastPos;
+	std::pair<int, int> tempNew = State::lastPos;
+	int aiStuffCounter = 0;
+	int stuckCount = 0; //count how many frames a player has been in the same grid coords
+	int reverseCounter = 0;
+	bool reversing = false;
 	// Loop until the user closes the window
 	while (!quit) {
 		quit = input.HandleInput();
@@ -251,10 +255,41 @@ int main(int argc, char** args) {
 		else {
 			target = State::flagBody->getGlobalPose().p;
 		}
-		if (counter % 10 == 0) {
-			opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, target);
+	
+		opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, target);
+
+		std::map<MovementFlags, bool> command;
+		command = opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ());
+		
+		tempNew = State::lastPos;	
+		if (tempNew == tempOld && !reversing) {
+			stuckCount++;
+			if (stuckCount > 2000) {
+				reversing = true;
+				stuckCount = 0;
+			}
 		}
-		opponentCar3.processInput(opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
+		else {
+			stuckCount = 0;
+		}
+		tempOld = State::lastPos;
+		if (reversing) {
+			command[MovementFlags::LEFT] = true;
+			command[MovementFlags::RIGHT] = true;
+			command[MovementFlags::DOWN] = false;
+			command[MovementFlags::UP] = true;
+			reverseCounter++;
+			if (reverseCounter > 850) {
+				reversing = false;
+				reverseCounter = 0;
+			}
+		}
+		
+		if (aiStuffCounter %  11 == 0) {
+			command[MovementFlags::UP] = true;
+		}
+		opponentCar3.processInput(command);
+		aiStuffCounter++;
 		//------------------------------*/
 
 		for (const auto& entity : entities)

@@ -34,6 +34,7 @@ struct State
 
 	inline static bool targetReached = false;
 	inline static std::pair<int, int> lastPos;
+	inline static std::pair<int, int> stallPos;
 
 	inline static bool flagPickedUp = false;
 	inline static bool flagPickedUpBy[4] = { false, false, false, false };

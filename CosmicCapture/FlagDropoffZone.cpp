@@ -36,7 +36,7 @@ void FlagDropoffZone::attachPhysics(Physics& instance)
 	instance.gScene->addActor(*dropoffZoneBody);
 	//----------------------------------------------------------
 	//Trigger Shapes--------------------------------------------
-	PxShape* dropoffShape = instance.gPhysics->createShape(PxBoxGeometry(1.f, 1.f, 1.f), *instance.gMaterial, true);
+	PxShape* dropoffShape = instance.gPhysics->createShape(PxBoxGeometry(5.f, 5.f, 5.f), *instance.gMaterial, true);
 	//trigger box for dropping off the flag
 	dropoffShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	dropoffShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
