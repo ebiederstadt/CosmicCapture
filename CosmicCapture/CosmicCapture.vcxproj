@@ -158,6 +158,7 @@
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="FlagDropoffZone.cpp" />
     <ClCompile Include="GridMarker.cpp" />
+    <ClCompile Include="InvisibleBarrier.cpp" />
     <ClCompile Include="OpponentInput.cpp" />
     <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="physics\ContactReportCallback.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="FlagDropoffZone.h" />
     <ClInclude Include="GlobalState.h" />
     <ClInclude Include="GridMarker.h" />
+    <ClInclude Include="InvisibleBarrier.h" />
     <ClInclude Include="OpponentInput.h" />
     <ClInclude Include="Pathfinding.h" />
     <ClInclude Include="physics\ContactReportCallback.h" />
