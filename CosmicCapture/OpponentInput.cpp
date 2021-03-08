@@ -127,7 +127,7 @@ std::map<MovementFlags, bool> OpponentInput::getCommand(int playerDir, int targe
 		inputMap[MovementFlags::RIGHT] = true;
 		inputMap[MovementFlags::DOWN] = true;
 		inputMap[MovementFlags::UP] = false;
-		printf("STRAIGHT\n");
+		//printf("STRAIGHT\n");
 		return inputMap;
 	}
 
@@ -246,14 +246,14 @@ std::map<MovementFlags, bool> OpponentInput::getCommand(int playerDir, int targe
 		inputMap[MovementFlags::RIGHT] = true;
 		inputMap[MovementFlags::DOWN] = true;
 		inputMap[MovementFlags::UP] = false;
-		printf("LEFT\n");
+		//printf("LEFT\n");
 	}
 	else {
 		inputMap[MovementFlags::LEFT] = true;
 		inputMap[MovementFlags::RIGHT] = false;
 		inputMap[MovementFlags::DOWN] = true;
 		inputMap[MovementFlags::UP] = false;
-		printf("RIGHT\n");
+		//printf("RIGHT\n");
 	}
 	return inputMap;
 }

@@ -144,9 +144,9 @@ int main(int argc, char** args) {
 	AudioEngine soundSystem = AudioEngine();
 	soundSystem.initialize();
 	soundSystem.initializeBuffers();
-	//AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
-	//music.loop();
-	 //music.playSound();
+	AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
+	music.loop();
+	music.playSound();
 	//AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
 	//engine.loop();
 	//engine.playSound();
@@ -353,13 +353,13 @@ int main(int argc, char** args) {
 			entity->draw(physics, shaderProgram, false, depthMap);
 
 		//player pos for testing
-		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
-		int xIndex = (int)((playerPosition.x + 100.f) / 10.f);
-		int zIndex = (int)((playerPosition.z + 100.f) / 10.f);;
-		int dir = opponentBrains.getOrientation(playerDir);
+		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		//PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
+		//int xIndex = (int)((playerPosition.x + 100.f) / 10.f);
+		//int zIndex = (int)((playerPosition.z + 100.f) / 10.f);;
+		//int dir = opponentBrains.getOrientation(playerDir);
 		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
-		printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
+		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//printf("%d\n", State::worldGrid[17][6]);
 
 		ImGui::Begin("Framerate Counter!");
