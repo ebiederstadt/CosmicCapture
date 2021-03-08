@@ -23,11 +23,13 @@ void SpeedBoostPickupZone::attachPhysics(Physics& instance) {
 	State::speedboostPickupTriggerBody->attachShape(*speedboostPickupTriggerShape);
 	instance.gScene->addActor(*State::speedboostPickupTriggerBody);
 }
+
 void SpeedBoostPickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) {
 	PxTransform transform = State::speedboostPickupMarkerBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
 	mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
 }
+
 void SpeedBoostPickupZone::simulate(Physics& instance) {
 	PxVec3 pos = State::speedboostPickupMarkerBody->getGlobalPose().p;
 	if (ascendingSpeedBoost) {
@@ -44,6 +46,7 @@ void SpeedBoostPickupZone::simulate(Physics& instance) {
 	}
 
 }
+
 void SpeedBoostPickupZone::cleanUpPhysics() {
 	PX_RELEASE(State::speedboostPickupTriggerBody);
 	PX_RELEASE(State::speedboostPickupMarkerBody);

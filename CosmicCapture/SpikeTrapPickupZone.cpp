@@ -10,7 +10,7 @@ void SpikeTrapPickupZone::attachPhysics(Physics& instance)
 {
 	PxShape* speedboostPickupMarker = instance.gPhysics->createShape(PxSphereGeometry(1.f), *instance.gMaterial, true);
 	speedboostPickupMarker->setSimulationFilterData(PxFilterData(COLLISION_FLAG_SCENERY, COLLISION_FLAG_SCENERY_AGAINST, 0, 0));
-	pickupBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(40.f, MIN_HEIGHT, 25.f)));
+	pickupBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(15.f, MIN_HEIGHT, 25.f)));
 	pickupBody->attachShape(*speedboostPickupMarker);
 	speedboostPickupMarker->release();
 	instance.gScene->addActor(*pickupBody);
@@ -19,7 +19,7 @@ void SpikeTrapPickupZone::attachPhysics(Physics& instance)
 	//trigger box for picking up the flag
 	speedboostPickupTriggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	speedboostPickupTriggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	State::spikeTrapPickupTriggerBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(40.f, 2.f, 25.f)));
+	State::spikeTrapPickupTriggerBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(15.f, 2.f, 25.f)));
 	State::spikeTrapPickupTriggerBody->attachShape(*speedboostPickupTriggerShape);
 	instance.gScene->addActor(*State::spikeTrapPickupTriggerBody);
 }

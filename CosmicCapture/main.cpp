@@ -24,6 +24,7 @@
 #include "SpikeTrapPickupZone.h"
 
 #include "OpponentInput.h"
+#include "GridMarker.h"
 
 #include "GlobalState.h"
 
@@ -42,14 +43,6 @@ int main(int argc, char** args) {
 	Physics physics = Physics::Instance();
 	const auto sCamera = std::make_shared<Camera>(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 	physics.Initialize();
-
-	//initialize world grid temp ----------------------------
-	for (int i = 0; i < 25; i++) {
-		for (int j = 0; j < 25; j++) {
-			State::worldGrid[i][j] = 1;
-		}
-	}
-	//-------------------------------------------------------
 	
 	Input input = Input();
 
@@ -63,7 +56,7 @@ int main(int argc, char** args) {
 	simpleDepthShader.compile();
 
 	// The arena model
-	Model arena("models/basic_arena.ply", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/untitled.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
 	// Shadow setup start ---------------------------------------------------------------------
 
@@ -147,16 +140,17 @@ int main(int argc, char** args) {
 	FlagDropoffZone flagDropoffZone1(shaderProgram, sCamera, 1);
 	flagDropoffZone1.attachPhysics(physics);
 
-  // setup audio
-  AudioEngine soundSystem = AudioEngine();
-  soundSystem.initialize();
-  soundSystem.initializeBuffers();
-  AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
-  music.loop();
-  music.playSound();
-  //AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
-  //engine.loop();
-  //engine.playSound();
+	// setup audio
+	AudioEngine soundSystem = AudioEngine();
+	soundSystem.initialize();
+	soundSystem.initializeBuffers();
+	AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
+	music.loop();
+	music.playSound();
+	AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
+	engine.loop();
+	engine.playSound();
+
 	FlagDropoffZone flagDropoffZone2(shaderProgram, sCamera, 2);
 	flagDropoffZone2.attachPhysics(physics);
 
@@ -178,6 +172,14 @@ int main(int argc, char** args) {
 	entities.push_back(&opponentCar3);
 	entities.push_back(&spikeTrapPickupZone);
 
+	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
+	PxVec3 position1(100.f, 2.0f, 100.0f);
+	GridMarker gm1(shaderProgram, sCamera, position1);
+	gm1.attachPhysics(physics);
+	entities.push_back(&gm1);	
+	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
+	//opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p); //get Initial path
+	int counter = 0;
 
 	// Loop until the user closes the window
 	while (!quit) {
@@ -200,10 +202,22 @@ int main(int argc, char** args) {
 			State::projectilePickedUp = false;
 		}
 
+		// Use speed boost
 		if (inputState[MovementFlags::ACTION] == false && State::speedboostPickedUp) {
 			testSpeedBoost.attachVehicle(car.getVehicle());
 			testSpeedBoost.attachPhysics(physics);
+			entities.push_back(&testSpeedBoost);
 			State::speedboostPickedUp = false;
+		}
+
+		// Cleanup speed boost after use
+		if (State::speedBoostFinished)
+		{
+			auto loc = std::find(entities.begin(), entities.end(), &testSpeedBoost);
+			entities.erase(loc);
+			testSpeedBoost.cleanUpPhysics();
+			testSpeedBoost.detachVehicle();
+			State::speedBoostFinished = false;
 		}
 
 		// Pickup spike trap
@@ -242,7 +256,10 @@ int main(int argc, char** args) {
 		}
 		
 		//forgive me--------------------
-		opponentCar1.processInput(opponentBrains.getInput());
+		//if (counter % 10 == 0) {
+		//	opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+		//}
+		//opponentCar3.processInput(opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 		//------------------------------*/
 
 		for (const auto& entity : entities)
@@ -306,27 +323,55 @@ int main(int argc, char** args) {
 			entity->draw(physics, shaderProgram, false, depthMap);
 
 		//player pos for testing
-		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		//PxVec3 playerDir = car.getVehicle()->getRigidDynamicActor()->getLinearVelocity();
+		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
+		int xIndex = (int)((playerPosition.x + 100.f) / 10.f);
+		int zIndex = (int)((playerPosition.z + 100.f) / 10.f);;
+		int dir = opponentBrains.getOrientation(playerDir);
 		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
-
-		if (State::scores[0] == 3) {
-			fmt::print("You win ");
-		}
-		else if (State::scores[1] == 3) {
-			fmt::print("Opponent 1 wins");
-		}
-		else if (State::scores[2] == 3) {
-			fmt::print("Opponent 2 wins");
-		}
-		else if (State::scores[3] == 3) {
-			fmt::print("Opponent 3 wins");
-		}
+		printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
+		//printf("%d\n", State::worldGrid[17][6]);
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Text("Camera Position");
 		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
+
+		// Game State information
+		ImGui::Text("Score: %d", State::scores[0]);
+		if (State::scores[0] == 3) {
+			ImGui::Text("You win");
+			if (ImGui::Button("Restart?"))
+			{
+				for (int i = 0; i < 4; ++i)
+					State::scores[i] = 0;
+			}
+		}
+		else if (State::scores[1] == 3) {
+			ImGui::Text("Opponent 1 wins");
+			if (ImGui::Button("Restart?"))
+			{
+				for (int i = 0; i < 4; ++i)
+					State::scores[i] = 0;
+			}
+		}
+		else if (State::scores[2] == 3) {
+			ImGui::Text("Opponent 2 wins");
+			if (ImGui::Button("Restart?"))
+			{
+				for (int i = 0; i < 4; ++i)
+					State::scores[i] = 0;
+			}
+		}
+		else if (State::scores[3] == 3) {
+			ImGui::Text("Opponent 3 wins");
+			if (ImGui::Button("Restart?"))
+			{
+				for (int i = 0; i < 4; ++i)
+					State::scores[i] = 0;
+			}
+		}
+		
 		ImGui::End();
 
 		Window::renderImGuiFrame();
