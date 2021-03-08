@@ -393,7 +393,10 @@ int main(int argc, char** args) {
 		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
 
 		// Game State information
-		ImGui::Text("Score: %d", State::scores[0]);
+		ImGui::Text("Player 1 Score: %d", State::scores[0]);
+		ImGui::Text("Opponent 1 Score: %d", State::scores[1]);
+		ImGui::Text("Opponent 2 Score: %d", State::scores[2]);
+		ImGui::Text("Opponent 3 Score: %d", State::scores[3]);
 		if (State::scores[0] == 3) {
 			ImGui::Text("You win");
 			if (ImGui::Button("Restart?"))

@@ -10,19 +10,19 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		// Flag pickups
 		if (pairs[i].triggerActor == State::pickupBox && pairs[i].otherActor != State::flagBody)
 		{		
-			if (pairs[i].otherActor == State::vehicleRDs[0] && !State::flagPickedUpBy[0] && State::flagPickedUp) {
+			if (pairs[i].otherActor == State::vehicleRDs[0] && !State::flagPickedUpBy[0] && !State::flagPickedUp) {
 				State::flagPickedUpBy[0] = true;
 				fmt::print("player 0 picked up flag\n");
 			}
-			else if (pairs[i].otherActor == State::vehicleRDs[1] && !State::flagPickedUpBy[1] && State::flagPickedUp) {
+			else if (pairs[i].otherActor == State::vehicleRDs[1] && !State::flagPickedUpBy[1] && !State::flagPickedUp) {
 				State::flagPickedUpBy[1] = true;
 				fmt::print("player 1 picked up flag\n");
 			}
-			else if (pairs[i].otherActor == State::vehicleRDs[2] && !State::flagPickedUpBy[2] && State::flagPickedUp) {
+			else if (pairs[i].otherActor == State::vehicleRDs[2] && !State::flagPickedUpBy[2] && !State::flagPickedUp) {
 				State::flagPickedUpBy[2] = true;
 				fmt::print("player 2 picked up flag\n");
 			}
-			else if (pairs[i].otherActor == State::vehicleRDs[3] && !State::flagPickedUpBy[3] && State::flagPickedUp) {
+			else if (pairs[i].otherActor == State::vehicleRDs[3] && !State::flagPickedUpBy[3] && !State::flagPickedUp) {
 				State::flagPickedUpBy[3] = true;
 				fmt::print("player 3 picked up flag\n");
 			}
