@@ -226,6 +226,18 @@ int main(int argc, char** args) {
 			entities.push_back(&testSpikeTrap);
 		}
 
+		// In this case, the trap has already been placed, and now is being picked up again
+		if (State::spikeTrapPickedUp && State::spikeTrapActive)
+		{
+			// Reset
+			auto loc = std::find(entities.begin(), entities.end(), &testSpikeTrap);
+			entities.erase(loc);
+			testSpikeTrap.cleanUpPhysics();
+
+			State::spikeTrapActive = false; // The other spike trap is no longer picked up and should be removed
+			testSpikeTrap.attachOwningVehicle(car.getVehicle());
+		}
+
 		// Run into spike trap
 		if (State::spikeTrapInUse && !testSpikeTrap.hasAffectedVehicle())
 		{
