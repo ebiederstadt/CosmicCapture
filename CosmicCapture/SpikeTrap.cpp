@@ -13,7 +13,7 @@ void SpikeTrap::draw(Physics& instance, const ShaderProgram& depthTexture, bool 
 	// Only draw when actually placed
 	if (!hasOwningVehicle())
 	{
-		const PxMat44 modelMatrix(body->getGlobalPose());
+	const PxMat44 modelMatrix(body->getGlobalPose());
 		mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
 	}
 }

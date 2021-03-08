@@ -151,6 +151,7 @@ int main(int argc, char** args) {
 	//engine.loop();
 	//engine.playSound();
 
+
 	FlagDropoffZone flagDropoffZone2(shaderProgram, sCamera, 2);
 	flagDropoffZone2.attachPhysics(physics);
 
@@ -206,16 +207,40 @@ int main(int argc, char** args) {
 			State::projectilePickedUp = false;
 		}
 
+		// Use speed boost
 		if (inputState[MovementFlags::ACTION] == false && State::speedboostPickedUp) {
 			testSpeedBoost.attachVehicle(car.getVehicle());
 			testSpeedBoost.attachPhysics(physics);
+			entities.push_back(&testSpeedBoost);
 			State::speedboostPickedUp = false;
+		}
+
+		// Cleanup speed boost after use
+		if (State::speedBoostFinished)
+		{
+			auto loc = std::find(entities.begin(), entities.end(), &testSpeedBoost);
+			entities.erase(loc);
+			testSpeedBoost.cleanUpPhysics();
+			testSpeedBoost.detachVehicle();
+			State::speedBoostFinished = false;
 		}
 
 		// Pickup spike trap
 		if (State::spikeTrapPickedUp && !testSpikeTrap.hasOwningVehicle()) {
 			testSpikeTrap.attachOwningVehicle(car.getVehicle());
 			entities.push_back(&testSpikeTrap);
+		}
+
+		// In this case, the trap has already been placed, and now is being picked up again
+		if (State::spikeTrapPickedUp && State::spikeTrapActive)
+		{
+			// Reset
+			auto loc = std::find(entities.begin(), entities.end(), &testSpikeTrap);
+			entities.erase(loc);
+			testSpikeTrap.cleanUpPhysics();
+
+			State::spikeTrapActive = false; // The other spike trap is no longer picked up and should be removed
+			testSpikeTrap.attachOwningVehicle(car.getVehicle());
 		}
 
 		// Run into spike trap

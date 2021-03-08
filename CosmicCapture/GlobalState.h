@@ -56,6 +56,8 @@ struct State
 	inline static PxRigidStatic* speedboostPickupTriggerBody = nullptr;
 	inline static bool speedboostPickedUp = false;
 
+	inline static bool speedBoostFinished = false;
+
 	inline static PxRigidStatic* spikeTrapPickupTriggerBody = nullptr;
 	inline static bool spikeTrapPickedUp = false;
 

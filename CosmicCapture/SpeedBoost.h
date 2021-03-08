@@ -13,6 +13,11 @@ public:
 	void cleanUpPhysics() override;
 
 	void attachVehicle(PxVehicleDrive4W* vehicle) { mVehicles.push_back(vehicle); }
+	void detachVehicle() { mVehicles.clear(); }
+
 private:
 	std::vector<PxVehicleDrive4W*> mVehicles;
+
+	float affectionTimer = 0;
+	constexpr static float AFFECTION_TIME = 1.0f * 60.0f; // The boost will speed up the player for 1 second
 };
