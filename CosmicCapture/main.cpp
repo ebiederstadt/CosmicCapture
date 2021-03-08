@@ -147,9 +147,10 @@ int main(int argc, char** args) {
 	AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
 	music.loop();
 	music.playSound();
-	AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
-	engine.loop();
-	engine.playSound();
+	//AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
+	//engine.loop();
+	//engine.playSound();
+
 
 	FlagDropoffZone flagDropoffZone2(shaderProgram, sCamera, 2);
 	flagDropoffZone2.attachPhysics(physics);
@@ -173,14 +174,18 @@ int main(int argc, char** args) {
 	entities.push_back(&spikeTrapPickupZone);
 
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
-	PxVec3 position1(100.f, 2.0f, 100.0f);
-	GridMarker gm1(shaderProgram, sCamera, position1);
-	gm1.attachPhysics(physics);
-	entities.push_back(&gm1);	
+	//PxVec3 position1(100.f, 2.0f, 100.0f);
+	//GridMarker gm1(shaderProgram, sCamera, position1);
+	//gm1.attachPhysics(physics);
+	//entities.push_back(&gm1);	
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
-	//opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p); //get Initial path
-	int counter = 0;
-
+	opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p); //get Initial path
+	std::pair<int, int> tempOld = State::lastPos;
+	std::pair<int, int> tempNew = State::lastPos;
+	int aiStuffCounter = 0;
+	int stuckCount = 0; //count how many frames a player has been in the same grid coords
+	int reverseCounter = 0;
+	bool reversing = false;
 	// Loop until the user closes the window
 	while (!quit) {
 		quit = input.HandleInput();
@@ -268,10 +273,48 @@ int main(int argc, char** args) {
 		}
 		
 		//forgive me--------------------
-		//if (counter % 10 == 0) {
-		//	opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
-		//}
-		//opponentCar3.processInput(opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
+		PxVec3 target;
+		if (State::targetReached) {
+			target = State::flagDropoffBoxes[3]->getGlobalPose().p;
+		}
+		else {
+			target = State::flagBody->getGlobalPose().p;
+		}
+	
+		opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, target);
+
+		std::map<MovementFlags, bool> command;
+		command = opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ());
+		
+		tempNew = State::lastPos;	
+		if (tempNew == tempOld && !reversing) {
+			stuckCount++;
+			if (stuckCount > 2000) {
+				reversing = true;
+				stuckCount = 0;
+			}
+		}
+		else {
+			stuckCount = 0;
+		}
+		tempOld = State::lastPos;
+		if (reversing) {
+			command[MovementFlags::LEFT] = true;
+			command[MovementFlags::RIGHT] = true;
+			command[MovementFlags::DOWN] = false;
+			command[MovementFlags::UP] = true;
+			reverseCounter++;
+			if (reverseCounter > 850) {
+				reversing = false;
+				reverseCounter = 0;
+			}
+		}
+		
+		if (aiStuffCounter %  11 == 0) {
+			command[MovementFlags::UP] = true;
+		}
+		opponentCar3.processInput(command);
+		aiStuffCounter++;
 		//------------------------------*/
 
 		for (const auto& entity : entities)
@@ -335,13 +378,13 @@ int main(int argc, char** args) {
 			entity->draw(physics, shaderProgram, false, depthMap);
 
 		//player pos for testing
-		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
-		int xIndex = (int)((playerPosition.x + 100.f) / 10.f);
-		int zIndex = (int)((playerPosition.z + 100.f) / 10.f);;
-		int dir = opponentBrains.getOrientation(playerDir);
+		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		//PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
+		//int xIndex = (int)((playerPosition.x + 100.f) / 10.f);
+		//int zIndex = (int)((playerPosition.z + 100.f) / 10.f);;
+		//int dir = opponentBrains.getOrientation(playerDir);
 		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
-		printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
+		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//printf("%d\n", State::worldGrid[17][6]);
 
 		ImGui::Begin("Framerate Counter!");

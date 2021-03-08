@@ -55,15 +55,17 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
 {
     // If the source is out of range
     if (isValid(src.first, src.second) == false) {
-        printf("Source is invalid\n");
+        //printf("Source is invalid\n");
         std::stack<Pair> dummy;
+        dummy.push(State::lastPos);
         return dummy;
     }
 
     // If the destination is out of range
     if (isValid(dest.first, dest.second) == false) {
-        printf("Destination is invalid\n");
+        //printf("Destination is invalid\n");
         std::stack<Pair> dummy;
+        dummy.push(State::lastPos);
         return dummy;
     }
 
@@ -71,16 +73,18 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
     if (isUnBlocked(grid, src.first, src.second) == false
         || isUnBlocked(grid, dest.first, dest.second)
         == false) {
-        printf("Source or the destination is blocked\n");
+       // printf("Source or the destination is blocked\n");
         std::stack<Pair> dummy;
+        dummy.push(State::lastPos);
         return dummy;
     }
 
     // If the destination cell is the same as source cell
     if (isDestination(src.first, src.second, dest)
         == true) {
-        printf("We are already at the destination\n");
+       // printf("We are already at the destination\n");
         std::stack<Pair> dummy;
+        dummy.push(State::lastPos);
         return dummy;
     }
 

@@ -16,6 +16,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 		target = path.top();
 		path.pop();
 	}
+	State::lastPos = current;
 	int targetDir = getTargetDirection(current, target);
 	int playerOrientation = getOrientation(playerDir);
 	return getCommand(targetDir, playerOrientation);
@@ -24,9 +25,20 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 void OpponentInput::updatePath(PxVec3 playerPos, PxVec3 targetPos) {
 	std::pair<int, int> p = getGridCoordinates(playerPos.x, playerPos.z);
 	std::pair<int, int> t = getGridCoordinates(targetPos.x, targetPos.z);
-	path = pathfinder.ehStarSearch(State::worldGrid, p, t);
-	target = path.top();
-	path.pop();
+	if (p == t) {
+		if (State::targetReached) {
+			State::targetReached = false;
+		}
+		else {
+			State::targetReached = true;
+		}
+		
+	}
+	else {
+		path = pathfinder.ehStarSearch(State::worldGrid, p, t);
+		target = path.top();
+		path.pop();
+	}
 }
 std::map<MovementFlags, bool> OpponentInput::followPath() {
 	std::map<MovementFlags, bool> inputMap;
@@ -115,7 +127,7 @@ std::map<MovementFlags, bool> OpponentInput::getCommand(int playerDir, int targe
 		inputMap[MovementFlags::RIGHT] = true;
 		inputMap[MovementFlags::DOWN] = true;
 		inputMap[MovementFlags::UP] = false;
-		printf("STRAIGHT\n");
+		//printf("STRAIGHT\n");
 		return inputMap;
 	}
 
@@ -234,14 +246,14 @@ std::map<MovementFlags, bool> OpponentInput::getCommand(int playerDir, int targe
 		inputMap[MovementFlags::RIGHT] = true;
 		inputMap[MovementFlags::DOWN] = true;
 		inputMap[MovementFlags::UP] = false;
-		printf("LEFT\n");
+		//printf("LEFT\n");
 	}
 	else {
 		inputMap[MovementFlags::LEFT] = true;
 		inputMap[MovementFlags::RIGHT] = false;
 		inputMap[MovementFlags::DOWN] = true;
 		inputMap[MovementFlags::UP] = false;
-		printf("RIGHT\n");
+		//printf("RIGHT\n");
 	}
 	return inputMap;
 }

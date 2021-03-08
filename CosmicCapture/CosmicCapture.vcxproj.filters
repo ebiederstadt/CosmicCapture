@@ -61,6 +61,7 @@
     <ClCompile Include="SpikeTrap.cpp" />
     <ClCompile Include="SpikeTrapPickupZone.cpp" />
     <ClCompile Include="GridMarker.cpp" />
+    <ClCompile Include="InvisibleBarrier.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -131,6 +132,7 @@
     <ClInclude Include="SpikeTrap.h" />
     <ClInclude Include="SpikeTrapPickupZone.h" />
     <ClInclude Include="GridMarker.h" />
+    <ClInclude Include="InvisibleBarrier.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
