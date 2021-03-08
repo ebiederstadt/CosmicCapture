@@ -213,15 +213,6 @@ int main(int argc, char** args) {
 			testSpeedBoost.attachPhysics(physics);
 			entities.push_back(&testSpeedBoost);
 			State::speedboostPickedUp = false;
-		}
-
-		// Cleanup speed boost after use
-		if (State::speedBoostFinished)
-		{
-			auto loc = std::find(entities.begin(), entities.end(), &testSpeedBoost);
-			entities.erase(loc);
-			testSpeedBoost.cleanUpPhysics();
-			testSpeedBoost.detachVehicle();
 			State::speedBoostFinished = false;
 		}
 
@@ -263,15 +254,6 @@ int main(int argc, char** args) {
 			}
 		}
 
-		// Delete spike trap once it is finished
-		if (State::spikeTrapFinished)
-		{
-			State::spikeTrapFinished = false;
-			auto loc = std::find(entities.begin(), entities.end(), &testSpikeTrap);
-			entities.erase(loc);
-			testSpikeTrap.cleanUpPhysics();
-		}
-		
 		//forgive me--------------------
 		PxVec3 target;
 		if (State::targetReached) {
