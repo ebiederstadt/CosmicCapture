@@ -57,6 +57,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
     if (isValid(src.first, src.second) == false) {
         printf("Source is invalid\n");
         std::stack<Pair> dummy;
+        dummy.push(State::lastPos);
         return dummy;
     }
 
@@ -64,6 +65,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
     if (isValid(dest.first, dest.second) == false) {
         printf("Destination is invalid\n");
         std::stack<Pair> dummy;
+        dummy.push(State::lastPos);
         return dummy;
     }
 
@@ -73,6 +75,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
         == false) {
         printf("Source or the destination is blocked\n");
         std::stack<Pair> dummy;
+        dummy.push(State::lastPos);
         return dummy;
     }
 
@@ -81,6 +84,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
         == true) {
         printf("We are already at the destination\n");
         std::stack<Pair> dummy;
+        dummy.push(State::lastPos);
         return dummy;
     }
 

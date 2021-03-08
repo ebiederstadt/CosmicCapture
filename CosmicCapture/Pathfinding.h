@@ -4,6 +4,7 @@
 #include <set>
 #include <math.h>
 #include <fmt/format.h>
+#include "GlobalState.h"
 
 #define ROW 20
 #define COL 20

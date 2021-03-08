@@ -24,7 +24,7 @@ void Flag::attachPhysics(Physics& instance)
 	instance.gScene->addActor(*State::flagBody);
 	//----------------------------------------------------------
 	//Trigger Shapes--------------------------------------------
-	PxShape* pickupShape = instance.gPhysics->createShape(PxBoxGeometry(1.1f, 2.f, 1.1f), *instance.gMaterial, true);
+	PxShape* pickupShape = instance.gPhysics->createShape(PxBoxGeometry(4.1f, 2.f, 4.1f), *instance.gMaterial, true);
 	//trigger box for picking up the flag
 	pickupShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	pickupShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);

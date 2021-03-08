@@ -173,12 +173,12 @@ int main(int argc, char** args) {
 	entities.push_back(&spikeTrapPickupZone);
 
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
-	PxVec3 position1(100.f, 2.0f, 100.0f);
-	GridMarker gm1(shaderProgram, sCamera, position1);
-	gm1.attachPhysics(physics);
-	entities.push_back(&gm1);	
+	//PxVec3 position1(100.f, 2.0f, 100.0f);
+	//GridMarker gm1(shaderProgram, sCamera, position1);
+	//gm1.attachPhysics(physics);
+	//entities.push_back(&gm1);	
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
-	//opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p); //get Initial path
+	opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p); //get Initial path
 	int counter = 0;
 
 	// Loop until the user closes the window
@@ -244,10 +244,17 @@ int main(int argc, char** args) {
 		}
 		
 		//forgive me--------------------
-		//if (counter % 10 == 0) {
-		//	opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
-		//}
-		//opponentCar3.processInput(opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
+		PxVec3 target;
+		if (State::targetReached) {
+			target = State::flagDropoffBoxes[3]->getGlobalPose().p;
+		}
+		else {
+			target = State::flagBody->getGlobalPose().p;
+		}
+		if (counter % 10 == 0) {
+			opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, target);
+		}
+		opponentCar3.processInput(opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 		//------------------------------*/
 
 		for (const auto& entity : entities)

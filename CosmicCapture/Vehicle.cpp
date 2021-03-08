@@ -29,20 +29,20 @@ void Vehicle::attachPhysics(Physics& instance)
 	float x = 0; 
 	float z = 0;
 	if (player == 0) {
-		x = 65.f;
-		z = 65.f;
+		x = 80.f;
+		z = 80.f;
 	}
 	else if (player == 1) {
-		x = -65.f;
-		z = 65.f;
+		x = -80.f;
+		z = 80.f;
 	}
 	else if (player == 2) {
-		x = 65.f;
-		z = -65.f;
+		x = 80.f;
+		z = -80.f;
 	}
 	else {
-		x = -65.f;
-		z = -65.f;
+		x = -80.f;
+		z = -80.f;
 	}
 	const PxTransform startTransform(PxVec3(x, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), z),
 		PxQuat(PxIdentity)); //inline ternary operators are probably not the best choice but they work for now

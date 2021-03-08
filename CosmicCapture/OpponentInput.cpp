@@ -16,6 +16,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 		target = path.top();
 		path.pop();
 	}
+	State::lastPos = current;
 	int targetDir = getTargetDirection(current, target);
 	int playerOrientation = getOrientation(playerDir);
 	return getCommand(targetDir, playerOrientation);
@@ -24,9 +25,20 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 void OpponentInput::updatePath(PxVec3 playerPos, PxVec3 targetPos) {
 	std::pair<int, int> p = getGridCoordinates(playerPos.x, playerPos.z);
 	std::pair<int, int> t = getGridCoordinates(targetPos.x, targetPos.z);
-	path = pathfinder.ehStarSearch(State::worldGrid, p, t);
-	target = path.top();
-	path.pop();
+	if (p == t) {
+		if (State::targetReached) {
+			State::targetReached = false;
+		}
+		else {
+			State::targetReached = true;
+		}
+		
+	}
+	else {
+		path = pathfinder.ehStarSearch(State::worldGrid, p, t);
+		target = path.top();
+		path.pop();
+	}
 }
 std::map<MovementFlags, bool> OpponentInput::followPath() {
 	std::map<MovementFlags, bool> inputMap;
