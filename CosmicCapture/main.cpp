@@ -144,12 +144,12 @@ int main(int argc, char** args) {
 	AudioEngine soundSystem = AudioEngine();
 	soundSystem.initialize();
 	soundSystem.initializeBuffers();
-	//AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
-	//music.loop();
-	 //music.playSound();
-	//AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
-	//engine.loop();
-	//engine.playSound();
+	AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
+	music.loop();
+	music.playSound();
+	AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
+	engine.loop();
+	engine.playSound();
 
 	FlagDropoffZone flagDropoffZone2(shaderProgram, sCamera, 2);
 	flagDropoffZone2.attachPhysics(physics);
@@ -202,10 +202,22 @@ int main(int argc, char** args) {
 			State::projectilePickedUp = false;
 		}
 
+		// Use speed boost
 		if (inputState[MovementFlags::ACTION] == false && State::speedboostPickedUp) {
 			testSpeedBoost.attachVehicle(car.getVehicle());
 			testSpeedBoost.attachPhysics(physics);
+			entities.push_back(&testSpeedBoost);
 			State::speedboostPickedUp = false;
+		}
+
+		// Cleanup speed boost after use
+		if (State::speedBoostFinished)
+		{
+			auto loc = std::find(entities.begin(), entities.end(), &testSpeedBoost);
+			entities.erase(loc);
+			testSpeedBoost.cleanUpPhysics();
+			testSpeedBoost.detachVehicle();
+			State::speedBoostFinished = false;
 		}
 
 		// Pickup spike trap
