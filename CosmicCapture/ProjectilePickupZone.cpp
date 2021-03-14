@@ -3,8 +3,8 @@
 #define MAX_HEIGHT 5.0f
 bool ascending = true;
 
-ProjectilePickupZone::ProjectilePickupZone(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera) :
-	Entity("models/projectile_sphere.ply", "textures/wall.jpg", shaderProgram, camera)
+ProjectilePickupZone::ProjectilePickupZone(std::shared_ptr<Camera> camera) :
+	Entity("models/projectile_sphere.ply", "textures/wall.jpg", camera)
 {}
 
 

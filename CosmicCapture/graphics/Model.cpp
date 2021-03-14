@@ -8,12 +8,10 @@
 Model::Model(
 	const char* modelPath,
 	const char* texturePath,
-	const ShaderProgram& shaderProgram,
 	std::shared_ptr<Camera> camera,
 	const unsigned int usage
 ) :
 	mTexture(texturePath, GL_LINEAR),
-	mShaderID(static_cast<unsigned int>(shaderProgram)),
 	mCameraPointer(std::move(camera)),
 	mUsage(usage),
 	mModel(physx::PxIdentity)
@@ -54,6 +52,61 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 		const auto purpleLightLoc = glGetUniformLocation(shaderID, "purpleLight");
 		const auto orangeLightLoc = glGetUniformLocation(shaderID, "orangeLight");
 
+		glUniform3fv(purpleLightLoc, 1, value_ptr(purpleLight));
+		glUniform3fv(orangeLightLoc, 1, value_ptr(orangeLight));
+
+		bool lit = true;
+		const auto litLoc = glGetUniformLocation(shaderID, "lit");
+		glUniform1i(litLoc, lit);
+
+		const auto viewLoc = glGetUniformLocation(shaderID, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(mCameraPointer->getViewMatrix()));
+
+		const auto projectionLoc = glGetUniformLocation(shaderID, "projection");
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(mCameraPointer->perspectiveMatrix));
+
+	}
+
+
+	float near_plane = 200.f, far_plane = 600.f;
+	glm::mat4 lightProjection = glm::ortho(-250.f, 250.f, -250.f, 500.f, near_plane, far_plane);
+
+	glm::mat4 lightView = lookAt(orangeLight, glm::vec3(-300.0f, 0.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
+
+	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+
+	auto lightSpaceLoc = glGetUniformLocation(shaderID, "lightSpaceMatrix");
+	glUniformMatrix4fv(lightSpaceLoc, 1, GL_FALSE, value_ptr(lightSpaceMatrix));
+
+	const auto modelLoc = glGetUniformLocation(shaderID, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelMatrix.column0.x);
+
+	for (const auto& mesh : mMeshes)
+		mesh.draw();
+
+	if (!depth) Texture::unbind();
+}
+
+void Model::drawArena(const ShaderProgram& shaderProgram, bool depth, const unsigned int& depthMap)
+{
+	unsigned int shaderID = static_cast<unsigned int>(shaderProgram);
+
+	if (!depth) {
+		glActiveTexture(GL_TEXTURE0);
+		mTexture.bind();
+	}
+
+	// Placing lights at opposite ends of x-axis
+	glm::vec3 purpleLight = glm::vec3(-300.0f, 300.0f, 0.0f);
+	glm::vec3 orangeLight = glm::vec3(300.0f, 300.0f, 0.0f);
+
+	if (!depth) {
+
+		// View pipeline
+
+		const auto purpleLightLoc = glGetUniformLocation(shaderID, "purpleLight");
+		const auto orangeLightLoc = glGetUniformLocation(shaderID, "orangeLight");
+
 		glUniform3fv(purpleLightLoc, 1, glm::value_ptr(purpleLight));
 		glUniform3fv(orangeLightLoc, 1, glm::value_ptr(orangeLight));
 
@@ -69,8 +122,8 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 
 	}
 
-
 	float near_plane = 200.f, far_plane = 600.f;
+
 	glm::mat4 lightProjection = glm::ortho(-250.f, 250.f, -250.f, 500.f, near_plane, far_plane);
 
 	glm::mat4 lightView = glm::lookAt(orangeLight,
@@ -83,63 +136,6 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 	glUniformMatrix4fv(lightSpaceLoc, 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
 
 	const auto modelLoc = glGetUniformLocation(shaderID, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelMatrix.column0.x);
-
-	for (const auto& mesh : mMeshes)
-		mesh.draw();
-
-	if (!depth) Texture::unbind();
-}
-
-void Model::drawArena(const ShaderProgram& shaderProgram, bool depth, const unsigned int& depthMap)
-{
-	mShaderID = static_cast<unsigned int>(shaderProgram);
-
-	if (!depth) {
-		glActiveTexture(GL_TEXTURE0);
-		mTexture.bind();
-	}
-
-	// Placing lights at opposite ends of x-axis
-	glm::vec3 purpleLight = glm::vec3(-300.0f, 300.0f, 0.0f);
-	glm::vec3 orangeLight = glm::vec3(300.0f, 300.0f, 0.0f);
-
-	if (!depth) {
-
-		// View pipeline
-
-		const auto purpleLightLoc = glGetUniformLocation(mShaderID, "purpleLight");
-		const auto orangeLightLoc = glGetUniformLocation(mShaderID, "orangeLight");
-
-		glUniform3fv(purpleLightLoc, 1, glm::value_ptr(purpleLight));
-		glUniform3fv(orangeLightLoc, 1, glm::value_ptr(orangeLight));
-
-		bool lit = true;
-		const auto litLoc = glGetUniformLocation(mShaderID, "lit");
-		glUniform1i(litLoc, lit);
-
-		const auto viewLoc = glGetUniformLocation(mShaderID, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->getViewMatrix()));
-
-		const auto projectionLoc = glGetUniformLocation(mShaderID, "projection");
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(mCameraPointer->perspectiveMatrix));
-
-	}
-
-	float near_plane = 200.f, far_plane = 600.f;
-
-	glm::mat4 lightProjection = glm::ortho(-250.f, 250.f, -250.f, 500.f, near_plane, far_plane);
-
-	glm::mat4 lightView = glm::lookAt(orangeLight,
-		glm::vec3(-300.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f));
-
-	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-
-	auto lightSpaceLoc = glGetUniformLocation(mShaderID, "lightSpaceMatrix");
-	glUniformMatrix4fv(lightSpaceLoc, 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
-
-	const auto modelLoc = glGetUniformLocation(mShaderID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
 

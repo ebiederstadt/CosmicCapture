@@ -6,11 +6,11 @@
 
 
 
-Flag::Flag(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera) :
-	Entity("models/flag.obj", "textures/blank.jpg", shaderProgram, camera)
+Flag::Flag(std::shared_ptr<Camera> camera) :
+	Entity("models/flag.obj", "textures/blank.jpg", camera)
 {
 
-	mFlagBody = std::make_unique<Model>("models/flag_body.obj", "textures/blank.jpg", shaderProgram, camera);
+	mFlagBody = std::make_unique<Model>("models/flag_body.obj", "textures/blank.jpg",camera);
 }
 
 void Flag::attachPhysics(Physics& instance)

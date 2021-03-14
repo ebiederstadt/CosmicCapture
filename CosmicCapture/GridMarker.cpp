@@ -1,6 +1,6 @@
 #include "GridMarker.h"
-GridMarker::GridMarker(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, PxVec3 pos) :
-	Entity("models/flag.ply", "textures/pink.jpg", shaderProgram, camera)
+GridMarker::GridMarker(std::shared_ptr<Camera> camera, PxVec3 pos) :
+	Entity("models/flag.ply", "textures/pink.jpg", camera)
 {
 	position = pos;
 }

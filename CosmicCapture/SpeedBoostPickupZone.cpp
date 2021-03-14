@@ -3,8 +3,8 @@
 #define MAX_HEIGHT 5.0f
 bool ascendingSpeedBoost = true;
 
-SpeedBoostPickupZone::SpeedBoostPickupZone(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera) :
-	Entity("models/projectile_sphere.ply", "textures/blue.jpg", shaderProgram, camera)
+SpeedBoostPickupZone::SpeedBoostPickupZone(std::shared_ptr<Camera> camera) :
+	Entity("models/projectile_sphere.ply", "textures/blue.jpg", camera)
 {}
 
 void SpeedBoostPickupZone::attachPhysics(Physics& instance) {

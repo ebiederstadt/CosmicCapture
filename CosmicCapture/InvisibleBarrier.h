@@ -6,7 +6,7 @@
 class InvisibleBarrier : public Entity
 {
 public:
-	InvisibleBarrier(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera);
+	InvisibleBarrier(std::shared_ptr<Camera> camera);
 
 	void attachPhysics(Physics& instance) override;
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) override;

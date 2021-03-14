@@ -2,8 +2,8 @@
 #include "GlobalState.h"
 #include "physics/VehicleFilterShader.h"
 
-SpikeTrapPickupZone::SpikeTrapPickupZone(const ShaderProgram& shader, const std::shared_ptr<Camera>& camera):
-	Entity("models/projectile_sphere.ply", "textures/pink.jpg", shader, camera)
+SpikeTrapPickupZone::SpikeTrapPickupZone(const std::shared_ptr<Camera>& camera):
+	Entity("models/projectile_sphere.ply", "textures/pink.jpg", camera)
 {}
 
 void SpikeTrapPickupZone::attachPhysics(Physics& instance)

@@ -2,8 +2,8 @@
 
 
 
-Projectile::Projectile(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera) :
-	Entity("models/projectile_sphere.ply", "textures/blue.jpg", shaderProgram, camera)
+Projectile::Projectile(std::shared_ptr<Camera> camera) :
+	Entity("models/projectile_sphere.ply", "textures/blue.jpg", camera)
 {}
 
 void Projectile::attachPhysics(Physics& instance) {

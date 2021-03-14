@@ -56,7 +56,7 @@ int main(int argc, char** args) {
 	simpleDepthShader.compile();
 
 	// The arena model
-	Model arena("models/untitled.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/untitled.obj", "textures/blank.jpg", sCamera);
 
 	// Shadow setup start ---------------------------------------------------------------------
 
@@ -99,45 +99,45 @@ int main(int argc, char** args) {
 	bool quit = false;
 
 	// Entities
-	Vehicle car(shaderProgram, sCamera, 0, "textures/blank.jpg");
+	Vehicle car(sCamera, 0, "textures/blank.jpg");
 	car.attachPhysics(physics);
 	State::vehicleRDs[0] = car.getVehicle()->getRigidDynamicActor();
 
-	Vehicle opponentCar1(shaderProgram, sCamera, 1, "textures/blue.jpg");
+	Vehicle opponentCar1(sCamera, 1, "textures/blue.jpg");
 	opponentCar1.attachPhysics(physics);
 	State::vehicleRDs[1] = opponentCar1.getVehicle()->getRigidDynamicActor();
 
-	Vehicle opponentCar2(shaderProgram, sCamera, 2, "textures/pink.jpg");
+	Vehicle opponentCar2(sCamera, 2, "textures/pink.jpg");
 	opponentCar2.attachPhysics(physics);
 	State::vehicleRDs[2] = opponentCar2.getVehicle()->getRigidDynamicActor();
 
-	Vehicle opponentCar3(shaderProgram, sCamera, 3, "textures/green.jpg");
+	Vehicle opponentCar3(sCamera, 3, "textures/green.jpg");
 	opponentCar3.attachPhysics(physics);
 	State::vehicleRDs[3] = opponentCar3.getVehicle()->getRigidDynamicActor();
 
 	//projectile prototype stuff----------------------
-	Projectile testProj(shaderProgram, sCamera);
-	ProjectilePickupZone projPickupZone(shaderProgram, sCamera);
+	Projectile testProj(sCamera);
+	ProjectilePickupZone projPickupZone(sCamera);
 	projPickupZone.attachPhysics(physics);
 	//------------------------------------------------
 
 	//speedboost powerup
-	SpeedBoost testSpeedBoost(shaderProgram, sCamera);
-	SpeedBoostPickupZone speedboostPickupZone(shaderProgram, sCamera);
+	SpeedBoost testSpeedBoost(sCamera);
+	SpeedBoostPickupZone speedboostPickupZone(sCamera);
 	speedboostPickupZone.attachPhysics(physics);
 
 	// Spike trap powerup
-	SpikeTrap testSpikeTrap(shaderProgram, sCamera);
-	SpikeTrapPickupZone spikeTrapPickupZone(shaderProgram, sCamera);
+	SpikeTrap testSpikeTrap(sCamera);
+	SpikeTrapPickupZone spikeTrapPickupZone(sCamera);
 	spikeTrapPickupZone.attachPhysics(physics);
 	
-	Flag flag(shaderProgram, sCamera);
+	Flag flag(sCamera);
 	flag.attachPhysics(physics);
 
-	FlagDropoffZone flagDropoffZone0(shaderProgram, sCamera, 0);
+	FlagDropoffZone flagDropoffZone0(sCamera, 0);
 	flagDropoffZone0.attachPhysics(physics);
 
-	FlagDropoffZone flagDropoffZone1(shaderProgram, sCamera, 1);
+	FlagDropoffZone flagDropoffZone1(sCamera, 1);
 	flagDropoffZone1.attachPhysics(physics);
 
 	// setup audio
@@ -152,10 +152,10 @@ int main(int argc, char** args) {
 	//engine.playSound();
 
 
-	FlagDropoffZone flagDropoffZone2(shaderProgram, sCamera, 2);
+	FlagDropoffZone flagDropoffZone2(sCamera, 2);
 	flagDropoffZone2.attachPhysics(physics);
 
-	FlagDropoffZone flagDropoffZone3(shaderProgram, sCamera, 3);
+	FlagDropoffZone flagDropoffZone3(sCamera, 3);
 	flagDropoffZone3.attachPhysics(physics);
 
 

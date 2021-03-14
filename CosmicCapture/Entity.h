@@ -10,7 +10,7 @@ class Entity
 {
 public:
 	Entity(std::unique_ptr<Model> model) : mGeometry(std::move(model)) {}
-	Entity(const char* modelPath, const char* texturePath, const ShaderProgram& shader, std::shared_ptr<Camera> camera);
+	Entity(const char* modelPath, const char* texturePath, std::shared_ptr<Camera> camera);
 
 	virtual ~Entity() = default;
 

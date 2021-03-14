@@ -1,7 +1,7 @@
 #include "FlagDropoffZone.h"
 
-FlagDropoffZone::FlagDropoffZone(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, int player) :
-	Entity("models/dropoff_zone.ply", "textures/dropflaghere.jpg", shaderProgram, camera)
+FlagDropoffZone::FlagDropoffZone(std::shared_ptr<Camera> camera, int player) :
+	Entity("models/dropoff_zone.ply", "textures/dropflaghere.jpg", camera)
 {
 	playerNum = player;
 }

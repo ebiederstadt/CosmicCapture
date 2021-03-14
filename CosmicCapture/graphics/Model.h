@@ -21,13 +21,11 @@ public:
 	/// </summary>
 	/// <param name="modelPath">Path to a file representing the 3D model</param>
 	/// <param name="texturePath">Path to the image texture to use with the model</param>
-	/// <param name="shaderProgram">Vertex + fragment shader to use with the model</param>
 	/// <param name="camera">Camera object to use with the model</param>
 	/// <param name="usage">openGL Usage type. Default is GL_STATIC_DRAW</param>
 	Model(
 		const char* modelPath,
 		const char* texturePath,
-		const ShaderProgram& shaderProgram,
 		std::shared_ptr<Camera> camera,
 		unsigned int usage = GL_STATIC_DRAW
 	);
@@ -40,7 +38,6 @@ public:
 private:
 	std::vector<Mesh> mMeshes; // Each model is made of one or more meshes 
 	Texture mTexture; // Assuming that each texture is unique to each model (may need to rework)
-	unsigned int mShaderID; // Shaders can be shared between multiple models
 	std::shared_ptr<Camera> mCameraPointer; // Camera object is shared among all the meshes
 
 	unsigned int mUsage;

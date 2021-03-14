@@ -1,8 +1,8 @@
 #include "SpeedBoost.h"
 #include <iostream>
 
-SpeedBoost::SpeedBoost(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera) :
-	Entity("models/projectile_sphere.ply", "textures/blue.jpg", shaderProgram, camera)
+SpeedBoost::SpeedBoost(std::shared_ptr<Camera> camera) :
+	Entity("models/projectile_sphere.ply", "textures/blue.jpg", camera)
 {}
 
 void SpeedBoost::attachPhysics(Physics& instance)
