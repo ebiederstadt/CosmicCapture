@@ -11,4 +11,11 @@ public:
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
+
+private:
+	PxRigidStatic* pickupBody;
+
+	constexpr static float MIN_HEIGHT = 2.0f;
+	constexpr static float MAX_HEIGHT = 5.0f;
+	bool ascending = true;
 };

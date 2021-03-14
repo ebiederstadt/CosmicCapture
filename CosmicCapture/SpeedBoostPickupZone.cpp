@@ -1,7 +1,4 @@
 #include "SpeedBoostPickupZone.h"
-#define MIN_HEIGHT 2.0f
-#define MAX_HEIGHT 5.0f
-bool ascendingSpeedBoost = true;
 
 SpeedBoostPickupZone::SpeedBoostPickupZone(std::shared_ptr<Camera> camera) :
 	Entity("models/projectile_sphere.ply", "textures/blue.jpg", camera)
@@ -10,10 +7,10 @@ SpeedBoostPickupZone::SpeedBoostPickupZone(std::shared_ptr<Camera> camera) :
 void SpeedBoostPickupZone::attachPhysics(Physics& instance) {
 	PxShape* speedboostPickupMarker = instance.gPhysics->createShape(PxSphereGeometry(1.f), *instance.gMaterial, true);
 	speedboostPickupMarker->setSimulationFilterData(PxFilterData(COLLISION_FLAG_SCENERY, COLLISION_FLAG_SCENERY_AGAINST, 0, 0));
-	State::speedboostPickupMarkerBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(25.f, MIN_HEIGHT, 25.f)));
-	State::speedboostPickupMarkerBody->attachShape(*speedboostPickupMarker);
+	pickupBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(25.f, MIN_HEIGHT, 25.f)));
+	pickupBody->attachShape(*speedboostPickupMarker);
 	speedboostPickupMarker->release();
-	instance.gScene->addActor(*State::speedboostPickupMarkerBody);
+	instance.gScene->addActor(*pickupBody);
 
 	PxShape* speedboostPickupTriggerShape = instance.gPhysics->createShape(PxBoxGeometry(1.1f, 2.f, 1.1f), *instance.gMaterial, true);
 	//trigger box for picking up the flag
@@ -25,23 +22,23 @@ void SpeedBoostPickupZone::attachPhysics(Physics& instance) {
 }
 
 void SpeedBoostPickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
-	PxTransform transform = State::speedboostPickupMarkerBody->getGlobalPose();
+	PxTransform transform = pickupBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
 	mGeometry->draw(modelMatrix, depthTexture, depth);
 }
 
 void SpeedBoostPickupZone::simulate(Physics& instance) {
-	PxVec3 pos = State::speedboostPickupMarkerBody->getGlobalPose().p;
-	if (ascendingSpeedBoost) {
-		State::speedboostPickupMarkerBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 0.01f, pos.z)));
+	PxVec3 pos = pickupBody->getGlobalPose().p;
+	if (ascending) {
+		pickupBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 0.01f, pos.z)));
 		if (pos.y + 0.1f >= MAX_HEIGHT) {
-			ascendingSpeedBoost = false;
+			ascending = false;
 		}
 	}
 	else {
-		State::speedboostPickupMarkerBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y - 0.01f, pos.z)));
+		pickupBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y - 0.01f, pos.z)));
 		if (pos.y - 0.1f <= MIN_HEIGHT) {
-			ascendingSpeedBoost = true;
+			ascending = true;
 		}
 	}
 
@@ -49,5 +46,5 @@ void SpeedBoostPickupZone::simulate(Physics& instance) {
 
 void SpeedBoostPickupZone::cleanUpPhysics() {
 	PX_RELEASE(State::speedboostPickupTriggerBody);
-	PX_RELEASE(State::speedboostPickupMarkerBody);
+	PX_RELEASE(pickupBody);
 }
