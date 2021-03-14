@@ -45,12 +45,12 @@ void FlagDropoffZone::attachPhysics(Physics& instance)
 	instance.gScene->addActor(*State::flagDropoffBoxes[playerNum]);
 }
 
-void FlagDropoffZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap)
+void FlagDropoffZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
 {
 	// Draw the drop-off box
 	PxTransform transform = State::flagDropoffBoxes[playerNum]->getGlobalPose();
 	PxMat44 modelMatrix = PxMat44(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
+	mGeometry->draw(modelMatrix, depthTexture, depth);
 }
 
 void FlagDropoffZone::simulate(Physics& instance)

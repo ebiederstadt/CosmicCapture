@@ -24,10 +24,10 @@ void ProjectilePickupZone::attachPhysics(Physics& instance) {
 	State::projectilePickupTriggerBody->attachShape(*projectilePickupTriggerShape);
 	instance.gScene->addActor(*State::projectilePickupTriggerBody);
 }
-void ProjectilePickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) {
+void ProjectilePickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
 	PxTransform transform = State::projectilePickupMarkerBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
+	mGeometry->draw(modelMatrix, depthTexture, depth);
 }
 void ProjectilePickupZone::simulate(Physics& instance) {
 	PxVec3 pos = State::projectilePickupMarkerBody->getGlobalPose().p;

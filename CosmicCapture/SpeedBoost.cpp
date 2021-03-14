@@ -10,7 +10,7 @@ void SpeedBoost::attachPhysics(Physics& instance)
 	affectionTimer = 0.0f;
 }
 
-void SpeedBoost::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) {}
+void SpeedBoost::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {}
 
 void SpeedBoost::simulate(Physics& instance) {
 	if (!State::speedBoostFinished)

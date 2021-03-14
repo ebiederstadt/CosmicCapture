@@ -70,7 +70,7 @@ int main(int argc, char** args) {
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-		SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -88,10 +88,10 @@ int main(int argc, char** args) {
 	// Set sampler aliases
 	shaderProgram.use();
 
-	auto mShaderID = static_cast<unsigned int>(shaderProgram);
-	auto samplerLoc = glGetUniformLocation(mShaderID, "textureSampler");
+	auto shaderID = static_cast<unsigned int>(shaderProgram);
+	auto samplerLoc = glGetUniformLocation(shaderID, "textureSampler");
 	glUniform1i(samplerLoc, 0);
-	samplerLoc = glGetUniformLocation(mShaderID, "shadowMap");
+	samplerLoc = glGetUniformLocation(shaderID, "shadowMap");
 	glUniform1i(samplerLoc, 1);
 
 
@@ -313,20 +313,19 @@ int main(int argc, char** args) {
 
 		shaderProgram.use();
 
-		auto counter = 1;
-
 		// first render to depth map ---------------
 		simpleDepthShader.use();
 
+		/* Start of stuff to move to the--------------------------------*/
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		// First pass
-		arena.drawArena(simpleDepthShader, true, depthMapFBO);
+		arena.draw(simpleDepthShader, true);
 
 		for (const auto& entity : entities)
-			entity->draw(physics, simpleDepthShader, true, depthMapFBO);
+			entity->draw(physics, simpleDepthShader, true);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, width, height);
@@ -339,10 +338,10 @@ int main(int argc, char** args) {
 
 		float near_plane = 200.f, far_plane = 600.f;
 
-		auto nearLoc = glGetUniformLocation(mShaderID, "near_plane");
+		auto nearLoc = glGetUniformLocation(shaderID, "near_plane");
 		glUniform1f(nearLoc, near_plane);
 
-		auto farLoc = glGetUniformLocation(mShaderID, "far_plane");
+		auto farLoc = glGetUniformLocation(shaderID, "far_plane");
 		glUniform1f(farLoc, far_plane);
 
 		glActiveTexture(GL_TEXTURE1);
@@ -354,10 +353,10 @@ int main(int argc, char** args) {
 		glActiveTexture(GL_TEXTURE0);
 
 		// Second pass
-		arena.drawArena(shaderProgram, false, depthMap);
+		arena.draw(shaderProgram, false);
 
 		for (const auto& entity : entities)
-			entity->draw(physics, shaderProgram, false, depthMap);
+			entity->draw(physics, shaderProgram, false);
 
 		//player pos for testing
 		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;

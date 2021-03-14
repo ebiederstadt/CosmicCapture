@@ -30,8 +30,11 @@ public:
 		unsigned int usage = GL_STATIC_DRAW
 	);
 
-	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, bool depth, const unsigned int& depthMap);
-	void drawArena(const ShaderProgram& shaderProgram, bool depth, const unsigned int& depthMap);
+	// Draw things where the position/rotation/scale changes
+	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, bool depth);
+
+	// Draw things that stay in the same place
+	void draw(const ShaderProgram& shaderProgram, bool depth);
 
 	[[nodiscard]] physx::PxMat44 getModelMatrix() const { return mModel; }
 

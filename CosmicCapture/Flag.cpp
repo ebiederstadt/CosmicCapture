@@ -34,13 +34,13 @@ void Flag::attachPhysics(Physics& instance)
 
 }
 
-void Flag::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap)
+void Flag::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
 {
 	// Draw the flag
 	PxTransform transform = State::flagBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mFlagBody->draw(modelMatrix, depthTexture, depth, depthMap);
-	mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
+	mFlagBody->draw(modelMatrix, depthTexture, depth);
+	mGeometry->draw(modelMatrix, depthTexture, depth);
 }
 
 void Flag::simulate(Physics& instance)

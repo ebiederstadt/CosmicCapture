@@ -24,10 +24,10 @@ void SpeedBoostPickupZone::attachPhysics(Physics& instance) {
 	instance.gScene->addActor(*State::speedboostPickupTriggerBody);
 }
 
-void SpeedBoostPickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) {
+void SpeedBoostPickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
 	PxTransform transform = State::speedboostPickupMarkerBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
+	mGeometry->draw(modelMatrix, depthTexture, depth);
 }
 
 void SpeedBoostPickupZone::simulate(Physics& instance) {

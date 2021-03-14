@@ -8,11 +8,11 @@ SpikeTrapPickupZone::SpikeTrapPickupZone(const std::shared_ptr<Camera>& camera):
 
 void SpikeTrapPickupZone::attachPhysics(Physics& instance)
 {
-	PxShape* speedboostPickupMarker = instance.gPhysics->createShape(PxSphereGeometry(1.f), *instance.gMaterial, true);
-	speedboostPickupMarker->setSimulationFilterData(PxFilterData(COLLISION_FLAG_SCENERY, COLLISION_FLAG_SCENERY_AGAINST, 0, 0));
+	PxShape* spikeTrapPickupMarker = instance.gPhysics->createShape(PxSphereGeometry(1.f), *instance.gMaterial, true);
+	spikeTrapPickupMarker->setSimulationFilterData(PxFilterData(COLLISION_FLAG_SCENERY, COLLISION_FLAG_SCENERY_AGAINST, 0, 0));
 	pickupBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(15.f, MIN_HEIGHT, 25.f)));
-	pickupBody->attachShape(*speedboostPickupMarker);
-	speedboostPickupMarker->release();
+	pickupBody->attachShape(*spikeTrapPickupMarker);
+	spikeTrapPickupMarker->release();
 	instance.gScene->addActor(*pickupBody);
 
 	PxShape* speedboostPickupTriggerShape = instance.gPhysics->createShape(PxBoxGeometry(1.1f, 2.f, 1.1f), *instance.gMaterial, true);
@@ -24,11 +24,11 @@ void SpikeTrapPickupZone::attachPhysics(Physics& instance)
 	instance.gScene->addActor(*State::spikeTrapPickupTriggerBody);
 }
 
-void SpikeTrapPickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap)
+void SpikeTrapPickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
 {
 	PxTransform transform = pickupBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
+	mGeometry->draw(modelMatrix, depthTexture, depth);
 }
 
 void SpikeTrapPickupZone::simulate(Physics& instance)

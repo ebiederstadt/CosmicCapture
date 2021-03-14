@@ -6,6 +6,6 @@ InvisibleBarrier::InvisibleBarrier(std::shared_ptr<Camera> camera) :
 {}
 
 void InvisibleBarrier::attachPhysics(Physics& instance) {}
-void InvisibleBarrier::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) {}
+void InvisibleBarrier::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {}
 void InvisibleBarrier::simulate(Physics& instance) {}
 void InvisibleBarrier::cleanUpPhysics() {}
