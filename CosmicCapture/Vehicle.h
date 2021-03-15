@@ -12,7 +12,7 @@
 inline PxVehicleKeySmoothingData gKeySmoothingData =
 {
 	{
-		6.0f, //rise rate eANALOG_INPUT_ACCEL
+		100.0f, //rise rate eANALOG_INPUT_ACCEL
 		6.0f, //rise rate eANALOG_INPUT_BRAKE		
 		6.0f, //rise rate eANALOG_INPUT_HANDBRAKE	
 		2.5f, //rise rate eANALOG_INPUT_STEER_LEFT

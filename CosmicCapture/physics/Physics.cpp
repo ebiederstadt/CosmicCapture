@@ -75,15 +75,32 @@ void Physics::Initialize()
 	gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
 	gScene->addActor(*gGroundPlane);
 
-	readMesh("./models/untitled.obj");
+	blueDoorMesh = readMesh("./models/blueArena.obj");
+
+	blueDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(blueDoorMesh), *gMaterial, true); //create shape
+	blueDoorShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
+	blueDoorBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create static rigid body - wont move
+	blueDoorBody->attachShape(*blueDoorShape); //stick shape on rigid body
+	blueDoorShape->release(); //free shape 
+	gScene->addActor(*blueDoorBody); //add rigid body to scene
+
+	PX_RELEASE(blueDoorBody);
+
+	redDoorMesh = readMesh("./models/redArena.obj");
+
+	redDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(redDoorMesh), *gMaterial, true); //create shape
+	redDoorShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
+	redDoorBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create static rigid body - wont move
+	redDoorBody->attachShape(*redDoorShape); //stick shape on rigid body
+	redDoorShape->release(); //free shape 
+	gScene->addActor(*redDoorBody); //add rigid body to scene
+	//generateRedDoor();
 
 	//----------------------------------------------------------*/
 
 	printf("Physx initialized\n");
 }
-#include <vector>
-std::vector<PxVec3> vectorList;
-std::vector<unsigned int> indicesList;
+
 void Physics::processNodeS(aiNode* node, const aiScene* scene)
 {
 	// Process all of the the meshes associated with the node
@@ -122,7 +139,7 @@ void Physics::processVerticesIndices(aiMesh* mesh)
 
 
 }
-void Physics::readMesh(std::string modelPath){
+PxTriangleMeshGeometry Physics::readMesh(std::string modelPath){
 	Assimp::Importer importer;
 	const auto* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -130,6 +147,11 @@ void Physics::readMesh(std::string modelPath){
 		fmt::print("ERROR::ASSIMP::{}\n", importer.GetErrorString());
 		throw std::runtime_error("Failed to load model");
 	}
+	vectorList.clear();
+	indicesList.clear();
+	std::cout << vectorList.size() << std::endl;
+	std::cout << indicesList.size() << std::endl;
+
 	processNodeS(scene->mRootNode, scene);
 	
 	std::cout << vectorList.size() << std::endl;
@@ -143,17 +165,35 @@ void Physics::readMesh(std::string modelPath){
 	meshDesc.triangles.count = indicesList.size();
 	meshDesc.triangles.stride = 3 * sizeof(PxU32);
 	meshDesc.triangles.data = reinterpret_cast<const void*>(indicesList.data());
-	PxTriangleMesh* convexMesh = gCooking->createTriangleMesh(meshDesc, gPhysics->getPhysicsInsertionCallback());
+	PxTriangleMesh* triangleMesh = gCooking->createTriangleMesh(meshDesc, gPhysics->getPhysicsInsertionCallback());
 
-	PxShape* awallShape = gPhysics->createShape(PxTriangleMeshGeometry(convexMesh), *gMaterial, true); //create shape
-	awallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
-	PxRigidStatic* awallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create static rigid body - wont move
-	awallBody->attachShape(*awallShape); //stick shape on rigid body
-	awallShape->release(); //free shape 
-	gScene->addActor(*awallBody); //add rigid body to scene
+	return triangleMesh;
 }
 
+void Physics::generateRedDoor() {
+	PX_RELEASE(blueDoorBody);
 
+	redDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(redDoorMesh), *gMaterial, true); //create shape
+	redDoorShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
+	redDoorBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create static rigid body - wont move
+	redDoorBody->attachShape(*redDoorShape); //stick shape on rigid body
+	redDoorShape->release(); //free shape 
+	gScene->addActor(*redDoorBody); //add rigid body to scene
+
+
+}
+
+void Physics::generateBlueDoor() {
+	PX_RELEASE(redDoorBody);
+	
+	blueDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(blueDoorMesh), *gMaterial, true); //create shape
+	blueDoorShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
+	blueDoorBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create static rigid body - wont move
+	blueDoorBody->attachShape(*blueDoorShape); //stick shape on rigid body
+	blueDoorShape->release(); //free shape 
+	gScene->addActor(*blueDoorBody); //add rigid body to scene
+	
+}
 VehicleDesc Physics::initVehicleDesc() const
 {
 	//Set up the chassis mass, dimensions, moment of inertia, and center of mass offset.
@@ -207,6 +247,8 @@ void Physics::CleanupPhysics()
 	PX_RELEASE(gBatchQuery);
 	gVehicleSceneQueryData->free(gAllocator);
 	PX_RELEASE(gFrictionPairs);
+	PX_RELEASE(redDoorBody);
+	PX_RELEASE(blueDoorBody);
 	PxCloseVehicleSDK();
 
 	PX_RELEASE(gMaterial);

@@ -22,6 +22,7 @@
 #include "SpeedBoostPickupZone.h"
 #include "SpikeTrap.h"
 #include "SpikeTrapPickupZone.h"
+#include "DoorSwitchZone.h"
 
 #include "OpponentInput.h"
 #include "GridMarker.h"
@@ -56,8 +57,9 @@ int main(int argc, char** args) {
 	simpleDepthShader.compile();
 
 	// The arena model
-	Model arena("models/untitled.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model redArena("models/redArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
+	Model blueArena("models/blueArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 	// Shadow setup start ---------------------------------------------------------------------
 
 // Configure depth map FBO
@@ -159,6 +161,9 @@ int main(int argc, char** args) {
 	flagDropoffZone3.attachPhysics(physics);
 
 
+	DoorSwitchZone doorSwitchZone(shaderProgram, sCamera);
+	doorSwitchZone.attachPhysics(physics);
+
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
 	entities.push_back(&flag);
@@ -172,6 +177,7 @@ int main(int argc, char** args) {
 	entities.push_back(&opponentCar2);
 	entities.push_back(&opponentCar3);
 	entities.push_back(&spikeTrapPickupZone);
+	entities.push_back(&doorSwitchZone);
 
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
 	//PxVec3 position1(100.f, 2.0f, 100.0f);
@@ -253,6 +259,35 @@ int main(int argc, char** args) {
 				break;
 			}
 		}
+		//arena door switch
+		if (State::arenaSwitch && State::arenaSwitchReady) {
+			//need undraw code here
+			if (State::blueArena) {
+				physics.generateRedDoor(); //switch from blue doors to red
+				State::redArena = true;
+				State::blueArena = false;
+				//draw red arena
+				//Model arena("models/redArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+				fmt::print("Button pressed, doors switching\n");
+				fmt::print("Red arena loaded\n");
+			}
+			else if (State::redArena) {
+				physics.generateBlueDoor(); //switch from red doors to blue
+				State::blueArena = true;
+				State::redArena = false;
+				//draw blue arena
+				//Model arena("models/blueArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+				fmt::print("Button pressed, doors switching\n");
+				fmt::print("Blue arena loaded\n");
+			}
+			State::arenaSwitch = false;
+			State::arenaSwitchReady = false;
+			State::arenaTimer = 0;
+		}
+		if (State::arenaSwitch && !State::arenaSwitchReady) {
+			State::arenaSwitch = false;
+		}
+
 
 		//forgive me--------------------
 		PxVec3 target;
@@ -323,7 +358,8 @@ int main(int argc, char** args) {
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		// First pass
-		arena.drawArena(simpleDepthShader, true, depthMapFBO);
+		if(State::redArena) redArena.drawArena(simpleDepthShader, true, depthMapFBO);
+		if(State::blueArena) blueArena.drawArena(simpleDepthShader, true, depthMapFBO);
 
 		for (const auto& entity : entities)
 			entity->draw(physics, simpleDepthShader, true, depthMapFBO);
@@ -354,7 +390,8 @@ int main(int argc, char** args) {
 		glActiveTexture(GL_TEXTURE0);
 
 		// Second pass
-		arena.drawArena(shaderProgram, false, depthMap);
+		if(State::redArena) redArena.drawArena(shaderProgram, false, depthMap);
+		if(State::blueArena) blueArena.drawArena(shaderProgram, false, depthMap);
 
 		for (const auto& entity : entities)
 			entity->draw(physics, shaderProgram, false, depthMap);

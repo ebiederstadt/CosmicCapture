@@ -88,5 +88,10 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			}
 		}
 
+		//Button switch
+		else if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody && !State::arenaSwitch) {
+			State::arenaSwitch = true;
+		}
+
 	}
 }

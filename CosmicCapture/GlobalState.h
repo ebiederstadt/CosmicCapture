@@ -67,4 +67,13 @@ struct State
 	inline static int spikeTrapActingUpon = 0; // Which car the spike trap is affecting
 
 	inline static bool spikeTrapFinished = false; // Use when the trap is finished and should be removed
+
+	inline static PxRigidStatic* doorSwitchPickupMarkerBody = nullptr;
+	inline static PxRigidStatic* doorSwitchPickupTriggerBody = nullptr;
+	inline static bool arenaSwitch = false;
+	inline static bool arenaSwitchReady = false;
+	inline static bool blueArena = false;
+	inline static bool redArena = true;
+	inline static int arenaTimer = 0;
+
 };
