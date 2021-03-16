@@ -193,6 +193,7 @@
     <ClCompile Include="physics\VehicleSceneQuery.cpp" />
     <ClCompile Include="physics\VehicleTireFriction.cpp" />
     <ClCompile Include="physics\VehicleMovement.cpp" />
+    <ClCompile Include="PowerUpManager.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="ProjectilePickupZone.cpp" />
     <ClCompile Include="SpeedBoost.cpp" />
@@ -243,6 +244,7 @@
     <ClInclude Include="physics\VehicleSceneQuery.h" />
     <ClInclude Include="physics\VehicleTireFriction.h" />
     <ClInclude Include="physics\VehicleMovement.h" />
+    <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="ProjectilePickupZone.h" />
     <ClInclude Include="SpeedBoost.h" />

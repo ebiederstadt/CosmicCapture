@@ -16,12 +16,7 @@
 #include "Vehicle.h"
 #include "Flag.h"
 #include "FlagDropoffZone.h"
-#include "Projectile.h"
-#include "ProjectilePickupZone.h"
-#include "SpeedBoost.h"
-#include "SpeedBoostPickupZone.h"
-#include "SpikeTrap.h"
-#include "SpikeTrapPickupZone.h"
+#include "PowerUpManager.h"
 
 #include "OpponentInput.h"
 #include "GridMarker.h"
@@ -102,36 +97,20 @@ int main(int argc, char** args)
 	// Entities
 	Vehicle car(sCamera, 0, "textures/blank.jpg");
 	car.attachPhysics(physics);
-	State::vehicleRDs[0] = car.getVehicle()->getRigidDynamicActor();
+	State::vehicles[0] = car.getVehicle();
 
 	Vehicle opponentCar1(sCamera, 1, "textures/blue.jpg");
 	opponentCar1.attachPhysics(physics);
-	State::vehicleRDs[1] = opponentCar1.getVehicle()->getRigidDynamicActor();
-
+	State::vehicles[1] = opponentCar1.getVehicle();
+	
 	Vehicle opponentCar2(sCamera, 2, "textures/pink.jpg");
 	opponentCar2.attachPhysics(physics);
-	State::vehicleRDs[2] = opponentCar2.getVehicle()->getRigidDynamicActor();
-
+	State::vehicles[2] = opponentCar2.getVehicle();
+	
 	Vehicle opponentCar3(sCamera, 3, "textures/green.jpg");
 	opponentCar3.attachPhysics(physics);
-	State::vehicleRDs[3] = opponentCar3.getVehicle()->getRigidDynamicActor();
-
-	//projectile prototype stuff----------------------
-	Projectile testProj(sCamera);
-	ProjectilePickupZone projPickupZone(sCamera);
-	projPickupZone.attachPhysics(physics);
-	//------------------------------------------------
-
-	//speedboost powerup
-	SpeedBoost testSpeedBoost(sCamera);
-	SpeedBoostPickupZone speedboostPickupZone(sCamera);
-	speedboostPickupZone.attachPhysics(physics);
-
-	// Spike trap powerup
-	SpikeTrap testSpikeTrap(sCamera);
-	SpikeTrapPickupZone spikeTrapPickupZone(sCamera);
-	spikeTrapPickupZone.attachPhysics(physics);
-
+	State::vehicles[3] = opponentCar3.getVehicle();
+	
 	Flag flag(sCamera);
 	flag.attachPhysics(physics);
 
@@ -152,13 +131,11 @@ int main(int argc, char** args)
 	//engine.loop();
 	//engine.playSound();
 
-
 	FlagDropoffZone flagDropoffZone2(sCamera, 2);
 	flagDropoffZone2.attachPhysics(physics);
 
 	FlagDropoffZone flagDropoffZone3(sCamera, 3);
 	flagDropoffZone3.attachPhysics(physics);
-
 
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
@@ -167,12 +144,11 @@ int main(int argc, char** args)
 	entities.push_back(&flagDropoffZone1);
 	entities.push_back(&flagDropoffZone2);
 	entities.push_back(&flagDropoffZone3);
-	entities.push_back(&projPickupZone);
-	entities.push_back(&speedboostPickupZone);
 	entities.push_back(&opponentCar1);
 	entities.push_back(&opponentCar2);
 	entities.push_back(&opponentCar3);
-	entities.push_back(&spikeTrapPickupZone);
+
+	PowerUpManager powerUpManager(sCamera, physics);
 
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
 	//PxVec3 position1(100.f, 2.0f, 100.0f);
@@ -180,7 +156,7 @@ int main(int argc, char** args)
 	//gm1.attachPhysics(physics);
 	//entities.push_back(&gm1);	
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
-	opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+	opponentBrains.updatePath(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 	//get Initial path
 	std::pair<int, int> tempOld = State::lastPos;
 	std::pair<int, int> tempNew = State::lastPos;
@@ -199,66 +175,9 @@ int main(int argc, char** args)
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
 
-		if (State::spikeTrapPickedUp && testSpikeTrap.hasOwningVehicle())
-			testSpikeTrap.processInput(inputState, physics);
-
-		if (inputState[MovementFlags::ACTION] == false && State::projectilePickedUp)
-		{
-			testProj.attachVehicle(car.getVehicle());
-			testProj.attachPhysics(physics);
-			entities.push_back(&testProj);
-
-			State::projectilePickedUp = false;
-		}
-
-		// Use speed boost
-		if (inputState[MovementFlags::ACTION] == false && State::speedboostPickedUp)
-		{
-			testSpeedBoost.attachVehicle(car.getVehicle());
-			testSpeedBoost.attachPhysics(physics);
-			entities.push_back(&testSpeedBoost);
-			State::speedboostPickedUp = false;
-			State::speedBoostFinished = false;
-		}
-
-		// Pickup spike trap
-		if (State::spikeTrapPickedUp && !testSpikeTrap.hasOwningVehicle())
-		{
-			testSpikeTrap.attachOwningVehicle(car.getVehicle());
-			entities.push_back(&testSpikeTrap);
-		}
-
-		// In this case, the trap has already been placed, and now is being picked up again
-		if (State::spikeTrapPickedUp && State::spikeTrapActive)
-		{
-			// Reset
-			auto loc = std::find(entities.begin(), entities.end(), &testSpikeTrap);
-			entities.erase(loc);
-			testSpikeTrap.cleanUpPhysics();
-
-			State::spikeTrapActive = false; // The other spike trap is no longer picked up and should be removed
-			testSpikeTrap.attachOwningVehicle(car.getVehicle());
-		}
-
-		// Run into spike trap
-		if (State::spikeTrapInUse && !testSpikeTrap.hasAffectedVehicle())
-		{
-			switch (State::spikeTrapActingUpon)
-			{
-			case 0:
-				testSpikeTrap.attachAffectedVehicle(car.getVehicle());
-				break;
-			case 1:
-				testSpikeTrap.attachAffectedVehicle(opponentCar1.getVehicle());
-				break;
-			case 2:
-				testSpikeTrap.attachAffectedVehicle(opponentCar2.getVehicle());
-				break;
-			case 3:
-				testSpikeTrap.attachAffectedVehicle(opponentCar3.getVehicle());
-				break;
-			}
-		}
+		powerUpManager.pickup(sCamera, physics);
+		// TODO: Make it so that all players can use powerups
+		powerUpManager.use(physics, inputState, 0);
 
 		//forgive me--------------------
 		PxVec3 target;
@@ -271,10 +190,10 @@ int main(int argc, char** args)
 			target = State::flagBody->getGlobalPose().p;
 		}
 
-		opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, target);
+		opponentBrains.updatePath(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, target);
 
 		std::map<MovementFlags, bool> command;
-		command = opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p,
+		command = opponentBrains.getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p,
 		                                  opponentCar3.mGeometry->getModelMatrix().column2.getXYZ());
 
 		tempNew = State::lastPos;
@@ -313,6 +232,8 @@ int main(int argc, char** args)
 		for (const auto& entity : entities)
 			entity->simulate(physics);
 
+		powerUpManager.simulate(physics);
+
 		physics.stepPhysics();
 
 		// Render
@@ -337,6 +258,8 @@ int main(int argc, char** args)
 
 		for (const auto& entity : entities)
 			entity->draw(physics, simpleDepthShader, true);
+
+		powerUpManager.draw(physics, simpleDepthShader, true);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, width, height);
@@ -367,6 +290,8 @@ int main(int argc, char** args)
 
 		for (const auto& entity : entities)
 			entity->draw(physics, shaderProgram, false);
+
+		powerUpManager.draw(physics, shaderProgram, false);
 
 		//player pos for testing
 		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
@@ -434,6 +359,7 @@ int main(int argc, char** args)
 	//cleanup
 	for (const auto& entity : entities)
 		entity->cleanUpPhysics();
+	powerUpManager.cleanUp();
 	physics.CleanupPhysics();
 	soundSystem.killSources();
 

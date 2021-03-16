@@ -7,8 +7,8 @@ Projectile::Projectile(std::shared_ptr<Camera> camera) :
 void Projectile::attachPhysics(Physics& instance) {
 	PxShape* projectile = instance.gPhysics->createShape(PxSphereGeometry(1.f), *instance.gMaterial, true); //create projectile shape
 	projectile->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	PxVec3 pos = mVehicles[0]->getRigidDynamicActor()->getGlobalPose().p;
-	PxVec3 dir = mVehicles[0]->getRigidDynamicActor()->getLinearVelocity();
+	PxVec3 pos = mVehicle->getRigidDynamicActor()->getGlobalPose().p;
+	PxVec3 dir = mVehicle->getRigidDynamicActor()->getLinearVelocity();
 	State::projectileBody = instance.gPhysics->createRigidDynamic(PxTransform(PxVec3(pos.x, pos.y + 5.f, pos.z)));
 	State::projectileBody->attachShape(*projectile);
 	projectile->release();

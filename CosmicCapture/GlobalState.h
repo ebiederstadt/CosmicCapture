@@ -1,10 +1,25 @@
 #pragma once
 
 #include <physx/PxPhysicsAPI.h>
-#include "Vehicle.h"
-
+#include <optional>
+#include <array>
 
 using namespace physx;
+
+enum class PowerUpOptions
+{
+	SPIKE_TRAP, SPEED_BOOST, PROJECTILE
+};
+
+struct spikeTrapState
+{
+	inline static PxRigidStatic* triggerBody; // The trigger body for the spike trap
+	bool active = false; // Spike trap has been deployed and is ready to catch people
+	bool inUse = false; // The spike trap has caught somebody
+	int actingUpon; // Which car the spike trap caught
+	bool finished = false; // The spike trap is finished and should be removed
+};
+
 
 struct State 
 {
@@ -42,27 +57,21 @@ struct State
 	inline static PxRigidDynamic* flagBody = nullptr;
 	inline static PxRigidStatic* flagDropoffBoxes[4] = { nullptr, nullptr, nullptr, nullptr };
 
-	inline static PxRigidDynamic* vehicleRDs[4] = { nullptr, nullptr, nullptr, nullptr };
+	inline static PxVehicleDrive4W* vehicles[4] = { nullptr, nullptr, nullptr, nullptr };
 
+	// Scores and powerups
 	inline static int scores[4] = {0, 0, 0, 0};
-
+	inline static std::array<std::optional<PowerUpOptions>, 4> heldPowerUps = {};
+	
 	inline static PxRigidDynamic* projectileBody = nullptr;
 	inline static PxRigidStatic* projectilePickupTriggerBody = nullptr;
-	inline static bool projectilePickedUp = false;
 
 	inline static PxRigidDynamic* speedboostBody = nullptr;
 	inline static PxRigidStatic* speedboostPickupTriggerBody = nullptr;
-	inline static bool speedboostPickedUp = false;
 
 	inline static bool speedBoostFinished = false;
 
 	inline static PxRigidStatic* spikeTrapPickupTriggerBody = nullptr;
-	inline static bool spikeTrapPickedUp = false;
 
-	inline static PxRigidStatic* spikeTrapTriggerBody = nullptr;
-	inline static bool spikeTrapActive = false; // Active: The trap is ready for use
-	inline static bool spikeTrapInUse = false; // In use: The trap is acting on a car
-	inline static int spikeTrapActingUpon = 0; // Which car the spike trap is affecting
-
-	inline static bool spikeTrapFinished = false; // Use when the trap is finished and should be removed
+	inline static std::vector<spikeTrapState> spike_trap_states;
 };

@@ -46,19 +46,19 @@ void Flag::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth
 void Flag::simulate(Physics& instance)
 {
 	if (State::flagPickedUpBy[0]) {
-		PxVec3 pos = State::vehicleRDs[0]->getGlobalPose().p;
+		PxVec3 pos = State::vehicles[0]->getRigidDynamicActor()->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else if (State::flagPickedUpBy[1]) {
-		PxVec3 pos = State::vehicleRDs[1]->getGlobalPose().p;
+		PxVec3 pos = State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else if (State::flagPickedUpBy[2]) {
-		PxVec3 pos = State::vehicleRDs[2]->getGlobalPose().p;
+		PxVec3 pos = State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else if (State::flagPickedUpBy[3]) {
-		PxVec3 pos = State::vehicleRDs[3]->getGlobalPose().p;
+		PxVec3 pos = State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else {
