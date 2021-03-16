@@ -27,6 +27,4 @@ void SpeedBoost::simulate(Physics& instance) {
 	}
 }
 
-void SpeedBoost::cleanUpPhysics() {
-	PX_RELEASE(State::speedboostBody);
-}
+void SpeedBoost::cleanUpPhysics() {}

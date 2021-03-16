@@ -62,16 +62,14 @@ struct State
 	// Scores and powerups
 	inline static int scores[4] = {0, 0, 0, 0};
 	inline static std::array<std::optional<PowerUpOptions>, 4> heldPowerUps = {};
-	
-	inline static PxRigidDynamic* projectileBody = nullptr;
-	inline static PxRigidStatic* projectilePickupTriggerBody = nullptr;
 
-	inline static PxRigidDynamic* speedboostBody = nullptr;
+	inline static PxRigidStatic* projectilePickupTriggerBody = nullptr;
 	inline static PxRigidStatic* speedboostPickupTriggerBody = nullptr;
+	inline static PxRigidStatic* spikeTrapPickupTriggerBody = nullptr;
+
+	inline static PxRigidDynamic* projectileBody = nullptr;
 
 	inline static bool speedBoostFinished = false;
-
-	inline static PxRigidStatic* spikeTrapPickupTriggerBody = nullptr;
 
 	inline static std::vector<spikeTrapState> spike_trap_states;
 };

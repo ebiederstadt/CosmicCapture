@@ -26,7 +26,6 @@ void PowerUpManager::pickup(const std::shared_ptr<Camera> camera, Physics& insta
 	{
 		auto index = std::distance(State::heldPowerUps.begin(), iter);
 
-		// First case: Powerup has been pickup up but we have not yet added it to the scene
 		if (iter->has_value())
 		{
 			// Check to see if we have already added the powerup to the game world
@@ -71,7 +70,13 @@ void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>&
 		fmt::print("The projectile should be used now\n");
 	} else if (dynamic_cast<SpeedBoost*>(mHeldPowerUps[playerNum].get()))
 	{
-		fmt::print("The speed boost should be used now\n");
+		// Use the powerup when the player presses the use key
+		if (!inputs.at(MovementFlags::ACTION))
+		{
+			auto powerup = static_cast<std::unique_ptr<Entity>>(mHeldPowerUps[playerNum].release());
+			mDeployedPowerUps.push_back(std::move(powerup));
+			State::heldPowerUps[playerNum].reset();
+		}
 	} else if (dynamic_cast<SpikeTrap*>(mHeldPowerUps[playerNum].get()))
 	{
 		// Check to see if the spike trap should be placed, and move it into the deployed powerups list if it should
@@ -125,6 +130,20 @@ void PowerUpManager::simulate(Physics& instance)
 			}
 		}
 
+		// Speed boost specific stuff
+		auto speedBoost = dynamic_cast<SpeedBoost*>(powerup->get());
+		if (speedBoost)
+		{
+			if (State::speedBoostFinished)
+			{
+				powerup->get()->cleanUpPhysics();
+				State::speedBoostFinished = false;
+				powerup = mDeployedPowerUps.erase(powerup);
+
+				increment = false;
+			}
+		}
+
 		if (increment)
 			++powerup;
 	}
@@ -154,7 +173,8 @@ void PowerUpManager::cleanUp()
 
 	for (const auto& heldPowerup : mHeldPowerUps)
 	{
-		heldPowerup->cleanUpPhysics();
+		if (heldPowerup != nullptr)
+			heldPowerup->cleanUpPhysics();
 	}
 
 	for (const auto& deployedPowerup : mDeployedPowerUps)
