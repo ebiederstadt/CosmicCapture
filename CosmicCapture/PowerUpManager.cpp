@@ -34,7 +34,6 @@ void PowerUpManager::pickup(const std::shared_ptr<Camera> camera, Physics& insta
 				if (iter->value() == PowerUpOptions::PROJECTILE)
 				{
 					mHeldPowerUps[index] = std::make_unique<Projectile>(camera);
-					mHeldPowerUps[index]->attachPhysics(instance);
 					dynamic_cast<Projectile*>(mHeldPowerUps[index].get())->attachVehicle(State::vehicles[index]);
 				} else if (iter->value() == PowerUpOptions::SPEED_BOOST)
 				{
@@ -64,10 +63,16 @@ void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>&
 		return;
 	}
 
-	// TODO: Projectile / speed boost donot really have a concept of a "held" state
 	if (dynamic_cast<Projectile*>(mHeldPowerUps[playerNum].get()))
 	{
-		fmt::print("The projectile should be used now\n");
+		if (!inputs.at(MovementFlags::ACTION))
+		{
+			fmt::print("Using Projectile\n");
+			auto powerup = static_cast<std::unique_ptr<Entity>>(mHeldPowerUps[playerNum].release());
+			powerup->attachPhysics(instance);
+			mDeployedPowerUps.push_back(std::move(powerup));
+			State::heldPowerUps[playerNum].reset();
+		}
 	} else if (dynamic_cast<SpeedBoost*>(mHeldPowerUps[playerNum].get()))
 	{
 		// Use the powerup when the player presses the use key
