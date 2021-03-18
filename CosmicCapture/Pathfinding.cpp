@@ -25,11 +25,14 @@ bool Pathfinding::isDestination(int row, int col, Pair dest)
     else
         return (false);
 }
-
 double Pathfinding::calculateHValue(int row, int col, Pair dest)
 {
-    return ((double)sqrt(pow(sqrt(row - dest.first), 2) + pow(sqrt(col - dest.second), 2))); //euclidean distance
+    return (double)abs(row - dest.first) + (double)abs(row - dest.second);
 }
+//double Pathfinding::calculateHValue(int row, int col, Pair dest)
+//{
+//   return ((double)sqrt(pow(sqrt(row - dest.first), 2) + pow(sqrt(col - dest.second), 2))); //euclidean distance
+//}
 
 std::stack<Pair> Pathfinding::tracePath(Cell cellDetails[][COL], Pair dest)
 {
@@ -57,7 +60,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
     if (isValid(src.first, src.second) == false) {
         //printf("Source is invalid\n");
         std::stack<Pair> dummy;
-        dummy.push(State::lastPos);
+        dummy.push(std::make_pair(0,0));
         return dummy;
     }
 
@@ -65,7 +68,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
     if (isValid(dest.first, dest.second) == false) {
         //printf("Destination is invalid\n");
         std::stack<Pair> dummy;
-        dummy.push(State::lastPos);
+        dummy.push(std::make_pair(0, 0));
         return dummy;
     }
 
@@ -75,7 +78,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
         == false) {
        // printf("Source or the destination is blocked\n");
         std::stack<Pair> dummy;
-        dummy.push(State::lastPos);
+        dummy.push(std::make_pair(0, 0));
         return dummy;
     }
 
@@ -84,7 +87,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
         == true) {
        // printf("We are already at the destination\n");
         std::stack<Pair> dummy;
-        dummy.push(State::lastPos);
+        dummy.push(std::make_pair(0, 0));
         return dummy;
     }
 

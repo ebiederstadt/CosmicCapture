@@ -26,6 +26,7 @@
 
 #include "OpponentInput.h"
 #include "GridMarker.h"
+#include "InvisibleBarrier.h"
 
 #include "GlobalState.h"
 
@@ -33,6 +34,7 @@
 #define M_PI  3.14159265358979323846
 
 float angle = -0.25f;
+
 
 int main(int argc, char** args) {
 	// Window Initialization
@@ -44,10 +46,9 @@ int main(int argc, char** args) {
 	Physics physics = Physics::Instance();
 	const auto sCamera = std::make_shared<Camera>(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 	physics.Initialize();
-	
-	Input input = Input();
 
-	OpponentInput opponentBrains(1);
+	Input input = Input();
+	OpponentInput opponentBrains[3];
 
 
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
@@ -57,9 +58,9 @@ int main(int argc, char** args) {
 	simpleDepthShader.compile();
 
 	// The arena model
-	Model redArena("models/redArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model redArena("models/walls_and_center.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
-	Model blueArena("models/blueArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model blueArena("models/walls_and_center.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 	// Shadow setup start ---------------------------------------------------------------------
 
 // Configure depth map FBO
@@ -132,7 +133,7 @@ int main(int argc, char** args) {
 	SpikeTrap testSpikeTrap(shaderProgram, sCamera);
 	SpikeTrapPickupZone spikeTrapPickupZone(shaderProgram, sCamera);
 	spikeTrapPickupZone.attachPhysics(physics);
-	
+
 	Flag flag(shaderProgram, sCamera);
 	flag.attachPhysics(physics);
 
@@ -147,8 +148,8 @@ int main(int argc, char** args) {
 	soundSystem.initialize();
 	soundSystem.initializeBuffers();
 	AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
-	music.loop();
-	music.playSound();
+	//music.loop();
+	//music.playSound();
 	//AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
 	//engine.loop();
 	//engine.playSound();
@@ -179,15 +180,20 @@ int main(int argc, char** args) {
 	entities.push_back(&spikeTrapPickupZone);
 	entities.push_back(&doorSwitchZone);
 
+
+	InvisibleBarrier barriers(shaderProgram, sCamera);
+	barriers.attachPhysics(physics);
+	entities.push_back(&barriers);
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
 	//PxVec3 position1(100.f, 2.0f, 100.0f);
 	//GridMarker gm1(shaderProgram, sCamera, position1);
 	//gm1.attachPhysics(physics);
 	//entities.push_back(&gm1);	
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
-	opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p); //get Initial path
-	std::pair<int, int> tempOld = State::lastPos;
-	std::pair<int, int> tempNew = State::lastPos;
+	for (int opponentNum = 1; opponentNum < 4; opponentNum++) {		
+			opponentBrains[opponentNum - 1].updatePath(State::vehicleRDs[opponentNum]->getGlobalPose().p, State::flagBody->getGlobalPose().p);	
+	}
+	//opponentBrains.updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagBody->getGlobalPose().p); //get Initial path--------------------------------
 	int aiStuffCounter = 0;
 	int stuckCount = 0; //count how many frames a player has been in the same grid coords
 	int reverseCounter = 0;
@@ -290,47 +296,34 @@ int main(int argc, char** args) {
 
 
 		//forgive me--------------------
-		PxVec3 target;
-		if (State::targetReached) {
-			target = State::flagDropoffBoxes[3]->getGlobalPose().p;
+		if (aiStuffCounter % 60 == 0) { //stagger pathfinding on different frames
+			if (State::flagPickedUpBy[1]) {
+				opponentBrains[0].updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
+			}
+			else {
+				opponentBrains[0].updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+			}
+		}
+		else if (aiStuffCounter % 3 == 1) {
+			if (State::flagPickedUpBy[2]) {
+				//opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
+			}
+			else {
+				//opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+			}
 		}
 		else {
-			target = State::flagBody->getGlobalPose().p;
+			if (State::flagPickedUpBy[3]) {
+				//opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
+			}
+			else {
+				//opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+			}
 		}
-	
-		opponentBrains.updatePath(State::vehicleRDs[3]->getGlobalPose().p, target);
+		opponentCar1.processInput(opponentBrains[0].getInput(State::vehicleRDs[1]->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
+		//opponentCar2.processInput(opponentBrains[1].getInput(State::vehicleRDs[2]->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
+		//opponentCar3.processInput(opponentBrains[2].getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 
-		std::map<MovementFlags, bool> command;
-		command = opponentBrains.getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ());
-		
-		tempNew = State::lastPos;	
-		if (tempNew == tempOld && !reversing) {
-			stuckCount++;
-			if (stuckCount > 2000) {
-				reversing = true;
-				stuckCount = 0;
-			}
-		}
-		else {
-			stuckCount = 0;
-		}
-		tempOld = State::lastPos;
-		if (reversing) {
-			command[MovementFlags::LEFT] = true;
-			command[MovementFlags::RIGHT] = true;
-			command[MovementFlags::DOWN] = false;
-			command[MovementFlags::UP] = true;
-			reverseCounter++;
-			if (reverseCounter > 850) {
-				reversing = false;
-				reverseCounter = 0;
-			}
-		}
-		
-		if (aiStuffCounter %  11 == 0) {
-			command[MovementFlags::UP] = true;
-		}
-		opponentCar3.processInput(command);
 		aiStuffCounter++;
 		//------------------------------*/
 
@@ -397,13 +390,13 @@ int main(int argc, char** args) {
 			entity->draw(physics, shaderProgram, false, depthMap);
 
 		//player pos for testing
-		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		//PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
-		//int xIndex = (int)((playerPosition.x + 100.f) / 10.f);
-		//int zIndex = (int)((playerPosition.z + 100.f) / 10.f);;
-		//int dir = opponentBrains.getOrientation(playerDir);
+		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
+		int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
+		int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
+		int dir = opponentBrains[1].getOrientation(playerDir);
 		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
-		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
+		printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//printf("%d\n", State::worldGrid[17][6]);
 
 		ImGui::Begin("Framerate Counter!");

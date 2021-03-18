@@ -1,37 +1,67 @@
 #include "OpponentInput.h"
-
+OpponentInput::OpponentInput()
+{
+	playerNum = 0;
+	counter = 0;
+	reverseCounter = 0;
+	stuckCounter = 0;
+}
 OpponentInput::OpponentInput(int playerNumber)
 {
 	playerNum = playerNumber;
 	counter = 0;
+	reverseCounter = 0;
+	stuckCounter = 0;
 }
 
 std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 playerDir) {
 	std::pair<int, int> current = getGridCoordinates(playerPos.x, playerPos.z);
-
 	if (current == target) {
 		if (path.empty()) {
-			path = pathfinder.ehStarSearch(State::worldGrid, current, std::make_pair<int,int>(10,10));
+			path = pathfinder.ehStarSearch(State::worldGrid, current, std::make_pair<int,int>(10,10)); //FIX THIS PROBLEM
 		}
 		target = path.top();
 		path.pop();
 	}
-	State::lastPos = current;
-	int targetDir = getTargetDirection(current, target);
-	int playerOrientation = getOrientation(playerDir);
-	return getCommand(targetDir, playerOrientation);
+	if (current == lastPosition && !reversing) {
+		if (stuckCounter >= stuckThreshold) {
+			reversing = true;
+		}
+		else {
+			stuckCounter++;
+		}
+	}
+	else {
+		stuckCounter = 0;
+		lastPosition = current;
+	}
+	std::map<MovementFlags, bool> command;
+	if (reversing) {
+		command[MovementFlags::LEFT] = true;
+		command[MovementFlags::RIGHT] = true;
+		command[MovementFlags::DOWN] = false;
+		command[MovementFlags::UP] = true;
+		reverseCounter++;
+		if (reverseCounter > maxReverseCount) {
+			reverseCounter = 0;
+			reversing = false;
+		}
+	}
+	else {
+		int targetDir = getTargetDirection(current, target);
+		int playerOrientation = getOrientation(playerDir);
+		command = getCommand(targetDir, playerOrientation);
+	}
+	
+	
+	return command;
 }
 
 void OpponentInput::updatePath(PxVec3 playerPos, PxVec3 targetPos) {
 	std::pair<int, int> p = getGridCoordinates(playerPos.x, playerPos.z);
 	std::pair<int, int> t = getGridCoordinates(targetPos.x, targetPos.z);
 	if (p == t) {
-		if (State::targetReached) {
-			State::targetReached = false;
-		}
-		else {
-			State::targetReached = true;
-		}
+
 		
 	}
 	else {
@@ -46,8 +76,8 @@ std::map<MovementFlags, bool> OpponentInput::followPath() {
 }
 
 std::pair<int, int> OpponentInput::getGridCoordinates(float globalPosX, float globalPosZ) {
-	int xIndex = std::min((int)((globalPosX + 100.f) / 10.f), 19);
-	int zIndex = std::min((int)((globalPosZ + 100.f) / 10.f), 19);
+	int xIndex = std::min((int)((globalPosX + 180.f) / 10.f), 35);
+	int zIndex = std::min((int)((globalPosZ + 180.f) / 10.f), 35);
 	std::pair p(xIndex, zIndex);
 	return p;
 }

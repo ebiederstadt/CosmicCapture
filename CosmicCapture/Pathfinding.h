@@ -6,8 +6,8 @@
 #include <fmt/format.h>
 #include "GlobalState.h"
 
-#define ROW 20
-#define COL 20
+#define ROW 36
+#define COL 36
 
 // Creating a shortcut for int, int pair type
 typedef std::pair<int, int> Pair;

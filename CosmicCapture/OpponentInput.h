@@ -7,6 +7,7 @@
 class OpponentInput
 {
 public:
+	OpponentInput();
 	OpponentInput(int playerNumber);
 	std::map<MovementFlags, bool> getInput(PxVec3 playerPos, PxVec3 playerDir);
 	int getOrientation(PxVec3 dirVec);
@@ -24,5 +25,13 @@ private:
 	std::stack<std::pair<int, int>> path;
 	std::pair<int, int> target;
 	Pathfinding pathfinder;
+
+	bool reversing = false;
+	int reverseCounter;
+	int maxReverseCount = 300;
+	int stuckCounter;
+	int stuckThreshold = 500;
+	std::pair<int, int> lastPosition;
+
 };
 

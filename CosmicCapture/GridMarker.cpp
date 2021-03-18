@@ -8,9 +8,9 @@ GridMarker::GridMarker(const ShaderProgram& shaderProgram, std::shared_ptr<Camer
 void GridMarker::attachPhysics(Physics& instance)
 {
 	int counter = 0;
-	for (int i = 0; i < 20; i++) {
-		for (int j = 0; j < 20; j++) {
-			PxVec3 p(100.f - 10.f * i, 2.f, 100.f - 10.f * j);
+	for (int i = 0; i < 36; i++) {
+		for (int j = 0; j < 36; j++) {
+			PxVec3 p(180.f - 10.f * i, 2.f, 180.f - 10.f * j);
 			PxShape* marker = instance.gPhysics->createShape(PxBoxGeometry(0.1f, 2.f, 0.1f), *instance.gMaterial, true); //create flag shape
 			marker->setSimulationFilterData(PxFilterData(COLLISION_FLAG_SCENERY, COLLISION_FLAG_SCENERY_AGAINST, 0, 0));
 			markerBody[counter] = instance.gPhysics->createRigidStatic(PxTransform(p));
@@ -36,7 +36,7 @@ void GridMarker::attachPhysics(Physics& instance)
 }
 
 void GridMarker::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) {
-	for (int i = 0; i <  400; i++) {
+	for (int i = 0; i <  36*36; i++) {
 		PxTransform transform = markerBody[i]->getGlobalPose();
 		PxMat44 modelMatrix(transform);
 		mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
@@ -45,7 +45,7 @@ void GridMarker::draw(Physics& instance, const ShaderProgram& depthTexture, bool
 void GridMarker::simulate(Physics& instance) {
 }
 void GridMarker::cleanUpPhysics() {
-	for (int i = 0; i < 400; i++) {
+	for (int i = 0; i < 36*36; i++) {
 		PX_RELEASE(markerBody[i]);
 	}
 }

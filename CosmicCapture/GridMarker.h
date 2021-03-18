@@ -14,7 +14,7 @@ public:
 	void setPosition(PxVec3 pos);
 private:
 	PxVec3 position;
-	PxRigidStatic* markerBody[400];
+	PxRigidStatic* markerBody[36*36];
 };
 
 

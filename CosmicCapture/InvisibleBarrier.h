@@ -13,6 +13,6 @@ public:
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
 private:
-
+	std::vector<PxRigidStatic*> barrierBodies;
 };
 
