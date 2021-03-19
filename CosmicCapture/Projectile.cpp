@@ -1,9 +1,7 @@
 #include "Projectile.h"
 
-
-
-Projectile::Projectile(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera) :
-	Entity("models/projectile_sphere.ply", "textures/blue.jpg", shaderProgram, camera)
+Projectile::Projectile(std::shared_ptr<Camera> camera) :
+	Entity("models/projectile_sphere.ply", "textures/blue.jpg", camera)
 {}
 
 void Projectile::attachPhysics(Physics& instance) {
@@ -19,13 +17,14 @@ void Projectile::attachPhysics(Physics& instance) {
 	instance.gScene->addActor(*State::projectileBody);
 }
 
-void Projectile::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) {
+void Projectile::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
 	PxTransform transform = State::projectileBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
+	mGeometry->draw(modelMatrix, depthTexture, depth);
 }
-void Projectile::simulate(Physics& instance) {
-}
+
+void Projectile::simulate(Physics& instance) {}
+
 void Projectile::cleanUpPhysics() {
 	PX_RELEASE(State::projectileBody);
 }

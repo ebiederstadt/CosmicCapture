@@ -1,20 +1,17 @@
 #include "ProjectilePickupZone.h"
-#define MIN_HEIGHT 2.0f
-#define MAX_HEIGHT 5.0f
-bool ascending = true;
 
-ProjectilePickupZone::ProjectilePickupZone(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera) :
-	Entity("models/projectile_sphere.ply", "textures/wall.jpg", shaderProgram, camera)
+ProjectilePickupZone::ProjectilePickupZone(std::shared_ptr<Camera> camera) :
+	Entity("models/projectile_sphere.ply", "textures/wall.jpg", camera)
 {}
 
 
 void ProjectilePickupZone::attachPhysics(Physics& instance) {
 	PxShape* projectilePickupMarker = instance.gPhysics->createShape(PxSphereGeometry(1.f), *instance.gMaterial, true);
 	projectilePickupMarker->setSimulationFilterData(PxFilterData(COLLISION_FLAG_SCENERY, COLLISION_FLAG_SCENERY_AGAINST, 0, 0));
-	State::projectilePickupMarkerBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, MIN_HEIGHT, 25.f)));
-	State::projectilePickupMarkerBody->attachShape(*projectilePickupMarker);
+	pickupBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, MIN_HEIGHT, 25.f)));
+	pickupBody->attachShape(*projectilePickupMarker);
 	projectilePickupMarker->release();
-	instance.gScene->addActor(*State::projectilePickupMarkerBody);
+	instance.gScene->addActor(*pickupBody);
 
 	PxShape* projectilePickupTriggerShape = instance.gPhysics->createShape(PxBoxGeometry(1.1f, 2.f, 1.1f), *instance.gMaterial, true);
 	//trigger box for picking up the flag
@@ -24,21 +21,21 @@ void ProjectilePickupZone::attachPhysics(Physics& instance) {
 	State::projectilePickupTriggerBody->attachShape(*projectilePickupTriggerShape);
 	instance.gScene->addActor(*State::projectilePickupTriggerBody);
 }
-void ProjectilePickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) {
-	PxTransform transform = State::projectilePickupMarkerBody->getGlobalPose();
+void ProjectilePickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
+	PxTransform transform = pickupBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
+	mGeometry->draw(modelMatrix, depthTexture, depth);
 }
 void ProjectilePickupZone::simulate(Physics& instance) {
-	PxVec3 pos = State::projectilePickupMarkerBody->getGlobalPose().p;
+	PxVec3 pos = pickupBody->getGlobalPose().p;
 	if (ascending) {
-		State::projectilePickupMarkerBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 0.01f, pos.z)));
+		pickupBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 0.01f, pos.z)));
 		if (pos.y + 0.1f >= MAX_HEIGHT) {
 			ascending = false;
 		}
 	}
 	else {
-		State::projectilePickupMarkerBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y - 0.01f, pos.z)));
+		pickupBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y - 0.01f, pos.z)));
 		if (pos.y - 0.1f <= MIN_HEIGHT) {
 			ascending = true;
 		}
@@ -47,5 +44,5 @@ void ProjectilePickupZone::simulate(Physics& instance) {
 }
 void ProjectilePickupZone::cleanUpPhysics() {
 	PX_RELEASE(State::projectilePickupTriggerBody);
-	PX_RELEASE(State::projectilePickupMarkerBody);
+	PX_RELEASE(pickupBody);
 }

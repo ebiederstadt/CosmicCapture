@@ -47,12 +47,10 @@ struct State
 	inline static int scores[4] = {0, 0, 0, 0};
 
 	inline static PxRigidDynamic* projectileBody = nullptr;
-	inline static PxRigidStatic* projectilePickupMarkerBody = nullptr;
 	inline static PxRigidStatic* projectilePickupTriggerBody = nullptr;
 	inline static bool projectilePickedUp = false;
 
 	inline static PxRigidDynamic* speedboostBody = nullptr;
-	inline static PxRigidStatic* speedboostPickupMarkerBody = nullptr;
 	inline static PxRigidStatic* speedboostPickupTriggerBody = nullptr;
 	inline static bool speedboostPickedUp = false;
 

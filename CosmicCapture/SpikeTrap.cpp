@@ -4,17 +4,17 @@
 #include "physics/VehicleFilterShader.h"
 #include <fmt/format.h>
 
-SpikeTrap::SpikeTrap(const ShaderProgram& shader, const std::shared_ptr<Camera>& camera): Entity(
-	"models/spike_trap.obj", "textures/blank.jpg", shader, camera)
+SpikeTrap::SpikeTrap(const std::shared_ptr<Camera>& camera): Entity(
+	"models/spike_trap.obj", "textures/blank.jpg", camera)
 {}
 
-void SpikeTrap::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap)
+void SpikeTrap::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
 {
 	// Only draw when actually placed
 	if (!hasOwningVehicle())
 	{
 	const PxMat44 modelMatrix(body->getGlobalPose());
-		mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
+		mGeometry->draw(modelMatrix, depthTexture, depth);
 	}
 }
 
