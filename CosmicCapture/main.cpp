@@ -16,6 +16,7 @@
 #include "Vehicle.h"
 #include "Flag.h"
 #include "FlagDropoffZone.h"
+#include "GameUI.h"
 #include "PowerUpManager.h"
 
 #include "OpponentInput.h"
@@ -164,6 +165,9 @@ int main(int argc, char** args)
 	int stuckCount = 0; //count how many frames a player has been in the same grid coords
 	int reverseCounter = 0;
 	bool reversing = false;
+
+	GameUI gameUI;
+	
 	// Loop until the user closes the window
 	while (!quit)
 	{
@@ -292,6 +296,8 @@ int main(int argc, char** args)
 			entity->draw(physics, shaderProgram, false);
 
 		powerUpManager.draw(physics, shaderProgram, false);
+
+		gameUI.render();
 
 		//player pos for testing
 		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;

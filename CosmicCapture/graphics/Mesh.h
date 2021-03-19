@@ -7,12 +7,11 @@
 class Mesh
 {
 public:
-	Mesh(const CpuGeometry& cpuGeometry, const Texture& texture, unsigned int usage);
+	Mesh(const CpuGeometry& cpuGeometry, unsigned int usage);
 
 	void draw() const;
 
 private:
 	GpuGeometry mGeometry{};
-	Texture mTexture;
 };
 

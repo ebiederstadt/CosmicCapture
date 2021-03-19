@@ -157,6 +157,7 @@
     <ClCompile Include="audio\AudioInstance.cpp" />
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="FlagDropoffZone.cpp" />
+    <ClCompile Include="GameUI.cpp" />
     <ClCompile Include="GridMarker.cpp" />
     <ClCompile Include="InvisibleBarrier.cpp" />
     <ClCompile Include="OpponentInput.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="FlagDropoffZone.h" />
+    <ClInclude Include="GameUI.h" />
     <ClInclude Include="GlobalState.h" />
     <ClInclude Include="GridMarker.h" />
     <ClInclude Include="InvisibleBarrier.h" />

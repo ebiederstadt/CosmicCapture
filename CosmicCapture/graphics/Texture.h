@@ -10,7 +10,7 @@
 class Texture
 {
 public:
-	Texture(const std::string& path, GLuint interpolation);
+	Texture(const std::string& path, GLuint interpolation, bool flip = true);
 
 	void bind() const { glBindTexture(GL_TEXTURE_2D, mID); }
 	static void unbind() { glBindTexture(GL_TEXTURE_2D, 0);  }
