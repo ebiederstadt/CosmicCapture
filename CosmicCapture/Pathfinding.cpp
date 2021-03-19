@@ -60,7 +60,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
     if (isValid(src.first, src.second) == false) {
         //printf("Source is invalid\n");
         std::stack<Pair> dummy;
-        dummy.push(std::make_pair(0,0));
+        dummy.push(std::make_pair(-1,-1));
         return dummy;
     }
 
@@ -68,7 +68,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
     if (isValid(dest.first, dest.second) == false) {
         //printf("Destination is invalid\n");
         std::stack<Pair> dummy;
-        dummy.push(std::make_pair(0, 0));
+        dummy.push(std::make_pair(-1, -1));
         return dummy;
     }
 
@@ -78,7 +78,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
         == false) {
        // printf("Source or the destination is blocked\n");
         std::stack<Pair> dummy;
-        dummy.push(std::make_pair(0, 0));
+        dummy.push(std::make_pair(-1, -1));
         return dummy;
     }
 
@@ -170,7 +170,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
 
         //----------- 2nd Successor (South) ------------
 
-
+        
         if (isValid(i + 1, j) == true) {
 
             if (isDestination(i + 1, j, dest) == true) {
@@ -202,6 +202,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
                 }
             }
         }
+        
 
         //----------- 3rd Successor (East) ------------
 
@@ -273,7 +274,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
         }
 
         //----------- 5th Successor (North-East)
-
+        
         if (isValid(i - 1, j + 1) == true) {
             if (isDestination(i - 1, j + 1, dest) == true) {
                 cellDetails[i - 1][j + 1].parent_i = i;
@@ -305,7 +306,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
         }
 
         //----------- 6th Successor (North-West)
-
+        
 
         if (isValid(i - 1, j - 1) == true) {
 

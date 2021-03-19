@@ -33,8 +33,8 @@ void Vehicle::attachPhysics(Physics& instance)
 		z = 80.f;
 	}
 	else if (player == 1) {
-		x = -80.f;
-		z = 80.f;
+		x = -160.f;
+		z = 160.f;
 	}
 	else if (player == 2) {
 		x = 80.f;

@@ -58,9 +58,9 @@ int main(int argc, char** args) {
 	simpleDepthShader.compile();
 
 	// The arena model
-	Model redArena("models/walls_and_center.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model redArena("models/redArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 
-	Model blueArena("models/walls_and_center.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+	Model blueArena("models/blueArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 	// Shadow setup start ---------------------------------------------------------------------
 
 // Configure depth map FBO
@@ -181,9 +181,10 @@ int main(int argc, char** args) {
 	entities.push_back(&doorSwitchZone);
 
 
-	InvisibleBarrier barriers(shaderProgram, sCamera);
+	InvisibleBarrier barriers(shaderProgram, sCamera, 1);
 	barriers.attachPhysics(physics);
 	entities.push_back(&barriers);
+
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
 	//PxVec3 position1(100.f, 2.0f, 100.0f);
 	//GridMarker gm1(shaderProgram, sCamera, position1);
@@ -296,7 +297,7 @@ int main(int argc, char** args) {
 
 
 		//forgive me--------------------
-		if (aiStuffCounter % 60 == 0) { //stagger pathfinding on different frames
+		if (aiStuffCounter % 3 == 0) { //stagger pathfinding on different frames
 			if (State::flagPickedUpBy[1]) {
 				opponentBrains[0].updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
 			}
@@ -306,7 +307,7 @@ int main(int argc, char** args) {
 		}
 		else if (aiStuffCounter % 3 == 1) {
 			if (State::flagPickedUpBy[2]) {
-				//opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
+				//opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagDropoffBoxes[2]->getGlobalPose().p);
 			}
 			else {
 				//opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
@@ -314,7 +315,7 @@ int main(int argc, char** args) {
 		}
 		else {
 			if (State::flagPickedUpBy[3]) {
-				//opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
+				//opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagDropoffBoxes[3]->getGlobalPose().p);
 			}
 			else {
 				//opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
@@ -396,7 +397,7 @@ int main(int argc, char** args) {
 		int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
 		int dir = opponentBrains[1].getOrientation(playerDir);
 		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
-		printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
+		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//printf("%d\n", State::worldGrid[17][6]);
 
 		ImGui::Begin("Framerate Counter!");

@@ -15,6 +15,7 @@ OpponentInput::OpponentInput(int playerNumber)
 }
 
 std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 playerDir) {
+
 	std::pair<int, int> current = getGridCoordinates(playerPos.x, playerPos.z);
 	if (current == target) {
 		if (path.empty()) {
@@ -47,13 +48,30 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 			reversing = false;
 		}
 	}
-	else {
-		int targetDir = getTargetDirection(current, target);
-		int playerOrientation = getOrientation(playerDir);
-		command = getCommand(targetDir, playerOrientation);
+	else if (counter % 11 != 0) {
+		if (target.first == -1 && target.second == -1) {
+			command[MovementFlags::LEFT] = true;
+			command[MovementFlags::RIGHT] = true;
+			command[MovementFlags::DOWN] = true;
+			command[MovementFlags::UP] = false;
+		}
+		else {
+			int targetDir = getTargetDirection(current, target);
+			if (targetDir % 2 == 0) {
+				targetDir = checkDiagonals(current, targetDir);
+			}
+			int playerOrientation = getOrientation(playerDir);
+			command = getCommand(targetDir, playerOrientation);
+		}	
 	}
-	
-	
+	else { //for some reason braking every 11 frames seems to work pretty well
+		command[MovementFlags::LEFT] = true;
+		command[MovementFlags::RIGHT] = true;
+		command[MovementFlags::DOWN] = true;
+		command[MovementFlags::UP] = true;
+	}
+	//printf("(%d, %d), (%d, %d) - %d, %d\n", current.first, current.second, target.first, target.second, stuckCounter, reverseCounter);
+	counter++;
 	return command;
 }
 
@@ -78,7 +96,7 @@ std::map<MovementFlags, bool> OpponentInput::followPath() {
 std::pair<int, int> OpponentInput::getGridCoordinates(float globalPosX, float globalPosZ) {
 	int xIndex = std::min((int)((globalPosX + 180.f) / 10.f), 35);
 	int zIndex = std::min((int)((globalPosZ + 180.f) / 10.f), 35);
-	std::pair p(xIndex, zIndex);
+	std::pair p(xIndex, zIndex); //swapped
 	return p;
 }
 
@@ -89,33 +107,85 @@ int OpponentInput::getTargetDirection(std::pair<int, int> playerCoords, std::pai
 	int targetX = targetCoords.first;
 	int targetY = targetCoords.second;
 	int dir = 0;
-	if (playerX == targetX && playerY > targetY) {
-		dir = 7; //west
-	}
-	else if (playerX < targetX && playerY > targetY) {
-		dir = 8; //northwest
-	}
-	else if (playerX < targetX && playerY == targetY) {
-		dir = 1; //north
-	}
-	else if (playerX < targetX && playerY < targetY) {
-		dir = 2; //northeast
-	}
-	else if (playerX == targetX && playerY < targetY) {
+	if (playerX	== targetX && playerY > targetY) {
 		dir = 3; //east
 	}
-	else if (playerX > targetX && playerY < targetY) {
+	else if (playerX < targetX && playerY > targetY) {
 		dir = 4;//southeast
 	}
-	else if (playerX > targetX && playerY == targetY) {
+	else if (playerX < targetX && playerY == targetY) {
 		dir = 5; //south
 	}
-	else if (playerX > targetX && playerY > targetY)  {
+	else if (playerX < targetX && playerY < targetY) {
 		dir = 6; //southwest
+	}
+	else if (playerX == targetX && playerY < targetY) {
+		dir = 7; //west
+	}
+	else if (playerX > targetX && playerY < targetY) {
+		dir = 8; //northwest
+	}
+	else if (playerX > targetX && playerY == targetY) {
+		dir = 1; //north
+	}
+	else if (playerX > targetX && playerY > targetY)  {
+		dir = 2; //northeast
 	}
 
 	return dir;
 }
+
+int OpponentInput::checkDiagonals(std::pair<int, int> currentPos, int targetDir) {
+	int dir = targetDir;
+	int right = -1;
+	int left = -1;
+
+	switch (targetDir) {
+	case 2:
+		right = State::worldGrid[currentPos.first][currentPos.second-1];
+		left = State::worldGrid[currentPos.first-1][currentPos.second];
+		if (right == 0 && left == 1) {
+			dir = 1;
+		}
+		else if (right == 1 && left == 0) {
+			dir = 3;
+		}
+		break;
+	case 4:
+		right = State::worldGrid[currentPos.first+1][currentPos.second];
+		left = State::worldGrid[currentPos.first][currentPos.second-1];
+		if (right == 0 && left == 1) {
+			dir = 3;
+		}
+		else if (right == 1 && left == 0) {
+			dir = 5;
+		}
+		break;
+	case 6:
+		right = State::worldGrid[currentPos.first][currentPos.second+1];
+		left = State::worldGrid[currentPos.first+1][currentPos.second];
+		if (right == 0 && left == 1) {
+			dir = 5;
+		}
+		else if (right == 1 && left == 0) {
+			dir = 7;
+		}
+		break;
+	case 8:
+		right = State::worldGrid[currentPos.first-1][currentPos.second];
+		left = State::worldGrid[currentPos.first][currentPos.second+1];
+		if (right == 0 && left == 1) {
+			dir = 7;
+		}
+		else if (right == 1 && left == 0) {
+			dir = 1;
+		}
+		break;
+	}
+
+	return dir;
+}
+
 
 int OpponentInput::getOrientation(PxVec3 dirVec) {
 	int dir = 0;
@@ -150,135 +220,24 @@ int OpponentInput::getOrientation(PxVec3 dirVec) {
 	return dir;
 }
 
-std::map<MovementFlags, bool> OpponentInput::getCommand(int playerDir, int targetDir) {
+std::map<MovementFlags, bool> OpponentInput::getCommand(int targetDir, int playerDir) {
 	std::map<MovementFlags, bool> inputMap;
-	if (playerDir == targetDir) {
+	int command = actionArray[targetDir-1][playerDir-1];
+	//printf("%d, %d, %d ", playerDir, targetDir, command);
+	if (command == 1) {
 		inputMap[MovementFlags::LEFT] = true;
 		inputMap[MovementFlags::RIGHT] = true;
 		inputMap[MovementFlags::DOWN] = true;
 		inputMap[MovementFlags::UP] = false;
 		//printf("STRAIGHT\n");
-		return inputMap;
-	}
-
-	bool left = false;
-
-
-	switch (playerDir) {
-	case 1:
-		switch (targetDir) {
-		case 6:
-			left = true;
-			break;
-		case 7:
-			left = true;
-			break;
-		case 8:
-			left = true;
-			break;
-		}
-		break;
-	case 2:
-		switch (targetDir) {
-		case 1:
-			left = true;
-			break;
-		case 7:
-			left = true;
-			break;
-		case 8:
-			left = true;
-			break;
-		}
-		break;
-	case 3:
-		switch (targetDir) {
-		case 1:
-			left = true;
-			break;
-		case 2:
-			left = true;
-			break;
-		case 8:
-			left = true;
-			break;
-		}
-		break;
-	case 4:
-		switch (targetDir) {
-		case 1:
-			left = true;
-			break;
-		case 2:
-			left = true;
-			break;
-		case 3:
-			left = true;
-			break;
-		}
-		break;
-	case 5:
-		switch (targetDir) {
-		case 2:
-			left = true;
-			break;
-		case 3:
-			left = true;
-			break;
-		case 4:
-			left = true;
-			break;
-		}
-		break;
-	case 6:
-		switch (targetDir) {
-		case 3:
-			left = true;
-			break;
-		case 4:
-			left = true;
-			break;
-		case 5:
-			left = true;
-			break;
-		}
-		break;
-	case 7:
-		switch (targetDir) {
-		case 4:
-			left = true;
-			break;
-		case 5:
-			left = true;
-			break;
-		case 6:
-			left = true;
-			break;
-		}
-		break;
-	case 8:
-		switch (targetDir) {
-		case 5:
-			left = true;
-			break;
-		case 6:
-			left = true;
-			break;
-		case 7:
-			left = true;
-			break;
-		}
-		break;
-	}
-
-	if (left) {
+	} else if (command == 3) {
 		inputMap[MovementFlags::LEFT] = false;
 		inputMap[MovementFlags::RIGHT] = true;
 		inputMap[MovementFlags::DOWN] = true;
 		inputMap[MovementFlags::UP] = false;
 		//printf("LEFT\n");
 	}
-	else {
+	else if (command == 2) {
 		inputMap[MovementFlags::LEFT] = true;
 		inputMap[MovementFlags::RIGHT] = false;
 		inputMap[MovementFlags::DOWN] = true;

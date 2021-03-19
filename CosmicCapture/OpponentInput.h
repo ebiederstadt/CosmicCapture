@@ -13,12 +13,12 @@ public:
 	int getOrientation(PxVec3 dirVec);
 	void updatePath(PxVec3 playerPos, PxVec3 targetPos);
 private:
-	
+
 	std::map<MovementFlags, bool> followPath();
 	std::pair<int, int> getGridCoordinates(float globalPosX, float globalPosZ);
 	std::map<MovementFlags, bool> getCommand(int playerDir, int targetDir);
 	int getTargetDirection(std::pair<int, int> playerCoords, std::pair<int, int> targetCoords);
-	
+	int checkDiagonals(std::pair<int, int> currentPos, int targetDir);
 
 	int playerNum;
 	int counter;
@@ -28,10 +28,20 @@ private:
 
 	bool reversing = false;
 	int reverseCounter;
-	int maxReverseCount = 300;
+	int maxReverseCount = 1000;
 	int stuckCounter;
 	int stuckThreshold = 500;
 	std::pair<int, int> lastPosition;
 
+	int actionArray[8][8] = {
+		1, 3, 3, 3, 3, 2, 2, 2,
+		2, 1, 3, 3, 3, 3, 2, 2,
+		2, 2, 1, 3, 3, 3, 3, 2,
+		2, 2, 2, 1, 3, 3, 3, 3,
+		2, 2, 2, 2, 1, 3, 3, 3,
+		3, 3, 2, 2, 2, 1, 3, 3,
+		3, 3, 3, 2, 2, 2, 1, 3,
+		3, 3, 3, 3, 2, 2, 2, 1
+	};
 };
 

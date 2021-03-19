@@ -6,7 +6,7 @@
 class InvisibleBarrier : public Entity
 {
 public:
-	InvisibleBarrier(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera);
+	InvisibleBarrier(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, int type);
 
 	void attachPhysics(Physics& instance) override;
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) override;
@@ -14,5 +14,6 @@ public:
 	void cleanUpPhysics() override;
 private:
 	std::vector<PxRigidStatic*> barrierBodies;
+	int barrierType;
 };
 
