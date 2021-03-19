@@ -124,6 +124,7 @@ void PowerUpManager::simulate(Physics& instance)
 				// Remove the spike trap once it is placed and trapped somebody
 				if (state->finished)
 				{
+					fmt::print("Finished using the spike trap\n");
 					powerup->get()->cleanUpPhysics();
 					state = State::spike_trap_states.erase(state);
 					powerup = mDeployedPowerUps.erase(powerup);
@@ -136,21 +137,24 @@ void PowerUpManager::simulate(Physics& instance)
 		}
 
 		// Speed boost specific stuff
-		auto speedBoost = dynamic_cast<SpeedBoost*>(powerup->get());
-		if (speedBoost)
+		if (powerup != mDeployedPowerUps.end())
 		{
-			if (State::speedBoostFinished)
+			auto speedBoost = dynamic_cast<SpeedBoost*>(powerup->get());
+			if (speedBoost)
 			{
-				powerup->get()->cleanUpPhysics();
-				State::speedBoostFinished = false;
-				powerup = mDeployedPowerUps.erase(powerup);
+				if (State::speedBoostFinished)
+				{
+					powerup->get()->cleanUpPhysics();
+					State::speedBoostFinished = false;
+					powerup = mDeployedPowerUps.erase(powerup);
 
-				increment = false;
+					increment = false;
+				}
 			}
-		}
 
-		if (increment)
-			++powerup;
+			if (increment)
+				++powerup;
+		}
 	}
 }
 
