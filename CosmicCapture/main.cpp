@@ -297,6 +297,10 @@ int main(int argc, char** args)
 
 		powerUpManager.draw(physics, shaderProgram, false);
 
+		if (!State::flagPickedUpBy[0])
+			gameUI.setCompassDirection(car.mGeometry->getModelMatrix(), flag.mGeometry->getModelMatrix());
+		else if (State::flagPickedUpBy[0])
+			gameUI.setCompassDirection(car.mGeometry->getModelMatrix(), State::flagDropoffBoxes[0]->getGlobalPose().p);
 		gameUI.render();
 
 		//player pos for testing
