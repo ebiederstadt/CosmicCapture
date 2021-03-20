@@ -3,6 +3,7 @@
 #include <physx/PxPhysicsAPI.h>
 #include <optional>
 #include <array>
+#include <map>
 
 using namespace physx;
 
@@ -13,7 +14,7 @@ enum class PowerUpOptions
 
 struct spikeTrapState
 {
-	inline static PxRigidStatic* triggerBody; // The trigger body for the spike trap
+	PxRigidStatic* triggerBody; // The trigger body for the spike trap
 	bool active = false; // Spike trap has been deployed and is ready to catch people
 	bool inUse = false; // The spike trap has caught somebody
 	int actingUpon; // Which car the spike trap caught
@@ -53,7 +54,7 @@ struct State
 
 	inline static bool flagPickedUp = false;
 	inline static bool flagPickedUpBy[4] = { false, false, false, false };
-	inline static PxRigidStatic* pickupBox = nullptr; //For flag -- Todo: Rename
+	inline static PxRigidStatic* flagPickupBox = nullptr;
 	inline static PxRigidDynamic* flagBody = nullptr;
 	inline static PxRigidStatic* flagDropoffBoxes[4] = { nullptr, nullptr, nullptr, nullptr };
 
@@ -71,5 +72,5 @@ struct State
 
 	inline static bool speedBoostFinished = false;
 
-	inline static std::vector<spikeTrapState> spike_trap_states;
+	inline static std::map<int, spikeTrapState> spike_trap_states;
 };

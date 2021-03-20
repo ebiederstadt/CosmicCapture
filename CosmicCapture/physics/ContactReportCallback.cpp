@@ -8,7 +8,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 	for (PxU32 i = 0; i < count; i++)
 	{
 		// Flag pickups
-		if (pairs[i].triggerActor == State::pickupBox && pairs[i].otherActor != State::flagBody)
+		if (pairs[i].triggerActor == State::flagPickupBox && pairs[i].otherActor != State::flagBody)
 		{		
 			if (pairs[i].otherActor == State::vehicles[0]->getRigidDynamicActor() && !State::flagPickedUpBy[0] && !State::flagPickedUp) {
 				State::flagPickedUpBy[0] = true;
@@ -74,7 +74,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			State::heldPowerUps[i] = PowerUpOptions::SPIKE_TRAP;
 		}
 
-		for (auto& spikeTrapState : State::spike_trap_states)
+		for (auto& [id, spikeTrapState] : State::spike_trap_states)
 		{
 			if (pairs[i].triggerActor == spikeTrapState.triggerBody && spikeTrapState.active)
 			{

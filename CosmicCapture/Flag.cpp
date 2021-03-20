@@ -28,9 +28,9 @@ void Flag::attachPhysics(Physics& instance)
 	//trigger box for picking up the flag
 	pickupShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	pickupShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	State::pickupBox = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 2.f, 0.f)));
-	State::pickupBox->attachShape(*pickupShape);
-	instance.gScene->addActor(*State::pickupBox);
+	State::flagPickupBox = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 2.f, 0.f)));
+	State::flagPickupBox->attachShape(*pickupShape);
+	instance.gScene->addActor(*State::flagPickupBox);
 
 }
 
@@ -68,6 +68,6 @@ void Flag::simulate(Physics& instance)
 
 void Flag::cleanUpPhysics()
 {
-	PX_RELEASE(State::pickupBox);
+	PX_RELEASE(State::flagPickupBox);
 	PX_RELEASE(State::flagBody);
 }

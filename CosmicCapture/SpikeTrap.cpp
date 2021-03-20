@@ -8,9 +8,10 @@ SpikeTrap::SpikeTrap(const std::shared_ptr<Camera>& camera): Entity(
 	"models/spike_trap.obj", "textures/blank.jpg", camera)
 {
 	spikeTrapState state;
+	fmt::print("Adding a spike trap to the scene, with active = {}\n", state.active);
 	m_id = State::spike_trap_states.size();
 
-	State::spike_trap_states.push_back(state);
+	State::spike_trap_states[m_id] = state;
 }
 
 void SpikeTrap::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
@@ -55,7 +56,10 @@ void SpikeTrap::simulate(Physics& instance)
 
 void SpikeTrap::cleanUpPhysics()
 {
+	fmt::print("Cleaning up spike trap {}\n", m_id);
 	PX_RELEASE(body);
+
+	// TODO: This will cause a crash when closing the window when you have multiple spike traps deployed over the map
 	PX_RELEASE(State::spike_trap_states[m_id].triggerBody);
 }
 
