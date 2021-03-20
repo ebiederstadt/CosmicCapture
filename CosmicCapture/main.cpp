@@ -167,15 +167,20 @@ int main(int argc, char** args)
 	bool reversing = false;
 
 	GameUI gameUI;
-	
-	// Loop until the user closes the window
-	while (!quit)
+	bool gameStarted = false;
+
+	std::map<MovementFlags, bool> inputState;
+
+	auto preLoop = [&]()
 	{
-		quit = input.HandleInput();
+		gameUI.renderMenu();
+		if (!inputState[MovementFlags::ENTER])
+			gameStarted = true;
+	};
 
+	auto mainLoop = [&]()
+	{
 		// Physics simulation
-		auto inputState = input.getInputState();
-
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
 
@@ -239,10 +244,6 @@ int main(int argc, char** args)
 		powerUpManager.simulate(physics);
 
 		physics.stepPhysics();
-
-		// Render
-		window.startImGuiFrame();
-		Window::clear();
 
 		// Update camera
 		sCamera->updateCamera(car.mGeometry->getModelMatrix());
@@ -313,9 +314,6 @@ int main(int argc, char** args)
 		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//printf("%d\n", State::worldGrid[17][6]);
 
-		ImGui::Begin("Framerate Counter!");
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
-		            ImGui::GetIO().Framerate);
 		ImGui::Text("Camera Position");
 		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
 
@@ -360,6 +358,26 @@ int main(int argc, char** args)
 					score = 0;
 			}
 		}
+
+	};
+	
+	// Loop until the user closes the window
+	while (!quit)
+	{
+		quit = input.HandleInput();
+		inputState = input.getInputState();
+
+		// Render
+		window.startImGuiFrame();
+		Window::clear();
+
+		ImGui::Begin("Framerate Counter!");
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+		if (!gameStarted)
+			preLoop();
+		else
+			mainLoop();
 
 		ImGui::End();
 

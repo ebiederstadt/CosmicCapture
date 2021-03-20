@@ -11,6 +11,7 @@ class GameUI
 public:
 	GameUI();
 	void render() const;
+	void renderMenu() const;
 
 	void setCompassDirection(const physx::PxMat44& carMatrix, const physx::PxMat44& targetMatrix);
 	void setCompassDirection(const physx::PxMat44& carMatrix, const physx::PxVec3& targetPos);
@@ -28,6 +29,11 @@ private:
 	GUIGPUGeometry mCompassDisplay;
 	Texture mCompassTexture;
 	float mCompassAngle;
+
+	// Main menu
+	GUIGPUGeometry mLogoDisplay;
+	GUIGPUGeometry mStartDisplay;
+	Texture mLogo;
 
 	void renderPowerUpDisplay(unsigned int shaderID) const;
 	void renderCompassDisplay(unsigned int shaderID) const;

@@ -15,7 +15,9 @@ GameUI::GameUI() :
 	mSpeedBoostTexture("textures/speed_boost.png", GL_LINEAR, false),
 	mProjectileTexture("textures/green_shell.png", GL_LINEAR, false),
 
-	mCompassTexture("textures/compass.png", GL_LINEAR, false)
+	mCompassTexture("textures/compass.png", GL_LINEAR, false),
+
+	mLogo("textures/cosmicLogo.png", GL_LINEAR, false)
 {
 	mShader.compile();
 	
@@ -23,6 +25,7 @@ GameUI::GameUI() :
 
 	mPowerupDisplay.uploadData(quad);
 	mCompassDisplay.uploadData(quad);
+	mLogoDisplay.uploadData(quad);
 }
 
 void GameUI::render() const
@@ -32,6 +35,20 @@ void GameUI::render() const
 	
 	renderPowerUpDisplay(shaderID);
 	renderCompassDisplay(shaderID);
+}
+
+void GameUI::renderMenu() const
+{
+	unsigned int shaderID = static_cast<unsigned int>(mShader);
+	mShader.use();
+
+	mLogo.bind();
+	mat4 model(1.0f);
+	const auto modelLoc = glGetUniformLocation(shaderID, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+	mLogoDisplay.drawData();
+
+	Texture::unbind();
 }
 
 void GameUI::setCompassDirection(const PxMat44& carMatrix, const PxMat44& targetMatrix)
