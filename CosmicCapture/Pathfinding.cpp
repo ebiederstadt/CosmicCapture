@@ -12,7 +12,7 @@ bool Pathfinding::isValid(int row, int col)
 
 bool Pathfinding::isUnBlocked(int grid[][COL], int row, int col)
 {
-    if (grid[row][col] == 1)
+    if (grid[row][col] >= 1)
         return true;
     else
         return false;
@@ -31,7 +31,7 @@ double Pathfinding::calculateHValue(int row, int col, Pair dest)
 }
 //double Pathfinding::calculateHValue(int row, int col, Pair dest)
 //{
-//   return ((double)sqrt(pow(sqrt(row - dest.first), 2) + pow(sqrt(col - dest.second), 2))); //euclidean distance
+//    return sqrt(pow(row - dest.first, 2) + pow(col - dest.second, 2); //euclidean distance
 //}
 
 std::stack<Pair> Pathfinding::tracePath(Cell cellDetails[][COL], Pair dest)

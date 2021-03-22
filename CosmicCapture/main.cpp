@@ -307,23 +307,23 @@ int main(int argc, char** args) {
 		}
 		else if (aiStuffCounter % 3 == 1) {
 			if (State::flagPickedUpBy[2]) {
-				//opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagDropoffBoxes[2]->getGlobalPose().p);
+				opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagDropoffBoxes[2]->getGlobalPose().p);
 			}
 			else {
-				//opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+				opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
 		else {
 			if (State::flagPickedUpBy[3]) {
-				//opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagDropoffBoxes[3]->getGlobalPose().p);
+				opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagDropoffBoxes[3]->getGlobalPose().p);
 			}
 			else {
-				//opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+				opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
 		opponentCar1.processInput(opponentBrains[0].getInput(State::vehicleRDs[1]->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
-		//opponentCar2.processInput(opponentBrains[1].getInput(State::vehicleRDs[2]->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
-		//opponentCar3.processInput(opponentBrains[2].getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
+		opponentCar2.processInput(opponentBrains[1].getInput(State::vehicleRDs[2]->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
+		opponentCar3.processInput(opponentBrains[2].getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 
 		aiStuffCounter++;
 		//------------------------------*/
