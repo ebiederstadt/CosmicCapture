@@ -140,7 +140,7 @@ void Physics::readMesh(const std::string& modelPath){
 		vectorList.size(), 
 		static_cast<PxU32*>(indicesList.data()), 
 		indicesList.size(), 
-		true
+		false
 	);
 
 	PxShape* awallShape = gPhysics->createShape(PxTriangleMeshGeometry(convexMesh), *gMaterial, true); //create shape
