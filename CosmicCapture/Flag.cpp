@@ -3,14 +3,15 @@
 #include <memory>
 #include "GlobalState.h"
 #include "physics/VehicleFilterShader.h"
+#include "Colors.h"
 
 
 
-Flag::Flag(std::shared_ptr<Camera> camera) :
-	Entity("models/flag.obj", "textures/blank.jpg", camera)
+Flag::Flag(const std::shared_ptr<Camera>& camera) :
+	Entity("models/flag.obj", WHITE, camera)
 {
 
-	mFlagBody = std::make_unique<Model>("models/flag_body.obj", "textures/blank.jpg",camera);
+	mFlagBody = std::make_unique<Model>("models/flag_body.obj", WHITE, camera);
 }
 
 void Flag::attachPhysics(Physics& instance)

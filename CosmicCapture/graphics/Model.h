@@ -7,6 +7,7 @@
 
 #include "Mesh.h"
 #include "ShaderProgram.h"
+#include "Texture.h"
 #include "../Camera.h"
 
 
@@ -29,6 +30,7 @@ public:
 		std::shared_ptr<Camera> camera,
 		unsigned int usage = GL_STATIC_DRAW
 	);
+	Model(const char* modelPath, const glm::vec4& textureColor, std::shared_ptr<Camera> camera);
 
 	// Draw things where the position/rotation/scale changes
 	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, bool depth);
@@ -47,6 +49,8 @@ private:
 
 	physx::PxMat44 mModel;
 	void setModel(const physx::PxMat44& m) { mModel = m; }
+
+	void readMesh(const char* modelPath);
 
 	void processNode(aiNode* node, const aiScene* scene);
 	void processMesh(aiMesh* mesh);

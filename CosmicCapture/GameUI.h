@@ -19,6 +19,8 @@ public:
 private:
 	ShaderProgram mShader;
 
+	Texture mBlank;
+
 	// Powerups
 	GUIGPUGeometry mPowerupDisplay;
 	Texture mSpikeTrapTexture;
@@ -28,7 +30,7 @@ private:
 	// Compass
 	GUIGPUGeometry mCompassDisplay;
 	Texture mCompassTexture;
-	float mCompassAngle;
+	float mCompassAngle{};
 
 	// Main menu
 	GUIGPUGeometry mLogoDisplay;

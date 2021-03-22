@@ -5,12 +5,15 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <fmt/core.h>
 
+#include "Colors.h"
 #include "GlobalState.h"
 
 using namespace glm;
 
 GameUI::GameUI() :
 	mShader("shaders/ui.vert", "shaders/ui.frag"),
+	mBlank(CLEAR),
+
 	mSpikeTrapTexture("textures/spike_preview.png", GL_LINEAR, false),
 	mSpeedBoostTexture("textures/speed_boost.png", GL_LINEAR, false),
 	mProjectileTexture("textures/green_shell.png", GL_LINEAR, false),
@@ -58,16 +61,19 @@ void GameUI::setCompassDirection(const PxMat44& carMatrix, const PxMat44& target
 
 void GameUI::setCompassDirection(const PxMat44& carMatrix, const PxVec3& targetPos)
 {
-	// Location of the car and the flag, in world space
-	const auto carLoc = carMatrix.column3;
-
-	// Vector pointing towards the location of the flag
-	const auto flagDirection = (targetPos - carLoc.getXYZ()).getNormalized();
-
+	auto carLoc = carMatrix.column3.getXYZ();
 	// Heading vector for the car
-	const auto carDirection = carMatrix.column2.getNormalized().getXYZ();
+	auto carDirection = carMatrix.column2.getXYZ().getNormalized();
 
-	mCompassAngle = acos(flagDirection.dot(carDirection));
+	// Don't car about y axis
+	auto target = targetPos;
+	target.y = 0.0f;
+	carLoc.y = 0.0f;
+	carDirection.y = 0.0f;
+
+	const auto targetDirection = (target - carLoc).getNormalized();
+
+	mCompassAngle = acos(targetDirection.dot(carDirection));
 }
 
 void GameUI::renderPowerUpDisplay(unsigned int shaderID) const
@@ -83,7 +89,7 @@ void GameUI::renderPowerUpDisplay(unsigned int shaderID) const
 			mProjectileTexture.bind();
 	}
 	else
-		Texture::unbind();
+		mBlank.bind();
 
 	mat4 model = translate(mat4{ 1.0f }, { -0.85f, -0.85f, 0.0f });
 	model = scale(model, { 0.25f, 0.25f, 0.0f });
@@ -101,16 +107,10 @@ void GameUI::renderCompassDisplay(unsigned int shaderID) const
 	mCompassTexture.bind();
 
 	// Decide which direction to rotate the compass
-	float r1 = mCompassAngle;
-	float r2 = pi<float>() * 2.0f - mCompassAngle;
-
 	mat4 model = translate(mat4{ 1.0f }, { 0.0f, 0.79, 0.0f });
 	model = scale(model, { 0.19f, 0.19f, 0.0f });
 
-	if (abs(r1) < abs(r2))
-		model = rotate(model, r1, { 0.0f, 0.0f, 1.0f });
-	else
-		model = rotate(model, r2, { 0.0f, 0.0f, 1.0f });
+	model = rotate(model, mCompassAngle, { 0.0f, 0.0f, 1.0f });
 
 	const auto modelLoc = glGetUniformLocation(shaderID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));

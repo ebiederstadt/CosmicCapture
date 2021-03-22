@@ -207,6 +207,7 @@
     <ClInclude Include="audio\AudioEngine.h" />
     <ClInclude Include="audio\AudioInstance.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Colors.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="FlagDropoffZone.h" />
     <ClInclude Include="GameUI.h" />
@@ -256,7 +257,6 @@
     <ClInclude Include="Vehicle.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="arenaTest.mtl" />
     <None Include="imgui.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

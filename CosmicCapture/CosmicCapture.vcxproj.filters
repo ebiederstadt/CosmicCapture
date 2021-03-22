@@ -137,9 +137,9 @@
     <ClInclude Include="InvisibleBarrier.h" />
     <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="GameUI.h" />
+    <ClInclude Include="Colors.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
-    <None Include="arenaTest.mtl" />
   </ItemGroup>
 </Project>

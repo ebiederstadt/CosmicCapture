@@ -13,6 +13,7 @@
 #include "./audio/AudioEngine.h"
 
 #include "Camera.h"
+#include "Colors.h"
 #include "Vehicle.h"
 #include "Flag.h"
 #include "FlagDropoffZone.h"
@@ -53,7 +54,7 @@ int main(int argc, char** args)
 	simpleDepthShader.compile();
 
 	// The arena model
-	Model arena("models/untitled.obj", "textures/blank.jpg", sCamera);
+	Model arena("models/untitled.obj", WHITE, sCamera);
 
 	// Shadow setup start ---------------------------------------------------------------------
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Geometry.h"
-#include "Texture.h"
 
 
 class Mesh

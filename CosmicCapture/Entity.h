@@ -5,12 +5,12 @@
 #include "physics/Physics.h"
 
 
-
 class Entity
 {
 public:
 	Entity(std::unique_ptr<Model> model) : mGeometry(std::move(model)) {}
 	Entity(const char* modelPath, const char* texturePath, std::shared_ptr<Camera> camera);
+	Entity(const char* modelPath, const glm::vec4& textureColor, std::shared_ptr<Camera> camera);
 
 	virtual ~Entity() = default;
 

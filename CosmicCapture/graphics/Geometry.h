@@ -27,10 +27,8 @@ struct GUIGeometry
 {
 	GUIGeometry();
 
-	std::array<glm::vec2, 4> vertices{};
+	std::array<glm::vec2, 4> vertices;
 };
-
-
 
 class GpuGeometry 
 {
