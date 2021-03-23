@@ -45,18 +45,23 @@ void Flag::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth
 void Flag::simulate(Physics& instance)
 {
 	float addDeg = 0;
-	float deg = 0;
+	float rad = 0;
 
 	if (State::flagPickedUpBy[0]) {
 		PxVec3 pos = State::vehicleRDs[0]->getGlobalPose().p;
-		PxVec3 dir = State::vehicleRDs[0]->getLinearVelocity();
+		PxMat33 rot = PxMat33(State::vehicleRDs[0]->getGlobalPose().q);
 
+		PxVec3 offset = rot * PxVec3(0.0f, 0.0f, 1.0f);
+
+		/*
+			PxVec3 dir = State::vehicleRDs[0]->getLinearVelocity();
 		if (dir.x < 0)
 			addDeg = dir.z >= 0 ? 180 : 270;
 		else if (dir.z <= 0) addDeg = 360;
-		deg = abs(abs(atan(dir.z / dir.x) * 180 / M_PI) - addDeg);
+		rad = abs(abs(atan(dir.z / dir.x)) - addDeg*M_PI/180);
+		*/
 
-		State::flagBody->setGlobalPose(PxTransform(PxVec3(deg*pos.x, pos.y + 2.0f, deg*(pos.z + 1.0f))));
+		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x - 1.8f*offset.x, pos.y + 1.8f, pos.z - 1.8f*offset.z)));
 	}
 	else if (State::flagPickedUpBy[1]) {
 		PxVec3 pos = State::vehicleRDs[1]->getGlobalPose().p;
