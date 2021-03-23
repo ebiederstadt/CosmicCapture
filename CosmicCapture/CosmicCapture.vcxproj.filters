@@ -137,5 +137,9 @@
   <ItemGroup>
     <None Include="imgui.ini" />
     <None Include="arenaTest.mtl" />
+    <None Include="shaders\main.frag" />
+    <None Include="shaders\main.vert" />
+    <None Include="shaders\simple.frag" />
+    <None Include="shaders\simple.vert" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <physx/PxPhysicsAPI.h>
+#include "../audio/AudioEngine.h"
 
 using namespace physx;
 
@@ -8,6 +9,9 @@ using namespace physx;
 class ContactReportCallback : public PxSimulationEventCallback
 {
 public:
+
+	static void initializeSoundTriggers();
+
 	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) override
 	{
 		PX_UNUSED(constraints);

@@ -10,7 +10,7 @@
 Texture::Texture(const std::string& path, const GLuint interpolation)
 {
 	int width, height, nrChannels;
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(false);
 	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
 
 	if (data)

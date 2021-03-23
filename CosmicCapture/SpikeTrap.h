@@ -18,7 +18,7 @@ public:
 
 	void attachOwningVehicle(PxVehicleDrive4W* vehicle) { mOwnerVehicle = vehicle; }
 	void attachAffectedVehicle(PxVehicleDrive4W* vehicle) { mAffectedVehicle = vehicle; }
-	void processInput(const std::map<MovementFlags, bool>& inputs, Physics& instance);
+	bool processInput(const std::map<MovementFlags, bool>& inputs, Physics& instance);
 
 	[[nodiscard]] bool hasOwningVehicle() const { return mOwnerVehicle.has_value(); }
 	[[nodiscard]] bool hasAffectedVehicle() const { return mAffectedVehicle.has_value(); }

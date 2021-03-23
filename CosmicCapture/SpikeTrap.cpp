@@ -56,7 +56,7 @@ void SpikeTrap::cleanUpPhysics()
 	PX_RELEASE(State::spikeTrapTriggerBody);
 }
 
-void SpikeTrap::processInput(const std::map<MovementFlags, bool>& inputs, Physics& instance)
+bool SpikeTrap::processInput(const std::map<MovementFlags, bool>& inputs, Physics& instance)
 {
 	for (const auto& [key, keyReleased] : inputs)
 	{
@@ -87,7 +87,11 @@ void SpikeTrap::processInput(const std::map<MovementFlags, bool>& inputs, Physic
 				State::spikeTrapPickedUp = false; // spike trap has been dropped
 				fmt::print("Placed the spike trap!\n");
 				active = true;
+
+				return true;
 			}
 		}
 	}
+
+	return false;
 }

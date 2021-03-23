@@ -62,12 +62,13 @@ inline PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedD
 class Vehicle : public Entity
 {
 public:
-	Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, int playerNum, std::string texturePath);
+	Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, int playerNum, std::string modelPath, std::string bodyTexturePath, std::string tireTexturePath);
 	void attachPhysics(Physics& instance) override;
 
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) override;
 	void simulate(Physics& instance) override;
 	void processInput(const std::map<MovementFlags, bool>& inputs);
+	float getSpeed();
 
 	void cleanUpPhysics() override;
 	[[nodiscard]] PxVehicleDrive4W* getVehicle() const { return mVehicle4W; }
