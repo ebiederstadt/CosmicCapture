@@ -24,44 +24,19 @@ void InvisibleBarrier::attachPhysics(Physics& instance) {
 		}
 	}
 	else {
-		int j = 0;
 		for (int i = 0; i < 36; i++) {
-			PxShape* barrier = instance.gPhysics->createShape(PxBoxGeometry(5.f, 5.f, 5.f), *instance.gMaterial, true);
-			barrier->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-			PxVec3 p(i * 10.f - 180.f + 5.f, 0.f, j * 10.f - 180.f + 5.f);
-			barrierBodies.push_back(instance.gPhysics->createRigidStatic(PxTransform(p)));
-			barrierBodies.back()->attachShape(*barrier);
-			barrier->release();
-			instance.gScene->addActor(*barrierBodies.back());
-
-			PxShape* barrier2 = instance.gPhysics->createShape(PxBoxGeometry(5.f, 5.f, 5.f), *instance.gMaterial, true);
-			barrier2->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-			PxVec3 p2(j * 10.f - 180.f + 5.f, 0.f, i * 10.f - 180.f + 5.f);
-			barrierBodies.push_back(instance.gPhysics->createRigidStatic(PxTransform(p)));
-			barrierBodies.back()->attachShape(*barrier2);
-			barrier2->release();
-			instance.gScene->addActor(*barrierBodies.back());
+			for (int j = 0; j < 36; j++) {
+				if ((i == 0 && j >= 0) || (i >= 0 && j == 0) || (i == 35 && j >= 0) || (i >= 0 && j == 35)) {
+					PxShape* barrier = instance.gPhysics->createShape(PxBoxGeometry(5.f, 5.f, 5.f), *instance.gMaterial, true);
+					barrier->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
+					PxVec3 p(i * 10.f - 180.f + 5.f, 0.f, j * 10.f - 180.f + 5.f);
+					barrierBodies.push_back(instance.gPhysics->createRigidStatic(PxTransform(p)));
+					barrierBodies.back()->attachShape(*barrier);
+					barrier->release();
+					instance.gScene->addActor(*barrierBodies.back());
+				}
+			}
 		}
-		j = 35;
-		for (int i = 0; i < 36; i++) {
-			PxShape* barrier = instance.gPhysics->createShape(PxBoxGeometry(5.f, 5.f, 5.f), *instance.gMaterial, true);
-			barrier->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-			PxVec3 p(i * 10.f - 180.f + 5.f, 0.f, j * 10.f - 180.f + 5.f);
-			barrierBodies.push_back(instance.gPhysics->createRigidStatic(PxTransform(p)));
-			barrierBodies.back()->attachShape(*barrier);
-			barrier->release();
-			instance.gScene->addActor(*barrierBodies.back());
-
-			PxShape* barrier2 = instance.gPhysics->createShape(PxBoxGeometry(5.f, 5.f, 5.f), *instance.gMaterial, true);
-			barrier2->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-			PxVec3 p2(j * 10.f - 180.f + 5.f, 0.f, i * 10.f - 180.f + 5.f);
-			barrierBodies.push_back(instance.gPhysics->createRigidStatic(PxTransform(p)));
-			barrierBodies.back()->attachShape(*barrier2);
-			barrier2->release();
-			instance.gScene->addActor(*barrierBodies.back());
-		}
-
-
 	}
 
 	

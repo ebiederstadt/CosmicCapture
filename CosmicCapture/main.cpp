@@ -35,8 +35,17 @@
 
 float angle = -0.25f;
 
+void initializeGridCenterCoords() {
+	for (int i = 0; i < 36; i++) {
+		for (int j = 0; j < 36; j++) {
+				State::worldGridCenterCoords[i][j].first = i * 10.f - 180.f + 5.f;
+				State::worldGridCenterCoords[i][j].second = j * 10.f - 180.f + 5.f;
+		}
+	}
+}
 
 int main(int argc, char** args) {
+	initializeGridCenterCoords();
 	// Window Initialization
 	const GLint width = 1280, height = 720;
 	Window window("Cosmic Capture", width, height);
@@ -49,6 +58,9 @@ int main(int argc, char** args) {
 
 	Input input = Input();
 	OpponentInput opponentBrains[3];
+	opponentBrains[0].setPlayerNum(1);
+	opponentBrains[1].setPlayerNum(2);
+	opponentBrains[2].setPlayerNum(3);
 
 
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
@@ -181,7 +193,7 @@ int main(int argc, char** args) {
 	entities.push_back(&doorSwitchZone);
 
 
-	InvisibleBarrier barriers(shaderProgram, sCamera, 1);
+	InvisibleBarrier barriers(shaderProgram, sCamera, 0);
 	barriers.attachPhysics(physics);
 	entities.push_back(&barriers);
 
@@ -299,10 +311,10 @@ int main(int argc, char** args) {
 		//forgive me--------------------
 		if (aiStuffCounter % 3 == 0) { //stagger pathfinding on different frames
 			if (State::flagPickedUpBy[1]) {
-				opponentBrains[0].updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
+				//opponentBrains[0].updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
 			}
 			else {
-				opponentBrains[0].updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+				//opponentBrains[0].updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
 		else if (aiStuffCounter % 3 == 1) {
@@ -315,15 +327,15 @@ int main(int argc, char** args) {
 		}
 		else {
 			if (State::flagPickedUpBy[3]) {
-				opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagDropoffBoxes[3]->getGlobalPose().p);
+				//opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagDropoffBoxes[3]->getGlobalPose().p);
 			}
 			else {
-				opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+				//opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
-		opponentCar1.processInput(opponentBrains[0].getInput(State::vehicleRDs[1]->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
+		//opponentCar1.processInput(opponentBrains[0].getInput(State::vehicleRDs[1]->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
 		opponentCar2.processInput(opponentBrains[1].getInput(State::vehicleRDs[2]->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
-		opponentCar3.processInput(opponentBrains[2].getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
+		//opponentCar3.processInput(opponentBrains[2].getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 
 		aiStuffCounter++;
 		//------------------------------*/
@@ -390,15 +402,16 @@ int main(int argc, char** args) {
 		for (const auto& entity : entities)
 			entity->draw(physics, shaderProgram, false, depthMap);
 
-		//player pos for testing
+		//scott's debugging prints----------------------------------------------------------------------------------------------
 		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
 		PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
+		PxVec3 playerToTarget = opponentBrains[0].getPlayerToTargetDir(playerDir, 0, State::flagBody->getGlobalPose().p);
 		int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
 		int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
 		int dir = opponentBrains[1].getOrientation(playerDir);
-		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
+		printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
 		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
-		//printf("%d\n", State::worldGrid[17][6]);
+		//-----------------------------------------------------------------------------------------------------------------------
 
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

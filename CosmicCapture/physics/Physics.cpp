@@ -139,6 +139,7 @@ void Physics::processVerticesIndices(aiMesh* mesh)
 
 
 }
+
 PxTriangleMeshGeometry Physics::readMesh(std::string modelPath){
 	Assimp::Importer importer;
 	const auto* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);

@@ -272,7 +272,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
                 }
             }
         }
-
+        
         //----------- 5th Successor (North-East)
         
         if (isValid(i - 1, j + 1) == true) {
@@ -408,10 +408,11 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
                     cellDetails[i + 1][j - 1].parent_i = i;
                     cellDetails[i + 1][j - 1].parent_j = j;
                 }
-            }
+            }            
         }
+        
     }
-
+    
     if (foundDest == false)
         printf("Failed to find the Destination Cell\n");
 
