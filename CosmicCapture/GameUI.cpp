@@ -16,7 +16,7 @@ GameUI::GameUI() :
 
 	mSpikeTrapTexture("textures/spike_preview.png", GL_LINEAR, false),
 	mSpeedBoostTexture("textures/speed_boost.png", GL_LINEAR, false),
-	mProjectileTexture("textures/green_shell.png", GL_LINEAR, false),
+	mProjectileTexture("textures/rocket_preview.png", GL_LINEAR, false),
 
 	mCompassTexture("textures/compass.png", GL_LINEAR, false),
 
@@ -69,11 +69,10 @@ void GameUI::setCompassDirection(const PxMat44& carMatrix, const PxVec3& targetP
 	auto target = targetPos;
 	target.y = 0.0f;
 	carLoc.y = 0.0f;
-	carDirection.y = 0.0f;
 
 	const auto targetDirection = (target - carLoc).getNormalized();
 
-	mCompassAngle = acos(targetDirection.dot(carDirection));
+	mCompassAngle = atan2(carDirection.z, carDirection.x) - atan2(targetDirection.z, targetDirection.x);
 }
 
 void GameUI::renderPowerUpDisplay(unsigned int shaderID) const
