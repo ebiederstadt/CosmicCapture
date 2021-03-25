@@ -58,15 +58,6 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 			command[MovementFlags::UP] = false;
 		}
 		else {
-			//int targetDir = getTargetDirection(current, target);
-			/*
-			if (targetDir % 2 == 0) {
-				targetDir = checkDiagonals(current, targetDir);
-			}
-			*/
-			//int playerOrientation = getOrientation(playerDir);
-			//command = getCommand(targetDir, playerOrientation);
-
 			PxVec3 targetDir = getPlayerToTargetDir(playerDir, playerNum);
 			command = getCommand(dirsToCommand(playerDir, targetDir));
 		}	
@@ -110,57 +101,7 @@ std::pair<int, int> OpponentInput::getGridCoordinates(float globalPosX, float gl
 
 
 
-std::map<MovementFlags, bool> OpponentInput::getCommand(int targetDir, int playerDir) {
-	std::map<MovementFlags, bool> inputMap;
-	int command = actionArray[targetDir-1][playerDir-1];
-	//printf("%d, %d, %d ", playerDir, targetDir, command);
-	if (command == 1) {
-		inputMap[MovementFlags::LEFT] = true;
-		inputMap[MovementFlags::RIGHT] = true;
-		inputMap[MovementFlags::DOWN] = true;
-		inputMap[MovementFlags::UP] = false;
-		//printf("STRAIGHT\n");
-	} else if (command == 3) {
-		inputMap[MovementFlags::LEFT] = false;
-		inputMap[MovementFlags::RIGHT] = true;
-		inputMap[MovementFlags::DOWN] = true;
-		inputMap[MovementFlags::UP] = false;
-		//printf("LEFT\n");
-	}
-	else if (command == 2) {
-		inputMap[MovementFlags::LEFT] = true;
-		inputMap[MovementFlags::RIGHT] = false;
-		inputMap[MovementFlags::DOWN] = true;
-		inputMap[MovementFlags::UP] = false;
-		//printf("RIGHT\n");
-	}
-	return inputMap;
-}
-std::map<MovementFlags, bool> OpponentInput::getCommand(int commandNum) {
-	std::map<MovementFlags, bool> inputMap;
-	if (commandNum == 1) {
-		inputMap[MovementFlags::LEFT] = true;
-		inputMap[MovementFlags::RIGHT] = true;
-		inputMap[MovementFlags::DOWN] = true;
-		inputMap[MovementFlags::UP] = false;
-		//printf("STRAIGHT\n");
-	}
-	else if (commandNum == 3) {
-		inputMap[MovementFlags::LEFT] = false;
-		inputMap[MovementFlags::RIGHT] = true;
-		inputMap[MovementFlags::DOWN] = true;
-		inputMap[MovementFlags::UP] = false;
-		//printf("LEFT\n");
-	}
-	else if (commandNum == 2) {
-		inputMap[MovementFlags::LEFT] = true;
-		inputMap[MovementFlags::RIGHT] = false;
-		inputMap[MovementFlags::DOWN] = true;
-		inputMap[MovementFlags::UP] = false;
-		//printf("RIGHT\n");
-	}
-	return inputMap;
-}
+
 
 PxVec3 OpponentInput::getPlayerToTargetDir(PxVec3 playerDirVec, int playerVehicleRDIndex, PxVec3 targetGlobalPos) {
 	std::pair<int, int> targetGridPos = getGridCoordinates(targetGlobalPos.x, targetGlobalPos.y);
@@ -199,7 +140,7 @@ int OpponentInput::dirsToCommand(PxVec3 playerDirVec, PxVec3 targetDirVec) {
 	float playerAngleRads = atan2(playerZ, playerX);
 	float targetAngleRads = atan2(targetZ, targetX);
 	int commandNum = 1;
-	if (abs(playerAngleRads - targetAngleRads) < 0.1f) {
+	if (abs(playerAngleRads - targetAngleRads) < 0.175f) {
 		return commandNum;
 	}
 	if (playerAngleRads > targetAngleRads) {
@@ -218,52 +159,67 @@ int OpponentInput::dirsToCommand(PxVec3 playerDirVec, PxVec3 targetDirVec) {
 			commandNum = 2;
 		}
 	}
-	/*
-	if (abs(playerX - targetX) < 0.1f && abs(playerZ - targetZ) < 0.1f) {
-		return commandNum;
-	}
-
-	if (playerX < 0 && targetX < 0) {
-		if (playerZ < targetZ) {
-			commandNum = 3;//LEFT
-		}
-		else if (playerZ > targetZ) {
-			commandNum = 2;//RIGHT
-		}
-	}
-	else if (playerX < 0 && targetX > 0) {
-		if (playerZ < targetZ) {
-			commandNum = 2;//RIGHT
-		}
-		else if (playerZ > targetZ) {
-			
-			commandNum = 3;//LEFT
-		}
-	}
-	else if (playerX > 0 && targetX < 0) {
-		if (playerZ < targetZ) {
-			commandNum = 3;//LEFT
-		}
-		else if (playerZ > targetZ) {
-			commandNum = 2;//RIGHT
-		}
-	}
-	else if (playerX > 0 && targetX > 0) {
-		if (playerZ < targetZ) {
-			commandNum = 2;//RIGHT
-		}
-		else if (playerZ > targetZ) {
-			commandNum = 3;//LEFT
-		}
-	}
-	*/
 	return commandNum;
+}
+
+std::map<MovementFlags, bool> OpponentInput::getCommand(int targetDir, int playerDir) {
+	std::map<MovementFlags, bool> inputMap;
+	int command = actionArray[targetDir - 1][playerDir - 1];
+	//printf("%d, %d, %d ", playerDir, targetDir, command);
+	if (command == 1) {
+		inputMap[MovementFlags::LEFT] = true;
+		inputMap[MovementFlags::RIGHT] = true;
+		inputMap[MovementFlags::DOWN] = true;
+		inputMap[MovementFlags::UP] = false;
+		//printf("STRAIGHT\n");
+	}
+	else if (command == 3) {
+		inputMap[MovementFlags::LEFT] = false;
+		inputMap[MovementFlags::RIGHT] = true;
+		inputMap[MovementFlags::DOWN] = true;
+		inputMap[MovementFlags::UP] = false;
+		//printf("LEFT\n");
+	}
+	else if (command == 2) {
+		inputMap[MovementFlags::LEFT] = true;
+		inputMap[MovementFlags::RIGHT] = false;
+		inputMap[MovementFlags::DOWN] = true;
+		inputMap[MovementFlags::UP] = false;
+		//printf("RIGHT\n");
+	}
+	return inputMap;
+}
+
+std::map<MovementFlags, bool> OpponentInput::getCommand(int commandNum) {
+	std::map<MovementFlags, bool> inputMap;
+	if (commandNum == 1) {
+		inputMap[MovementFlags::LEFT] = true;
+		inputMap[MovementFlags::RIGHT] = true;
+		inputMap[MovementFlags::DOWN] = true;
+		inputMap[MovementFlags::UP] = false;
+		//printf("STRAIGHT\n");
+	}
+	else if (commandNum == 3) {
+		inputMap[MovementFlags::LEFT] = false;
+		inputMap[MovementFlags::RIGHT] = true;
+		inputMap[MovementFlags::DOWN] = true;
+		inputMap[MovementFlags::UP] = false;
+		//printf("LEFT\n");
+	}
+	else if (commandNum == 2) {
+		inputMap[MovementFlags::LEFT] = true;
+		inputMap[MovementFlags::RIGHT] = false;
+		inputMap[MovementFlags::DOWN] = true;
+		inputMap[MovementFlags::UP] = false;
+		//printf("RIGHT\n");
+	}
+	return inputMap;
 }
 
 void OpponentInput::setPlayerNum(int num) {
 	playerNum = num;
 }
-
+/*
 int OpponentInput::getTargetDirection(std::pair<int, int> playerCoords, std::pair<int, int> targetCoords) {
 	int playerX = playerCoords.first;
 	int playerY = playerCoords.second;
@@ -382,3 +338,4 @@ int OpponentInput::getOrientation(PxVec3 dirVec) {
 
 	return dir;
 }
+*/

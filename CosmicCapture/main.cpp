@@ -38,11 +38,33 @@ float angle = -0.25f;
 void initializeGridCenterCoords() {
 	for (int i = 0; i < 36; i++) {
 		for (int j = 0; j < 36; j++) {
-				State::worldGridCenterCoords[i][j].first = i * 10.f - 180.f + 5.f;
-				State::worldGridCenterCoords[i][j].second = j * 10.f - 180.f + 5.f;
+			State::worldGridCenterCoords[i][j].first = i * 10.f - 180.f + 5.f;
+			State::worldGridCenterCoords[i][j].second = j * 10.f - 180.f + 5.f;
+			if (i + 1 < 36) {
+				if (State::worldGrid[i + 1][j] == 0) {
+					State::worldGridCenterCoords[i][j].first -= 3.f;
+				}
+			}
+			if (i - 1 >= 0) {
+				if (State::worldGrid[i - 1][j] == 0) {
+					State::worldGridCenterCoords[i][j].first += 3.f;
+				}
+			}
+			if (j + 1 < 36) {
+				if (State::worldGrid[i][j + 1] == 0) {
+					State::worldGridCenterCoords[i][j].second -= 3.f;
+				}
+			}
+			if (j - 1 >= 0) {
+				if (State::worldGrid[i][j - 1] == 0) {
+					State::worldGridCenterCoords[i][j].second += 3.f;
+				}
+			}
 		}
 	}
 }
+	
+
 
 int main(int argc, char** args) {
 	initializeGridCenterCoords();
@@ -319,23 +341,23 @@ int main(int argc, char** args) {
 		}
 		else if (aiStuffCounter % 3 == 1) {
 			if (State::flagPickedUpBy[2]) {
-				opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagDropoffBoxes[2]->getGlobalPose().p);
+				//opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagDropoffBoxes[2]->getGlobalPose().p);
 			}
 			else {
-				opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+				//opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
 		else {
 			if (State::flagPickedUpBy[3]) {
-				//opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagDropoffBoxes[3]->getGlobalPose().p);
+				opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagDropoffBoxes[3]->getGlobalPose().p);
 			}
 			else {
-				//opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+				opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
 		//opponentCar1.processInput(opponentBrains[0].getInput(State::vehicleRDs[1]->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
-		opponentCar2.processInput(opponentBrains[1].getInput(State::vehicleRDs[2]->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
-		//opponentCar3.processInput(opponentBrains[2].getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
+		//opponentCar2.processInput(opponentBrains[1].getInput(State::vehicleRDs[2]->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
+		opponentCar3.processInput(opponentBrains[2].getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 
 		aiStuffCounter++;
 		//------------------------------*/
@@ -408,7 +430,7 @@ int main(int argc, char** args) {
 		PxVec3 playerToTarget = opponentBrains[0].getPlayerToTargetDir(playerDir, 0, State::flagBody->getGlobalPose().p);
 		int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
 		int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
-		int dir = opponentBrains[1].getOrientation(playerDir);
+		//int dir = opponentBrains[1].getOrientation(playerDir);
 		printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
 		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//-----------------------------------------------------------------------------------------------------------------------
