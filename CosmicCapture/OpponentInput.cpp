@@ -3,21 +3,19 @@ OpponentInput::OpponentInput()
 {
 	playerNum = 0;
 	counter = 0;
-	reverseCounter = 0;
 	stuckCounter = 0;
 }
 OpponentInput::OpponentInput(int playerNumber)
 {
 	playerNum = playerNumber;
 	counter = 0;
-	reverseCounter = 0;
 	stuckCounter = 0;
 }
 
 
 
 std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 playerDir) {
-
+	float vehicleSpeed = mVehicles[0]->computeForwardSpeed();
 	std::pair<int, int> current = getGridCoordinates(playerPos.x, playerPos.z);
 	if (current == target) {
 		if (path.empty()) {
@@ -44,13 +42,11 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 		command[MovementFlags::RIGHT] = true;
 		command[MovementFlags::DOWN] = false;
 		command[MovementFlags::UP] = true;
-		reverseCounter++;
-		if (reverseCounter > maxReverseCount) {
-			reverseCounter = 0;
+		if (vehicleSpeed < reverseThresholdSpeed) {
 			reversing = false;
 		}
 	}
-	else if (counter % 11 != 0) {
+	else {
 		if (target.first == -1 && target.second == -1) {
 			command[MovementFlags::LEFT] = true;
 			command[MovementFlags::RIGHT] = true;
@@ -62,12 +58,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 			command = getCommand(dirsToCommand(playerDir, targetDir));
 		}	
 	}
-	else { //for some reason braking every 11 frames seems to work pretty well
-		command[MovementFlags::LEFT] = true;
-		command[MovementFlags::RIGHT] = true;
-		command[MovementFlags::DOWN] = true;
-		command[MovementFlags::UP] = true;
-	}
+	
 	//printf("(%d, %d), (%d, %d) - %d, %d\n", current.first, current.second, target.first, target.second, stuckCounter, reverseCounter);
 	counter++;
 	return command;
@@ -140,7 +131,7 @@ int OpponentInput::dirsToCommand(PxVec3 playerDirVec, PxVec3 targetDirVec) {
 	float playerAngleRads = atan2(playerZ, playerX);
 	float targetAngleRads = atan2(targetZ, targetX);
 	int commandNum = 1;
-	if (abs(playerAngleRads - targetAngleRads) < 0.175f) {
+	if (abs(playerAngleRads - targetAngleRads) < 0.175f) { //TUNING POINT
 		return commandNum;
 	}
 	if (playerAngleRads > targetAngleRads) {
@@ -160,34 +151,6 @@ int OpponentInput::dirsToCommand(PxVec3 playerDirVec, PxVec3 targetDirVec) {
 		}
 	}
 	return commandNum;
-}
-
-std::map<MovementFlags, bool> OpponentInput::getCommand(int targetDir, int playerDir) {
-	std::map<MovementFlags, bool> inputMap;
-	int command = actionArray[targetDir - 1][playerDir - 1];
-	//printf("%d, %d, %d ", playerDir, targetDir, command);
-	if (command == 1) {
-		inputMap[MovementFlags::LEFT] = true;
-		inputMap[MovementFlags::RIGHT] = true;
-		inputMap[MovementFlags::DOWN] = true;
-		inputMap[MovementFlags::UP] = false;
-		//printf("STRAIGHT\n");
-	}
-	else if (command == 3) {
-		inputMap[MovementFlags::LEFT] = false;
-		inputMap[MovementFlags::RIGHT] = true;
-		inputMap[MovementFlags::DOWN] = true;
-		inputMap[MovementFlags::UP] = false;
-		//printf("LEFT\n");
-	}
-	else if (command == 2) {
-		inputMap[MovementFlags::LEFT] = true;
-		inputMap[MovementFlags::RIGHT] = false;
-		inputMap[MovementFlags::DOWN] = true;
-		inputMap[MovementFlags::UP] = false;
-		//printf("RIGHT\n");
-	}
-	return inputMap;
 }
 
 std::map<MovementFlags, bool> OpponentInput::getCommand(int commandNum) {
@@ -219,6 +182,38 @@ std::map<MovementFlags, bool> OpponentInput::getCommand(int commandNum) {
 void OpponentInput::setPlayerNum(int num) {
 	playerNum = num;
 }
+/*
+std::map<MovementFlags, bool> OpponentInput::getCommand(int targetDir, int playerDir) {
+	std::map<MovementFlags, bool> inputMap;
+	int command = actionArray[targetDir - 1][playerDir - 1];
+	//printf("%d, %d, %d ", playerDir, targetDir, command);
+	if (command == 1) {
+		inputMap[MovementFlags::LEFT] = true;
+		inputMap[MovementFlags::RIGHT] = true;
+		inputMap[MovementFlags::DOWN] = true;
+		inputMap[MovementFlags::UP] = false;
+		//printf("STRAIGHT\n");
+	}
+	else if (command == 3) {
+		inputMap[MovementFlags::LEFT] = false;
+		inputMap[MovementFlags::RIGHT] = true;
+		inputMap[MovementFlags::DOWN] = true;
+		inputMap[MovementFlags::UP] = false;
+		//printf("LEFT\n");
+	}
+	else if (command == 2) {
+		inputMap[MovementFlags::LEFT] = true;
+		inputMap[MovementFlags::RIGHT] = false;
+		inputMap[MovementFlags::DOWN] = true;
+		inputMap[MovementFlags::UP] = false;
+		//printf("RIGHT\n");
+	}
+	return inputMap;
+}
+*/
+
+
+
 /*
 int OpponentInput::getTargetDirection(std::pair<int, int> playerCoords, std::pair<int, int> targetCoords) {
 	int playerX = playerCoords.first;

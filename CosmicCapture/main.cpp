@@ -36,38 +36,116 @@
 float angle = -0.25f;
 
 void initializeGridCenterCoords() {
+	float flatOffset = 4.f; //TUNING POINT
+	float diagonalOffset = 1.f; //TUNING POINT
+	bool shifted = false;
 	for (int i = 0; i < 36; i++) {
 		for (int j = 0; j < 36; j++) {
 			State::worldGridCenterCoords[i][j].first = i * 10.f - 180.f + 5.f;
 			State::worldGridCenterCoords[i][j].second = j * 10.f - 180.f + 5.f;
-			if (i + 1 < 36) {
+			shifted = false;
+			if ((i + 1 < 36) && (i - 1 >= 0) && (j + 1 < 36) && (j - 1 >= 0)) {
 				if (State::worldGrid[i + 1][j] == 0) {
-					State::worldGridCenterCoords[i][j].first -= 3.f;
+					State::worldGridCenterCoords[i][j].first -= flatOffset;
+					shifted = true;
 				}
-			}
-			if (i - 1 >= 0) {
 				if (State::worldGrid[i - 1][j] == 0) {
-					State::worldGridCenterCoords[i][j].first += 3.f;
+					State::worldGridCenterCoords[i][j].first += flatOffset;
+					shifted = true;
 				}
-			}
-			if (j + 1 < 36) {
 				if (State::worldGrid[i][j + 1] == 0) {
-					State::worldGridCenterCoords[i][j].second -= 3.f;
+					State::worldGridCenterCoords[i][j].second -= flatOffset;
+					shifted = true;
 				}
-			}
-			if (j - 1 >= 0) {
 				if (State::worldGrid[i][j - 1] == 0) {
-					State::worldGridCenterCoords[i][j].second += 3.f;
+					State::worldGridCenterCoords[i][j].second += flatOffset;
+					shifted = true;
 				}
+
+				if (shifted) continue;
+
+				if (State::worldGrid[i - 1][j - 1] == 0) {
+					State::worldGridCenterCoords[i][j].first += diagonalOffset;
+					State::worldGridCenterCoords[i][j].second += diagonalOffset;
+				}
+				if (State::worldGrid[i + 1][j + 1] == 0) {
+					State::worldGridCenterCoords[i][j].first -= diagonalOffset;
+					State::worldGridCenterCoords[i][j].second -= diagonalOffset;
+				}
+				if (State::worldGrid[i + 1][j - 1] == 0) {
+					State::worldGridCenterCoords[i][j].first -= diagonalOffset;
+					State::worldGridCenterCoords[i][j].second += diagonalOffset;
+				}
+				if (State::worldGrid[i - 1][j + 1] == 0) {
+					State::worldGridCenterCoords[i][j].first += diagonalOffset;
+					State::worldGridCenterCoords[i][j].second -= diagonalOffset;
+				}
+				
 			}
+
 		}
 	}
 }
 	
+void updateWorldGridArena1() {
+	State::worldGrid[12][17] = 0;
+	State::worldGrid[12][18] = 0;
+	State::worldGrid[28][17] = 0;
+	State::worldGrid[28][18] = 0;
+	State::worldGrid[7][1] = 0;
+	State::worldGrid[7][2] = 0;
+	State::worldGrid[29][1] = 0;
+	State::worldGrid[29][2] = 0;
+	State::worldGrid[7][33] = 0;
+	State::worldGrid[7][34] = 0;
+	State::worldGrid[29][33] = 0;
+	State::worldGrid[29][34] = 0;
 
+	State::worldGrid[17][12] = 1;
+	State::worldGrid[18][12] = 1;
+	State::worldGrid[17][28] = 1;
+	State::worldGrid[18][28] = 1;
+	State::worldGrid[1][7] = 1;
+	State::worldGrid[2][7] = 1;
+	State::worldGrid[1][29] = 1;
+	State::worldGrid[2][29] = 1;
+	State::worldGrid[33][7] = 1;
+	State::worldGrid[34][7] = 1;
+	State::worldGrid[33][29] = 1;
+	State::worldGrid[34][29] = 1;
+
+}
+void updateWorldGridArena2() {
+	State::worldGrid[12][17] = 1;
+	State::worldGrid[12][18] = 1;
+	State::worldGrid[23][17] = 1;
+	State::worldGrid[23][13] = 1;
+	State::worldGrid[7][1] = 1;
+	State::worldGrid[7][2] = 1;
+	State::worldGrid[29][1] = 1;
+	State::worldGrid[29][2] = 1;
+	State::worldGrid[7][33] = 1;
+	State::worldGrid[7][34] = 1;
+	State::worldGrid[29][33] = 1;
+	State::worldGrid[29][34] = 1;
+
+	State::worldGrid[17][12] = 0;
+	State::worldGrid[18][12] = 0;
+	State::worldGrid[17][23] = 0;
+	State::worldGrid[18][23] = 0;
+	State::worldGrid[1][7] = 0;
+	State::worldGrid[2][7] = 0;
+	State::worldGrid[1][29] = 0;
+	State::worldGrid[2][29] = 0;
+	State::worldGrid[33][7] = 0;
+	State::worldGrid[34][7] = 0;
+	State::worldGrid[33][29] = 0;
+	State::worldGrid[34][29] = 0;
+}
 
 int main(int argc, char** args) {
 	initializeGridCenterCoords();
+	updateWorldGridArena2();
 	// Window Initialization
 	const GLint width = 1280, height = 720;
 	Window window("Cosmic Capture", width, height);
@@ -143,14 +221,17 @@ int main(int argc, char** args) {
 	Vehicle opponentCar1(shaderProgram, sCamera, 1, "textures/blue.jpg");
 	opponentCar1.attachPhysics(physics);
 	State::vehicleRDs[1] = opponentCar1.getVehicle()->getRigidDynamicActor();
+	opponentBrains[0].attachVehicle(opponentCar1.getVehicle());
 
 	Vehicle opponentCar2(shaderProgram, sCamera, 2, "textures/pink.jpg");
 	opponentCar2.attachPhysics(physics);
 	State::vehicleRDs[2] = opponentCar2.getVehicle()->getRigidDynamicActor();
+	opponentBrains[1].attachVehicle(opponentCar2.getVehicle());
 
 	Vehicle opponentCar3(shaderProgram, sCamera, 3, "textures/green.jpg");
 	opponentCar3.attachPhysics(physics);
 	State::vehicleRDs[3] = opponentCar3.getVehicle()->getRigidDynamicActor();
+	opponentBrains[2].attachVehicle(opponentCar3.getVehicle());
 
 	//projectile prototype stuff----------------------
 	Projectile testProj(shaderProgram, sCamera);
@@ -230,9 +311,6 @@ int main(int argc, char** args) {
 	}
 	//opponentBrains.updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagBody->getGlobalPose().p); //get Initial path--------------------------------
 	int aiStuffCounter = 0;
-	int stuckCount = 0; //count how many frames a player has been in the same grid coords
-	int reverseCounter = 0;
-	bool reversing = false;
 	// Loop until the user closes the window
 	while (!quit) {
 		quit = input.HandleInput();
@@ -304,6 +382,7 @@ int main(int argc, char** args) {
 		if (State::arenaSwitch && State::arenaSwitchReady) {
 			//need undraw code here
 			if (State::blueArena) {
+				updateWorldGridArena1();
 				physics.generateRedDoor(); //switch from blue doors to red
 				State::redArena = true;
 				State::blueArena = false;
@@ -313,6 +392,7 @@ int main(int argc, char** args) {
 				fmt::print("Red arena loaded\n");
 			}
 			else if (State::redArena) {
+				updateWorldGridArena2();
 				physics.generateBlueDoor(); //switch from red doors to blue
 				State::blueArena = true;
 				State::redArena = false;
@@ -333,18 +413,18 @@ int main(int argc, char** args) {
 		//forgive me--------------------
 		if (aiStuffCounter % 3 == 0) { //stagger pathfinding on different frames
 			if (State::flagPickedUpBy[1]) {
-				//opponentBrains[0].updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
+				opponentBrains[0].updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
 			}
 			else {
-				//opponentBrains[0].updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+				opponentBrains[0].updatePath(State::vehicleRDs[1]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
 		else if (aiStuffCounter % 3 == 1) {
 			if (State::flagPickedUpBy[2]) {
-				//opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagDropoffBoxes[2]->getGlobalPose().p);
+				opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagDropoffBoxes[2]->getGlobalPose().p);
 			}
 			else {
-				//opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+				opponentBrains[1].updatePath(State::vehicleRDs[2]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
 		else {
@@ -355,8 +435,8 @@ int main(int argc, char** args) {
 				opponentBrains[2].updatePath(State::vehicleRDs[3]->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
-		//opponentCar1.processInput(opponentBrains[0].getInput(State::vehicleRDs[1]->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
-		//opponentCar2.processInput(opponentBrains[1].getInput(State::vehicleRDs[2]->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
+		opponentCar1.processInput(opponentBrains[0].getInput(State::vehicleRDs[1]->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
+		opponentCar2.processInput(opponentBrains[1].getInput(State::vehicleRDs[2]->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
 		opponentCar3.processInput(opponentBrains[2].getInput(State::vehicleRDs[3]->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 
 		aiStuffCounter++;
@@ -418,20 +498,23 @@ int main(int argc, char** args) {
 		glActiveTexture(GL_TEXTURE0);
 
 		// Second pass
-		if(State::redArena) redArena.drawArena(shaderProgram, false, depthMap);
-		if(State::blueArena) blueArena.drawArena(shaderProgram, false, depthMap);
-
+		if (State::redArena) {
+			redArena.drawArena(shaderProgram, false, depthMap);
+		}
+		if (State::blueArena) {
+			blueArena.drawArena(shaderProgram, false, depthMap);
+		}
 		for (const auto& entity : entities)
 			entity->draw(physics, shaderProgram, false, depthMap);
 
 		//scott's debugging prints----------------------------------------------------------------------------------------------
-		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
-		PxVec3 playerToTarget = opponentBrains[0].getPlayerToTargetDir(playerDir, 0, State::flagBody->getGlobalPose().p);
-		int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
-		int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
+		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		//PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
+		//PxVec3 playerToTarget = opponentBrains[0].getPlayerToTargetDir(playerDir, 0, State::flagBody->getGlobalPose().p);
+		//int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
+		//int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
 		//int dir = opponentBrains[1].getOrientation(playerDir);
-		printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
+		//printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
 		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//-----------------------------------------------------------------------------------------------------------------------
 
