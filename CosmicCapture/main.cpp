@@ -317,45 +317,6 @@ int main(int argc, char** args)
 
 		ImGui::Text("Camera Position");
 		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
-
-		// Game State information
-		if (State::scores[0] == 3)
-		{
-			ImGui::Text("You win");
-			if (ImGui::Button("Restart?"))
-			{
-				for (int& score : State::scores)
-					score = 0;
-			}
-		}
-		else if (State::scores[1] == 3)
-		{
-			ImGui::Text("Opponent 1 wins");
-			if (ImGui::Button("Restart?"))
-			{
-				for (int& score : State::scores)
-					score = 0;
-			}
-		}
-		else if (State::scores[2] == 3)
-		{
-			ImGui::Text("Opponent 2 wins");
-			if (ImGui::Button("Restart?"))
-			{
-				for (int& score : State::scores)
-					score = 0;
-			}
-		}
-		else if (State::scores[3] == 3)
-		{
-			ImGui::Text("Opponent 3 wins");
-			if (ImGui::Button("Restart?"))
-			{
-				for (int& score : State::scores)
-					score = 0;
-			}
-		}
-
 	};
 	
 	// Loop until the user closes the window

@@ -28,10 +28,20 @@ struct ScoreDisplay
 	ScoreDisplay();
 	
 	std::array<FontGpuGeometry, 4> scoreDisplays;
+	std::array<GUIGPUGeometry, 4> playerDisplays;
 	std::array<FontGeometry, 4> scoreGeometry;
 	std::array<int, 4> playerScores = { 0, 0, 0, 0 };
 
 	Texture score = Texture("textures/font.bmp", GL_NEAREST, false);
+
+	// Car Textures
+	// TODO: Update these to be the actual cars
+	std::array<Texture, 4> carTextures = {
+		Texture(BLUE),
+		Texture(GREEN),
+		Texture(ORANGE),
+		Texture(TEAL)
+	};
 };
 
 class GameUI

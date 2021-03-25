@@ -11,11 +11,15 @@ using namespace glm;
 
 ScoreDisplay::ScoreDisplay()
 {
+	GUIGeometry quad;
+
 	// Initially, all scores are at zero
 	for (int i = 0; i < 4; ++i)
 	{
 		scoreGeometry[i].texCoords = GameUI::generateTexCoordsForNum(0);
 		scoreDisplays[i].uploadData(scoreGeometry[i]);
+
+		playerDisplays[i].uploadData(quad);
 	}
 }
 
@@ -149,6 +153,17 @@ void GameUI::renderScores(unsigned int shaderID)
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 
 		mScoreDisplay.scoreDisplays[i].drawData();
+
+		// Draw an icon for the player next to their score
+		model = scale(model, { 0.5f, 0.5f, 0.0f });
+		model = translate(model, { -3.2, 0.6f, 0.f });
+		modelLoc = glGetUniformLocation(shaderID, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+
+		mScoreDisplay.carTextures[i].bind();
+		mScoreDisplay.playerDisplays[i].drawData();
+
+		mTextures.font.bind();
 	};
 
 	// Draw the score for the main player
