@@ -183,7 +183,66 @@ int main(int argc, char** args)
 		// Physics simulation
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
-
+		//used for respawning cars
+		if (State::killCar0) {
+			car.getVehicle()->getRigidDynamicActor()->release();
+			car.attachPhysics(physics);
+			std::cout << "Respawning player" << std::endl;
+			State::killCar0 = false;
+		}
+		if (State::killCar1) {
+			opponentCar1.getVehicle()->getRigidDynamicActor()->release();
+			opponentCar1.attachPhysics(physics);
+			std::cout << "Respawning opponent 1" << std::endl;
+			State::killCar1 = false;
+		}
+		if (State::killCar2) {
+			opponentCar2.getVehicle()->getRigidDynamicActor()->release();
+			opponentCar2.attachPhysics(physics);
+			std::cout << "Respawning opponent 2" << std::endl;
+			State::killCar2 = false;
+		}
+		if (State::killCar3) {
+			opponentCar3.getVehicle()->getRigidDynamicActor()->release();
+			opponentCar3.attachPhysics(physics);
+			std::cout << "Respawning opponent 3" << std::endl;
+			State::killCar3 = false;
+		}
+		//testing for respawning, remove after
+		/*
+		for (const auto& [key, keyReleased] : inputState) {
+			switch (key){
+				case MovementFlags::ZERO:
+					if (!keyReleased) {
+						car.getVehicle()->getRigidDynamicActor()->release();
+						car.attachPhysics(physics);
+						std::cout << "Respawning player" << std::endl;
+					}
+					break;
+				case MovementFlags::ONE:
+					if (!keyReleased) {
+						opponentCar1.getVehicle()->getRigidDynamicActor()->release();
+						opponentCar1.attachPhysics(physics);
+						std::cout << "Respawning opponent 1" << std::endl;
+					}
+					break;
+				case MovementFlags::TWO:
+					if (!keyReleased) {
+						opponentCar2.getVehicle()->getRigidDynamicActor()->release();
+						opponentCar2.attachPhysics(physics);
+						std::cout << "Respawning opponent 2" << std::endl;
+					}
+					break;
+				case MovementFlags::THREE:
+					if (!keyReleased) {
+						opponentCar3.getVehicle()->getRigidDynamicActor()->release();
+						opponentCar3.attachPhysics(physics);
+						std::cout << "Respawning opponent 3" << std::endl;
+					}
+					break;
+			}
+		}
+		*/
 		powerUpManager.pickup(sCamera, physics);
 		// TODO: Make it so that all players can use powerups
 		powerUpManager.use(physics, inputState, 0);
