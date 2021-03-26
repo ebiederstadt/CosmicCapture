@@ -8,7 +8,7 @@
 class Flag : public Entity
 {
 public:
-	Flag(std::shared_ptr<Camera> camera);
+	Flag(const std::shared_ptr<Camera>& camera);
 
 	void attachPhysics(Physics& instance) override;
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;

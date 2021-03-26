@@ -18,7 +18,7 @@ public:
 	Shader(const char* path, shaderTypes type);
 	Shader() : mID(0), mType(shaderTypes::VERTEX) {}
 
-	unsigned int getID() const { return mID; }
+	[[nodiscard]] unsigned int getID() const { return mID; }
 	void compile();
 	void cleanUp() const { glDeleteShader(mID); }
 

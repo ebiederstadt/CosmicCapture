@@ -9,32 +9,41 @@
 
 using namespace glm;
 
-GameUI::GameUI() :
-	mShader("shaders/ui.vert", "shaders/ui.frag"),
-	mSpikeTrapTexture("textures/spike_preview.png", GL_LINEAR, false),
-	mSpeedBoostTexture("textures/speed_boost.png", GL_LINEAR, false),
-	mProjectileTexture("textures/green_shell.png", GL_LINEAR, false),
-
-	mCompassTexture("textures/compass.png", GL_LINEAR, false),
-
-	mLogo("textures/cosmicLogo.png", GL_LINEAR, false)
+ScoreDisplay::ScoreDisplay()
 {
-	mShader.compile();
-	
 	GUIGeometry quad;
 
+	// Initially, all scores are at zero
+	for (int i = 0; i < 4; ++i)
+	{
+		scoreGeometry[i].texCoords = GameUI::generateTexCoordsForNum(0);
+		scoreDisplays[i].uploadData(scoreGeometry[i]);
+
+		playerDisplays[i].uploadData(quad);
+	}
+}
+
+GameUI::GameUI() :
+	mShader("shaders/ui.vert", "shaders/ui.frag"),
+	mFontShader("shaders/font.vert", "shaders/font.frag")
+{
+	mShader.compile();
+	mFontShader.compile();
+	
+	GUIGeometry quad;
 	mPowerupDisplay.uploadData(quad);
 	mCompassDisplay.uploadData(quad);
 	mLogoDisplay.uploadData(quad);
 }
 
-void GameUI::render() const
+void GameUI::render()
 {
 	unsigned int shaderID = static_cast<unsigned int>(mShader);
 	mShader.use();
 	
 	renderPowerUpDisplay(shaderID);
 	renderCompassDisplay(shaderID);
+	renderScores(shaderID);
 }
 
 void GameUI::renderMenu() const
@@ -42,7 +51,7 @@ void GameUI::renderMenu() const
 	unsigned int shaderID = static_cast<unsigned int>(mShader);
 	mShader.use();
 
-	mLogo.bind();
+	mTextures.logo.bind();
 	mat4 model(1.0f);
 	const auto modelLoc = glGetUniformLocation(shaderID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
@@ -58,16 +67,17 @@ void GameUI::setCompassDirection(const PxMat44& carMatrix, const PxMat44& target
 
 void GameUI::setCompassDirection(const PxMat44& carMatrix, const PxVec3& targetPos)
 {
-	// Location of the car and the flag, in world space
-	const auto carLoc = carMatrix.column3;
-
-	// Vector pointing towards the location of the flag
-	const auto flagDirection = (targetPos - carLoc.getXYZ()).getNormalized();
-
+	auto carLoc = carMatrix.column3.getXYZ();
 	// Heading vector for the car
-	const auto carDirection = carMatrix.column2.getNormalized().getXYZ();
+	const auto carDirection = carMatrix.column2.getXYZ().getNormalized();
 
-	mCompassAngle = acos(flagDirection.dot(carDirection));
+	// Don't car about y axis
+	auto target = targetPos;
+	target.y = 0.0f;
+	carLoc.y = 0.0f;
+
+	const auto targetDirection = (target - carLoc).getNormalized();
+	mCompassAngle = atan2(carDirection.z, carDirection.x) - atan2(targetDirection.z, targetDirection.x);
 }
 
 void GameUI::renderPowerUpDisplay(unsigned int shaderID) const
@@ -76,14 +86,14 @@ void GameUI::renderPowerUpDisplay(unsigned int shaderID) const
 	{
 		auto value = State::heldPowerUps[0].value();
 		if (value == PowerUpOptions::SPIKE_TRAP)
-			mSpikeTrapTexture.bind();
+			mTextures.spikeTrapTexture.bind();
 		else if (value == PowerUpOptions::SPEED_BOOST)
-			mSpeedBoostTexture.bind();
+			mTextures.speedBoostTexture.bind();
 		else if (value == PowerUpOptions::PROJECTILE)
-			mProjectileTexture.bind();
+			mTextures.projectileTexture.bind();
 	}
 	else
-		Texture::unbind();
+		mTextures.blank.bind();
 
 	mat4 model = translate(mat4{ 1.0f }, { -0.85f, -0.85f, 0.0f });
 	model = scale(model, { 0.25f, 0.25f, 0.0f });
@@ -98,19 +108,13 @@ void GameUI::renderPowerUpDisplay(unsigned int shaderID) const
 
 void GameUI::renderCompassDisplay(unsigned int shaderID) const
 {
-	mCompassTexture.bind();
+	mTextures.compassTexture.bind();
 
 	// Decide which direction to rotate the compass
-	float r1 = mCompassAngle;
-	float r2 = pi<float>() * 2.0f - mCompassAngle;
-
 	mat4 model = translate(mat4{ 1.0f }, { 0.0f, 0.79, 0.0f });
 	model = scale(model, { 0.19f, 0.19f, 0.0f });
 
-	if (abs(r1) < abs(r2))
-		model = rotate(model, r1, { 0.0f, 0.0f, 1.0f });
-	else
-		model = rotate(model, r2, { 0.0f, 0.0f, 1.0f });
+	model = rotate(model, mCompassAngle, { 0.0f, 0.0f, 1.0f });
 
 	const auto modelLoc = glGetUniformLocation(shaderID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
@@ -118,5 +122,100 @@ void GameUI::renderCompassDisplay(unsigned int shaderID) const
 	mCompassDisplay.drawData();
 
 	Texture::unbind();
+}
+
+void GameUI::renderScores(unsigned int shaderID)
+{
+	mFontShader.use();
+	mTextures.font.bind();
+
+	float yPos = 0.78f;
+	constexpr float inc = 0.24f;
+
+	// Helper lambdas
+	auto updateScore = [&](const int i)
+	{
+		if (State::scores[i] != mScoreDisplay.playerScores[i])
+		{
+			mScoreDisplay.playerScores[i] = State::scores[i];
+
+			// Update the texture coordinates to show the new score
+			mScoreDisplay.scoreGeometry[i].texCoords = generateTexCoordsForNum(State::scores[i]);
+			mScoreDisplay.scoreDisplays[i].uploadData(mScoreDisplay.scoreGeometry[i]);
+		}
+	};
+
+	auto draw = [&](const float x, const int i)
+	{
+		mat4 model = translate(mat4{ 1.f }, { x, yPos, 0.0f });
+		model = scale(model, { 0.15f, 0.2f , 0.0f });
+		auto modelLoc = glGetUniformLocation(shaderID, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+
+		mScoreDisplay.scoreDisplays[i].drawData();
+
+		// Draw an icon for the player next to their score
+		model = scale(model, { 0.5f, 0.5f, 0.0f });
+		model = translate(model, { -3.2, 0.6f, 0.f });
+		modelLoc = glGetUniformLocation(shaderID, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+
+		mScoreDisplay.carTextures[i].bind();
+		mScoreDisplay.playerDisplays[i].drawData();
+
+		mTextures.font.bind();
+	};
+
+	// Draw the score for the main player
+	updateScore(0);
+	draw(-0.6f, 0);
+
+	// Draw the score for the other players
+	for (int i = 1; i < 4; ++i)
+	{
+		updateScore(i);
+		draw(1.0f, i);
+		yPos -= inc;
+	}
+
+	Texture::unbind();
+	mShader.use();
+}
+
+std::array<vec2, 4> GameUI::generateTexCoordsForNum(unsigned int num)
+{
+	// Invalid case: can only handle numbers between 0 and 9
+	// In this case just return generic texture coordinates to show the entire image
+	if (num > 9)
+	{
+		return {
+			vec2(0.f, 0.f),
+			vec2(0.f, 1.f),
+			vec2(1.f, 0.f),
+			vec2(1.f, 1.f)
+		};
+	}
+
+	float inc = 1.f / 8.f;
+
+	if (num <= 7)
+	{
+		return {
+			vec2(num * inc, 2.f * inc),
+			vec2(num * inc, 3.f * inc),
+			vec2((num + 1) * inc, 2.f * inc),
+			vec2((num + 1) * inc, 3.f * inc)
+		};
+	}
+
+	if (num == 8 || num == 9)
+	{
+		return {
+			vec2((num % 8) * inc, 3.f * inc),
+			vec2((num % 8) * inc, 4.f * inc),
+			vec2(((num % 8) + 1) * inc, 3.f * inc),
+			vec2(((num % 8) + 1) * inc, 4.f * inc)
+		};
+	}
 }
 

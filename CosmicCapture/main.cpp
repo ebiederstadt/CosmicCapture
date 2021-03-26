@@ -15,6 +15,7 @@
 #include "./physics/ContactReportCallback.h"
 
 #include "Camera.h"
+#include "Colors.h"
 #include "Vehicle.h"
 #include "Flag.h"
 #include "FlagDropoffZone.h"
@@ -55,7 +56,6 @@ int main(int argc, char** args)
 	simpleDepthShader.compile();
 
 	// The arena model
-
 	Model arena("models/arena_texture_test.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
 
 	// Shadow setup start ---------------------------------------------------------------------
@@ -370,49 +370,6 @@ int main(int argc, char** args)
 
 		ImGui::Text("Camera Position");
 		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
-
-		// Game State information
-		ImGui::Text("Player 1 Score: %d", State::scores[0]);
-		ImGui::Text("Opponent 1 Score: %d", State::scores[1]);
-		ImGui::Text("Opponent 2 Score: %d", State::scores[2]);
-		ImGui::Text("Opponent 3 Score: %d", State::scores[3]);
-		if (State::scores[0] == 3)
-		{
-			ImGui::Text("You win");
-			if (ImGui::Button("Restart?"))
-			{
-				for (int& score : State::scores)
-					score = 0;
-			}
-		}
-		else if (State::scores[1] == 3)
-		{
-			ImGui::Text("Opponent 1 wins");
-			if (ImGui::Button("Restart?"))
-			{
-				for (int& score : State::scores)
-					score = 0;
-			}
-		}
-		else if (State::scores[2] == 3)
-		{
-			ImGui::Text("Opponent 2 wins");
-			if (ImGui::Button("Restart?"))
-			{
-				for (int& score : State::scores)
-					score = 0;
-			}
-		}
-		else if (State::scores[3] == 3)
-		{
-			ImGui::Text("Opponent 3 wins");
-			if (ImGui::Button("Restart?"))
-			{
-				for (int& score : State::scores)
-					score = 0;
-			}
-		}
-
 	};
 	
 	// Loop until the user closes the window

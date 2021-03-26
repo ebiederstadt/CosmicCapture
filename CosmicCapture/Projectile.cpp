@@ -1,7 +1,7 @@
 #include "Projectile.h"
 
 Projectile::Projectile(std::shared_ptr<Camera> camera) :
-	Entity("models/projectile_sphere.ply", "textures/blue.jpg", camera)
+	Entity("models/rocket.obj", "textures/blue.jpg", camera)
 {}
 
 void Projectile::attachPhysics(Physics& instance) {

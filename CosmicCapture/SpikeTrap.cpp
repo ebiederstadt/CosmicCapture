@@ -4,12 +4,13 @@
 #include "physics/VehicleFilterShader.h"
 #include <fmt/format.h>
 
+#include "Colors.h"
+
 SpikeTrap::SpikeTrap(const std::shared_ptr<Camera>& camera): Entity(
-	"models/spike_trap.obj", "textures/blank.jpg", camera)
+	"models/spike_trap.obj", WHITE, camera)
 {
 	spikeTrapState state;
-	fmt::print("Adding a spike trap to the scene, with active = {}\n", state.active);
-	m_id = State::spike_trap_states.size();
+	m_id = static_cast<int>(State::spike_trap_states.size());
 
 	State::spike_trap_states[m_id] = state;
 }

@@ -2,16 +2,31 @@
 
 #include <fmt/format.h>
 
+using namespace glm;
+
+// CPU side geometry
 
 GUIGeometry::GUIGeometry()
 {
 	vertices = {
-		glm::vec2(-1.f, 1.f),
-		glm::vec2(-1.f, -1.f),
-		glm::vec2(1.0f, 1.0f),
-		glm::vec2(1.0f, -1.f)
+	vec2(-1.f, 1.f),
+	vec2(-1.f, -1.f),
+	vec2(1.0f, 1.0f),
+	vec2(1.0f, -1.f)
 	};
 }
+
+FontGeometry::FontGeometry()
+{
+	vertices = {
+	vec2(-1.f, 1.f),
+	vec2(-1.f, -1.f),
+	vec2(1.0f, 1.0f),
+	vec2(1.0f, -1.f)
+	};
+}
+
+// GUP side geometry
 
 GpuGeometry::GpuGeometry():
 	mVertBuffer(0),
@@ -23,9 +38,9 @@ void GpuGeometry::uploadData(const CpuGeometry& cpuGeom, const unsigned int usag
 {
 	bind();
 	
-	mVertBuffer.uploadData(sizeof(glm::vec3) * cpuGeom.vertices.size(), cpuGeom.vertices.data(), usage);
-	mNormBuffer.uploadData(sizeof(glm::vec3) * cpuGeom.normals.size(), cpuGeom.normals.data(), usage);
-	mTextureBuffer.uploadData(sizeof(glm::vec2) * cpuGeom.texCoords.size(), cpuGeom.texCoords.data(), usage);
+	mVertBuffer.uploadData(sizeof(vec3) * cpuGeom.vertices.size(), cpuGeom.vertices.data(), usage);
+	mNormBuffer.uploadData(sizeof(vec3) * cpuGeom.normals.size(), cpuGeom.normals.data(), usage);
+	mTextureBuffer.uploadData(sizeof(vec2) * cpuGeom.texCoords.size(), cpuGeom.texCoords.data(), usage);
 
 	mElementArray.uploadData(sizeof(int) * cpuGeom.indices.size(), (void *) cpuGeom.indices.data(), usage);
 
@@ -46,7 +61,7 @@ GUIGPUGeometry::GUIGPUGeometry() :
 void GUIGPUGeometry::uploadData(const GUIGeometry& geom) const
 {
 	bind();
-	mVertexBuffer.uploadData(sizeof(glm::vec2) * geom.vertices.size(), geom.vertices.data(), GL_STATIC_DRAW);
+	mVertexBuffer.uploadData(sizeof(vec2) * geom.vertices.size(), geom.vertices.data(), GL_STATIC_DRAW);
 }
 
 void GUIGPUGeometry::drawData() const
@@ -55,3 +70,22 @@ void GUIGPUGeometry::drawData() const
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
+
+FontGpuGeometry::FontGpuGeometry() :
+	mVertBuffer(0, 2),
+	mTextureBuffer(1, 2)
+{
+}
+
+void FontGpuGeometry::uploadData(const FontGeometry& geom) const
+{
+	bind();
+	mVertBuffer.uploadData(sizeof(vec2) * geom.vertices.size(), geom.vertices.data(), GL_STATIC_DRAW);
+	mTextureBuffer.uploadData(sizeof(vec2) * geom.texCoords.size(), geom.texCoords.data(), GL_STATIC_DRAW);
+}
+
+void FontGpuGeometry::drawData() const
+{
+	bind();
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}

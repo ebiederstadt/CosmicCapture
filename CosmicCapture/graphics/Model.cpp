@@ -16,19 +16,17 @@ Model::Model(
 	mUsage(usage),
 	mModel(physx::PxIdentity)
 {
-	Assimp::Importer importer;
-
-	// TODO: Consider the flags set here. Potential for higher quality or higher performance
-	const auto* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
-	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
-	{
-		fmt::print("ERROR::ASSIMP::{}\n", importer.GetErrorString());
-		throw std::runtime_error("Failed to load model");
-	}
-
-	processNode(scene->mRootNode, scene);
+	readMesh(modelPath);
 }
 
+Model::Model(const char* modelPath, const glm::vec4& textureColor , std::shared_ptr<Camera> camera) :
+	mTexture(textureColor),
+	mCameraPointer(std::move(camera)),
+	mUsage(GL_STATIC_DRAW),
+	mModel(physx::PxIdentity)
+{
+	readMesh(modelPath);
+}
 
 
 void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, bool depth)
@@ -92,6 +90,21 @@ void Model::draw(const ShaderProgram& shaderProgram, bool depth)
 	draw(physx::PxMat44(physx::PxIdentity), shaderProgram, depth);
 }
 
+
+void Model::readMesh(const char* modelPath)
+{
+	Assimp::Importer importer;
+
+	// TODO: Consider the flags set here. Potential for higher quality or higher performance
+	const auto* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+	{
+		fmt::print("ERROR::ASSIMP::{}\n", importer.GetErrorString());
+		throw std::runtime_error("Failed to load model");
+	}
+
+	processNode(scene->mRootNode, scene);
+}
 
 void Model::processNode(aiNode* node, const aiScene* scene)
 {

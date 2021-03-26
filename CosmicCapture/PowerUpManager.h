@@ -10,7 +10,7 @@
 class PowerUpManager
 {
 public:
-	PowerUpManager(const std::shared_ptr<Camera> camera, Physics& instance);
+	PowerUpManager(std::shared_ptr<Camera> camera, Physics& instance);
 	
 	void pickup(std::shared_ptr<Camera>, Physics&);
 	void use(Physics& instance, const std::map<MovementFlags, bool>& inputs, int playerNum);

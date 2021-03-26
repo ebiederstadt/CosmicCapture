@@ -5,12 +5,14 @@
 
 #include <string>
 #include <GL/glew.h>
+#include <glm/vec4.hpp>
 
 
 class Texture
 {
 public:
 	Texture(const std::string& path, GLuint interpolation, bool flip = true);
+	Texture(const glm::vec4& color);
 
 	void bind() const { glBindTexture(GL_TEXTURE_2D, mID); }
 	static void unbind() { glBindTexture(GL_TEXTURE_2D, 0);  }

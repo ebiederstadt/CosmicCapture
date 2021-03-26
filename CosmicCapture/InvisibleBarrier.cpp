@@ -1,8 +1,10 @@
 #include "InvisibleBarrier.h"
 
+#include "Colors.h"
+
 
 InvisibleBarrier::InvisibleBarrier(std::shared_ptr<Camera> camera) : 
-	Entity("models/blocking_cube", "textures/blank.jpg", camera)
+	Entity("models/blocking_cube", WHITE, camera)
 {}
 
 void InvisibleBarrier::attachPhysics(Physics& instance) {}

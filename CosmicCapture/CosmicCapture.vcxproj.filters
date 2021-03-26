@@ -137,13 +137,9 @@
     <ClInclude Include="InvisibleBarrier.h" />
     <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="GameUI.h" />
+    <ClInclude Include="Colors.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
-    <None Include="arenaTest.mtl" />
-    <None Include="shaders\main.frag" />
-    <None Include="shaders\main.vert" />
-    <None Include="shaders\simple.frag" />
-    <None Include="shaders\simple.vert" />
   </ItemGroup>
 </Project>

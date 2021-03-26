@@ -27,12 +27,31 @@ struct GUIGeometry
 {
 	GUIGeometry();
 
-	std::array<glm::vec2, 4> vertices{};
+	std::array<glm::vec2, 4> vertices;
 };
 
+// Geometry to use for text rendering
+struct FontGeometry
+{
+	FontGeometry();
+	
+	std::array<glm::vec2, 4> vertices;
+	std::array<glm::vec2, 4> texCoords;
+};
 
+class Geometry
+{
+public:
+	virtual void drawData() const = 0;
 
-class GpuGeometry 
+protected:
+	void bind() const { mVertexArray.bind(); }
+
+private:
+	VertexArray mVertexArray;
+};
+
+class GpuGeometry : Geometry
 {
 public:
 	GpuGeometry();
@@ -43,7 +62,7 @@ public:
 	/// <param name="cpuGeom">CPU Geometry to use</param>
 	/// <param name="usage">OpenGL Usage Hint.</param>
 	void uploadData(const CpuGeometry& cpuGeom, unsigned int usage);
-	void drawData() const;
+	void drawData() const override;
 
 private:
 	VertexArray mVertexArray;
@@ -55,21 +74,31 @@ private:
 	ElementBuffer mElementArray;
 
 	int mNumElements = 0;
-
-	void bind() const { mVertexArray.bind(); }
 };
 
-class GUIGPUGeometry
+class GUIGPUGeometry : Geometry
 {
 public:
 	GUIGPUGeometry();
 
 	void uploadData(const GUIGeometry& geom) const;
-	void drawData() const;
+	void drawData() const override;
 
 private:
 	VertexArray mVertexArray;
 	VertexBuffer mVertexBuffer;
+};
 
-	void bind() const { mVertexArray.bind(); }
+class FontGpuGeometry : Geometry
+{
+public:
+	FontGpuGeometry();
+
+	void uploadData(const FontGeometry& geom) const;
+	void drawData() const override;
+
+private:
+	VertexArray mVertexArray;
+	VertexBuffer mVertBuffer;
+	VertexBuffer mTextureBuffer;
 };
