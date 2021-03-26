@@ -15,7 +15,6 @@
 #include "./physics/ContactReportCallback.h"
 
 #include "Camera.h"
-#include "Colors.h"
 #include "Vehicle.h"
 #include "Flag.h"
 #include "FlagDropoffZone.h"
@@ -25,7 +24,6 @@
 
 
 #include "OpponentInput.h"
-#include "GridMarker.h"
 #include "InvisibleBarrier.h"
 
 #include "GlobalState.h"
@@ -34,7 +32,8 @@
 #define M_PI  3.14159265358979323846
 
 float angle = -0.25f;
-
+glm::vec2 g_scale = { 1.f, 1.f };
+glm::vec2 g_pos = { 1.0f, 1.0f };
 
 void initializeGridCenterCoords() {
 	float flatOffset = 4.f; //TUNING POINT
@@ -435,7 +434,6 @@ int main(int argc, char** args) {
 
 		//Update sound
 		engine.setVolume(0.1f + 0.001f*car.getSpeed());
-		printf("%f \n", car.getSpeed());
 
 		shaderProgram.use();
 
@@ -513,6 +511,10 @@ int main(int argc, char** args) {
 
 		ImGui::Text("Camera Position");
 		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
+		ImGui::SliderFloat("x Scale", &g_scale.x, 0.01f, 3.0f);
+		ImGui::SliderFloat("y Scale", &g_scale.y, 0.01f, 3.0f);
+		ImGui::SliderFloat("Position x", &g_pos.x, -3.0f, 3.0f);
+		ImGui::SliderFloat("Position y", &g_pos.y, -3.0f, 3.0f);
 	};
 	
 	// Loop until the user closes the window

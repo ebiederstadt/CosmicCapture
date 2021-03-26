@@ -1,7 +1,7 @@
 #include "Projectile.h"
 
 Projectile::Projectile(std::shared_ptr<Camera> camera) :
-	Entity("models/rocket.obj", "textures/blue.jpg", camera)
+	Entity("models/rocket.obj", "textures/rocket_texture.png", camera)
 {}
 
 void Projectile::attachPhysics(Physics& instance) {
@@ -13,7 +13,7 @@ void Projectile::attachPhysics(Physics& instance) {
 	State::projectileBody->attachShape(*projectile);
 	projectile->release();
 	State::projectileBody->setAngularDamping(0.0f); //I failed highschool physics idk what this means
-	State::projectileBody->setLinearVelocity(PxVec3(dir.x * 10, dir.y * 10, dir.z * 10));
+	State::projectileBody->setLinearVelocity(PxVec3(dir.x * 5, dir.y * 5, dir.z * 5));
 	instance.gScene->addActor(*State::projectileBody);
 }
 
