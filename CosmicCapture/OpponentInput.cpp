@@ -24,6 +24,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 		target = path.top();
 		path.pop();
 	}
+
 	if (current == lastPosition && !reversing) {
 		if (stuckCounter >= stuckThreshold) {
 			reversing = true;
@@ -36,6 +37,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 		stuckCounter = 0;
 		lastPosition = current;
 	}
+
 	std::map<MovementFlags, bool> command;
 	if (reversing) {
 		command[MovementFlags::LEFT] = true;
@@ -85,7 +87,7 @@ std::map<MovementFlags, bool> OpponentInput::followPath() {
 std::pair<int, int> OpponentInput::getGridCoordinates(float globalPosX, float globalPosZ) {
 	int xIndex = std::min((int)((globalPosX + 180.f) / 10.f), 35);
 	int zIndex = std::min((int)((globalPosZ + 180.f) / 10.f), 35);
-	std::pair p(xIndex, zIndex); //swapped
+	std::pair p(xIndex, zIndex); 
 	return p;
 }
 
@@ -131,7 +133,8 @@ int OpponentInput::dirsToCommand(PxVec3 playerDirVec, PxVec3 targetDirVec) {
 	float playerAngleRads = atan2(playerZ, playerX);
 	float targetAngleRads = atan2(targetZ, targetX);
 	int commandNum = 1;
-	if (abs(playerAngleRads - targetAngleRads) < 0.175f) { //TUNING POINT
+
+	if (abs(playerAngleRads - targetAngleRads) < 0.175f) { //TUNING POINT -- magic number = how close you have to be pointing to your target to go straight
 		return commandNum;
 	}
 	if (playerAngleRads > targetAngleRads) {
