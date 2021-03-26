@@ -101,7 +101,7 @@ public:
 
 	void stepPhysics() const;
 
-	PxTriangleMesh* readMesh(const std::string& modelPath);
+	PxTriangleMeshGeometry readMesh(std::string modelPath);
 
 	void processNodeS(aiNode* node, const aiScene* scene);
 	void processVerticesIndices(aiMesh* mesh);

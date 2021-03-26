@@ -140,7 +140,7 @@ void Physics::processVerticesIndices(aiMesh* mesh)
 
 }
 
-PxTriangleMesh* Physics::readMesh(const std::string& modelPath){
+PxTriangleMeshGeometry Physics::readMesh(std::string modelPath) {
 	Assimp::Importer importer;
 	const auto* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -154,28 +154,21 @@ PxTriangleMesh* Physics::readMesh(const std::string& modelPath){
 	std::cout << indicesList.size() << std::endl;
 
 	processNodeS(scene->mRootNode, scene);
-	
+
 	std::cout << vectorList.size() << std::endl;
 	std::cout << indicesList.size() << std::endl;
 
-	PxTriangleMesh* convexMesh = createTriangleMesh32(
-		gPhysics, 
-		gCooking, 
-		static_cast<PxVec3*>(vectorList.data()), 
-		vectorList.size(), 
-		static_cast<PxU32*>(indicesList.data()), 
-		indicesList.size(), 
-		false
-	);
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count = vectorList.size();
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = reinterpret_cast<const void*>(vectorList.data());
 
+	meshDesc.triangles.count = indicesList.size();
+	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	meshDesc.triangles.data = reinterpret_cast<const void*>(indicesList.data());
+	PxTriangleMesh* triangleMesh = gCooking->createTriangleMesh(meshDesc, gPhysics->getPhysicsInsertionCallback());
 
-	PxShape* awallShape = gPhysics->createShape(PxTriangleMeshGeometry(convexMesh), *gMaterial, true); //create shape
-	awallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
-	PxRigidStatic* awallBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create static rigid body - wont move
-	awallBody->attachShape(*awallShape); //stick shape on rigid body
-	awallShape->release(); //free shape 
-	gScene->addActor(*awallBody); //add rigid body to scene
-	return convexMesh;
+	return triangleMesh;
 }
 
 void Physics::generateRedDoor() {
