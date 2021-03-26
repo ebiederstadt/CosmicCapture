@@ -62,6 +62,8 @@
     <ClCompile Include="SpikeTrapPickupZone.cpp" />
     <ClCompile Include="GridMarker.cpp" />
     <ClCompile Include="InvisibleBarrier.cpp" />
+    <ClCompile Include="PowerUpManager.cpp" />
+    <ClCompile Include="GameUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -133,6 +135,8 @@
     <ClInclude Include="SpikeTrapPickupZone.h" />
     <ClInclude Include="GridMarker.h" />
     <ClInclude Include="InvisibleBarrier.h" />
+    <ClInclude Include="PowerUpManager.h" />
+    <ClInclude Include="GameUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

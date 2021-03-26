@@ -81,9 +81,7 @@ void Physics::Initialize()
 
 	printf("Physx initialized\n");
 }
-#include <vector>
-std::vector<PxVec3> vectorList;
-std::vector<unsigned int> indicesList;
+
 void Physics::processNodeS(aiNode* node, const aiScene* scene)
 {
 	// Process all of the the meshes associated with the node
@@ -107,7 +105,7 @@ void Physics::processVerticesIndices(aiMesh* mesh)
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
 		auto vertex = mesh->mVertices[i];
-		vectorList.push_back(PxVec3(vertex.x, vertex.y, vertex.z));
+		vectorList.emplace_back(vertex.x, vertex.y, vertex.z);
 	}
 
 	// Process indices
@@ -122,7 +120,7 @@ void Physics::processVerticesIndices(aiMesh* mesh)
 
 
 }
-void Physics::readMesh(std::string modelPath){
+void Physics::readMesh(const std::string& modelPath){
 	Assimp::Importer importer;
 	const auto* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -135,17 +133,16 @@ void Physics::readMesh(std::string modelPath){
 	std::cout << vectorList.size() << std::endl;
 	std::cout << indicesList.size() << std::endl;
 
-	PxTriangleMeshDesc meshDesc;
-	meshDesc.points.count = vectorList.size();
-	meshDesc.points.stride = sizeof(PxVec3);
-	meshDesc.points.data = reinterpret_cast<const void*>(vectorList.data());
+	PxTriangleMesh* convexMesh = createTriangleMesh32(
+		gPhysics, 
+		gCooking, 
+		static_cast<PxVec3*>(vectorList.data()), 
+		vectorList.size(), 
+		static_cast<PxU32*>(indicesList.data()), 
+		indicesList.size(), 
+		false
+	);
 
-	meshDesc.triangles.count = indicesList.size();
-	float a = indicesList.size();
-	printf("%f \n", a);
-	meshDesc.triangles.stride = 3 * sizeof(PxU32);
-	meshDesc.triangles.data = reinterpret_cast<const void*>(indicesList.data());
-	PxTriangleMesh* convexMesh = gCooking->createTriangleMesh(meshDesc, gPhysics->getPhysicsInsertionCallback());
 
 	PxShape* awallShape = gPhysics->createShape(PxTriangleMeshGeometry(convexMesh), *gMaterial, true); //create shape
 	awallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
@@ -393,4 +390,30 @@ void Physics::setupWheelsSimulationData
 	barRear.mWheel1 = PxVehicleDrive4WWheelOrder::eREAR_RIGHT;
 	barRear.mStiffness = 10000.0f;
 	wheelsSimData->addAntiRollBarData(barRear);
+}
+
+PxTriangleMesh* Physics::createTriangleMesh32(PxPhysics* physics, PxCooking* cooking, const PxVec3* verts,
+                                              PxU32 vertCount, const PxU32* indices32, PxU32 triCount, bool insert)
+{
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count = vertCount;
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = verts;
+
+	meshDesc.triangles.count = triCount;
+	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	meshDesc.triangles.data = indices32;
+
+	if (!insert)
+	{
+		PxDefaultMemoryOutputStream writeBuffer;
+		bool status = cooking->cookTriangleMesh(meshDesc, writeBuffer);
+		if (!status)
+			return nullptr;
+
+		PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+		return physics->createTriangleMesh(readBuffer);
+	}
+
+	return cooking->createTriangleMesh(meshDesc, physics->getPhysicsInsertionCallback());
 }

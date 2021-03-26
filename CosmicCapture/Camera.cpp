@@ -89,7 +89,7 @@ glm::mat4 Camera::getViewMatrix() const
 	return glm::lookAt(pxVec2glm(mEye), pxVec2glm(center), { 0.0f, 1.0f, 0.0f });
 }
 
-void Camera::updateCamera(const physx::PxMat44& model)
+void Camera::updateCamera(const PxMat44& model)
 {
 	const auto modelPos = model.column3.getXYZ();
 	auto back = model.column2.getXYZ() * -10.0f;

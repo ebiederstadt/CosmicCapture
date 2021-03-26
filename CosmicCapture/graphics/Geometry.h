@@ -4,13 +4,13 @@
 #pragma once
 
 #include <vector>
+#include <array>
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "ElementBuffer.h"
-
 
 struct CpuGeometry
 {
@@ -20,6 +20,16 @@ struct CpuGeometry
 
 	std::vector<int> indices;
 };
+
+
+// Simplified form of CPU geometry, to be used in a 2D context
+struct GUIGeometry
+{
+	GUIGeometry();
+
+	std::array<glm::vec2, 4> vertices{};
+};
+
 
 
 class GpuGeometry 
@@ -45,6 +55,21 @@ private:
 	ElementBuffer mElementArray;
 
 	int mNumElements = 0;
+
+	void bind() const { mVertexArray.bind(); }
+};
+
+class GUIGPUGeometry
+{
+public:
+	GUIGPUGeometry();
+
+	void uploadData(const GUIGeometry& geom) const;
+	void drawData() const;
+
+private:
+	VertexArray mVertexArray;
+	VertexBuffer mVertexBuffer;
 
 	void bind() const { mVertexArray.bind(); }
 };

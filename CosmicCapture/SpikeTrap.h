@@ -9,10 +9,10 @@
 class SpikeTrap : public Entity
 {
 public:
-	SpikeTrap(const ShaderProgram& shader, const std::shared_ptr<Camera>& camera);
+	SpikeTrap(const std::shared_ptr<Camera>& camera);
 
 	void attachPhysics(Physics& instance) override {}
-	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap) override;
+	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
 
@@ -29,6 +29,8 @@ private:
 
 	PxRigidStatic* body;
 
+	int m_id;
+	
 	bool active = false;
 	float activationTimer = 0;
 	constexpr static float ACTIVATION_TIME = 3.0f * 60.0f; // ~ 3 seconds for the spike trap to become active

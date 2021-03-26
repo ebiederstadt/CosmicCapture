@@ -5,9 +5,11 @@
 #include <physx/vehicle/PxVehicleUtil.h>
 
 
-Vehicle::Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera, int playerNum, std::string modelPath, std::string bodyTexturePath, std::string tireTexturePath) :
 
-	Entity(modelPath.c_str(), bodyTexturePath.c_str(), shaderProgram, camera)
+Vehicle::Vehicle(std::shared_ptr<Camera> camera, int playerNum, std::string modelPath, std::string bodyTexturePath, std::string tireTexturePath) :
+
+	Entity(modelPath.c_str(), bodyTexturePath.c_str(), camera)
+
 {
 	player = playerNum;
 	if (player >= 0) {
@@ -17,12 +19,14 @@ Vehicle::Vehicle(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> cam
 		movement = VehicleMovement(false);
 	}
 
+
 	//tireTexturePath = "textures/blank.jpg";
 
-	wheel1 = std::make_unique<Model>("models/frontRight.obj", tireTexturePath.c_str(), shaderProgram, camera);
-	wheel2 = std::make_unique<Model>("models/frontLeft.obj", tireTexturePath.c_str(), shaderProgram, camera);
-	wheel3 = std::make_unique<Model>("models/backRight.obj", tireTexturePath.c_str(), shaderProgram, camera);
-	wheel4 = std::make_unique<Model>("models/backLeft.obj", tireTexturePath.c_str(), shaderProgram, camera);
+	wheel1 = std::make_unique<Model>("models/frontRight.obj", tireTexturePath.c_str(), camera);
+	wheel2 = std::make_unique<Model>("models/frontLeft.obj", tireTexturePath.c_str(), camera);
+	wheel3 = std::make_unique<Model>("models/backRight.obj", tireTexturePath.c_str(), camera);
+	wheel4 = std::make_unique<Model>("models/backLeft.obj", tireTexturePath.c_str(), camera);
+
 }
 
 void Vehicle::attachPhysics(Physics& instance)
@@ -63,7 +67,7 @@ void Vehicle::attachPhysics(Physics& instance)
 	movement.startBrakeMode();
 }
 
-void Vehicle::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap)
+void Vehicle::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
 {
 	std::vector<PxMat44> modelMatrices;
 	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
@@ -81,11 +85,11 @@ void Vehicle::draw(Physics& instance, const ShaderProgram& depthTexture, bool de
 		modelMatrices.push_back(shapePose);
 	}
 
-	wheel1->draw(modelMatrices[0], depthTexture, depth, depthMap);
-	wheel2->draw(modelMatrices[1], depthTexture, depth, depthMap);
-	wheel3->draw(modelMatrices[2], depthTexture, depth, depthMap);
-	wheel4->draw(modelMatrices[3], depthTexture, depth, depthMap);
-	mGeometry->draw(modelMatrices[4], depthTexture, depth, depthMap);
+	wheel1->draw(modelMatrices[0], depthTexture, depth);
+	wheel2->draw(modelMatrices[1], depthTexture, depth);
+	wheel3->draw(modelMatrices[2], depthTexture, depth);
+	wheel4->draw(modelMatrices[3], depthTexture, depth);
+	mGeometry->draw(modelMatrices[4], depthTexture, depth);
 }
 
 void Vehicle::simulate(Physics& instance)

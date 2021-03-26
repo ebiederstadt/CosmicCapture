@@ -28,7 +28,6 @@ public:
 	void startImGuiFrame() const;
 	static void renderImGuiFrame();
 
-
 	SDL_Event event{};
 
 private:

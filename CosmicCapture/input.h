@@ -4,14 +4,12 @@
 ///////////////////////////////
 
 #include <map>
-#include <string>
-
 
 #include "SDL/SDL.h"
 
 enum class MovementFlags
 {
-    LEFT, RIGHT, UP, DOWN, ACTION
+    LEFT, RIGHT, UP, DOWN, ACTION, ENTER
 };
 
 

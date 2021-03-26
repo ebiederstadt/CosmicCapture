@@ -4,8 +4,6 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <fmt/format.h>
-
 
 class VertexArray
 {

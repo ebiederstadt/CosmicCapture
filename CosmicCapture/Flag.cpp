@@ -5,11 +5,13 @@
 #include "physics/VehicleFilterShader.h"
 
 
-Flag::Flag(const ShaderProgram& shaderProgram, std::shared_ptr<Camera> camera) :
-	Entity("models/flag.obj", "textures/blank.jpg", shaderProgram, camera)
+
+Flag::Flag(std::shared_ptr<Camera> camera) :
+	Entity("models/flag.obj", "textures/blank.jpg", camera)
+
 {
 
-	mFlagBody = std::make_unique<Model>("models/flag_body.obj", "textures/blank.jpg", shaderProgram, camera);
+	mFlagBody = std::make_unique<Model>("models/flag_body.obj", "textures/blank.jpg",camera);
 }
 
 void Flag::attachPhysics(Physics& instance)
@@ -27,19 +29,19 @@ void Flag::attachPhysics(Physics& instance)
 	//trigger box for picking up the flag
 	pickupShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	pickupShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	State::pickupBox = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 2.f, 0.f)));
-	State::pickupBox->attachShape(*pickupShape);
-	instance.gScene->addActor(*State::pickupBox);
+	State::flagPickupBox = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 2.f, 0.f)));
+	State::flagPickupBox->attachShape(*pickupShape);
+	instance.gScene->addActor(*State::flagPickupBox);
 
 }
 
-void Flag::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth, const unsigned& depthMap)
+void Flag::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
 {
 	// Draw the flag
 	PxTransform transform = State::flagBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mFlagBody->draw(modelMatrix, depthTexture, depth, depthMap);
-	mGeometry->draw(modelMatrix, depthTexture, depth, depthMap);
+	mFlagBody->draw(modelMatrix, depthTexture, depth);
+	mGeometry->draw(modelMatrix, depthTexture, depth);
 }
 
 void Flag::simulate(Physics& instance)
@@ -48,6 +50,7 @@ void Flag::simulate(Physics& instance)
 	float rad = 0;
 
 	if (State::flagPickedUpBy[0]) {
+
 		PxVec3 pos = State::vehicleRDs[0]->getGlobalPose().p;
 		PxMat33 rot = PxMat33(State::vehicleRDs[0]->getGlobalPose().q);
 
@@ -64,15 +67,15 @@ void Flag::simulate(Physics& instance)
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x - 1.8f*offset.x, pos.y + 1.8f, pos.z - 1.8f*offset.z)));
 	}
 	else if (State::flagPickedUpBy[1]) {
-		PxVec3 pos = State::vehicleRDs[1]->getGlobalPose().p;
+		PxVec3 pos = State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else if (State::flagPickedUpBy[2]) {
-		PxVec3 pos = State::vehicleRDs[2]->getGlobalPose().p;
+		PxVec3 pos = State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else if (State::flagPickedUpBy[3]) {
-		PxVec3 pos = State::vehicleRDs[3]->getGlobalPose().p;
+		PxVec3 pos = State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else {
@@ -82,6 +85,6 @@ void Flag::simulate(Physics& instance)
 
 void Flag::cleanUpPhysics()
 {
-	PX_RELEASE(State::pickupBox);
+	PX_RELEASE(State::flagPickupBox);
 	PX_RELEASE(State::flagBody);
 }

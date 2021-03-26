@@ -87,7 +87,7 @@ public:
 	[[nodiscard]] VehicleDesc initVehicleDesc() const;
 
 	void stepPhysics() const;
-	void readMesh(std::string modelPath);
+	void readMesh(const std::string& modelPath);
 	void processNodeS(aiNode* node, const aiScene* scene);
 	void processVerticesIndices(aiMesh* mesh);
 
@@ -137,4 +137,10 @@ public:
 
 	static constexpr PxF32 timestep = 1.0f / 60.0f;
 private:
+	// Cooking parameters
+	std::vector<PxVec3> vectorList;
+	std::vector<unsigned int> indicesList;
+
+	static PxTriangleMesh* createTriangleMesh32(PxPhysics* physics, PxCooking* cooking, const PxVec3* verts,
+	                                            PxU32 vertCount, const PxU32* indices32, PxU32 triCount, bool insert);
 };

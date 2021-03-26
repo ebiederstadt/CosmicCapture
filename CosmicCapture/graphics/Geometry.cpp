@@ -3,6 +3,16 @@
 #include <fmt/format.h>
 
 
+GUIGeometry::GUIGeometry()
+{
+	vertices = {
+		glm::vec2(-1.f, 1.f),
+		glm::vec2(-1.f, -1.f),
+		glm::vec2(1.0f, 1.0f),
+		glm::vec2(1.0f, -1.f)
+	};
+}
+
 GpuGeometry::GpuGeometry():
 	mVertBuffer(0),
 	mNormBuffer(1),
@@ -22,10 +32,26 @@ void GpuGeometry::uploadData(const CpuGeometry& cpuGeom, const unsigned int usag
 	mNumElements = static_cast<int>(cpuGeom.indices.size());
 }
 
-
 void GpuGeometry::drawData() const
 {
 	bind();
 	glDrawElements(GL_TRIANGLES, mNumElements, GL_UNSIGNED_INT, nullptr);
+}
+
+GUIGPUGeometry::GUIGPUGeometry() :
+	mVertexBuffer(0, 2)
+{
+}
+
+void GUIGPUGeometry::uploadData(const GUIGeometry& geom) const
+{
+	bind();
+	mVertexBuffer.uploadData(sizeof(glm::vec2) * geom.vertices.size(), geom.vertices.data(), GL_STATIC_DRAW);
+}
+
+void GUIGPUGeometry::drawData() const
+{
+	bind();
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
