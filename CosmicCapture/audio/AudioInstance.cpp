@@ -22,6 +22,11 @@ AudioInstance::~AudioInstance() {
 		
 		alSourcePlay(source);
 	}
+	void AudioInstance::setVolume(float volume) {
+
+		if (volume > 0.6f) volume = 0.6f;
+		alSourcef(source, AL_GAIN, volume);
+	}
 	void AudioInstance::AudioInstance::stopSound() {
 	
 		alSourcePause(source);

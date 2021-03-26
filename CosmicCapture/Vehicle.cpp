@@ -5,8 +5,11 @@
 #include <physx/vehicle/PxVehicleUtil.h>
 
 
-Vehicle::Vehicle(std::shared_ptr<Camera> camera, int playerNum, std::string texturePath) :
-	Entity("models/car_body.obj", texturePath.c_str(), camera)
+
+Vehicle::Vehicle(std::shared_ptr<Camera> camera, int playerNum, std::string modelPath, std::string bodyTexturePath, std::string tireTexturePath) :
+
+	Entity(modelPath.c_str(), bodyTexturePath.c_str(), camera)
+
 {
 	player = playerNum;
 	if (player >= 0) {
@@ -16,10 +19,14 @@ Vehicle::Vehicle(std::shared_ptr<Camera> camera, int playerNum, std::string text
 		movement = VehicleMovement(false);
 	}
 
-	wheel1 = std::make_unique<Model>("models/frontRight.obj", texturePath.c_str(), camera);
-	wheel2 = std::make_unique<Model>("models/frontLeft.obj", texturePath.c_str(), camera);
-	wheel3 = std::make_unique<Model>("models/backRight.obj", texturePath.c_str(), camera);
-	wheel4 = std::make_unique<Model>("models/backLeft.obj", texturePath.c_str(), camera);
+
+	//tireTexturePath = "textures/blank.jpg";
+
+	wheel1 = std::make_unique<Model>("models/frontRight.obj", tireTexturePath.c_str(), camera);
+	wheel2 = std::make_unique<Model>("models/frontLeft.obj", tireTexturePath.c_str(), camera);
+	wheel3 = std::make_unique<Model>("models/backRight.obj", tireTexturePath.c_str(), camera);
+	wheel4 = std::make_unique<Model>("models/backLeft.obj", tireTexturePath.c_str(), camera);
+
 }
 
 void Vehicle::attachPhysics(Physics& instance)
@@ -180,6 +187,12 @@ void Vehicle::processInput(const std::map<MovementFlags, bool>& inputs)
 			break;
 		}
 	}
+}
+
+float Vehicle::getSpeed() {
+	float speed = abs(mVehicle4W->mDriveDynData.getEngineRotationSpeed());
+
+	return speed;
 }
 
 void Vehicle::cleanUpPhysics()

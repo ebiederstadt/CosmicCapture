@@ -11,6 +11,7 @@ public:
 	void initialize();
 	void loop();
 	void playSound();
+	void setVolume(float volume);
 	void stopSound();
 	bool isSoundPlaying();
 	void cleanup();
