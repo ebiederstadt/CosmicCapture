@@ -97,6 +97,9 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			State::heldPowerUps[i] = PowerUpOptions::SPEED_BOOST;
       speed_boost_pickup.playSound();
 
+		}//Button switch
+		else if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody && !State::arenaSwitch) {
+			State::arenaSwitch = true;
 		}
 
 		if (pairs[i].triggerActor == State::spikeTrapPickupTriggerBody && !State::heldPowerUps[i].has_value()) {
@@ -123,6 +126,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				}
 			}
 		}
+		
 
 	}
 }

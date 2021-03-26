@@ -20,10 +20,13 @@
 #include "Flag.h"
 #include "FlagDropoffZone.h"
 #include "GameUI.h"
+#include "DoorSwitchZone.h"
 #include "PowerUpManager.h"
+
 
 #include "OpponentInput.h"
 #include "GridMarker.h"
+#include "InvisibleBarrier.h"
 
 #include "GlobalState.h"
 
@@ -32,8 +35,118 @@
 
 float angle = -0.25f;
 
-int main(int argc, char** args)
-{
+
+void initializeGridCenterCoords() {
+	float flatOffset = 4.f; //TUNING POINT
+	float diagonalOffset = 1.f; //TUNING POINT
+	bool shifted = false;
+	for (int i = 0; i < 36; i++) {
+		for (int j = 0; j < 36; j++) {
+			State::worldGridCenterCoords[i][j].first = i * 10.f - 180.f + 5.f;
+			State::worldGridCenterCoords[i][j].second = j * 10.f - 180.f + 5.f;
+			shifted = false;
+			if ((i + 1 < 36) && (i - 1 >= 0) && (j + 1 < 36) && (j - 1 >= 0)) {
+				if (State::worldGrid[i + 1][j] == 0) {
+					State::worldGridCenterCoords[i][j].first -= flatOffset;
+					shifted = true;
+				}
+				if (State::worldGrid[i - 1][j] == 0) {
+					State::worldGridCenterCoords[i][j].first += flatOffset;
+					shifted = true;
+				}
+				if (State::worldGrid[i][j + 1] == 0) {
+					State::worldGridCenterCoords[i][j].second -= flatOffset;
+					shifted = true;
+				}
+				if (State::worldGrid[i][j - 1] == 0) {
+					State::worldGridCenterCoords[i][j].second += flatOffset;
+					shifted = true;
+				}
+
+				if (shifted) continue;
+
+				if (State::worldGrid[i - 1][j - 1] == 0) {
+					State::worldGridCenterCoords[i][j].first += diagonalOffset;
+					State::worldGridCenterCoords[i][j].second += diagonalOffset;
+				}
+				if (State::worldGrid[i + 1][j + 1] == 0) {
+					State::worldGridCenterCoords[i][j].first -= diagonalOffset;
+					State::worldGridCenterCoords[i][j].second -= diagonalOffset;
+				}
+				if (State::worldGrid[i + 1][j - 1] == 0) {
+					State::worldGridCenterCoords[i][j].first -= diagonalOffset;
+					State::worldGridCenterCoords[i][j].second += diagonalOffset;
+				}
+				if (State::worldGrid[i - 1][j + 1] == 0) {
+					State::worldGridCenterCoords[i][j].first += diagonalOffset;
+					State::worldGridCenterCoords[i][j].second -= diagonalOffset;
+				}
+				
+			}
+
+		}
+	}
+}
+	
+void updateWorldGridArena1() {
+	State::worldGrid[12][17] = 0;
+	State::worldGrid[12][18] = 0;
+	State::worldGrid[28][17] = 0;
+	State::worldGrid[28][18] = 0;
+	State::worldGrid[7][1] = 0;
+	State::worldGrid[7][2] = 0;
+	State::worldGrid[29][1] = 0;
+	State::worldGrid[29][2] = 0;
+	State::worldGrid[7][33] = 0;
+	State::worldGrid[7][34] = 0;
+	State::worldGrid[29][33] = 0;
+	State::worldGrid[29][34] = 0;
+
+	State::worldGrid[17][12] = 1;
+	State::worldGrid[18][12] = 1;
+	State::worldGrid[17][28] = 1;
+	State::worldGrid[18][28] = 1;
+	State::worldGrid[1][7] = 1;
+	State::worldGrid[2][7] = 1;
+	State::worldGrid[1][29] = 1;
+	State::worldGrid[2][29] = 1;
+	State::worldGrid[33][7] = 1;
+	State::worldGrid[34][7] = 1;
+	State::worldGrid[33][29] = 1;
+	State::worldGrid[34][29] = 1;
+
+}
+void updateWorldGridArena2() {
+	State::worldGrid[12][17] = 1;
+	State::worldGrid[12][18] = 1;
+	State::worldGrid[23][17] = 1;
+	State::worldGrid[23][13] = 1;
+	State::worldGrid[7][1] = 1;
+	State::worldGrid[7][2] = 1;
+	State::worldGrid[29][1] = 1;
+	State::worldGrid[29][2] = 1;
+	State::worldGrid[7][33] = 1;
+	State::worldGrid[7][34] = 1;
+	State::worldGrid[29][33] = 1;
+	State::worldGrid[29][34] = 1;
+
+	State::worldGrid[17][12] = 0;
+	State::worldGrid[18][12] = 0;
+	State::worldGrid[17][23] = 0;
+	State::worldGrid[18][23] = 0;
+	State::worldGrid[1][7] = 0;
+	State::worldGrid[2][7] = 0;
+	State::worldGrid[1][29] = 0;
+	State::worldGrid[2][29] = 0;
+	State::worldGrid[33][7] = 0;
+	State::worldGrid[34][7] = 0;
+	State::worldGrid[33][29] = 0;
+	State::worldGrid[34][29] = 0;
+}
+
+int main(int argc, char** args) {
+	initializeGridCenterCoords();
+	updateWorldGridArena2();
 	// Window Initialization
 	const GLint width = 1280, height = 720;
 	Window window("Cosmic Capture", width, height);
@@ -45,8 +158,10 @@ int main(int argc, char** args)
 	physics.Initialize();
 
 	Input input = Input();
-
-	OpponentInput opponentBrains(1);
+	OpponentInput opponentBrains[3];
+	opponentBrains[0].setPlayerNum(1);
+	opponentBrains[1].setPlayerNum(2);
+	opponentBrains[2].setPlayerNum(3);
 
 
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
@@ -56,8 +171,9 @@ int main(int argc, char** args)
 	simpleDepthShader.compile();
 
 	// The arena model
-	Model arena("models/arena_texture_test.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
 
+	Model redArena("models/redArena.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model blueArena("models/blueArena.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	// Shadow setup start ---------------------------------------------------------------------
 
 	// Configure depth map FBO
@@ -110,17 +226,22 @@ int main(int argc, char** args)
 	Vehicle opponentCar1(sCamera, 1, "models/blueCar.obj", "textures/blue_car_texture.jpg", "textures/blue_tire_texture.jpg");
 	opponentCar1.attachPhysics(physics);
 	State::vehicles[1] = opponentCar1.getVehicle();
-
+	opponentBrains[0].attachVehicle(opponentCar1.getVehicle());
+	
 	Vehicle opponentCar2(sCamera, 2, "models/redCar.obj", "textures/red_car_texture.jpg", "textures/red_tire_texture.jpg");
 	opponentCar2.attachPhysics(physics);
+	opponentBrains[1].attachVehicle(opponentCar2.getVehicle());
+	
 	State::vehicles[2] = opponentCar2.getVehicle();
-
 	Vehicle opponentCar3(sCamera, 3, "models/yellowCar.obj", "textures/yellow_car_texture.jpg", "textures/yellow_tire_texture.jpg");
 
 	opponentCar3.attachPhysics(physics);
 	State::vehicles[3] = opponentCar3.getVehicle();
+	opponentBrains[2].attachVehicle(opponentCar3.getVehicle());
 	
 	Flag flag(sCamera);
+	
+
 	flag.attachPhysics(physics);
 
 	FlagDropoffZone flagDropoffZone0(sCamera, 0);
@@ -128,14 +249,16 @@ int main(int argc, char** args)
 
 	FlagDropoffZone flagDropoffZone1(sCamera, 1);
 	flagDropoffZone1.attachPhysics(physics);
-
-
+	
 	FlagDropoffZone flagDropoffZone2(sCamera, 2);
-
 	flagDropoffZone2.attachPhysics(physics);
 
 	FlagDropoffZone flagDropoffZone3(sCamera, 3);
 	flagDropoffZone3.attachPhysics(physics);
+
+
+	DoorSwitchZone doorSwitchZone(sCamera);
+	doorSwitchZone.attachPhysics(physics);
 
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
@@ -175,21 +298,19 @@ int main(int argc, char** args)
 	ContactReportCallback::initializeSoundTriggers();
 
 
-	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
-	//PxVec3 position1(100.f, 2.0f, 100.0f);
-	//GridMarker gm1(shaderProgram, sCamera, position1);
-	//gm1.attachPhysics(physics);
-	//entities.push_back(&gm1);	
-	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
-	opponentBrains.updatePath(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
-	//get Initial path
-	std::pair<int, int> tempOld = State::lastPos;
-	std::pair<int, int> tempNew = State::lastPos;
-	int aiStuffCounter = 0;
-	int stuckCount = 0; //count how many frames a player has been in the same grid coords
-	int reverseCounter = 0;
-	bool reversing = false;
+	entities.push_back(&doorSwitchZone);
+	InvisibleBarrier barriers(sCamera, 0);
+	barriers.attachPhysics(physics);
+	entities.push_back(&barriers);
 
+
+
+	for (int opponentNum = 1; opponentNum < 4; opponentNum++) {		
+		opponentBrains[opponentNum - 1].updatePath(State::vehicles[opponentNum]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+	}
+	int aiStuffCounter = 0;
+	
+	
 	GameUI gameUI;
 	bool gameStarted = false;
 
@@ -233,58 +354,72 @@ int main(int argc, char** args)
 			std::cout << "Respawning opponent 3" << std::endl;
 			State::killCar3 = false;
 		}
-		
+
 		powerUpManager.pickup(sCamera, physics);
 		// TODO: Make it so that all players can use powerups
 		powerUpManager.use(physics, inputState, 0);
 
+		//arena door switch
+		if (State::arenaSwitch && State::arenaSwitchReady) {
+			//need undraw code here
+			if (State::blueArena) {
+				updateWorldGridArena1();
+				physics.generateRedDoor(); //switch from blue doors to red
+				State::redArena = true;
+				State::blueArena = false;
+				//draw red arena
+				//Model arena("models/redArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+				fmt::print("Button pressed, doors switching\n");
+				fmt::print("Red arena loaded\n");
+			}
+			else if (State::redArena) {
+				updateWorldGridArena2();
+				physics.generateBlueDoor(); //switch from red doors to blue
+				State::blueArena = true;
+				State::redArena = false;
+				//draw blue arena
+				//Model arena("models/blueArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
+				fmt::print("Button pressed, doors switching\n");
+				fmt::print("Blue arena loaded\n");
+			}
+			State::arenaSwitch = false;
+			State::arenaSwitchReady = false;
+			State::arenaTimer = 0;
+		}
+		if (State::arenaSwitch && !State::arenaSwitchReady) {
+			State::arenaSwitch = false;
+		}
+
+
 		//forgive me--------------------
-		PxVec3 target;
-		if (State::targetReached)
-		{
-			target = State::flagDropoffBoxes[3]->getGlobalPose().p;
-		}
-		else
-		{
-			target = State::flagBody->getGlobalPose().p;
-		}
-
-		opponentBrains.updatePath(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, target);
-
-		std::map<MovementFlags, bool> command;
-		command = opponentBrains.getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p,
-		                                  opponentCar3.mGeometry->getModelMatrix().column2.getXYZ());
-
-		tempNew = State::lastPos;
-		if (tempNew == tempOld && !reversing)
-		{
-			stuckCount++;
-			if (stuckCount > 2000)
-			{
-				reversing = true;
-				stuckCount = 0;
+		if (aiStuffCounter % 3 == 0) { //stagger pathfinding on different frames
+			if (State::flagPickedUpBy[1]) {
+				opponentBrains[0].updatePath(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
+			}
+			else {
+				opponentBrains[0].updatePath(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
-		else
-			stuckCount = 0;
-		tempOld = State::lastPos;
-		if (reversing)
-		{
-			command[MovementFlags::LEFT] = true;
-			command[MovementFlags::RIGHT] = true;
-			command[MovementFlags::DOWN] = false;
-			command[MovementFlags::UP] = true;
-			reverseCounter++;
-			if (reverseCounter > 850)
-			{
-				reversing = false;
-				reverseCounter = 0;
+		else if (aiStuffCounter % 3 == 1) {
+			if (State::flagPickedUpBy[2]) {
+				opponentBrains[1].updatePath(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, State::flagDropoffBoxes[2]->getGlobalPose().p);
+			}
+			else {
+				opponentBrains[1].updatePath(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
+		else {
+			if (State::flagPickedUpBy[3]) {
+				opponentBrains[2].updatePath(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, State::flagDropoffBoxes[3]->getGlobalPose().p);
+			}
+			else {
+				opponentBrains[2].updatePath(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
+			}
+		}
+		opponentCar1.processInput(opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
+		opponentCar2.processInput(opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
+		opponentCar3.processInput(opponentBrains[2].getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 
-		if (aiStuffCounter % 11 == 0)
-			command[MovementFlags::UP] = true;
-		opponentCar3.processInput(command);
 		aiStuffCounter++;
 		//------------------------------*/
 
@@ -313,7 +448,9 @@ int main(int argc, char** args)
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		// First pass
-		arena.draw(simpleDepthShader, true);
+
+		if(State::redArena) redArena.draw(simpleDepthShader, true);
+		if(State::blueArena) blueArena.draw(simpleDepthShader, true);
 
 		for (const auto& entity : entities)
 			entity->draw(physics, simpleDepthShader, true);
@@ -345,8 +482,13 @@ int main(int argc, char** args)
 		glActiveTexture(GL_TEXTURE0);
 
 		// Second pass
-		arena.draw(shaderProgram, false);
 
+		if (State::redArena) {
+			redArena.draw(shaderProgram, false);
+		}
+		if (State::blueArena) {
+			blueArena.draw(shaderProgram, false);
+		}
 		for (const auto& entity : entities)
 			entity->draw(physics, shaderProgram, false);
 
@@ -358,15 +500,16 @@ int main(int argc, char** args)
 			gameUI.setCompassDirection(car.mGeometry->getModelMatrix(), State::flagDropoffBoxes[0]->getGlobalPose().p);
 		gameUI.render();
 
-		//player pos for testing
+		//scott's debugging prints----------------------------------------------------------------------------------------------
 		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
 		//PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
-		//int xIndex = (int)((playerPosition.x + 100.f) / 10.f);
-		//int zIndex = (int)((playerPosition.z + 100.f) / 10.f);;
-		//int dir = opponentBrains.getOrientation(playerDir);
-		//printf("%f, %f, %f -- %f, %f, %f\n", playerPosition.x, playerPosition.y, playerPosition.z, playerDir.x, playerDir.y, playerDir.z);
+		//PxVec3 playerToTarget = opponentBrains[0].getPlayerToTargetDir(playerDir, 0, State::flagBody->getGlobalPose().p);
+		//int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
+		//int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
+		//int dir = opponentBrains[1].getOrientation(playerDir);
+		//printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
 		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
-		//printf("%d\n", State::worldGrid[17][6]);
+		//-----------------------------------------------------------------------------------------------------------------------
 
 		ImGui::Text("Camera Position");
 		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);

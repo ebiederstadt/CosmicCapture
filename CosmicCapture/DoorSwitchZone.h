@@ -2,19 +2,14 @@
 #include "Entity.h"
 #include "GlobalState.h"
 #include "physics/VehicleFilterShader.h"
-class GridMarker : public Entity
-{
+class DoorSwitchZone : public Entity {
 public:
-	GridMarker(std::shared_ptr<Camera> camera, PxVec3 pos);
-
+	DoorSwitchZone(std::shared_ptr<Camera> camera);
 	void attachPhysics(Physics& instance) override;
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
-	void setPosition(PxVec3 pos);
-private:
-	PxVec3 position;
-	PxRigidStatic* markerBody[36*36];
+
+	float affectionTimer = 0;
+	constexpr static float AFFECTION_TIME = 10.0f * 60.0f; // The boost will speed up the player for 10 second
 };
-
-

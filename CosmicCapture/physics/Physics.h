@@ -8,6 +8,7 @@
 #include <fmt/format.h>
 #include <assimp/mesh.h>
 #include <assimp/scene.h>
+#include <vector>
 
 #define PX_RELEASE(x) if(x){x->release();x=NULL;}
 #define PVD_HOST "127.0.0.1"
@@ -79,15 +80,29 @@ struct VehicleDesc
 class Physics
 {
 public:
+
+
 	bool inReverseMode;
 	static Physics& Instance();
 	void Initialize();
 	void CleanupPhysics();
 
+	void generateRedDoor();
+	void generateBlueDoor();
+
+	PxTriangleMeshGeometry redDoorMesh = nullptr;
+	PxTriangleMeshGeometry blueDoorMesh = nullptr;
+	PxShape* blueDoorShape = nullptr;
+	PxRigidStatic* blueDoorBody = nullptr;
+	PxShape* redDoorShape = nullptr;
+	PxRigidStatic* redDoorBody = nullptr;
+
 	[[nodiscard]] VehicleDesc initVehicleDesc() const;
 
 	void stepPhysics() const;
-	void readMesh(const std::string& modelPath);
+
+	PxTriangleMesh* readMesh(const std::string& modelPath);
+
 	void processNodeS(aiNode* node, const aiScene* scene);
 	void processVerticesIndices(aiMesh* mesh);
 

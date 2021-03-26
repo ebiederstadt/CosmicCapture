@@ -64,6 +64,7 @@
     <ClCompile Include="InvisibleBarrier.cpp" />
     <ClCompile Include="PowerUpManager.cpp" />
     <ClCompile Include="GameUI.cpp" />
+    <ClCompile Include="DoorSwitchZone.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -138,6 +139,7 @@
     <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="GameUI.h" />
     <ClInclude Include="Colors.h" />
+    <ClInclude Include="DoorSwitchZone.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
