@@ -18,7 +18,7 @@ public:
 
 	void attachOwningVehicle(PxVehicleDrive4W* vehicle) { mOwnerVehicle = vehicle; }
 	void attachAffectedVehicle(PxVehicleDrive4W* vehicle) { mAffectedVehicle = vehicle; }
-	void processInput(const std::map<MovementFlags, bool>& inputs, Physics& instance);
+	bool processInput(const std::map<MovementFlags, bool>& inputs, Physics& instance);
 
 	[[nodiscard]] bool hasOwningVehicle() const { return mOwnerVehicle.has_value(); }
 	[[nodiscard]] bool hasAffectedVehicle() const { return mAffectedVehicle.has_value(); }
@@ -29,6 +29,8 @@ private:
 
 	PxRigidStatic* body;
 
+	int m_id;
+	
 	bool active = false;
 	float activationTimer = 0;
 	constexpr static float ACTIVATION_TIME = 3.0f * 60.0f; // ~ 3 seconds for the spike trap to become active

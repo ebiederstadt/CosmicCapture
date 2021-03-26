@@ -163,5 +163,5 @@ void Model::processMesh(aiMesh* mesh)
 	// TODO: material stuff :)
 
 	// Move into a vector, without copying it
-	mMeshes.emplace_back(geometry, mTexture, mUsage);
+	mMeshes.emplace_back(geometry,mUsage);
 }

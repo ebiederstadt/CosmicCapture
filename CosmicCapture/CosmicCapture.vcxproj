@@ -157,6 +157,7 @@
     <ClCompile Include="audio\AudioInstance.cpp" />
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="FlagDropoffZone.cpp" />
+    <ClCompile Include="GameUI.cpp" />
     <ClCompile Include="GridMarker.cpp" />
     <ClCompile Include="InvisibleBarrier.cpp" />
     <ClCompile Include="OpponentInput.cpp" />
@@ -193,6 +194,7 @@
     <ClCompile Include="physics\VehicleSceneQuery.cpp" />
     <ClCompile Include="physics\VehicleTireFriction.cpp" />
     <ClCompile Include="physics\VehicleMovement.cpp" />
+    <ClCompile Include="PowerUpManager.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="ProjectilePickupZone.cpp" />
     <ClCompile Include="SpeedBoost.cpp" />
@@ -207,6 +209,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="FlagDropoffZone.h" />
+    <ClInclude Include="GameUI.h" />
     <ClInclude Include="GlobalState.h" />
     <ClInclude Include="GridMarker.h" />
     <ClInclude Include="InvisibleBarrier.h" />
@@ -243,6 +246,7 @@
     <ClInclude Include="physics\VehicleSceneQuery.h" />
     <ClInclude Include="physics\VehicleTireFriction.h" />
     <ClInclude Include="physics\VehicleMovement.h" />
+    <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="ProjectilePickupZone.h" />
     <ClInclude Include="SpeedBoost.h" />

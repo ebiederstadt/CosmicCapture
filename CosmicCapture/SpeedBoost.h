@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include "GlobalState.h"
+#include "Input.h"
 #include "physics/Physics.h"
 #include "physics/VehicleFilterShader.h"
 

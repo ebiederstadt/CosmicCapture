@@ -14,8 +14,9 @@ class Projectile : public Entity
 		void simulate(Physics& instance) override;
 		void cleanUpPhysics() override;
 
-		void attachVehicle(PxVehicleDrive4W* vehicle) { mVehicles.push_back(vehicle); }
+		void attachVehicle(PxVehicleDrive4W* vehicle) { mVehicle = vehicle; }
+
 	private:
-		std::vector<PxVehicleDrive4W*> mVehicles;
+		PxVehicleDrive4W* mVehicle;
 };
 
