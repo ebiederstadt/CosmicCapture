@@ -73,4 +73,9 @@ struct State
 	inline static bool speedBoostFinished = false;
 
 	inline static std::map<int, spikeTrapState> spike_trap_states;
+
+	inline static bool killCar0 = false;
+	inline static bool killCar1 = false;
+	inline static bool killCar2 = false;
+	inline static bool killCar3 = false;
 };
