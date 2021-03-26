@@ -51,8 +51,8 @@ void Flag::simulate(Physics& instance)
 
 	if (State::flagPickedUpBy[0]) {
 
-		PxVec3 pos = State::vehicleRDs[0]->getGlobalPose().p;
-		PxMat33 rot = PxMat33(State::vehicleRDs[0]->getGlobalPose().q);
+		PxVec3 pos = State::vehicles[0]->getRigidDynamicActor()->getGlobalPose().p;
+		PxMat33 rot = PxMat33(State::vehicles[0]->getRigidDynamicActor()->getGlobalPose().q);
 
 		PxVec3 offset = rot * PxVec3(0.0f, 0.0f, 1.0f);
 
