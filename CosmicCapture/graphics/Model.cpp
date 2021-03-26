@@ -53,7 +53,7 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 		glUniform3fv(purpleLightLoc, 1, value_ptr(purpleLight));
 		glUniform3fv(orangeLightLoc, 1, value_ptr(orangeLight));
 
-		bool lit = true;
+		bool lit = false;
 		const auto litLoc = glGetUniformLocation(shaderID, "lit");
 		glUniform1i(litLoc, lit);
 

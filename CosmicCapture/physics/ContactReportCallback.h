@@ -1,6 +1,7 @@
 #pragma once
 
 #include <physx/PxPhysicsAPI.h>
+#include "../audio/AudioEngine.h"
 
 using namespace physx;
 
@@ -8,6 +9,9 @@ using namespace physx;
 class ContactReportCallback : public PxSimulationEventCallback
 {
 public:
+
+	static void initializeSoundTriggers();
+
 	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) override
 	{
 		PX_UNUSED(constraints);
@@ -28,6 +32,6 @@ public:
 
 	void onTrigger(PxTriggerPair* pairs, PxU32 count) override;
 	void onAdvance(const PxRigidBody* const*, const PxTransform*, const PxU32) override {}
-	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override {}
+	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override;
 };
 

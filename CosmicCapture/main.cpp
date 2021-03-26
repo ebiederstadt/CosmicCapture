@@ -12,6 +12,8 @@
 
 #include "./audio/AudioEngine.h"
 
+#include "./physics/ContactReportCallback.h"
+
 #include "Camera.h"
 #include "Colors.h"
 #include "Vehicle.h"
@@ -54,14 +56,14 @@ int main(int argc, char** args)
 	simpleDepthShader.compile();
 
 	// The arena model
-	Model arena("models/untitled.obj", WHITE, sCamera);
+	Model arena("models/arena_texture_test.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
 
 	// Shadow setup start ---------------------------------------------------------------------
 
 	// Configure depth map FBO
 	unsigned int depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
-	const unsigned int SHADOW_WIDTH = 1024 * 4, SHADOW_HEIGHT = 1024 * 4;
+	const unsigned int SHADOW_WIDTH = 1024 * 15, SHADOW_HEIGHT = 1024 * 15;
 
 	// create depth texture
 	unsigned int depthMap;
@@ -97,19 +99,24 @@ int main(int argc, char** args)
 	bool quit = false;
 
 	// Entities
-	Vehicle car(sCamera, 0, "textures/blank.jpg");
+
+	Vehicle car(sCamera, 0, "models/car_body.obj", "textures/car_body_texture.jpg", "textures/green_tire_texture.jpg");
+	//Vehicle car(shaderProgram, sCamera, 0, "textures/test_texture.png");
+
 	car.attachPhysics(physics);
 	State::vehicles[0] = car.getVehicle();
 
-	Vehicle opponentCar1(sCamera, 1, "textures/blue.jpg");
+
+	Vehicle opponentCar1(sCamera, 1, "models/blueCar.obj", "textures/blue_car_texture.jpg", "textures/blue_tire_texture.jpg");
 	opponentCar1.attachPhysics(physics);
 	State::vehicles[1] = opponentCar1.getVehicle();
-	
-	Vehicle opponentCar2(sCamera, 2, "textures/pink.jpg");
+
+	Vehicle opponentCar2(sCamera, 2, "models/redCar.obj", "textures/red_car_texture.jpg", "textures/red_tire_texture.jpg");
 	opponentCar2.attachPhysics(physics);
 	State::vehicles[2] = opponentCar2.getVehicle();
-	
-	Vehicle opponentCar3(sCamera, 3, "textures/green.jpg");
+
+	Vehicle opponentCar3(sCamera, 3, "models/yellowCar.obj", "textures/yellow_car_texture.jpg", "textures/yellow_tire_texture.jpg");
+
 	opponentCar3.attachPhysics(physics);
 	State::vehicles[3] = opponentCar3.getVehicle();
 	
@@ -122,18 +129,9 @@ int main(int argc, char** args)
 	FlagDropoffZone flagDropoffZone1(sCamera, 1);
 	flagDropoffZone1.attachPhysics(physics);
 
-	// setup audio
-	AudioEngine soundSystem = AudioEngine();
-	soundSystem.initialize();
-	soundSystem.initializeBuffers();
-	AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
-	music.loop();
-	music.playSound();
-	//AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
-	//engine.loop();
-	//engine.playSound();
 
 	FlagDropoffZone flagDropoffZone2(sCamera, 2);
+
 	flagDropoffZone2.attachPhysics(physics);
 
 	FlagDropoffZone flagDropoffZone3(sCamera, 3);
@@ -151,6 +149,31 @@ int main(int argc, char** args)
 	entities.push_back(&opponentCar3);
 
 	PowerUpManager powerUpManager(sCamera, physics);
+
+	// setup audio
+	AudioEngine soundSystem = AudioEngine();
+	soundSystem.initialize();
+	soundSystem.initializeBuffers();
+	AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
+	music.loop();
+	music.setVolume(0.35f);
+	music.playSound();
+	AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
+    engine.loop();
+	engine.setVolume(0.1f);
+	engine.playSound();
+
+	AudioInstance collision = soundSystem.createInstance(audioConstants::SOUND_FILE_COLLISION);
+	AudioInstance projectile = soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE);
+	AudioInstance flag_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_PICKUP);
+	AudioInstance projectile_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE_PICKUP);
+	AudioInstance spike_trap_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_SPIKE_TRAP_PICKUP);
+	AudioInstance speed_boost_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST_PICKUP);
+	AudioInstance flag_return = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_RETURN);
+	AudioInstance speed_boost = soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST);
+
+	ContactReportCallback::initializeSoundTriggers();
+
 
 	//GRID VISUALS TO HELP ME MAKE AI----------------------------------------
 	//PxVec3 position1(100.f, 2.0f, 100.0f);
@@ -185,6 +208,32 @@ int main(int argc, char** args)
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
 
+		//used for respawning cars
+		if (State::killCar0) {
+			car.getVehicle()->getRigidDynamicActor()->release();
+			car.attachPhysics(physics);
+			std::cout << "Respawning player" << std::endl;
+			State::killCar0 = false;
+		}
+		if (State::killCar1) {
+			opponentCar1.getVehicle()->getRigidDynamicActor()->release();
+			opponentCar1.attachPhysics(physics);
+			std::cout << "Respawning opponent 1" << std::endl;
+			State::killCar1 = false;
+		}
+		if (State::killCar2) {
+			opponentCar2.getVehicle()->getRigidDynamicActor()->release();
+			opponentCar2.attachPhysics(physics);
+			std::cout << "Respawning opponent 2" << std::endl;
+			State::killCar2 = false;
+		}
+		if (State::killCar3) {
+			opponentCar3.getVehicle()->getRigidDynamicActor()->release();
+			opponentCar3.attachPhysics(physics);
+			std::cout << "Respawning opponent 3" << std::endl;
+			State::killCar3 = false;
+		}
+		
 		powerUpManager.pickup(sCamera, physics);
 		// TODO: Make it so that all players can use powerups
 		powerUpManager.use(physics, inputState, 0);
@@ -248,6 +297,10 @@ int main(int argc, char** args)
 
 		// Update camera
 		sCamera->updateCamera(car.mGeometry->getModelMatrix());
+
+		//Update sound
+		engine.setVolume(0.1f + 0.001f*car.getSpeed());
+		printf("%f \n", car.getSpeed());
 
 		shaderProgram.use();
 

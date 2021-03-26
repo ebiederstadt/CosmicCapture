@@ -35,13 +35,13 @@ float shadowCalc(float dotLightNormal)
 	float depth = texture(shadowMap, pos.xy).r;
 
 	// remove shadow irregularities 
-	float bias = max(0.05/4 * (1.0 - dotLightNormal), 0.005/4);
+	float bias = max(0.05/15 * (1.0 - dotLightNormal), 0.005/15);
 	//float bias = 0.5;
 
 	// Used to get blur on shadow 
 	// PCE (percentage-closer filter
 	float shadow = 0.0;
-	vec2 texelSize = 1.0f / textureSize(shadowMap, 0);
+	vec2 texelSize = 0.75f / textureSize(shadowMap, 0);
 	for (int x = -1; x <= 1; x++) 
 	{
 		for (int y = -1; y <= 1; y++) 
@@ -69,7 +69,9 @@ void main()
 
 
     //Ambient light -> dark blue
-	vec3  amb = vec3(0.1f, 0.1f, 0.5f);
+	//vec3  amb = vec3(0.1f, 0.1f, 0.5f);
+	// white
+	vec3  amb = vec3(1.0f, 1.0f, 1.0f);
 
 	//Diffuse calculation
 	vec3 plightDir = normalize(purpleLight - fragPos);
@@ -85,10 +87,18 @@ void main()
 	// Lighting via view position not implemented yet
 	
 	//Specular calculation
-	// vec3 viewDir = normalize(viewPos - fragPos);
-    // vec3 reflectDir = reflect(-lightDir, normal);
-	// float specularStrength = 1.0;
-	// float spec = specularStrength * pow(max(dot(viewDir, reflectDir), 0.0), 32);
+
+	float specularStrength = 1.0;
+
+	// orange side
+	vec3 viewDir = normalize(vec3(fragPosLightSpace) - fragPos);
+    vec3 reflectDir = reflect(-olightDir, normal);
+	float ospec = specularStrength * pow(max(dot(viewDir, reflectDir), 0.0), 32);
+
+	// purple side
+	//vec3 viewDir = normalize(fragPos - vec3(fragPosLightSpace));
+    reflectDir = reflect(-plightDir, normal);
+	float pspec = specularStrength * pow(max(dot(viewDir, reflectDir), 0.0), 32);
 
 	// Shadow calc
 	//float dotLightNormal = dot(olightDir, normal);
@@ -101,9 +111,11 @@ void main()
 	// if(lit) fragColor = vec4((0.3f*pCol + oCol + 0.3f*amb)* color, 1.0f);
 	// if(lit) fragColor = vec4((shadow * (spec + diff) + amb) * color);
 	
+	//if(lit) fragColor = vec4(color, 1.0f);
 	if(lit) fragColor = vec4((shadow * oCol + 0.3f * pCol + 0.3f*amb)* color,1.0f);
 	//if(lit) fragColor = vec4((shadow * oCol + 0.3f*amb)* color,1.0f);
 
-	else fragColor = vec4(color, 1.0f);
+	else fragColor = vec4((shadow * oCol + (1.0f - shadow)*0.5f*pCol + (shadow + 1.0f)*0.3f*amb + shadow*0.5f*ospec*oCol +(1.0f - shadow)*0.2f*pspec*pCol)* color,1.0f);
+	//else fragColor = vec4(color, 1.0f);
 
 }

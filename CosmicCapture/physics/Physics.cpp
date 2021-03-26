@@ -81,9 +81,7 @@ void Physics::Initialize()
 
 	printf("Physx initialized\n");
 }
-#include <vector>
-std::vector<PxVec3> vectorList;
-std::vector<unsigned int> indicesList;
+
 void Physics::processNodeS(aiNode* node, const aiScene* scene)
 {
 	// Process all of the the meshes associated with the node
@@ -107,7 +105,7 @@ void Physics::processVerticesIndices(aiMesh* mesh)
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
 		auto vertex = mesh->mVertices[i];
-		vectorList.push_back(PxVec3(vertex.x, vertex.y, vertex.z));
+		vectorList.emplace_back(vertex.x, vertex.y, vertex.z);
 	}
 
 	// Process indices
@@ -122,7 +120,7 @@ void Physics::processVerticesIndices(aiMesh* mesh)
 
 
 }
-void Physics::readMesh(std::string modelPath){
+void Physics::readMesh(const std::string& modelPath){
 	Assimp::Importer importer;
 	const auto* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -135,15 +133,16 @@ void Physics::readMesh(std::string modelPath){
 	std::cout << vectorList.size() << std::endl;
 	std::cout << indicesList.size() << std::endl;
 
-	PxTriangleMeshDesc meshDesc;
-	meshDesc.points.count = vectorList.size();
-	meshDesc.points.stride = sizeof(PxVec3);
-	meshDesc.points.data = reinterpret_cast<const void*>(vectorList.data());
+	PxTriangleMesh* convexMesh = createTriangleMesh32(
+		gPhysics, 
+		gCooking, 
+		static_cast<PxVec3*>(vectorList.data()), 
+		vectorList.size(), 
+		static_cast<PxU32*>(indicesList.data()), 
+		indicesList.size(), 
+		false
+	);
 
-	meshDesc.triangles.count = indicesList.size();
-	meshDesc.triangles.stride = 3 * sizeof(PxU32);
-	meshDesc.triangles.data = reinterpret_cast<const void*>(indicesList.data());
-	PxTriangleMesh* convexMesh = gCooking->createTriangleMesh(meshDesc, gPhysics->getPhysicsInsertionCallback());
 
 	PxShape* awallShape = gPhysics->createShape(PxTriangleMeshGeometry(convexMesh), *gMaterial, true); //create shape
 	awallShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
@@ -170,7 +169,7 @@ VehicleDesc Physics::initVehicleDesc() const
 	//Set up the wheel mass, radius, width, moment of inertia, and number of wheels.
 	//Moment of inertia is just the moment of inertia of a cylinder.
 	const PxF32 wheelMass = 40.0f;
-	const PxF32 wheelRadius = 0.9f;
+	const PxF32 wheelRadius = 0.8f;
 	const PxF32 wheelWidth = 0.5f;
 	const PxF32 wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
 	const PxU32 nbWheels = 4;
@@ -237,20 +236,20 @@ void Physics::computeWheelCenterActorOffsets4W(const PxF32 wheelFrontZ, const Px
 	//Compute a position for the front wheel and the rear wheel along the z-axis.
 	//Compute the separation between each wheel along the z-axis.
 	const PxF32 numLeftWheels = numWheels / 2.0f;
-	const PxF32 deltaZ = (wheelFrontZ - wheelRearZ) / (numLeftWheels - 0.65f);
+	const PxF32 deltaZ = (wheelFrontZ - wheelRearZ) / (numLeftWheels - 0.6f);
 	//Set the outside of the left and right wheels to be flush with the chassis.
 	//Set the top of the wheel to be just touching the underside of the chassis.
 	//Begin by setting the rear-left/rear-right/front-left,front-right wheels.
 	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eREAR_LEFT] = PxVec3((-chassisDims.x + wheelWidth) * 0.5f,
-	                                                                    -(chassisDims.y / 4 + wheelRadius),
+	                                                                    -(chassisDims.y / 3.5f + wheelRadius),
 	                                                                    wheelRearZ + 0 * deltaZ * 0.5f);
 	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = PxVec3(
-		(+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 4 + wheelRadius), wheelRearZ + 0 * deltaZ * 0.5f);
+		(+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 3.5f + wheelRadius), wheelRearZ + 0 * deltaZ * 0.5f);
 	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = PxVec3(
-		(-chassisDims.x + wheelWidth + 0.2f) * 0.5f, -(chassisDims.y / 3 + wheelRadius),
+		(-chassisDims.x + wheelWidth + 0.2f) * 0.5f, -(chassisDims.y / 2.6f + wheelRadius),
 		wheelRearZ + (numLeftWheels - 1) * deltaZ);
 	wheelCentreOffsets[PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = PxVec3(
-		(+chassisDims.x - wheelWidth - 0.2f) * 0.5f, -(chassisDims.y / 3 + wheelRadius),
+		(+chassisDims.x - wheelWidth - 0.2f) * 0.5f, -(chassisDims.y / 2.6f + wheelRadius),
 		wheelRearZ + (numLeftWheels - 1) * deltaZ);
 	//Set the remaining wheels.
 	for (PxU32 i = 2, wheelCount = 4; i < numWheels - 2; i += 2, wheelCount += 2)
@@ -391,4 +390,30 @@ void Physics::setupWheelsSimulationData
 	barRear.mWheel1 = PxVehicleDrive4WWheelOrder::eREAR_RIGHT;
 	barRear.mStiffness = 10000.0f;
 	wheelsSimData->addAntiRollBarData(barRear);
+}
+
+PxTriangleMesh* Physics::createTriangleMesh32(PxPhysics* physics, PxCooking* cooking, const PxVec3* verts,
+                                              PxU32 vertCount, const PxU32* indices32, PxU32 triCount, bool insert)
+{
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count = vertCount;
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = verts;
+
+	meshDesc.triangles.count = triCount;
+	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	meshDesc.triangles.data = indices32;
+
+	if (!insert)
+	{
+		PxDefaultMemoryOutputStream writeBuffer;
+		bool status = cooking->cookTriangleMesh(meshDesc, writeBuffer);
+		if (!status)
+			return nullptr;
+
+		PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+		return physics->createTriangleMesh(readBuffer);
+	}
+
+	return cooking->createTriangleMesh(meshDesc, physics->getPhysicsInsertionCallback());
 }

@@ -89,11 +89,12 @@ bool SpikeTrap::processInput(const std::map<MovementFlags, bool>& inputs, Physic
 			State::spike_trap_states[m_id].triggerBody = instance.gPhysics->createRigidStatic(PxTransform(currentVehiclePos));
 			State::spike_trap_states[m_id].triggerBody->attachShape(*speedboostPickupTriggerShape);
 			instance.gScene->addActor(*State::spike_trap_states[m_id].triggerBody);
-
+      
 			mOwnerVehicle.reset(); // No longer attached to the vehicle
 			fmt::print("Placed the spike trap!\n");
 			active = true;
 			return true;
+
 		}
 	}
 

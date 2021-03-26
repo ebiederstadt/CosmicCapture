@@ -80,8 +80,8 @@ AudioEngine::~AudioEngine() {}
         alSourcefv(sources[0], AL_VELOCITY, source0Vel);
         alSourcei(sources[0], AL_BUFFER, bufferArray[0]);
 
-        /*
-        loadWavFile("audio_files/engine_loop.wav", bufferArray + 1);
+        
+        loadWavFile("audio_files/engine.wav", bufferArray + 1);
         CheckError();
 
         alSourcef(sources[1], AL_PITCH, 1.0f);
@@ -89,7 +89,79 @@ AudioEngine::~AudioEngine() {}
         alSourcefv(sources[1], AL_POSITION, source0Pos);
         alSourcefv(sources[1], AL_VELOCITY, source0Vel);
         alSourcei(sources[1], AL_BUFFER, bufferArray[1]);
-        */
+
+        loadWavFile("audio_files/collision.wav", bufferArray + 2);
+        CheckError();
+
+        alSourcef(sources[2], AL_PITCH, 1.0f);
+        alSourcef(sources[2], AL_GAIN, 1.0f);
+        alSourcefv(sources[2], AL_POSITION, source0Pos);
+        alSourcefv(sources[2], AL_VELOCITY, source0Vel);
+        alSourcei(sources[2], AL_BUFFER, bufferArray[2]);
+
+        loadWavFile("audio_files/projectile.wav", bufferArray + 3);
+        CheckError();
+
+        alSourcef(sources[3], AL_PITCH, 1.0f);
+        alSourcef(sources[3], AL_GAIN, 2.0f);
+        alSourcefv(sources[3], AL_POSITION, source0Pos);
+        alSourcefv(sources[3], AL_VELOCITY, source0Vel);
+        alSourcei(sources[3], AL_BUFFER, bufferArray[3]);
+
+        loadWavFile("audio_files/flag_pickup.wav", bufferArray + 4);
+        CheckError();
+
+        alSourcef(sources[4], AL_PITCH, 1.0f);
+        alSourcef(sources[4], AL_GAIN, 1.0f);
+        alSourcefv(sources[4], AL_POSITION, source0Pos);
+        alSourcefv(sources[4], AL_VELOCITY, source0Vel);
+        alSourcei(sources[4], AL_BUFFER, bufferArray[4]);
+
+        loadWavFile("audio_files/projectile_pickup.wav", bufferArray + 5);
+        CheckError();
+
+        alSourcef(sources[5], AL_PITCH, 1.0f);
+        alSourcef(sources[5], AL_GAIN, 0.4f);
+        alSourcefv(sources[5], AL_POSITION, source0Pos);
+        alSourcefv(sources[5], AL_VELOCITY, source0Vel);
+        alSourcei(sources[5], AL_BUFFER, bufferArray[5]);
+
+        loadWavFile("audio_files/spike_trap_pickup.wav", bufferArray + 6);
+        CheckError();
+
+        alSourcef(sources[6], AL_PITCH, 1.0f);
+        alSourcef(sources[6], AL_GAIN, 0.4f);
+        alSourcefv(sources[6], AL_POSITION, source0Pos);
+        alSourcefv(sources[6], AL_VELOCITY, source0Vel);
+        alSourcei(sources[6], AL_BUFFER, bufferArray[6]);
+
+        loadWavFile("audio_files/speed_boost_pickup.wav", bufferArray + 7);
+        CheckError();
+
+        alSourcef(sources[7], AL_PITCH, 1.0f);
+        alSourcef(sources[7], AL_GAIN, 0.4f);
+        alSourcefv(sources[7], AL_POSITION, source0Pos);
+        alSourcefv(sources[7], AL_VELOCITY, source0Vel);
+        alSourcei(sources[7], AL_BUFFER, bufferArray[7]);
+
+        loadWavFile("audio_files/flag_return.wav", bufferArray + 8);
+        CheckError();
+
+        alSourcef(sources[8], AL_PITCH, 1.0f);
+        alSourcef(sources[8], AL_GAIN, 1.0f);
+        alSourcefv(sources[8], AL_POSITION, source0Pos);
+        alSourcefv(sources[8], AL_VELOCITY, source0Vel);
+        alSourcei(sources[8], AL_BUFFER, bufferArray[8]);
+
+        loadWavFile("audio_files/speed_boost.wav", bufferArray + 9);
+        CheckError();
+
+        alSourcef(sources[9], AL_PITCH, 0.6f);
+        alSourcef(sources[9], AL_GAIN, 0.8f);
+        alSourcefv(sources[9], AL_POSITION, source0Pos);
+        alSourcefv(sources[9], AL_VELOCITY, source0Vel);
+        alSourcei(sources[9], AL_BUFFER, bufferArray[9]);
+        
     }
 	AudioInstance& AudioEngine::createInstance(int soundFile) {
 

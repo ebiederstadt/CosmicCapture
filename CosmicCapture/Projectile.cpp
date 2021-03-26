@@ -23,7 +23,8 @@ void Projectile::draw(Physics& instance, const ShaderProgram& depthTexture, bool
 	mGeometry->draw(modelMatrix, depthTexture, depth);
 }
 
-void Projectile::simulate(Physics& instance) {}
+void Projectile::simulate(Physics& instance) {
+}
 
 void Projectile::cleanUpPhysics() {
 	PX_RELEASE(State::projectileBody);

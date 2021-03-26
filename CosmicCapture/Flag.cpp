@@ -6,7 +6,6 @@
 #include "Colors.h"
 
 
-
 Flag::Flag(const std::shared_ptr<Camera>& camera) :
 	Entity("models/flag.obj", WHITE, camera)
 {
@@ -46,9 +45,25 @@ void Flag::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth
 
 void Flag::simulate(Physics& instance)
 {
+	float addDeg = 0;
+	float rad = 0;
+
 	if (State::flagPickedUpBy[0]) {
+
 		PxVec3 pos = State::vehicles[0]->getRigidDynamicActor()->getGlobalPose().p;
-		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
+		PxMat33 rot = PxMat33(State::vehicles[0]->getRigidDynamicActor()->getGlobalPose().q);
+
+		PxVec3 offset = rot * PxVec3(0.0f, 0.0f, 1.0f);
+
+		/*
+			PxVec3 dir = State::vehicleRDs[0]->getLinearVelocity();
+		if (dir.x < 0)
+			addDeg = dir.z >= 0 ? 180 : 270;
+		else if (dir.z <= 0) addDeg = 360;
+		rad = abs(abs(atan(dir.z / dir.x)) - addDeg*M_PI/180);
+		*/
+
+		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x - 1.8f*offset.x, pos.y + 1.8f, pos.z - 1.8f*offset.z)));
 	}
 	else if (State::flagPickedUpBy[1]) {
 		PxVec3 pos = State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p;

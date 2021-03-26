@@ -20,5 +20,6 @@ private:
 	constexpr static float MIN_HEIGHT = 2.0f;
 	constexpr static float MAX_HEIGHT = 5.0f;
 	bool ascending = true;
+	
 };
 

@@ -2,6 +2,29 @@
 
 #include <fmt/format.h>
 #include "../GlobalState.h"
+#include <iostream>
+
+#include "../audio/AudioEngine.h"
+
+AudioEngine soundSystem2 = AudioEngine();
+
+AudioInstance flag_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_FLAG_PICKUP);
+AudioInstance projectile_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_PROJECTILE_PICKUP);
+AudioInstance spike_trap_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_SPIKE_TRAP_PICKUP);
+AudioInstance speed_boost_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST_PICKUP);
+AudioInstance flag_return = soundSystem2.createInstance(audioConstants::SOUND_FILE_FLAG_RETURN);
+
+void ContactReportCallback::initializeSoundTriggers() {
+
+	soundSystem2.initialize();
+	soundSystem2.initializeBuffers();
+
+	flag_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_FLAG_PICKUP);
+	projectile_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_PROJECTILE_PICKUP);
+	spike_trap_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_SPIKE_TRAP_PICKUP);
+	speed_boost_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST_PICKUP);
+	flag_return = soundSystem2.createInstance(audioConstants::SOUND_FILE_FLAG_RETURN);
+}
 
 void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 {
@@ -13,6 +36,8 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			if (pairs[i].otherActor == State::vehicles[0]->getRigidDynamicActor() && !State::flagPickedUpBy[0] && !State::flagPickedUp) {
 				State::flagPickedUpBy[0] = true;
 				fmt::print("player 0 picked up flag\n");
+				flag_pickup.playSound();
+				
 			}
 			else if (pairs[i].otherActor == State::vehicles[1]->getRigidDynamicActor() && !State::flagPickedUpBy[1] && !State::flagPickedUp) {
 				State::flagPickedUpBy[1] = true;
@@ -36,6 +61,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			State::flagPickedUpBy[0] = false;
 			State::flagPickedUp = false;
 			State::scores[0]++;
+			flag_return.playSound();
 		}
 		else if (pairs[i].triggerActor == State::flagDropoffBoxes[1] && pairs[i].otherActor == State::vehicles[1]->getRigidDynamicActor() && State::flagPickedUpBy[1])
 		{
@@ -60,13 +86,17 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		}
 
 		// Powerups
+
 		else if (pairs[i].triggerActor == State::projectilePickupTriggerBody && !State::heldPowerUps[i].has_value()) {
 			fmt::print("Player {} picked up projectile.\n", i);
 			State::heldPowerUps[i] = PowerUpOptions::PROJECTILE;
+      projectile_pickup.playSound();
 		}
 		else if (pairs[i].triggerActor == State::speedboostPickupTriggerBody && !State::heldPowerUps[i].has_value()) {
 			fmt::print("Player {} picked up speed boost.\n", i);
 			State::heldPowerUps[i] = PowerUpOptions::SPEED_BOOST;
+      speed_boost_pickup.playSound();
+
 		}
 
 		if (pairs[i].triggerActor == State::spikeTrapPickupTriggerBody && !State::heldPowerUps[i].has_value()) {
@@ -94,5 +124,93 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			}
 		}
 
+	}
+}
+void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) {
+	for (PxU32 i = 0; i < nbPairs; i++)
+	{
+		const PxContactPair& cp = pairs[i];
+
+		if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND) {
+			if ((pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
+				if (State::flagPickedUpBy[0]) {
+					State::killCar0 = true;
+					State::flagPickedUpBy[0] = false;
+					State::flagPickedUp = false;
+				}
+				else if (State::flagPickedUpBy[1]) {
+					State::killCar1 = true;
+					State::flagPickedUpBy[1] = false;
+					State::flagPickedUp = false;
+				}
+				printf("Car 0 and Car 1 have hit\n");
+			}
+			if ((pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor())|| (pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
+				if (State::flagPickedUpBy[0]) {
+					State::killCar0 = true;
+					State::flagPickedUpBy[0] = false;
+					State::flagPickedUp = false;
+				}
+				else if (State::flagPickedUpBy[2]) {
+					State::killCar2 = true;
+					State::flagPickedUpBy[2] = false;
+					State::flagPickedUp = false;
+				}
+				printf("Car 0 and Car 2 have hit\n");
+			}
+			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
+				if (State::flagPickedUpBy[0]) {
+					State::killCar0 = true;
+					State::flagPickedUpBy[0] = false;
+					State::flagPickedUp = false;
+				}
+				else if (State::flagPickedUpBy[3]) {
+					State::killCar3 = true;
+					State::flagPickedUpBy[3] = false;
+					State::flagPickedUp = false;
+				}
+				printf("Car 0 and Car 3 have hit\n");
+			}
+			if ((pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor())) {
+				if (State::flagPickedUpBy[1]) {
+					State::killCar1 = true;
+					State::flagPickedUpBy[1] = false;
+					State::flagPickedUp = false;
+				}
+				else if (State::flagPickedUpBy[2]) {
+					State::killCar2 = true;
+					State::flagPickedUpBy[2] = false;
+					State::flagPickedUp = false;
+				}
+				printf("Car 1 and Car 2 have hit\n");
+			}
+			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor())) {
+				if (State::flagPickedUpBy[1]) {
+					State::killCar1 = true;
+					State::flagPickedUpBy[1] = false;
+					State::flagPickedUp = false;
+				}
+				else if (State::flagPickedUpBy[3]) {
+					State::killCar3 = true;
+					State::flagPickedUpBy[3] = false;
+					State::flagPickedUp = false;
+				}
+				printf("Car 1 and Car 3 have hit\n");
+			}
+			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor())){
+				if (State::flagPickedUpBy[2]) {
+					State::killCar2 = true;
+					State::flagPickedUpBy[2] = false;
+					State::flagPickedUp = false;
+				}
+				else if (State::flagPickedUpBy[3]) {
+					State::killCar3 = true;
+					State::flagPickedUpBy[3] = false;
+					State::flagPickedUp = false;
+				}
+				printf("Car 2 and Car 3 have hit\n");
+			}
+			
+		}
 	}
 }
