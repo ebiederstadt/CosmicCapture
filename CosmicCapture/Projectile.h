@@ -16,7 +16,14 @@ class Projectile : public Entity
 
 		void attachVehicle(PxVehicleDrive4W* vehicle) { mVehicle = vehicle; }
 
+		bool shouldBeDeleted = false; // Set to true when the projectile should be removed from the world
+
 	private:
 		PxVehicleDrive4W* mVehicle;
+		PxRigidDynamic* mBody;
+
+		bool active = false;
+		float activationTimer = 0;
+		constexpr static float ACTIVATION_TIME = 5.0f * 60.0f; // The projectile should only exist in the game world for ~5 seconds before being deleted
 };
 

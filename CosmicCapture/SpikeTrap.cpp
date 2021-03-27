@@ -49,8 +49,7 @@ void SpikeTrap::simulate(Physics& instance)
 		{
 			State::spike_trap_states[m_id].inUse = false;
 			mAffectedVehicle.reset();
-			affectionTimer = 0.0f;
-			State::spike_trap_states[m_id].finished = true;
+			shouldBeDeleted = true;
 		}
 	}
 }

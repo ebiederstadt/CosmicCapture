@@ -34,6 +34,7 @@
 float angle = -0.25f;
 glm::vec2 g_scale = { 1.f, 1.f };
 glm::vec2 g_pos = { 1.0f, 1.0f };
+float scalingFactor = 3.0f;
 
 void initializeGridCenterCoords() {
 	float flatOffset = 4.f; //TUNING POINT
@@ -515,6 +516,7 @@ int main(int argc, char** args) {
 		ImGui::SliderFloat("y Scale", &g_scale.y, 0.01f, 3.0f);
 		ImGui::SliderFloat("Position x", &g_pos.x, -3.0f, 3.0f);
 		ImGui::SliderFloat("Position y", &g_pos.y, -3.0f, 3.0f);
+		ImGui::SliderFloat("Projectile speed scaling factor", &scalingFactor, 1.0f, 5.0f);
 	};
 	
 	// Loop until the user closes the window

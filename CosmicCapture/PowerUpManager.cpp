@@ -122,7 +122,7 @@ void PowerUpManager::simulate(Physics& instance)
 				}
 
 				// Remove the spike trap once it is placed and trapped somebody
-				if (state->second.finished)
+				if (spikeTrap->shouldBeDeleted)
 				{
 					powerup->get()->cleanUpPhysics();
 					state = State::spike_trap_states.erase(state);
@@ -135,25 +135,37 @@ void PowerUpManager::simulate(Physics& instance)
 			}
 		}
 
-		// Speed boost specific stuff
 		if (powerup != mDeployedPowerUps.end())
 		{
+
+			// Speed boost specific stuff
 			const auto speedBoost = dynamic_cast<SpeedBoost*>(powerup->get());
 			if (speedBoost)
 			{
-				if (State::speedBoostFinished)
+				if (speedBoost->shouldBeDeleted)
 				{
-					powerup->get()->cleanUpPhysics();
-					State::speedBoostFinished = false;
+					speedBoost->cleanUpPhysics();
 					powerup = mDeployedPowerUps.erase(powerup);
-
-					increment = false;
+					continue;
 				}
 			}
 
-			if (increment)
-				++powerup;
+			// Projectile specific stuff
+			const auto projectile = dynamic_cast<Projectile*>(powerup->get());
+			if (projectile)
+			{
+				if (projectile->shouldBeDeleted)
+				{
+					projectile->cleanUpPhysics();
+					powerup = mDeployedPowerUps.erase(powerup);
+					continue;
+				}
+			}
 		}
+
+		// Only increment when we did not erase anything from deployed powerups
+		if (increment)
+			++powerup;
 	}
 }
 
