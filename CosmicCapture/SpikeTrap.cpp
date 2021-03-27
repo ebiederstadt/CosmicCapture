@@ -58,8 +58,6 @@ void SpikeTrap::cleanUpPhysics()
 {
 	fmt::print("Cleaning up spike trap {}\n", m_id);
 	PX_RELEASE(body);
-
-	// TODO: This will cause a crash when closing the window when you have multiple spike traps deployed over the map
 	PX_RELEASE(State::spike_trap_states[m_id].triggerBody);
 }
 

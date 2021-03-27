@@ -82,11 +82,9 @@ struct State
 	inline static PxRigidStatic* spikeTrapPickupTriggerBody = nullptr;
 
 	inline static std::map<int, spikeTrapState> spike_trap_states;
+	inline static std::map<int, PxRigidDynamic*> projectileList;
 
-	inline static bool killCar0 = false;
-	inline static bool killCar1 = false;
-	inline static bool killCar2 = false;
-	inline static bool killCar3 = false;
+	inline static std::array<bool, 4> killCars = { false, false, false, false };
 
 	inline static PxRigidStatic* doorSwitchPickupMarkerBody = nullptr;
 	inline static PxRigidStatic* doorSwitchPickupTriggerBody = nullptr;

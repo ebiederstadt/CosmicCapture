@@ -1,9 +1,8 @@
 #include "ContactReportCallback.h"
 
 #include <fmt/format.h>
-#include "../GlobalState.h"
-#include <iostream>
 
+#include "../GlobalState.h"
 #include "../audio/AudioEngine.h"
 
 AudioEngine soundSystem2 = AudioEngine();
@@ -118,7 +117,6 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			State::arenaSwitch = true;
 		}
 
-
 		// Handle colliding into the spike trap
 		for (auto& [id, spikeTrapState] : State::spike_trap_states)
 		{
@@ -139,10 +137,9 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				}
 			}
 		}
-		
-
 	}
 }
+
 void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) {
 	for (PxU32 i = 0; i < nbPairs; i++)
 	{
@@ -151,12 +148,12 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 		if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND) {
 			if ((pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[0]) {
-					State::killCar0 = true;
+					State::killCars[0] = true;
 					State::flagPickedUpBy[0] = false;
 					State::flagPickedUp = false;
 				}
 				else if (State::flagPickedUpBy[1]) {
-					State::killCar1 = true;
+					State::killCars[1] = true;
 					State::flagPickedUpBy[1] = false;
 					State::flagPickedUp = false;
 				}
@@ -164,12 +161,12 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 			}
 			if ((pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor())|| (pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[0]) {
-					State::killCar0 = true;
+					State::killCars[0] = true;
 					State::flagPickedUpBy[0] = false;
 					State::flagPickedUp = false;
 				}
 				else if (State::flagPickedUpBy[2]) {
-					State::killCar2 = true;
+					State::killCars[2] = true;
 					State::flagPickedUpBy[2] = false;
 					State::flagPickedUp = false;
 				}
@@ -177,12 +174,12 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[0]) {
-					State::killCar0 = true;
+					State::killCars[0] = true;
 					State::flagPickedUpBy[0] = false;
 					State::flagPickedUp = false;
 				}
 				else if (State::flagPickedUpBy[3]) {
-					State::killCar3 = true;
+					State::killCars[3] = true;
 					State::flagPickedUpBy[3] = false;
 					State::flagPickedUp = false;
 				}
@@ -190,12 +187,12 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 			}
 			if ((pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[1]) {
-					State::killCar1 = true;
+					State::killCars[1] = true;
 					State::flagPickedUpBy[1] = false;
 					State::flagPickedUp = false;
 				}
 				else if (State::flagPickedUpBy[2]) {
-					State::killCar2 = true;
+					State::killCars[2] = true;
 					State::flagPickedUpBy[2] = false;
 					State::flagPickedUp = false;
 				}
@@ -203,12 +200,12 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[1]) {
-					State::killCar1 = true;
+					State::killCars[1] = true;
 					State::flagPickedUpBy[1] = false;
 					State::flagPickedUp = false;
 				}
 				else if (State::flagPickedUpBy[3]) {
-					State::killCar3 = true;
+					State::killCars[3] = true;
 					State::flagPickedUpBy[3] = false;
 					State::flagPickedUp = false;
 				}
@@ -216,16 +213,35 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor())){
 				if (State::flagPickedUpBy[2]) {
-					State::killCar2 = true;
+					State::killCars[2] = true;
 					State::flagPickedUpBy[2] = false;
 					State::flagPickedUp = false;
 				}
 				else if (State::flagPickedUpBy[3]) {
-					State::killCar3 = true;
+					State::killCars[3] = true;
 					State::flagPickedUpBy[3] = false;
 					State::flagPickedUp = false;
 				}
 				printf("Car 2 and Car 3 have hit\n");
+			}
+
+			// Handle collisions between vehicles and the projectile
+			for (const auto& [id, geometry] : State::projectileList)
+			{
+				for (int j = 0; j < 4; ++j)
+				{
+					if ((pairHeader.actors[0] == geometry && pairHeader.actors[1] == State::vehicles[j]->getRigidDynamicActor()) ||
+						(pairHeader.actors[0] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[1] == geometry))
+					{
+						fmt::print("Projectile collided with car #{}\n", j);
+						State::killCars[j] = true;
+						if (State::flagPickedUpBy[j])
+						{
+							State::flagPickedUpBy[j] = false;
+							State::flagPickedUp = false;
+						}
+					}
+				}
 			}
 			
 		}

@@ -29,8 +29,6 @@
 #include "GlobalState.h"
 
 
-#define M_PI  3.14159265358979323846
-
 float angle = -0.25f;
 glm::vec2 g_scale = { 1.f, 1.f };
 glm::vec2 g_pos = { 1.0f, 1.0f };
@@ -330,29 +328,29 @@ int main(int argc, char** args) {
 		car.processInput(inputState);
 
 		//used for respawning cars
-		if (State::killCar0) {
+		if (State::killCars[0]) {
 			car.getVehicle()->getRigidDynamicActor()->release();
 			car.attachPhysics(physics);
 			std::cout << "Respawning player" << std::endl;
-			State::killCar0 = false;
+			State::killCars[0] = false;
 		}
-		if (State::killCar1) {
+		if (State::killCars[1]) {
 			opponentCar1.getVehicle()->getRigidDynamicActor()->release();
 			opponentCar1.attachPhysics(physics);
 			std::cout << "Respawning opponent 1" << std::endl;
-			State::killCar1 = false;
+			State::killCars[1] = false;
 		}
-		if (State::killCar2) {
+		if (State::killCars[2]) {
 			opponentCar2.getVehicle()->getRigidDynamicActor()->release();
 			opponentCar2.attachPhysics(physics);
 			std::cout << "Respawning opponent 2" << std::endl;
-			State::killCar2 = false;
+			State::killCars[2] = false;
 		}
-		if (State::killCar3) {
+		if (State::killCars[3]) {
 			opponentCar3.getVehicle()->getRigidDynamicActor()->release();
 			opponentCar3.attachPhysics(physics);
 			std::cout << "Respawning opponent 3" << std::endl;
-			State::killCar3 = false;
+			State::killCars[3] = false;
 		}
 
 		powerUpManager.pickup(sCamera, physics);

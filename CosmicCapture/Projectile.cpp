@@ -11,34 +11,51 @@ void Projectile::attachPhysics(Physics& instance) {
 	projectile->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
 	PxVec3 pos = mVehicle->getRigidDynamicActor()->getGlobalPose().p;
 	PxVec3 dir = mVehicle->getRigidDynamicActor()->getLinearVelocity();
-	mBody = instance.gPhysics->createRigidDynamic(PxTransform(PxVec3(pos.x, pos.y + 5.f, pos.z)));
+
+	mBody = instance.gPhysics->createRigidDynamic(PxTransform(pos + dir.getNormalized() * 3.0f));
 	mBody->attachShape(*projectile);
 	projectile->release();
 	mBody->setAngularDamping(0.0f); //I failed highschool physics idk what this means
 	mBody->setLinearVelocity(PxVec3(dir.x * scalingFactor, dir.y * scalingFactor, dir.z * scalingFactor));
 	instance.gScene->addActor(*mBody);
 
-	active = true;
+	deployed = true;
 }
 
 void Projectile::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
-	PxTransform transform = mBody->getGlobalPose();
-	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth);
+	if (active)
+	{
+		PxTransform transform = State::projectileList[mID]->getGlobalPose();
+		PxMat44 modelMatrix(transform);
+		mGeometry->draw(modelMatrix, depthTexture, depth);
+	}
 }
 
 void Projectile::simulate(Physics& instance) {
-	if (active)
+	if (deployed && !active)
 	{
 		activationTimer += 1.0f;
 		if (activationTimer >= ACTIVATION_TIME)
 		{
-			active = false;
+			active = true;
+			mID = static_cast<int>(State::projectileList.size());
+			State::projectileList[mID] = mBody;
+		}
+	}
+	
+	if (active)
+	{
+		removalTimer += 1.0f;
+		if (removalTimer >= REMOVAL_TIME)
+		{
+			deployed = false;
 			shouldBeDeleted = true;
 		}
 	}
 }
 
 void Projectile::cleanUpPhysics() {
-	PX_RELEASE(mBody);
+	PX_RELEASE(State::projectileList[mID]);
+
+	State::projectileList.erase(mID);
 }
