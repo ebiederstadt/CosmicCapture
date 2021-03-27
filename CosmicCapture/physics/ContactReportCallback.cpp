@@ -86,27 +86,40 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		}
 
 		// Powerups
+		for (int j = 0; j < 4; ++j)
+		{
+			if (pairs[i].otherActor == State::vehicles[j]->getRigidDynamicActor() && !State::heldPowerUps[j].has_value())
+			{
+				if (pairs[i].triggerActor == State::projectilePickupTriggerBody)
+				{
+					fmt::print("Player {} picked up projectile.\n", j);
+					State::heldPowerUps[j] = PowerUpOptions::PROJECTILE;
+					projectile_pickup.playSound();
+				}
 
-		else if (pairs[i].triggerActor == State::projectilePickupTriggerBody && !State::heldPowerUps[i].has_value()) {
-			fmt::print("Player {} picked up projectile.\n", i);
-			State::heldPowerUps[i] = PowerUpOptions::PROJECTILE;
-      projectile_pickup.playSound();
+				else if (pairs[i].triggerActor == State::speedboostPickupTriggerBody)
+				{
+					fmt::print("Player {} picked up speed boost.\n", j);
+					State::heldPowerUps[j] = PowerUpOptions::SPEED_BOOST;
+					speed_boost_pickup.playSound();
+				}
+
+				else if (pairs[i].triggerActor == State::spikeTrapPickupTriggerBody)
+				{
+					fmt::print("Player {} picked up spike trap\n", i);
+					State::heldPowerUps[i] = PowerUpOptions::SPIKE_TRAP;
+					spike_trap_pickup.playSound();
+				}
+			}
 		}
-		else if (pairs[i].triggerActor == State::speedboostPickupTriggerBody && !State::heldPowerUps[i].has_value()) {
-			fmt::print("Player {} picked up speed boost.\n", i);
-			State::heldPowerUps[i] = PowerUpOptions::SPEED_BOOST;
-      speed_boost_pickup.playSound();
 
-		}//Button switch
-		else if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody && !State::arenaSwitch) {
+		//Button switch
+		if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody && !State::arenaSwitch) {
 			State::arenaSwitch = true;
 		}
 
-		if (pairs[i].triggerActor == State::spikeTrapPickupTriggerBody && !State::heldPowerUps[i].has_value()) {
-			fmt::print("Player {} picked up spike trap\n", i);
-			State::heldPowerUps[i] = PowerUpOptions::SPIKE_TRAP;
-		}
 
+		// Handle colliding into the spike trap
 		for (auto& [id, spikeTrapState] : State::spike_trap_states)
 		{
 			if (pairs[i].triggerActor == spikeTrapState.triggerBody && spikeTrapState.active)
