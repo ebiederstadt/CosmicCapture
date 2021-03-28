@@ -23,6 +23,8 @@ public:
 	[[nodiscard]] bool hasOwningVehicle() const { return mOwnerVehicle.has_value(); }
 	[[nodiscard]] bool hasAffectedVehicle() const { return mAffectedVehicle.has_value(); }
 
+	bool shouldBeDeleted;
+
 private:
 	std::optional<PxVehicleDrive4W*> mOwnerVehicle;
 	std::optional<PxVehicleDrive4W*> mAffectedVehicle;
