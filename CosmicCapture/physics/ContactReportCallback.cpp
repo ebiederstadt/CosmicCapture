@@ -4,6 +4,7 @@
 
 #include "../GlobalState.h"
 #include "../audio/AudioEngine.h"
+#include "Physics.h"
 
 AudioEngine soundSystem2 = AudioEngine();
 
@@ -146,6 +147,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 		const PxContactPair& cp = pairs[i];
 
 		if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND) {
+			//car hits
 			if ((pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[0]) {
 					State::killCars[0] = true;
@@ -243,7 +245,14 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					}
 				}
 			}
-			
+		
+			//arena hits (only for player)
+			if ((pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::redDoorBody) || (pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::blueDoorBody)) {
+				printf("hit red arena\n");
+			}
+			if ((pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::blueDoorBody) || (pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::blueDoorBody)) {
+				printf("hit blue arena\n");
+			}
 		}
 	}
 }
