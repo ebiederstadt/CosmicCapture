@@ -89,7 +89,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				{
 					fmt::print("Player {} picked up spike trap\n", j);
 					State::heldPowerUps[i] = PowerUpOptions::SPIKE_TRAP;
-					if (j == 0) Audio::spike_trap_pickup.playSound()
+					if (j == 0) Audio::spike_trap_pickup.playSound();
 				}
 			}
 		}
