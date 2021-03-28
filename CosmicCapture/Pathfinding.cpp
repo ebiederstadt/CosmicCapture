@@ -60,7 +60,7 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
     if (isValid(src.first, src.second) == false) {
         //printf("Source is invalid\n");
         std::stack<Pair> dummy;
-        dummy.push(std::make_pair(-1,-1));
+        dummy.push(std::make_pair(-1, -1));
         return dummy;
     }
 
@@ -73,14 +73,19 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
     }
 
     // Either the source or the destination is blocked
-    if (isUnBlocked(grid, src.first, src.second) == false
-        || isUnBlocked(grid, dest.first, dest.second)
-        == false) {
-       // printf("Source or the destination is blocked\n");
+    if (isUnBlocked(grid, src.first, src.second) == false) {
+        // printf("Source or the destination is blocked\n");
         std::stack<Pair> dummy;
         dummy.push(std::make_pair(-1, -1));
         return dummy;
     }
+
+    if (isUnBlocked(grid, dest.first, dest.second) == false) {
+        std::stack<Pair> dummy;
+        dummy.push(std::make_pair(-2, -2));
+        return dummy;
+    }
+
 
     // If the destination cell is the same as source cell
     if (isDestination(src.first, src.second, dest)
