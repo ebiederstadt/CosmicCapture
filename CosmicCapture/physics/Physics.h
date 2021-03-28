@@ -90,6 +90,9 @@ public:
 	void generateRedDoor();
 	void generateBlueDoor();
 
+	//PxTriangleMeshGeometry arenaMesh = nullptr;
+	//PxShape* arenaShape = nullptr;
+	//PxRigidStatic* arenaBody = nullptr;
 	PxTriangleMeshGeometry redDoorMesh = nullptr;
 	PxTriangleMeshGeometry blueDoorMesh = nullptr;
 	PxShape* blueDoorShape = nullptr;

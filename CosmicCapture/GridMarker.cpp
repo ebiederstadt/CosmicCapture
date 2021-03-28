@@ -40,7 +40,7 @@ void GridMarker::draw(Physics& instance, const ShaderProgram& depthTexture, bool
 	for (int i = 0; i <  36*36; i++) {
 		PxTransform transform = markerBody[i]->getGlobalPose();
 		PxMat44 modelMatrix(transform);
-		mGeometry->draw(modelMatrix, depthTexture, depth);
+		mGeometry->draw(modelMatrix, depthTexture, depth, 1);
 	}
 }
 void GridMarker::simulate(Physics& instance) {

@@ -23,12 +23,14 @@ void Projectile::attachPhysics(Physics& instance) {
 }
 
 void Projectile::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
+
 	if (active)
 	{
 		PxTransform transform = State::projectileList[mID]->getGlobalPose();
 		PxMat44 modelMatrix(transform);
-		mGeometry->draw(modelMatrix, depthTexture, depth);
+		mGeometry->draw(modelMatrix, depthTexture, depth, 2);
 	}
+
 }
 
 void Projectile::simulate(Physics& instance) {

@@ -40,8 +40,8 @@ void Flag::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth
 	// Draw the flag
 	PxTransform transform = State::flagBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mFlagBody->draw(modelMatrix, depthTexture, depth);
-	mGeometry->draw(modelMatrix, depthTexture, depth);
+	mFlagBody->draw(modelMatrix, depthTexture, depth, 2);
+	mGeometry->draw(modelMatrix, depthTexture, depth, 2);
 }
 
 void Flag::simulate(Physics& instance)

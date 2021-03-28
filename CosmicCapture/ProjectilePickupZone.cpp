@@ -24,7 +24,7 @@ void ProjectilePickupZone::attachPhysics(Physics& instance) {
 void ProjectilePickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
 	PxTransform transform = pickupBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth);
+	mGeometry->draw(modelMatrix, depthTexture, depth, 1);
 }
 void ProjectilePickupZone::simulate(Physics& instance) {
 	PxVec3 pos = pickupBody->getGlobalPose().p;

@@ -6,25 +6,6 @@
 #include "../audio/AudioEngine.h"
 #include "Physics.h"
 
-AudioEngine soundSystem2 = AudioEngine();
-
-AudioInstance flag_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_FLAG_PICKUP);
-AudioInstance projectile_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_PROJECTILE_PICKUP);
-AudioInstance spike_trap_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_SPIKE_TRAP_PICKUP);
-AudioInstance speed_boost_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST_PICKUP);
-AudioInstance flag_return = soundSystem2.createInstance(audioConstants::SOUND_FILE_FLAG_RETURN);
-
-void ContactReportCallback::initializeSoundTriggers() {
-
-	soundSystem2.initialize();
-	soundSystem2.initializeBuffers();
-
-	flag_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_FLAG_PICKUP);
-	projectile_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_PROJECTILE_PICKUP);
-	spike_trap_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_SPIKE_TRAP_PICKUP);
-	speed_boost_pickup = soundSystem2.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST_PICKUP);
-	flag_return = soundSystem2.createInstance(audioConstants::SOUND_FILE_FLAG_RETURN);
-}
 
 void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 {
@@ -36,7 +17,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			if (pairs[i].otherActor == State::vehicles[0]->getRigidDynamicActor() && !State::flagPickedUpBy[0] && !State::flagPickedUp) {
 				State::flagPickedUpBy[0] = true;
 				fmt::print("player 0 picked up flag\n");
-				flag_pickup.playSound();
+				Audio::flag_pickup.playSound();
 				
 			}
 			else if (pairs[i].otherActor == State::vehicles[1]->getRigidDynamicActor() && !State::flagPickedUpBy[1] && !State::flagPickedUp) {
@@ -61,7 +42,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			State::flagPickedUpBy[0] = false;
 			State::flagPickedUp = false;
 			State::scores[0]++;
-			flag_return.playSound();
+			Audio::flag_return.playSound();
 		}
 		else if (pairs[i].triggerActor == State::flagDropoffBoxes[1] && pairs[i].otherActor == State::vehicles[1]->getRigidDynamicActor() && State::flagPickedUpBy[1])
 		{
@@ -93,22 +74,22 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				if (pairs[i].triggerActor == State::projectilePickupTriggerBody)
 				{
 					fmt::print("Player {} picked up projectile.\n", j);
+          if(j == 0) Audio::projectile_pickup.playSound();
 					State::heldPowerUps[j] = PowerUpOptions::PROJECTILE;
-					projectile_pickup.playSound();
 				}
-
+        
 				else if (pairs[i].triggerActor == State::speedboostPickupTriggerBody)
 				{
 					fmt::print("Player {} picked up speed boost.\n", j);
 					State::heldPowerUps[j] = PowerUpOptions::SPEED_BOOST;
-					speed_boost_pickup.playSound();
+					if (j == 0) Audio::speed_boost_pickup.playSound();
 				}
 
 				else if (pairs[i].triggerActor == State::spikeTrapPickupTriggerBody)
 				{
-					fmt::print("Player {} picked up spike trap\n", i);
+					fmt::print("Player {} picked up spike trap\n", j);
 					State::heldPowerUps[i] = PowerUpOptions::SPIKE_TRAP;
-					spike_trap_pickup.playSound();
+					if (j == 0) Audio::spike_trap_pickup.playSound()
 				}
 			}
 		}
@@ -116,6 +97,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		//Button switch
 		if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody && !State::arenaSwitch) {
 			State::arenaSwitch = true;
+
 		}
 
 		// Handle colliding into the spike trap
@@ -132,6 +114,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				{
 					if (pairs[i].otherActor == State::vehicles[j]->getRigidDynamicActor())
 					{
+						if(j == 0) Audio::collision.playSound();
 						spikeTrapState.actingUpon = j;
 						break;
 					}

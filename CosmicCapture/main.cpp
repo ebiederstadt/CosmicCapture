@@ -170,8 +170,11 @@ int main(int argc, char** args) {
 
 	// The arena model
 
-	Model redArena("models/redArena.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model blueArena("models/blueArena.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/arena.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model walls("models/walls.obj", "textures/walls_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model redGates("models/red_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model blueGates("models/blue_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model skybox("models/skybox.obj", "textures/stars.jpg", sCamera, GL_DYNAMIC_DRAW);
 	// Shadow setup start ---------------------------------------------------------------------
 
 	// Configure depth map FBO
@@ -276,28 +279,25 @@ int main(int argc, char** args) {
 	PowerUpManager powerUpManager(sCamera, physics);
 
 	// setup audio
-	AudioEngine soundSystem = AudioEngine();
-	soundSystem.initialize();
-	soundSystem.initializeBuffers();
-	AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
-	music.loop();
-	music.setVolume(0.35f);
-	music.playSound();
-	AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
-    engine.loop();
-	engine.setVolume(0.1f);
-	engine.playSound();
+	Audio::soundSystem.initialize();
+	Audio::soundSystem.initializeBuffers();
+	Audio::music = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
+	Audio::music.loop();
+	Audio::music.setVolume(0.35f);
+	Audio::music.playSound();
+	Audio::engine = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
+	Audio::engine.loop();
+	Audio::engine.setVolume(0.3f);
+	Audio::engine.playSound();
+	Audio::collision = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_COLLISION);
+	Audio::projectile = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE);
+	Audio::flag_pickup = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_PICKUP);
+	Audio::projectile_pickup = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE_PICKUP);
+	Audio::spike_trap_pickup = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_SPIKE_TRAP_PICKUP);
+	Audio::speed_boost_pickup = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST_PICKUP);
+	Audio::flag_return = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_RETURN);
+	Audio::speed_boost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST);
 
-	AudioInstance collision = soundSystem.createInstance(audioConstants::SOUND_FILE_COLLISION);
-	AudioInstance projectile = soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE);
-	AudioInstance flag_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_PICKUP);
-	AudioInstance projectile_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE_PICKUP);
-	AudioInstance spike_trap_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_SPIKE_TRAP_PICKUP);
-	AudioInstance speed_boost_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST_PICKUP);
-	AudioInstance flag_return = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_RETURN);
-	AudioInstance speed_boost = soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST);
-
-	ContactReportCallback::initializeSoundTriggers();
 
 
 	entities.push_back(&doorSwitchZone);
@@ -334,6 +334,7 @@ int main(int argc, char** args) {
 		powerUpManager.pickup(sCamera, physics);
 		// TODO: Make it so that all players can use powerups
 		powerUpManager.use(physics, inputState, 0);
+
 
 		//arena door switch
 		if (State::arenaSwitch && State::arenaSwitchReady) {
@@ -410,8 +411,7 @@ int main(int argc, char** args) {
 		sCamera->updateCamera(car.mGeometry->getModelMatrix());
 
 		//Update sound
-		engine.setVolume(0.1f + 0.001f*car.getSpeed());
-    
+		Audio::engine.setVolume(0.3f + 0.001f*car.getSpeed());
 		//printf("%f \n", car.getSpeed());
 
 		shaderProgram.use();
@@ -426,8 +426,12 @@ int main(int argc, char** args) {
 
 		// First pass
 
-		if(State::redArena) redArena.draw(simpleDepthShader, true);
-		if(State::blueArena) blueArena.draw(simpleDepthShader, true);
+		arena.draw(simpleDepthShader, true, 1);
+		walls.draw(simpleDepthShader, true, 1);
+		// don't include skybox in depth map
+
+		if(State::redArena) redGates.draw(simpleDepthShader, true, 1);
+		if(State::blueArena) blueGates.draw(simpleDepthShader, true, 1);
 
 		for (const auto& entity : entities)
 			entity->draw(physics, simpleDepthShader, true);
@@ -460,11 +464,15 @@ int main(int argc, char** args) {
 
 		// Second pass
 
+		arena.draw(shaderProgram, false, 1);
+		walls.draw(shaderProgram, false, 1);
+		skybox.draw(shaderProgram, false, 0);
+
 		if (State::redArena) {
-			redArena.draw(shaderProgram, false);
+			redGates.draw(shaderProgram, false, 1);
 		}
 		if (State::blueArena) {
-			blueArena.draw(shaderProgram, false);
+			blueGates.draw(shaderProgram, false, 1);
 		}
 		for (const auto& entity : entities)
 			entity->draw(physics, shaderProgram, false);
@@ -561,7 +569,7 @@ int main(int argc, char** args) {
 		entity->cleanUpPhysics();
 	powerUpManager.cleanUp();
 	physics.CleanupPhysics();
-	soundSystem.killSources();
+	Audio::soundSystem.killSources();
 
 	return 0;
 }

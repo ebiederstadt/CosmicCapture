@@ -75,6 +75,20 @@ void Physics::Initialize()
 	gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
 	gScene->addActor(*gGroundPlane);
 
+	/*
+	arenaMesh = readMesh("./models/arena.obj");
+
+	arenaShape = gPhysics->createShape(PxTriangleMeshGeometry(arenaMesh), *gMaterial, true); //create shape
+	arenaShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
+	arenaBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create static rigid body - wont move
+	arenaBody->attachShape(*arenaShape); //stick shape on rigid body
+	arenaShape->release(); //free shape 
+	gScene->addActor(*arenaBody); //add rigid body to scene
+
+	//PX_RELEASE(arenaBody);
+	*/
+
+	//blueDoorMesh = readMesh("./models/blue_gates.obj");
 	blueDoorMesh = readMesh("./models/blueArena.obj");
 
 	blueDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(blueDoorMesh), *gMaterial, true); //create shape
@@ -86,6 +100,7 @@ void Physics::Initialize()
 
 	PX_RELEASE(blueDoorBody);
 
+	//redDoorMesh = readMesh("./models/red_gates.obj");
 	redDoorMesh = readMesh("./models/redArena.obj");
 
 	redDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(redDoorMesh), *gMaterial, true); //create shape

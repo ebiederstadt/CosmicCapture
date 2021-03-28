@@ -28,7 +28,7 @@ void SpikeTrapPickupZone::draw(Physics& instance, const ShaderProgram& depthText
 {
 	PxTransform transform = pickupBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth);
+	mGeometry->draw(modelMatrix, depthTexture, depth, 1);
 }
 
 void SpikeTrapPickupZone::simulate(Physics& instance)
