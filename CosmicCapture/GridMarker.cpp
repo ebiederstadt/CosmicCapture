@@ -10,7 +10,7 @@ void GridMarker::attachPhysics(Physics& instance)
 	int counter = 0;
 	for (int i = 0; i < 36; i++) {
 		for (int j = 0; j < 36; j++) {
-			PxVec3 p(180.f - 10.f * i, 2.f, 180.f - 10.f * j);
+			PxVec3 p(State::worldGridCenterCoords[i][j].first, 2.f, State::worldGridCenterCoords[i][j].second);
 			PxShape* marker = instance.gPhysics->createShape(PxBoxGeometry(0.1f, 2.f, 0.1f), *instance.gMaterial, true); //create flag shape
 			marker->setSimulationFilterData(PxFilterData(COLLISION_FLAG_SCENERY, COLLISION_FLAG_SCENERY_AGAINST, 0, 0));
 			markerBody[counter] = instance.gPhysics->createRigidStatic(PxTransform(p));

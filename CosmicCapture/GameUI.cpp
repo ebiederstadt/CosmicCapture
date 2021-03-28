@@ -9,6 +9,9 @@
 
 using namespace glm;
 
+// extern vec2 g_scale;
+// extern vec2 g_pos;
+
 ScoreDisplay::ScoreDisplay()
 {
 	GUIGeometry quad;
@@ -155,8 +158,14 @@ void GameUI::renderScores(unsigned int shaderID)
 		mScoreDisplay.scoreDisplays[i].drawData();
 
 		// Draw an icon for the player next to their score
-		model = scale(model, { 0.5f, 0.5f, 0.0f });
-		model = translate(model, { -3.2, 0.6f, 0.f });
+		mShader.use();
+
+		model = scale(model, { 0.78f, 0.66f, 0.0f });
+		model = translate(model, { -1.62f, 0.3f, 0.f });
+
+		/*model = scale(model, { g_scale.x, g_scale.y, 0.0f });
+		model = translate(model, { g_pos.x, g_pos.y, 0.f });*/
+
 		modelLoc = glGetUniformLocation(shaderID, "model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
 
@@ -164,6 +173,7 @@ void GameUI::renderScores(unsigned int shaderID)
 		mScoreDisplay.playerDisplays[i].drawData();
 
 		mTextures.font.bind();
+		mFontShader.use();
 	};
 
 	// Draw the score for the main player

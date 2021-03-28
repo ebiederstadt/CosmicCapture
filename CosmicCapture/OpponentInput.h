@@ -35,7 +35,9 @@ private:
 
 	bool reversing = false;
 	int stuckCounter;
-	float reverseThresholdSpeed = -6.f;
+	float reverseThresholdSpeed = -10.f;
+	int framesReversing = 0;
+	int reversingMax = 750;
 	int stuckThreshold = 250; //TUNING POINT
 	std::pair<int, int> lastPosition;
 };

@@ -49,8 +49,7 @@ void SpikeTrap::simulate(Physics& instance)
 		{
 			State::spike_trap_states[m_id].inUse = false;
 			mAffectedVehicle.reset();
-			affectionTimer = 0.0f;
-			State::spike_trap_states[m_id].finished = true;
+			shouldBeDeleted = true;
 		}
 	}
 }
@@ -59,8 +58,6 @@ void SpikeTrap::cleanUpPhysics()
 {
 	fmt::print("Cleaning up spike trap {}\n", m_id);
 	PX_RELEASE(body);
-
-	// TODO: This will cause a crash when closing the window when you have multiple spike traps deployed over the map
 	PX_RELEASE(State::spike_trap_states[m_id].triggerBody);
 }
 

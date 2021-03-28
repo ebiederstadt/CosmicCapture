@@ -155,7 +155,7 @@ void Physics::processVerticesIndices(aiMesh* mesh)
 
 }
 
-PxTriangleMeshGeometry Physics::readMesh(std::string modelPath) {
+PxTriangleMesh* Physics::readMesh(std::string modelPath) {
 	Assimp::Importer importer;
 	const auto* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -173,15 +173,15 @@ PxTriangleMeshGeometry Physics::readMesh(std::string modelPath) {
 	std::cout << vectorList.size() << std::endl;
 	std::cout << indicesList.size() << std::endl;
 
-	PxTriangleMeshDesc meshDesc;
-	meshDesc.points.count = vectorList.size();
-	meshDesc.points.stride = sizeof(PxVec3);
-	meshDesc.points.data = reinterpret_cast<const void*>(vectorList.data());
-
-	meshDesc.triangles.count = indicesList.size();
-	meshDesc.triangles.stride = 3 * sizeof(PxU32);
-	meshDesc.triangles.data = reinterpret_cast<const void*>(indicesList.data());
-	PxTriangleMesh* triangleMesh = gCooking->createTriangleMesh(meshDesc, gPhysics->getPhysicsInsertionCallback());
+	PxTriangleMesh* triangleMesh = createTriangleMesh32(
+		gPhysics,
+		gCooking,
+		static_cast<PxVec3*>(vectorList.data()),
+		vectorList.size(),
+		static_cast<PxU32*>(indicesList.data()),
+		indicesList.size(),
+		false
+	);
 
 	return triangleMesh;
 }

@@ -15,7 +15,6 @@
 #include "./physics/ContactReportCallback.h"
 
 #include "Camera.h"
-#include "Colors.h"
 #include "Vehicle.h"
 #include "Flag.h"
 #include "FlagDropoffZone.h"
@@ -25,16 +24,15 @@
 
 
 #include "OpponentInput.h"
-#include "GridMarker.h"
 #include "InvisibleBarrier.h"
 
 #include "GlobalState.h"
 
 
-#define M_PI  3.14159265358979323846
-
 float angle = -0.25f;
-
+glm::vec2 g_scale = { 1.f, 1.f };
+glm::vec2 g_pos = { 1.0f, 1.0f };
+float scalingFactor = 3.0f;
 
 void initializeGridCenterCoords() {
 	float flatOffset = 4.f; //TUNING POINT
@@ -91,8 +89,8 @@ void initializeGridCenterCoords() {
 void updateWorldGridArena1() {
 	State::worldGrid[12][17] = 0;
 	State::worldGrid[12][18] = 0;
-	State::worldGrid[28][17] = 0;
-	State::worldGrid[28][18] = 0;
+	State::worldGrid[23][17] = 0;
+	State::worldGrid[23][18] = 0;
 	State::worldGrid[7][1] = 0;
 	State::worldGrid[7][2] = 0;
 	State::worldGrid[29][1] = 0;
@@ -104,8 +102,8 @@ void updateWorldGridArena1() {
 
 	State::worldGrid[17][12] = 1;
 	State::worldGrid[18][12] = 1;
-	State::worldGrid[17][28] = 1;
-	State::worldGrid[18][28] = 1;
+	State::worldGrid[17][23] = 1;
+	State::worldGrid[18][23] = 1;
 	State::worldGrid[1][7] = 1;
 	State::worldGrid[2][7] = 1;
 	State::worldGrid[1][29] = 1;
@@ -120,7 +118,7 @@ void updateWorldGridArena2() {
 	State::worldGrid[12][17] = 1;
 	State::worldGrid[12][18] = 1;
 	State::worldGrid[23][17] = 1;
-	State::worldGrid[23][13] = 1;
+	State::worldGrid[23][18] = 1;
 	State::worldGrid[7][1] = 1;
 	State::worldGrid[7][2] = 1;
 	State::worldGrid[29][1] = 1;
@@ -273,7 +271,11 @@ int main(int argc, char** args) {
 	entities.push_back(&opponentCar1);
 	entities.push_back(&opponentCar2);
 	entities.push_back(&opponentCar3);
-
+	/*
+	GridMarker grid(sCamera, PxVec3());
+	grid.attachPhysics(physics);
+	entities.push_back(&grid);
+	*/
 	PowerUpManager powerUpManager(sCamera, physics);
 
 	// setup audio
@@ -328,33 +330,7 @@ int main(int argc, char** args) {
 		// Physics simulation
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
-
-		//used for respawning cars
-		if (State::killCar0) {
-			car.getVehicle()->getRigidDynamicActor()->release();
-			car.attachPhysics(physics);
-			std::cout << "Respawning player" << std::endl;
-			State::killCar0 = false;
-		}
-		if (State::killCar1) {
-			opponentCar1.getVehicle()->getRigidDynamicActor()->release();
-			opponentCar1.attachPhysics(physics);
-			std::cout << "Respawning opponent 1" << std::endl;
-			State::killCar1 = false;
-		}
-		if (State::killCar2) {
-			opponentCar2.getVehicle()->getRigidDynamicActor()->release();
-			opponentCar2.attachPhysics(physics);
-			std::cout << "Respawning opponent 2" << std::endl;
-			State::killCar2 = false;
-		}
-		if (State::killCar3) {
-			opponentCar3.getVehicle()->getRigidDynamicActor()->release();
-			opponentCar3.attachPhysics(physics);
-			std::cout << "Respawning opponent 3" << std::endl;
-			State::killCar3 = false;
-		}
-
+    
 		powerUpManager.pickup(sCamera, physics);
 		// TODO: Make it so that all players can use powerups
 		powerUpManager.use(physics, inputState, 0);
@@ -364,7 +340,7 @@ int main(int argc, char** args) {
 		if (State::arenaSwitch && State::arenaSwitchReady) {
 			//need undraw code here
 			if (State::blueArena) {
-				updateWorldGridArena1();
+				updateWorldGridArena2();
 				physics.generateRedDoor(); //switch from blue doors to red
 				State::redArena = true;
 				State::blueArena = false;
@@ -374,7 +350,7 @@ int main(int argc, char** args) {
 				fmt::print("Red arena loaded\n");
 			}
 			else if (State::redArena) {
-				updateWorldGridArena2();
+				updateWorldGridArena1();
 				physics.generateBlueDoor(); //switch from red doors to blue
 				State::blueArena = true;
 				State::redArena = false;
@@ -436,7 +412,7 @@ int main(int argc, char** args) {
 
 		//Update sound
 		Audio::engine.setVolume(0.3f + 0.001f*car.getSpeed());
-		printf("%f \n", car.getSpeed());
+		//printf("%f \n", car.getSpeed());
 
 		shaderProgram.use();
 
@@ -508,6 +484,41 @@ int main(int argc, char** args) {
 		else if (State::flagPickedUpBy[0])
 			gameUI.setCompassDirection(car.mGeometry->getModelMatrix(), State::flagDropoffBoxes[0]->getGlobalPose().p);
 		gameUI.render();
+		//const VehicleDesc vehicleDesc = physics.initVehicleDesc();
+		if (State::killCars[0]) {
+			car.getVehicle()->getRigidDynamicActor()->release();
+			State::flagPickedUpBy[0] = false;
+			State::flagPickedUp = false;
+			car.attachPhysics(physics);
+			//const PxTransform startTransform(PxVec3(160.f, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 160.f), PxQuat(PxIdentity)); //inline ternary operators are probably not the best choice but they work for now
+			//car.getVehicle()->getRigidDynamicActor()->setGlobalPose(startTransform);
+			std::cout << "Respawning player" << std::endl;
+			State::killCars[0] = false;
+		} 
+		if (State::killCars[1]) {
+			opponentCar1.getVehicle()->getRigidDynamicActor()->release();
+			State::flagPickedUpBy[1] = false;
+			State::flagPickedUp = false;
+			opponentCar1.attachPhysics(physics);
+			std::cout << "Respawning opponent 1" << std::endl;
+			State::killCars[1] = false;
+		}
+		if (State::killCars[2]) {
+			opponentCar2.getVehicle()->getRigidDynamicActor()->release();
+			State::flagPickedUpBy[2] = false;
+			State::flagPickedUp = false;
+			opponentCar2.attachPhysics(physics);
+			std::cout << "Respawning opponent 2" << std::endl;
+			State::killCars[2] = false;
+		}
+		if (State::killCars[3]) {
+			opponentCar3.getVehicle()->getRigidDynamicActor()->release();
+			State::flagPickedUpBy[3] = false;
+			State::flagPickedUp = false;
+			opponentCar3.attachPhysics(physics);
+			std::cout << "Respawning opponent 3" << std::endl;
+			State::killCars[3] = false;
+		}
 
 		//scott's debugging prints----------------------------------------------------------------------------------------------
 		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
@@ -516,12 +527,18 @@ int main(int argc, char** args) {
 		//int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
 		//int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
 		//int dir = opponentBrains[1].getOrientation(playerDir);
+		printf("%f - %f - %f\n" , State::vehicles[1]->computeForwardSpeed(), State::vehicles[2]->computeForwardSpeed(), State::vehicles[3]->computeForwardSpeed() );
 		//printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
 		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//-----------------------------------------------------------------------------------------------------------------------
 
 		ImGui::Text("Camera Position");
 		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
+		ImGui::SliderFloat("x Scale", &g_scale.x, 0.01f, 3.0f);
+		ImGui::SliderFloat("y Scale", &g_scale.y, 0.01f, 3.0f);
+		ImGui::SliderFloat("Position x", &g_pos.x, -3.0f, 3.0f);
+		ImGui::SliderFloat("Position y", &g_pos.y, -3.0f, 3.0f);
+		ImGui::SliderFloat("Projectile speed scaling factor", &scalingFactor, 1.0f, 5.0f);
 	};
 	
 	// Loop until the user closes the window

@@ -37,10 +37,10 @@ struct ScoreDisplay
 	// Car Textures
 	// TODO: Update these to be the actual cars
 	std::array<Texture, 4> carTextures = {
-		Texture(BLUE),
-		Texture(GREEN),
-		Texture(ORANGE),
-		Texture(TEAL)
+		Texture("textures/greenCar.png", GL_LINEAR, false),
+		Texture("textures/blueCar.png", GL_LINEAR, false),
+		Texture("textures/redCar.png", GL_LINEAR, false),
+		Texture("textures/yellowCar.png", GL_LINEAR, false)
 	};
 };
 
