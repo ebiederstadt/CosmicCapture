@@ -477,7 +477,7 @@ int main(int argc, char** args) {
 			gameUI.setCompassDirection(car.mGeometry->getModelMatrix(), State::flagDropoffBoxes[0]->getGlobalPose().p);
 		gameUI.render();
 		//const VehicleDesc vehicleDesc = physics.initVehicleDesc();
-		if (State::killCar0) {
+		if (State::killCars[0]) {
 			car.getVehicle()->getRigidDynamicActor()->release();
 			State::flagPickedUpBy[0] = false;
 			State::flagPickedUp = false;
@@ -485,31 +485,31 @@ int main(int argc, char** args) {
 			//const PxTransform startTransform(PxVec3(160.f, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 160.f), PxQuat(PxIdentity)); //inline ternary operators are probably not the best choice but they work for now
 			//car.getVehicle()->getRigidDynamicActor()->setGlobalPose(startTransform);
 			std::cout << "Respawning player" << std::endl;
-			State::killCar0 = false;
+			State::killCars[0] = false;
 		} 
-		if (State::killCar1) {
+		if (State::killCars[1]) {
 			opponentCar1.getVehicle()->getRigidDynamicActor()->release();
 			State::flagPickedUpBy[1] = false;
 			State::flagPickedUp = false;
 			opponentCar1.attachPhysics(physics);
 			std::cout << "Respawning opponent 1" << std::endl;
-			State::killCar1 = false;
+			State::killCars[1] = false;
 		}
-		if (State::killCar2) {
+		if (State::killCars[2]) {
 			opponentCar2.getVehicle()->getRigidDynamicActor()->release();
 			State::flagPickedUpBy[2] = false;
 			State::flagPickedUp = false;
 			opponentCar2.attachPhysics(physics);
 			std::cout << "Respawning opponent 2" << std::endl;
-			State::killCar2 = false;
+			State::killCars[2] = false;
 		}
-		if (State::killCar3) {
+		if (State::killCars[3]) {
 			opponentCar3.getVehicle()->getRigidDynamicActor()->release();
 			State::flagPickedUpBy[3] = false;
 			State::flagPickedUp = false;
 			opponentCar3.attachPhysics(physics);
 			std::cout << "Respawning opponent 3" << std::endl;
-			State::killCar3 = false;
+			State::killCars[3] = false;
 		}
 
 		//scott's debugging prints----------------------------------------------------------------------------------------------
