@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "../audio/AudioEngine.h"
+#include "Physics.h"
 
 AudioEngine soundSystem2 = AudioEngine();
 
@@ -136,85 +137,69 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 		const PxContactPair& cp = pairs[i];
 
 		if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND) {
+			//car hits
 			if ((pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[0]) {
 					State::killCar0 = true;
-					State::flagPickedUpBy[0] = false;
-					State::flagPickedUp = false;
 				}
 				else if (State::flagPickedUpBy[1]) {
 					State::killCar1 = true;
-					State::flagPickedUpBy[1] = false;
-					State::flagPickedUp = false;
 				}
 				printf("Car 0 and Car 1 have hit\n");
 			}
 			if ((pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor())|| (pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[0]) {
 					State::killCar0 = true;
-					State::flagPickedUpBy[0] = false;
-					State::flagPickedUp = false;
 				}
 				else if (State::flagPickedUpBy[2]) {
 					State::killCar2 = true;
-					State::flagPickedUpBy[2] = false;
-					State::flagPickedUp = false;
 				}
 				printf("Car 0 and Car 2 have hit\n");
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[0]) {
 					State::killCar0 = true;
-					State::flagPickedUpBy[0] = false;
-					State::flagPickedUp = false;
 				}
 				else if (State::flagPickedUpBy[3]) {
 					State::killCar3 = true;
-					State::flagPickedUpBy[3] = false;
-					State::flagPickedUp = false;
 				}
 				printf("Car 0 and Car 3 have hit\n");
 			}
 			if ((pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[1]) {
 					State::killCar1 = true;
-					State::flagPickedUpBy[1] = false;
-					State::flagPickedUp = false;
 				}
 				else if (State::flagPickedUpBy[2]) {
 					State::killCar2 = true;
-					State::flagPickedUpBy[2] = false;
-					State::flagPickedUp = false;
 				}
 				printf("Car 1 and Car 2 have hit\n");
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[1]) {
 					State::killCar1 = true;
-					State::flagPickedUpBy[1] = false;
-					State::flagPickedUp = false;
 				}
 				else if (State::flagPickedUpBy[3]) {
 					State::killCar3 = true;
-					State::flagPickedUpBy[3] = false;
-					State::flagPickedUp = false;
 				}
 				printf("Car 1 and Car 3 have hit\n");
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor())){
 				if (State::flagPickedUpBy[2]) {
 					State::killCar2 = true;
-					State::flagPickedUpBy[2] = false;
-					State::flagPickedUp = false;
 				}
 				else if (State::flagPickedUpBy[3]) {
 					State::killCar3 = true;
-					State::flagPickedUpBy[3] = false;
-					State::flagPickedUp = false;
 				}
 				printf("Car 2 and Car 3 have hit\n");
 			}
-			
+			//arena hits (only for player)
+			if ((pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::redDoorBody) || (pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::blueDoorBody)) {
+				printf("hit red arena\n");
+			}
+			if ((pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::blueDoorBody) || (pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::blueDoorBody)) {
+				printf("hit blue arena\n");
+			}
+
 		}
 	}
 }
