@@ -93,15 +93,15 @@ public:
 	PxTriangleMeshGeometry redDoorMesh = nullptr;
 	PxTriangleMeshGeometry blueDoorMesh = nullptr;
 	PxShape* blueDoorShape = nullptr;
-	PxRigidStatic* blueDoorBody = nullptr;
+	inline static PxRigidStatic* blueDoorBody = nullptr;
 	PxShape* redDoorShape = nullptr;
-	PxRigidStatic* redDoorBody = nullptr;
+	inline static PxRigidStatic* redDoorBody = nullptr;
 
 	[[nodiscard]] VehicleDesc initVehicleDesc() const;
 
 	void stepPhysics() const;
 
-	PxTriangleMeshGeometry readMesh(std::string modelPath);
+	PxTriangleMesh* readMesh(std::string modelPath);
 
 	void processNodeS(aiNode* node, const aiScene* scene);
 	void processVerticesIndices(aiMesh* mesh);

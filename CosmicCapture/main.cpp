@@ -328,33 +328,6 @@ int main(int argc, char** args) {
 		// Physics simulation
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
-
-		//used for respawning cars
-		if (State::killCar0) {
-			car.getVehicle()->getRigidDynamicActor()->release();
-			car.attachPhysics(physics);
-			std::cout << "Respawning player" << std::endl;
-			State::killCar0 = false;
-		}
-		if (State::killCar1) {
-			opponentCar1.getVehicle()->getRigidDynamicActor()->release();
-			opponentCar1.attachPhysics(physics);
-			std::cout << "Respawning opponent 1" << std::endl;
-			State::killCar1 = false;
-		}
-		if (State::killCar2) {
-			opponentCar2.getVehicle()->getRigidDynamicActor()->release();
-			opponentCar2.attachPhysics(physics);
-			std::cout << "Respawning opponent 2" << std::endl;
-			State::killCar2 = false;
-		}
-		if (State::killCar3) {
-			opponentCar3.getVehicle()->getRigidDynamicActor()->release();
-			opponentCar3.attachPhysics(physics);
-			std::cout << "Respawning opponent 3" << std::endl;
-			State::killCar3 = false;
-		}
-
 		powerUpManager.pickup(sCamera, physics);
 		// TODO: Make it so that all players can use powerups
 		powerUpManager.use(physics, inputState, 0);
@@ -435,7 +408,7 @@ int main(int argc, char** args) {
 
 		//Update sound
 		engine.setVolume(0.1f + 0.001f*car.getSpeed());
-		printf("%f \n", car.getSpeed());
+		//printf("%f \n", car.getSpeed());
 
 		shaderProgram.use();
 
@@ -499,6 +472,41 @@ int main(int argc, char** args) {
 		else if (State::flagPickedUpBy[0])
 			gameUI.setCompassDirection(car.mGeometry->getModelMatrix(), State::flagDropoffBoxes[0]->getGlobalPose().p);
 		gameUI.render();
+		//const VehicleDesc vehicleDesc = physics.initVehicleDesc();
+		if (State::killCar0) {
+			car.getVehicle()->getRigidDynamicActor()->release();
+			State::flagPickedUpBy[0] = false;
+			State::flagPickedUp = false;
+			car.attachPhysics(physics);
+			//const PxTransform startTransform(PxVec3(160.f, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 160.f), PxQuat(PxIdentity)); //inline ternary operators are probably not the best choice but they work for now
+			//car.getVehicle()->getRigidDynamicActor()->setGlobalPose(startTransform);
+			std::cout << "Respawning player" << std::endl;
+			State::killCar0 = false;
+		} 
+		if (State::killCar1) {
+			opponentCar1.getVehicle()->getRigidDynamicActor()->release();
+			State::flagPickedUpBy[1] = false;
+			State::flagPickedUp = false;
+			opponentCar1.attachPhysics(physics);
+			std::cout << "Respawning opponent 1" << std::endl;
+			State::killCar1 = false;
+		}
+		if (State::killCar2) {
+			opponentCar2.getVehicle()->getRigidDynamicActor()->release();
+			State::flagPickedUpBy[2] = false;
+			State::flagPickedUp = false;
+			opponentCar2.attachPhysics(physics);
+			std::cout << "Respawning opponent 2" << std::endl;
+			State::killCar2 = false;
+		}
+		if (State::killCar3) {
+			opponentCar3.getVehicle()->getRigidDynamicActor()->release();
+			State::flagPickedUpBy[3] = false;
+			State::flagPickedUp = false;
+			opponentCar3.attachPhysics(physics);
+			std::cout << "Respawning opponent 3" << std::endl;
+			State::killCar3 = false;
+		}
 
 		//scott's debugging prints----------------------------------------------------------------------------------------------
 		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
