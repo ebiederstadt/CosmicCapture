@@ -11,6 +11,7 @@ uniform sampler2D shadowMap;
 uniform vec3 purpleLight;
 uniform vec3 orangeLight;
 uniform bool lit;
+uniform int type;
 
 uniform float near_plane;
 uniform float far_plane;
@@ -107,12 +108,14 @@ void main()
 	float shadow = shadowCalc(dotLightNormal);
 	//float shadow = LinearizeDepth(shadowCalc(dotLightNormal))/far_plane;
 
-    // if(lit) fragColor = vec4((amb + spec + diff) *color);
-	// if(lit) fragColor = vec4((0.3f*pCol + oCol + 0.3f*amb)* color, 1.0f);
+	//if(lit) fragColor = vec4((0.3f*pCol + oCol + 0.3f*amb)* color, 1.0f);
 	// if(lit) fragColor = vec4((shadow * (spec + diff) + amb) * color);
 	
+	// skybox
+	if (type == 0) fragColor = vec4(color, 1.0f);
+
 	//if(lit) fragColor = vec4(color, 1.0f);
-	if(lit) fragColor = vec4((shadow * oCol + 0.3f * pCol + 0.3f*amb)* color,1.0f);
+	else if(type == 1) fragColor = vec4((shadow * oCol + 0.3f * pCol + 0.3f*amb)* color,1.0f);
 	//if(lit) fragColor = vec4((shadow * oCol + 0.3f*amb)* color,1.0f);
 
 	else fragColor = vec4((shadow * oCol + (1.0f - shadow)*0.5f*pCol + (shadow + 1.0f)*0.3f*amb + shadow*0.5f*ospec*oCol +(1.0f - shadow)*0.2f*pspec*pCol)* color,1.0f);

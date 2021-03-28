@@ -33,10 +33,10 @@ public:
 	Model(const char* modelPath, const glm::vec4& textureColor, std::shared_ptr<Camera> camera);
 
 	// Draw things where the position/rotation/scale changes
-	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, bool depth);
+	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, bool depth, int type);
 
 	// Draw things that stay in the same place
-	void draw(const ShaderProgram& shaderProgram, bool depth);
+	void draw(const ShaderProgram& shaderProgram, bool depth, int type);
 
 	[[nodiscard]] physx::PxMat44 getModelMatrix() const { return mModel; }
 

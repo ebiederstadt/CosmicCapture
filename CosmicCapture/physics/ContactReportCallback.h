@@ -10,8 +10,6 @@ class ContactReportCallback : public PxSimulationEventCallback
 {
 public:
 
-	static void initializeSoundTriggers();
-
 	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) override
 	{
 		PX_UNUSED(constraints);

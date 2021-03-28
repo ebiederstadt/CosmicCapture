@@ -21,7 +21,7 @@ void SpikeTrap::draw(Physics& instance, const ShaderProgram& depthTexture, bool 
 	if (!hasOwningVehicle())
 	{
 	const PxMat44 modelMatrix(body->getGlobalPose());
-		mGeometry->draw(modelMatrix, depthTexture, depth);
+		mGeometry->draw(modelMatrix, depthTexture, depth, 1);
 	}
 }
 

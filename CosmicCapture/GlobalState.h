@@ -4,6 +4,7 @@
 #include <optional>
 #include <array>
 #include <map>
+#include "./audio/AudioEngine.h"
 
 
 using namespace physx;
@@ -102,5 +103,21 @@ struct State
 	inline static bool blueArena = false;
 	inline static bool redArena = true;
 	inline static int arenaTimer = 0;
+
+};
+
+struct Audio
+{
+	inline static AudioEngine soundSystem = AudioEngine();
+	inline static AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
+	inline static AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
+	inline static AudioInstance collision = soundSystem.createInstance(audioConstants::SOUND_FILE_COLLISION);
+	inline static AudioInstance projectile = soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE);
+	inline static AudioInstance flag_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_PICKUP);
+	inline static AudioInstance projectile_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE_PICKUP);
+	inline static AudioInstance spike_trap_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_SPIKE_TRAP_PICKUP);
+	inline static AudioInstance speed_boost_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST_PICKUP);
+	inline static AudioInstance flag_return = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_RETURN);
+	inline static AudioInstance speed_boost = soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST);
 
 };

@@ -29,7 +29,7 @@ Model::Model(const char* modelPath, const glm::vec4& textureColor , std::shared_
 }
 
 
-void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, bool depth)
+void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, bool depth, int type)
 {
 	setModel(modelMatrix);
 
@@ -53,9 +53,9 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 		glUniform3fv(purpleLightLoc, 1, value_ptr(purpleLight));
 		glUniform3fv(orangeLightLoc, 1, value_ptr(orangeLight));
 
-		bool lit = false;
-		const auto litLoc = glGetUniformLocation(shaderID, "lit");
-		glUniform1i(litLoc, lit);
+		//bool lit = false;
+		//const auto litLoc = glGetUniformLocation(shaderID, "lit");
+		//glUniform1i(litLoc, lit);
 
 		const auto viewLoc = glGetUniformLocation(shaderID, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(mCameraPointer->getViewMatrix()));
@@ -63,6 +63,8 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 		const auto projectionLoc = glGetUniformLocation(shaderID, "projection");
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(mCameraPointer->perspectiveMatrix));
 
+		const auto typeLoc = glGetUniformLocation(shaderID, "type");
+		glUniform1i(typeLoc, type);
 	}
 
 
@@ -85,9 +87,9 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 	if (!depth) Texture::unbind();
 }
 
-void Model::draw(const ShaderProgram& shaderProgram, bool depth)
+void Model::draw(const ShaderProgram& shaderProgram, bool depth, int type)
 {
-	draw(physx::PxMat44(physx::PxIdentity), shaderProgram, depth);
+	draw(physx::PxMat44(physx::PxIdentity), shaderProgram, depth, type);
 }
 
 

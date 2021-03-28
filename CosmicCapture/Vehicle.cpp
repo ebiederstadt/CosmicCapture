@@ -85,11 +85,11 @@ void Vehicle::draw(Physics& instance, const ShaderProgram& depthTexture, bool de
 		modelMatrices.push_back(shapePose);
 	}
 
-	wheel1->draw(modelMatrices[0], depthTexture, depth);
-	wheel2->draw(modelMatrices[1], depthTexture, depth);
-	wheel3->draw(modelMatrices[2], depthTexture, depth);
-	wheel4->draw(modelMatrices[3], depthTexture, depth);
-	mGeometry->draw(modelMatrices[4], depthTexture, depth);
+	wheel1->draw(modelMatrices[0], depthTexture, depth, 2);
+	wheel2->draw(modelMatrices[1], depthTexture, depth, 2);
+	wheel3->draw(modelMatrices[2], depthTexture, depth, 2);
+	wheel4->draw(modelMatrices[3], depthTexture, depth, 2);
+	mGeometry->draw(modelMatrices[4], depthTexture, depth, 2);
 }
 
 void Vehicle::simulate(Physics& instance)

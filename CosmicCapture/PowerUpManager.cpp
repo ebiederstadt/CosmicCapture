@@ -8,6 +8,8 @@
 #include "ProjectilePickupZone.h"
 #include "Projectile.h"
 
+#include "./audio/AudioEngine.h"
+
 PowerUpManager::PowerUpManager(const std::shared_ptr<Camera> camera, Physics& instance)
 {
 	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(camera));
@@ -72,6 +74,8 @@ void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>&
 			powerup->attachPhysics(instance);
 			mDeployedPowerUps.push_back(std::move(powerup));
 			State::heldPowerUps[playerNum].reset();
+
+			if (playerNum == 0) Audio::projectile.playSound();
 		}
 	} else if (dynamic_cast<SpeedBoost*>(mHeldPowerUps[playerNum].get()))
 	{
@@ -81,6 +85,8 @@ void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>&
 			auto powerup = static_cast<std::unique_ptr<Entity>>(mHeldPowerUps[playerNum].release());
 			mDeployedPowerUps.push_back(std::move(powerup));
 			State::heldPowerUps[playerNum].reset();
+
+			if (playerNum == 0) Audio::speed_boost.playSound();
 		}
 	} else if (dynamic_cast<SpikeTrap*>(mHeldPowerUps[playerNum].get()))
 	{
@@ -90,6 +96,8 @@ void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>&
 			auto powerup = static_cast<std::unique_ptr<Entity>>(mHeldPowerUps[playerNum].release());
 			mDeployedPowerUps.push_back(std::move(powerup));
 			State::heldPowerUps[playerNum].reset();
+
+			if (playerNum == 0) Audio::collision.playSound();
 		}
 	}
 }

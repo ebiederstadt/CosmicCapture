@@ -31,7 +31,7 @@ void DoorSwitchZone::draw(Physics& instance, const ShaderProgram& depthTexture, 
 	// Draw the drop-off box
 	PxTransform transform = State::doorSwitchPickupMarkerBody->getGlobalPose();
 	PxMat44 modelMatrix = PxMat44(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth);
+	mGeometry->draw(modelMatrix, depthTexture, depth, 1);
 }
 
 void DoorSwitchZone::simulate(Physics& instance)
