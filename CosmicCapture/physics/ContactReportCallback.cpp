@@ -83,25 +83,33 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		{
 			if (pairs[i].otherActor == State::vehicles[j]->getRigidDynamicActor() && !State::heldPowerUps[j].has_value())
 			{
-				if (pairs[i].triggerActor == State::projectilePickupTriggerBody)
+				for (const auto& [id, geom] : State::projectilePickupTriggerBodies)
 				{
-					fmt::print("Player {} picked up projectile.\n", j);
-					if(j == 0) Audio::projectile_pickup.playSound();
-					State::heldPowerUps[j] = PowerUpOptions::PROJECTILE;
+					if (pairs[i].triggerActor == geom)
+					{
+						fmt::print("Player {} picked up projectile.\n", j);
+						if(j == 0) Audio::projectile_pickup.playSound();
+						State::heldPowerUps[j] = PowerUpOptions::PROJECTILE;
+					}
 				}
-        
-				else if (pairs[i].triggerActor == State::speedboostPickupTriggerBody)
+				for (const auto& [id, geom] : State::speedBoostPickupTriggerBodies)
 				{
-					fmt::print("Player {} picked up speed boost.\n", j);
-					State::heldPowerUps[j] = PowerUpOptions::SPEED_BOOST;
-					if (j == 0) Audio::speed_boost_pickup.playSound();
+					if (pairs[i].triggerActor == geom)
+					{
+						fmt::print("Player {} picked up speed boost.\n", j);
+						State::heldPowerUps[j] = PowerUpOptions::SPEED_BOOST;
+						if (j == 0) Audio::speed_boost_pickup.playSound();
+					}
 				}
 
-				else if (pairs[i].triggerActor == State::spikeTrapPickupTriggerBody)
+				for (const auto& [id, geom] : State::spikeTrapPickupTriggerBodies)
 				{
-					fmt::print("Player {} picked up spike trap\n", j);
-					State::heldPowerUps[i] = PowerUpOptions::SPIKE_TRAP;
-					if (j == 0) Audio::spike_trap_pickup.playSound();
+					if (pairs[i].triggerActor == geom)
+					{
+						fmt::print("Player {} picked up spike trap\n", j);
+						State::heldPowerUps[i] = PowerUpOptions::SPIKE_TRAP;
+						if (j == 0) Audio::spike_trap_pickup.playSound();
+					}
 				}
 			}
 		}

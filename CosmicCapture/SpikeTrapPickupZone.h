@@ -7,7 +7,7 @@ using namespace physx;
 class SpikeTrapPickupZone : public Entity
 {
 public:
-	SpikeTrapPickupZone(const std::shared_ptr<Camera>& camera);
+	SpikeTrapPickupZone(const std::shared_ptr<Camera>& camera, const PxVec3& location);
 
 	void attachPhysics(Physics& instance) override;
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
@@ -16,6 +16,9 @@ public:
 
 private:
 	PxRigidStatic* pickupBody;
+
+	int mID;
+	physx::PxVec3 mLocation;
 
 	bool ascending = false;
 

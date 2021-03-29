@@ -6,7 +6,7 @@
 
 class SpeedBoostPickupZone : public Entity {
 public:
-	SpeedBoostPickupZone(std::shared_ptr<Camera> camera);
+	SpeedBoostPickupZone(std::shared_ptr<Camera> camera, const physx::PxVec3& pos);
 	void attachPhysics(Physics& instance) override;
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
 	void simulate(Physics& instance) override;
@@ -14,6 +14,9 @@ public:
 
 private:
 	PxRigidStatic* pickupBody;
+
+	int mID;
+	physx::PxVec3 mLocation;
 
 	constexpr static float MIN_HEIGHT = 2.0f;
 	constexpr static float MAX_HEIGHT = 5.0f;

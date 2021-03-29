@@ -2,15 +2,18 @@
 #include "GlobalState.h"
 #include "physics/VehicleFilterShader.h"
 
-SpikeTrapPickupZone::SpikeTrapPickupZone(const std::shared_ptr<Camera>& camera):
-	Entity("models/projectile_sphere.ply", "textures/pink.jpg", camera)
+SpikeTrapPickupZone::SpikeTrapPickupZone(const std::shared_ptr<Camera>& camera, const PxVec3& location):
+	Entity("models/projectile_sphere.ply", "textures/pink.jpg", camera),
+	mLocation(location)
 {}
 
 void SpikeTrapPickupZone::attachPhysics(Physics& instance)
 {
+	mID = static_cast<int>(State::spikeTrapPickupTriggerBodies.size());
+	
 	PxShape* spikeTrapPickupMarker = instance.gPhysics->createShape(PxSphereGeometry(1.f), *instance.gMaterial, true);
 	spikeTrapPickupMarker->setSimulationFilterData(PxFilterData(COLLISION_FLAG_SCENERY, COLLISION_FLAG_SCENERY_AGAINST, 0, 0));
-	pickupBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(15.f, MIN_HEIGHT, 25.f)));
+	pickupBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(mLocation.x, MIN_HEIGHT, mLocation.z)));
 	pickupBody->attachShape(*spikeTrapPickupMarker);
 	spikeTrapPickupMarker->release();
 	instance.gScene->addActor(*pickupBody);
@@ -19,9 +22,11 @@ void SpikeTrapPickupZone::attachPhysics(Physics& instance)
 	//trigger box for picking up the flag
 	speedboostPickupTriggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	speedboostPickupTriggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	State::spikeTrapPickupTriggerBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(15.f, 2.f, 25.f)));
-	State::spikeTrapPickupTriggerBody->attachShape(*speedboostPickupTriggerShape);
-	instance.gScene->addActor(*State::spikeTrapPickupTriggerBody);
+	PxRigidStatic* body = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(mLocation.x, 2.f, mLocation.z)));
+	body->attachShape(*speedboostPickupTriggerShape);
+	instance.gScene->addActor(*body);
+
+	State::spikeTrapPickupTriggerBodies[mID] = body;
 }
 
 void SpikeTrapPickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
@@ -51,5 +56,5 @@ void SpikeTrapPickupZone::simulate(Physics& instance)
 void SpikeTrapPickupZone::cleanUpPhysics()
 {
 	PX_RELEASE(pickupBody);
-	PX_RELEASE(State::spikeTrapPickupTriggerBody);
+	PX_RELEASE(State::spikeTrapPickupTriggerBodies[mID]);
 }

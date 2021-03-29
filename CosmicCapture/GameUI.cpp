@@ -63,6 +63,24 @@ void GameUI::renderMenu() const
 	Texture::unbind();
 }
 
+void GameUI::renderEndScreen() const
+{
+	mShader.use();
+
+	if (State::scores[0] >= State::winScore)
+		mTextures.winScreen.bind();
+	else
+		mTextures.loseScreen.bind();
+
+	mat4 model(1.0f);
+	const auto modelLoc = glGetUniformLocation(static_cast<unsigned int>(mShader), "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+
+	mLogoDisplay.drawData();
+
+	Texture::unbind();
+}
+
 void GameUI::setCompassDirection(const PxMat44& carMatrix, const PxMat44& targetMatrix)
 {
 	setCompassDirection(carMatrix, targetMatrix.column3.getXYZ());

@@ -67,7 +67,7 @@ struct State
 
 
 	inline static bool flagPickedUp = false;
-	inline static bool flagPickedUpBy[4] = { false, false, false, false };
+	inline static std::array<bool, 4> flagPickedUpBy = { false, false, false, false };
 	inline static PxRigidStatic* flagPickupBox = nullptr;
 	inline static PxRigidDynamic* flagBody = nullptr;
 	inline static PxRigidStatic* flagDropoffBoxes[4] = { nullptr, nullptr, nullptr, nullptr };
@@ -75,12 +75,13 @@ struct State
 	inline static PxVehicleDrive4W* vehicles[4] = { nullptr, nullptr, nullptr, nullptr };
 
 	// Scores and powerups
-	inline static int scores[4] = {0, 0, 0, 0};
+	inline static std::array<int, 4> scores = {0, 0, 0, 0};
+	inline static int winScore = 1;
 	inline static std::array<std::optional<PowerUpOptions>, 4> heldPowerUps = {};
 
-	inline static PxRigidStatic* projectilePickupTriggerBody = nullptr;
-	inline static PxRigidStatic* speedboostPickupTriggerBody = nullptr;
-	inline static PxRigidStatic* spikeTrapPickupTriggerBody = nullptr;
+	inline static std::map<int, PxRigidStatic*> spikeTrapPickupTriggerBodies;
+	inline static std::map<int, PxRigidStatic*> projectilePickupTriggerBodies;
+	inline static std::map<int, PxRigidStatic*> speedBoostPickupTriggerBodies;
 
 	inline static std::map<int, spikeTrapState> spike_trap_states;
 	inline static std::map<int, PxRigidDynamic*> projectileList;

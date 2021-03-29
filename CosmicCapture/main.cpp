@@ -491,7 +491,28 @@ int main(int argc, char** args) {
 			gameUI.setCompassDirection(car.mGeometry->getModelMatrix(), flag.mGeometry->getModelMatrix());
 		else if (State::flagPickedUpBy[0])
 			gameUI.setCompassDirection(car.mGeometry->getModelMatrix(), State::flagDropoffBoxes[0]->getGlobalPose().p);
+		
 		gameUI.render();
+
+		// Check to see if any of the players have won
+		if (std::any_of(std::begin(State::scores), std::end(State::scores), [](int score)
+		{
+				return score >= State::winScore;
+		}))
+		{
+			gameUI.renderEndScreen();
+			// If the user presses enter, reset the game
+			if (!inputState[MovementFlags::ENTER])
+			{
+				State::scores.fill(0);
+				State::flagPickedUp = false;
+				State::killCars.fill(true);
+				State::flagPickedUpBy.fill(false);
+				State::blueArena = false;
+				State::redArena = true;
+			}
+		}
+
 		//const VehicleDesc vehicleDesc = physics.initVehicleDesc();
 		if (State::killCars[0]) {
 			car.getVehicle()->getRigidDynamicActor()->release();

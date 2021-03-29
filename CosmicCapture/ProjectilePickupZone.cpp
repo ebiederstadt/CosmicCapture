@@ -1,14 +1,18 @@
 #include "ProjectilePickupZone.h"
 
-ProjectilePickupZone::ProjectilePickupZone(std::shared_ptr<Camera> camera) :
-	Entity("models/projectile_sphere.ply", "textures/wall.jpg", camera)
+ProjectilePickupZone::ProjectilePickupZone(std::shared_ptr<Camera> camera, const PxVec3& location) :
+	Entity("models/projectile_sphere.ply", "textures/wall.jpg", camera),
+	mLocation(location)
 {}
 
 
 void ProjectilePickupZone::attachPhysics(Physics& instance) {
+
+	mID = static_cast<int>(State::projectilePickupTriggerBodies.size());
+	
 	PxShape* projectilePickupMarker = instance.gPhysics->createShape(PxSphereGeometry(1.f), *instance.gMaterial, true);
 	projectilePickupMarker->setSimulationFilterData(PxFilterData(COLLISION_FLAG_SCENERY, COLLISION_FLAG_SCENERY_AGAINST, 0, 0));
-	pickupBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, MIN_HEIGHT, 25.f)));
+	pickupBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(mLocation.x, MIN_HEIGHT, mLocation.z)));
 	pickupBody->attachShape(*projectilePickupMarker);
 	projectilePickupMarker->release();
 	instance.gScene->addActor(*pickupBody);
@@ -17,9 +21,11 @@ void ProjectilePickupZone::attachPhysics(Physics& instance) {
 	//trigger box for picking up the flag
 	projectilePickupTriggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	projectilePickupTriggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	State::projectilePickupTriggerBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 2.f, 25.f)));
-	State::projectilePickupTriggerBody->attachShape(*projectilePickupTriggerShape);
-	instance.gScene->addActor(*State::projectilePickupTriggerBody);
+	PxRigidStatic* body = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(mLocation.x, 2.f, mLocation.z)));
+	body->attachShape(*projectilePickupTriggerShape);
+	instance.gScene->addActor(*body);
+
+	State::projectilePickupTriggerBodies[mID] = body;
 }
 void ProjectilePickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
 	PxTransform transform = pickupBody->getGlobalPose();
@@ -43,6 +49,6 @@ void ProjectilePickupZone::simulate(Physics& instance) {
 
 }
 void ProjectilePickupZone::cleanUpPhysics() {
-	PX_RELEASE(State::projectilePickupTriggerBody);
+	PX_RELEASE(State::projectilePickupTriggerBodies[mID]);
 	PX_RELEASE(pickupBody);
 }
