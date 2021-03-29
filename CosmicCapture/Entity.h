@@ -15,7 +15,6 @@ public:
 	virtual ~Entity() = default;
 
 	virtual void attachPhysics(Physics& instance) = 0;
-
 	virtual void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) = 0;
 	virtual void simulate(Physics& instance) = 0;
 

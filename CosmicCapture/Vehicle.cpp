@@ -3,6 +3,7 @@
 #include "physics/VehicleCreate.h"
 #include "physics/VehicleMovement.h"
 #include <physx/vehicle/PxVehicleUtil.h>
+#include "GlobalState.h"
 
 
 
@@ -184,6 +185,12 @@ void Vehicle::processInput(const std::map<MovementFlags, bool>& inputs)
 			break;
 		case MovementFlags::LEFT:
 			keyReleased ? movement.stopTurnHardRightMode() : movement.startTurnHardRightMode();
+			break;
+
+		case MovementFlags::RESET:
+			if (!keyReleased) {
+				State::killCars[0] = true;
+			}
 			break;
 		}
 	}

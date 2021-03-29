@@ -9,7 +9,7 @@
 
 enum class MovementFlags
 {
-    LEFT, RIGHT, UP, DOWN, ACTION, ENTER
+    LEFT, RIGHT, UP, DOWN, ACTION, ENTER, RESET
 };
 
 
