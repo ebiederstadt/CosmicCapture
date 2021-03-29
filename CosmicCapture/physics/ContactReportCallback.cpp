@@ -42,6 +42,9 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			State::flagPickedUpBy[0] = false;
 			State::flagPickedUp = false;
 			State::scores[0]++;
+			for (int j = 0; j < 4; j++) {
+				State::killCars[j] = true;
+			}
 			Audio::flag_return.playSound();
 		}
 		else if (pairs[i].triggerActor == State::flagDropoffBoxes[1] && pairs[i].otherActor == State::vehicles[1]->getRigidDynamicActor() && State::flagPickedUpBy[1])
@@ -50,6 +53,9 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			State::flagPickedUpBy[1] = false;
 			State::flagPickedUp = false;
 			State::scores[1]++;
+			for (int j = 0; j < 4; j++) {
+				State::killCars[j] = true;
+			}
 		}
 		else if (pairs[i].triggerActor == State::flagDropoffBoxes[2] && pairs[i].otherActor == State::vehicles[2]->getRigidDynamicActor() && State::flagPickedUpBy[2])
 		{
@@ -57,6 +63,9 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			State::flagPickedUpBy[2] = false;
 			State::flagPickedUp = false;
 			State::scores[2]++;
+			for (int j = 0; j < 4; j++) {
+				State::killCars[j] = true;
+			}
 		}
 		else if (pairs[i].triggerActor == State::flagDropoffBoxes[3] && pairs[i].otherActor == State::vehicles[3]->getRigidDynamicActor() && State::flagPickedUpBy[3])
 		{
@@ -64,6 +73,9 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			State::flagPickedUpBy[3] = false;
 			State::flagPickedUp = false;
 			State::scores[3]++;
+			for (int j = 0; j < 4; j++) {
+				State::killCars[j] = true;
+			}
 		}
 
 		// Powerups
@@ -74,7 +86,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				if (pairs[i].triggerActor == State::projectilePickupTriggerBody)
 				{
 					fmt::print("Player {} picked up projectile.\n", j);
-          if(j == 0) Audio::projectile_pickup.playSound();
+					if(j == 0) Audio::projectile_pickup.playSound();
 					State::heldPowerUps[j] = PowerUpOptions::PROJECTILE;
 				}
         
@@ -95,9 +107,17 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		}
 
 		//Button switch
-		if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody && !State::arenaSwitch) {
+		if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody[0] && !State::arenaSwitch) {
 			State::arenaSwitch = true;
-
+		}
+		if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody[1] && !State::arenaSwitch) {
+			State::arenaSwitch = true;
+		}
+		if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody[2] && !State::arenaSwitch) {
+			State::arenaSwitch = true;
+		}
+		if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody[3] && !State::arenaSwitch) {
+			State::arenaSwitch = true;
 		}
 
 		// Handle colliding into the spike trap

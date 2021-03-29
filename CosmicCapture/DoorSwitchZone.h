@@ -4,12 +4,14 @@
 #include "physics/VehicleFilterShader.h"
 class DoorSwitchZone : public Entity {
 public:
-	DoorSwitchZone(std::shared_ptr<Camera> camera);
+	DoorSwitchZone(std::shared_ptr<Camera> camera, int doorSwitchZoneNum);
 	void attachPhysics(Physics& instance) override;
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
 
 	float affectionTimer = 0;
-	constexpr static float AFFECTION_TIME = 10.0f * 60.0f; // The boost will speed up the player for 10 second
+	constexpr static float AFFECTION_TIME = 30.0f * 60.0f; // The boost will speed up the player for 10 second
+private:
+	int doorSwitchZoneNum;
 };

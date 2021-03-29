@@ -182,6 +182,13 @@ PxTriangleMesh* Physics::readMesh(std::string modelPath) {
 		indicesList.size(),
 		false
 	);
+	PxShape* meshShape = gPhysics->createShape(PxTriangleMeshGeometry(triangleMesh), *gMaterial, true); //create shape
+	meshShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
+	PxRigidStatic* meshBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create static rigid body - wont move
+	meshBody->attachShape(*meshShape); //stick shape on rigid body
+	meshShape->release(); //free shape 
+	gScene->addActor(*meshBody);
+	PX_RELEASE(meshBody)
 
 	return triangleMesh;
 }

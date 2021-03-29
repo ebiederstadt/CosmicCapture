@@ -20,6 +20,7 @@ Input::Input()
     mInputMap[MovementFlags::UP] = true;
     mInputMap[MovementFlags::ACTION] = true;
     mInputMap[MovementFlags::ENTER] = true;
+    mInputMap[MovementFlags::RESET] = true;
 }
 
 bool Input::HandleInput()
@@ -76,6 +77,9 @@ void Input::HandleKeys()
     case SDLK_RETURN:
         mInputMap[MovementFlags::ENTER] = keyReleased;
         break;
+    case SDLK_r:
+        mInputMap[MovementFlags::RESET] = keyReleased;
+        break;
 	default:
 		break;
 	}
@@ -96,6 +100,7 @@ void Input::HandleButtons()
         mInputMap[MovementFlags::ACTION] = buttonReleased;
 		break;
 	case SDL_CONTROLLER_BUTTON_Y:
+        mInputMap[MovementFlags::RESET] = buttonReleased;
 		break;
 	case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
 		break;

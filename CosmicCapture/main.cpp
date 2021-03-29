@@ -257,9 +257,14 @@ int main(int argc, char** args) {
 	FlagDropoffZone flagDropoffZone3(sCamera, 3);
 	flagDropoffZone3.attachPhysics(physics);
 
-
-	DoorSwitchZone doorSwitchZone(sCamera);
-	doorSwitchZone.attachPhysics(physics);
+	DoorSwitchZone doorSwitchZone0(sCamera, 0);
+	doorSwitchZone0.attachPhysics(physics);
+	DoorSwitchZone doorSwitchZone1(sCamera, 1);
+	doorSwitchZone1.attachPhysics(physics);
+	DoorSwitchZone doorSwitchZone2(sCamera, 2);
+	doorSwitchZone2.attachPhysics(physics);
+	DoorSwitchZone doorSwitchZone3(sCamera, 3);
+	doorSwitchZone3.attachPhysics(physics);
 
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
@@ -271,6 +276,10 @@ int main(int argc, char** args) {
 	entities.push_back(&opponentCar1);
 	entities.push_back(&opponentCar2);
 	entities.push_back(&opponentCar3);
+	entities.push_back(&doorSwitchZone0);
+	entities.push_back(&doorSwitchZone1);
+	entities.push_back(&doorSwitchZone2);
+	entities.push_back(&doorSwitchZone3);
 	/*
 	GridMarker grid(sCamera, PxVec3());
 	grid.attachPhysics(physics);
@@ -298,9 +307,6 @@ int main(int argc, char** args) {
 	Audio::flag_return = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_RETURN);
 	Audio::speed_boost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST);
 
-
-
-	entities.push_back(&doorSwitchZone);
 	InvisibleBarrier barriers(sCamera, 0);
 	barriers.attachPhysics(physics);
 	entities.push_back(&barriers);
@@ -327,6 +333,8 @@ int main(int argc, char** args) {
 
 	auto mainLoop = [&]()
 	{
+		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		printf("%f,%f,%f\n", playerPosition.x, playerPosition.y, playerPosition.z);
 		// Physics simulation
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
@@ -527,7 +535,7 @@ int main(int argc, char** args) {
 		//int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
 		//int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
 		//int dir = opponentBrains[1].getOrientation(playerDir);
-		printf("%f - %f - %f\n" , State::vehicles[1]->computeForwardSpeed(), State::vehicles[2]->computeForwardSpeed(), State::vehicles[3]->computeForwardSpeed() );
+		//printf("%f - %f - %f\n" , State::vehicles[1]->computeForwardSpeed(), State::vehicles[2]->computeForwardSpeed(), State::vehicles[3]->computeForwardSpeed() );
 		//printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
 		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//-----------------------------------------------------------------------------------------------------------------------
