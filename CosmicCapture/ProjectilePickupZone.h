@@ -8,7 +8,7 @@
 class ProjectilePickupZone : public Entity
 {
 public:
-	ProjectilePickupZone(std::shared_ptr<Camera> camera);
+	ProjectilePickupZone(std::shared_ptr<Camera> camera, const PxVec3& location);
 	void attachPhysics(Physics& instance) override;
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
 	void simulate(Physics& instance) override;
@@ -16,6 +16,9 @@ public:
 
 private:
 	PxRigidStatic* pickupBody;
+
+	int mID;
+	PxVec3 mLocation;
 
 	constexpr static float MIN_HEIGHT = 2.0f;
 	constexpr static float MAX_HEIGHT = 5.0f;

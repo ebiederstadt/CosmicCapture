@@ -21,6 +21,9 @@ struct GUITextures
 
 	Texture logo = Texture("textures/cosmicLogo.png", GL_LINEAR, false);
 	Texture font = Texture("textures/font.bmp", GL_NEAREST, false);
+
+	Texture winScreen = Texture("textures/winscreen.png", GL_NEAREST, false);
+	Texture loseScreen = Texture("textures/losescreen.png", GL_NEAREST, false);
 };
 
 struct ScoreDisplay
@@ -50,6 +53,7 @@ public:
 	GameUI();
 	void render();
 	void renderMenu() const;
+	void renderEndScreen() const;
 
 	void setCompassDirection(const physx::PxMat44& carMatrix, const physx::PxMat44& targetMatrix);
 	void setCompassDirection(const physx::PxMat44& carMatrix, const physx::PxVec3& targetPos);
