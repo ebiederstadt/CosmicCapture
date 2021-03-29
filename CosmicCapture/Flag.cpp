@@ -17,14 +17,14 @@ void Flag::attachPhysics(Physics& instance)
 {
 	PxShape* flag = instance.gPhysics->createShape(PxBoxGeometry(0.1f, 2.f, 0.1f), *instance.gMaterial, true); //create flag shape
 	flag->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));
-	State::flagBody = instance.gPhysics->createRigidDynamic(PxTransform(PxVec3(5.f, 2.f, 5.f)));
+	State::flagBody = instance.gPhysics->createRigidDynamic(PxTransform(PxVec3(0.f, 2.f, 0.f)));
 	//create static rigid body - wont move
 	State::flagBody->attachShape(*flag);
 	flag->release();
 	instance.gScene->addActor(*State::flagBody);
 	//----------------------------------------------------------
 	//Trigger Shapes--------------------------------------------
-	PxShape* pickupShape = instance.gPhysics->createShape(PxBoxGeometry(10.f, 2.f, 10.f), *instance.gMaterial, true);
+	PxShape* pickupShape = instance.gPhysics->createShape(PxBoxGeometry(4.f, 2.f, 4.f), *instance.gMaterial, true);
 	//trigger box for picking up the flag
 	pickupShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	pickupShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
@@ -79,7 +79,7 @@ void Flag::simulate(Physics& instance)
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else {
-		State::flagBody->setGlobalPose(PxTransform(PxVec3(5.f, 2.f, 5.f)));
+		State::flagBody->setGlobalPose(PxTransform(PxVec3(0.f, 2.f, 0.f)));
 	}
 }
 
