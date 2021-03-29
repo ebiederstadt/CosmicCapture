@@ -103,7 +103,7 @@ AudioEngine::~AudioEngine() {}
         CheckError();
 
         alSourcef(sources[3], AL_PITCH, 1.0f);
-        alSourcef(sources[3], AL_GAIN, 2.0f);
+        alSourcef(sources[3], AL_GAIN, 3.5f);
         alSourcefv(sources[3], AL_POSITION, source0Pos);
         alSourcefv(sources[3], AL_VELOCITY, source0Vel);
         alSourcei(sources[3], AL_BUFFER, bufferArray[3]);
@@ -161,6 +161,33 @@ AudioEngine::~AudioEngine() {}
         alSourcefv(sources[9], AL_POSITION, source0Pos);
         alSourcefv(sources[9], AL_VELOCITY, source0Vel);
         alSourcei(sources[9], AL_BUFFER, bufferArray[9]);
+
+        loadWavFile("audio_files/car_crash.wav", bufferArray + 10);
+        CheckError();
+
+        alSourcef(sources[10], AL_PITCH, 1.0f);
+        alSourcef(sources[10], AL_GAIN, 1.5f);
+        alSourcefv(sources[10], AL_POSITION, source0Pos);
+        alSourcefv(sources[10], AL_VELOCITY, source0Vel);
+        alSourcei(sources[10], AL_BUFFER, bufferArray[10]);
+
+        loadWavFile("audio_files/projectile_explosion.wav", bufferArray + 11);
+        CheckError();
+
+        alSourcef(sources[11], AL_PITCH, 1.0f);
+        alSourcef(sources[11], AL_GAIN, 0.8f);
+        alSourcefv(sources[11], AL_POSITION, source0Pos);
+        alSourcefv(sources[11], AL_VELOCITY, source0Vel);
+        alSourcei(sources[11], AL_BUFFER, bufferArray[11]);
+
+        loadWavFile("audio_files/flag_lost.wav", bufferArray + 12);
+        CheckError();
+
+        alSourcef(sources[12], AL_PITCH, 1.0f);
+        alSourcef(sources[12], AL_GAIN, 1.0f);
+        alSourcefv(sources[12], AL_POSITION, source0Pos);
+        alSourcefv(sources[12], AL_VELOCITY, source0Vel);
+        alSourcei(sources[12], AL_BUFFER, bufferArray[12]);
         
     }
 	AudioInstance& AudioEngine::createInstance(int soundFile) {

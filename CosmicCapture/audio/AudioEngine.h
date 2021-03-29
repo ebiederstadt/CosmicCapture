@@ -21,6 +21,9 @@ namespace audioConstants
 	const int SOUND_FILE_SPEED_BOOST_PICKUP = 7;
 	const int SOUND_FILE_FLAG_RETURN = 8;
 	const int SOUND_FILE_SPEED_BOOST = 9;
+	const int SOUND_FILE_CRASH = 10;
+	const int SOUND_FILE_EXPLOSION = 11;
+	const int SOUND_FILE_FLAG_LOST = 12;
 
 	//music tracks
 	const int SOUND_FILE_MAIN_TRACK = 0;
@@ -42,8 +45,8 @@ class AudioEngine
 		bool _strcmp(const char* bse, const char* cp);
 		bool loadWavFile(const char* filename, ALuint* buffer);
 
-		static const int NUM_TOTAL = 10;
-		static const int NUM_EFFECTS = 9;
+		static const int NUM_TOTAL = 13;
+		static const int NUM_EFFECTS = 12;
 		static const int NUM_TRACKS = 1;
 		const char* soundEffects[NUM_EFFECTS];
 		const char* musicTracks[NUM_TRACKS];

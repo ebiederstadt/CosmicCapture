@@ -136,6 +136,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::killCars[0] = true;
 					State::flagPickedUpBy[0] = false;
 					State::flagPickedUp = false;
+					Audio::flag_lost.playSound();
 				}
 				else if (State::flagPickedUpBy[1]) {
 					State::killCars[1] = true;
@@ -143,12 +144,14 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::flagPickedUp = false;
 				}
 				printf("Car 0 and Car 1 have hit\n");
+				Audio::car_crash.playSound();
 			}
 			if ((pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor())|| (pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[0]) {
 					State::killCars[0] = true;
 					State::flagPickedUpBy[0] = false;
 					State::flagPickedUp = false;
+					Audio::flag_lost.playSound();
 				}
 				else if (State::flagPickedUpBy[2]) {
 					State::killCars[2] = true;
@@ -156,12 +159,14 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::flagPickedUp = false;
 				}
 				printf("Car 0 and Car 2 have hit\n");
+				Audio::car_crash.playSound();
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[0]) {
 					State::killCars[0] = true;
 					State::flagPickedUpBy[0] = false;
 					State::flagPickedUp = false;
+					Audio::flag_lost.playSound();
 				}
 				else if (State::flagPickedUpBy[3]) {
 					State::killCars[3] = true;
@@ -169,6 +174,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::flagPickedUp = false;
 				}
 				printf("Car 0 and Car 3 have hit\n");
+				Audio::car_crash.playSound();
 			}
 			if ((pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[1]) {
@@ -220,6 +226,9 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					{
 						fmt::print("Projectile collided with car #{}\n", j);
 						State::killCars[j] = true;
+
+						// Note: as of now no bounds for distance from player etc.
+						Audio::projectile_explosion.playSound();
 						if (State::flagPickedUpBy[j])
 						{
 							State::flagPickedUpBy[j] = false;
@@ -231,9 +240,11 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 		
 			//arena hits (only for player)
 			if ((pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::redDoorBody) || (pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::blueDoorBody)) {
+				Audio::collision.playSound();
 				printf("hit red arena\n");
 			}
 			if ((pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::blueDoorBody) || (pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::blueDoorBody)) {
+				Audio::collision.playSound();
 				printf("hit blue arena\n");
 			}
 		}

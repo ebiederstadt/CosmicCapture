@@ -110,5 +110,8 @@ struct Audio
 	inline static AudioInstance speed_boost_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST_PICKUP);
 	inline static AudioInstance flag_return = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_RETURN);
 	inline static AudioInstance speed_boost = soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST);
+	inline static AudioInstance projectile_explosion = soundSystem.createInstance(audioConstants::SOUND_FILE_EXPLOSION);
+	inline static AudioInstance car_crash = soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
+	inline static AudioInstance flag_lost = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
 
 };
