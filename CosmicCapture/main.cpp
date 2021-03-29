@@ -336,8 +336,8 @@ int main(int argc, char** args) {
 
 	auto mainLoop = [&]()
 	{
-		PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		printf("%f,%f,%f\n", playerPosition.x, playerPosition.y, playerPosition.z);
+		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+		//printf("%f,%f,%f\n", playerPosition.x, playerPosition.y, playerPosition.z);
 		// Physics simulation
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);

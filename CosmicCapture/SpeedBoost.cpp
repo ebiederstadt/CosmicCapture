@@ -16,7 +16,7 @@ void SpeedBoost::draw(Physics& instance, const ShaderProgram& depthTexture, bool
 void SpeedBoost::simulate(Physics& instance) {
 	if (active)
 	{
-		std::cout << mVehicles[0]->mDriveDynData.getEngineRotationSpeed() << std::endl;
+		//std::cout << mVehicles[0]->mDriveDynData.getEngineRotationSpeed() << std::endl;
 		affectionTimer += 1.0f;
 		if (affectionTimer <= AFFECTION_TIME)
 		{
@@ -27,7 +27,7 @@ void SpeedBoost::simulate(Physics& instance) {
 			active = false;
 			shouldBeDeleted = true;
 		}
-		std::cout << mVehicles[0]->mDriveDynData.getEngineRotationSpeed() << std::endl;
+		//std::cout << mVehicles[0]->mDriveDynData.getEngineRotationSpeed() << std::endl;
 	}
 }
 
