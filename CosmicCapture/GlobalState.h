@@ -76,7 +76,7 @@ struct State
 
 	// Scores and powerups
 	inline static std::array<int, 4> scores = {0, 0, 0, 0};
-	inline static int winScore = 1;
+	inline static int winScore = 3;
 	inline static std::array<std::optional<PowerUpOptions>, 4> heldPowerUps = {};
 
 	inline static std::map<int, PxRigidStatic*> spikeTrapPickupTriggerBodies;
