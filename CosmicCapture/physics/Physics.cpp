@@ -88,6 +88,7 @@ void Physics::Initialize()
 	//PX_RELEASE(arenaBody);
 	*/
 
+	/*
 	//blueDoorMesh = readMesh("./models/blue_gates.obj");
 	blueDoorMesh = readMesh("./models/blueArena.obj");
 
@@ -103,6 +104,7 @@ void Physics::Initialize()
 	//redDoorMesh = readMesh("./models/red_gates.obj");
 	redDoorMesh = readMesh("./models/redArena.obj");
 
+
 	redDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(redDoorMesh), *gMaterial, true); //create shape
 	redDoorShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
 	redDoorBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create static rigid body - wont move
@@ -110,7 +112,7 @@ void Physics::Initialize()
 	redDoorShape->release(); //free shape 
 	gScene->addActor(*redDoorBody); //add rigid body to scene
 	//generateRedDoor();
-
+	*/
 	//----------------------------------------------------------*/
 
 	printf("Physx initialized\n");

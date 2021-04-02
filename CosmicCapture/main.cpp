@@ -310,7 +310,7 @@ int main(int argc, char** args) {
 	Audio::car_crash = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
 	Audio::flag_lost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
 
-	InvisibleBarrier barriers(sCamera, 0);
+	InvisibleBarrier barriers(sCamera, 1);
 	barriers.attachPhysics(physics);
 	entities.push_back(&barriers);
 
@@ -352,7 +352,7 @@ int main(int argc, char** args) {
 			//need undraw code here
 			if (State::blueArena) {
 				updateWorldGridArena2();
-				physics.generateRedDoor(); //switch from blue doors to red
+				//physics.generateRedDoor(); //switch from blue doors to red
 				State::redArena = true;
 				State::blueArena = false;
 				//draw red arena
@@ -362,7 +362,7 @@ int main(int argc, char** args) {
 			}
 			else if (State::redArena) {
 				updateWorldGridArena1();
-				physics.generateBlueDoor(); //switch from red doors to blue
+				//physics.generateBlueDoor(); //switch from red doors to blue
 				State::blueArena = true;
 				State::redArena = false;
 				//draw blue arena
