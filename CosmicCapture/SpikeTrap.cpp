@@ -63,6 +63,9 @@ void SpikeTrap::cleanUpPhysics()
 	//   Or when it is placed, and ready to be run into
 	if (active && !State::spike_trap_states[m_id].active || !active && State::spike_trap_states[m_id].active)
 		PX_RELEASE(State::spike_trap_states[m_id].triggerBody);
+
+	// In either case, we need to remove the spike trap from the global state as well
+	State::spike_trap_states.erase(m_id);
 }
 
 bool SpikeTrap::processInput(const std::map<MovementFlags, bool>& inputs, Physics& instance)

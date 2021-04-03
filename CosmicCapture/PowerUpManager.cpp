@@ -148,12 +148,11 @@ void PowerUpManager::simulate(Physics& instance)
 				if (spikeTrap->shouldBeDeleted)
 				{
 					spikeTrap->cleanUpPhysics();
-					State::spike_trap_states.erase(id);
 					powerup = mDeployedPowerUps.erase(powerup);
 
 					increment = false; // Don't increment when we erase from the vector
 				}
-			} catch (std::out_of_range& e)
+			} catch (std::out_of_range&)
 			{
 				fmt::print("WARNING: Attempting to operate on an invalid spike trap: {}\n", id);
 			}
