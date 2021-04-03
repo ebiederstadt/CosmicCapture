@@ -107,7 +107,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 					if (pairs[i].triggerActor == geom)
 					{
 						fmt::print("Player {} picked up spike trap\n", j);
-						State::heldPowerUps[i] = PowerUpOptions::SPIKE_TRAP;
+						State::heldPowerUps[j] = PowerUpOptions::SPIKE_TRAP;
 						if (j == 0) Audio::spike_trap_pickup.playSound();
 					}
 				}
