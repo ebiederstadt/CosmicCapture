@@ -58,7 +58,11 @@ void SpikeTrap::cleanUpPhysics()
 {
 	fmt::print("Cleaning up spike trap {}\n", m_id);
 	PX_RELEASE(body);
-	PX_RELEASE(State::spike_trap_states[m_id].triggerBody);
+	// Only clean up the trigger body after the spike trap has been placed
+	//   Either when it is placed, but not yet ready to be run into yet
+	//   Or when it is placed, and ready to be run into
+	if (active && !State::spike_trap_states[m_id].active || !active && State::spike_trap_states[m_id].active)
+		PX_RELEASE(State::spike_trap_states[m_id].triggerBody);
 }
 
 bool SpikeTrap::processInput(const std::map<MovementFlags, bool>& inputs, Physics& instance)
