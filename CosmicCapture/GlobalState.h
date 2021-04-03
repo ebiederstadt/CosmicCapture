@@ -22,6 +22,12 @@ struct spikeTrapState
 	int actingUpon; // Which car the spike trap caught
 };
 
+struct projectileState
+{
+	PxRigidDynamic* body; // The body of the projectile
+	bool active = false; // True when the projectile can blow up cars
+};
+
 
 struct State 
 {
@@ -84,7 +90,7 @@ struct State
 	inline static std::map<int, PxRigidStatic*> speedBoostPickupTriggerBodies;
 
 	inline static std::map<int, spikeTrapState> spike_trap_states;
-	inline static std::map<int, PxRigidDynamic*> projectileList;
+	inline static std::map<int, projectileState> projectileStates;
 
 	inline static std::array<bool, 4> killCars = { false, false, false, false };
 
