@@ -21,7 +21,6 @@ class Projectile : public Entity
 	private:
 		int mID;
 		PxVehicleDrive4W* mVehicle;
-		PxRigidDynamic* mBody;
 
 		float activationTimer = 0.0f;
 		constexpr static float ACTIVATION_TIME = 0.3f * 60.0f; // The projectile is not active for ~ second to prevent self collisions

@@ -48,6 +48,7 @@ void Projectile::simulate(Physics& instance) {
 }
 
 void Projectile::cleanUpPhysics() {
-	PX_RELEASE(State::projectileStates[mID].body);
+	if (State::projectileStates[mID].body != nullptr)
+		PX_RELEASE(State::projectileStates[mID].body);
 	State::projectileStates.erase(mID);
 }

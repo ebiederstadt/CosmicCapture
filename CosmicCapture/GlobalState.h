@@ -16,7 +16,7 @@ enum class PowerUpOptions
 
 struct spikeTrapState
 {
-	PxRigidStatic* triggerBody; // The trigger body for the spike trap
+	PxRigidStatic* triggerBody = nullptr; // The trigger body for the spike trap
 	bool active = false; // Spike trap has been deployed and is ready to catch people
 	bool inUse = false; // The spike trap has caught somebody
 	int actingUpon; // Which car the spike trap caught
@@ -24,7 +24,7 @@ struct spikeTrapState
 
 struct projectileState
 {
-	PxRigidDynamic* body; // The body of the projectile
+	PxRigidDynamic* body = nullptr; // The body of the projectile
 	bool active = false; // True when the projectile can blow up cars
 };
 
