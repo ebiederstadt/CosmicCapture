@@ -7,7 +7,7 @@
 
 #include "Mesh.h"
 #include "ShaderProgram.h"
-#include "Texture.h"
+#include "TextureAPI.h"
 #include "../Camera.h"
 
 
@@ -42,8 +42,10 @@ public:
 
 private:
 	std::vector<Mesh> mMeshes; // Each model is made of one or more meshes 
-	Texture mTexture; // Assuming that each texture is unique to each model (may need to rework)
 	std::shared_ptr<Camera> mCameraPointer; // Camera object is shared among all the meshes
+
+	TextureAPI* api;
+	TextureAPI::TextureName mTexture; // Assuming that each texture is unique to each model (may need to rework)
 
 	unsigned int mUsage;
 
