@@ -1,7 +1,7 @@
 #include "ProjectilePickupZone.h"
 
 ProjectilePickupZone::ProjectilePickupZone(std::shared_ptr<Camera> camera, const PxVec3& location) :
-	Entity("models/powerup_stand.obj", "textures/rocket_preview.png", camera),
+	Entity("models/powerup_stand.obj", "textures/rocket_preview_white.png", camera),
 	mLocation(location)
 {}
 
