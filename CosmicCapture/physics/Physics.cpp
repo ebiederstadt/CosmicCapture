@@ -75,20 +75,6 @@ void Physics::Initialize()
 	gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
 	gScene->addActor(*gGroundPlane);
 
-	/*
-	arenaMesh = readMesh("./models/arena.obj");
-
-	arenaShape = gPhysics->createShape(PxTriangleMeshGeometry(arenaMesh), *gMaterial, true); //create shape
-	arenaShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
-	arenaBody = gPhysics->createRigidStatic(PxTransform(PxVec3(0.f, 0.f, 0.f))); //create static rigid body - wont move
-	arenaBody->attachShape(*arenaShape); //stick shape on rigid body
-	arenaShape->release(); //free shape 
-	gScene->addActor(*arenaBody); //add rigid body to scene
-
-	//PX_RELEASE(arenaBody);
-	*/
-
-	//blueDoorMesh = readMesh("./models/blue_gates.obj");
 	blueDoorMesh = readMesh("./models/blueArena.obj");
 
 	blueDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(blueDoorMesh), *gMaterial, true); //create shape
@@ -461,14 +447,30 @@ void Physics::setupWheelsSimulationData
 PxTriangleMesh* Physics::createTriangleMesh32(PxPhysics* physics, PxCooking* cooking, const PxVec3* verts,
                                               PxU32 vertCount, const PxU32* indices32, PxU32 triCount, bool insert)
 {
+	PxTolerancesScale scale;
+	PxCookingParams params(scale);
+	// Disabel mesh cleaning - perform mesh validation on development configurations
+	params.meshPreprocessParams |= PxMeshPreprocessingFlag::eDISABLE_CLEAN_MESH;
+	// Disable edge precompute, edges are set for each triangle, slows contact generation
+	params.meshPreprocessParams |= PxMeshPreprocessingFlag::eDISABLE_ACTIVE_EDGES_PRECOMPUTE;
+
+	cooking->setParams(params);
+
 	PxTriangleMeshDesc meshDesc;
 	meshDesc.points.count = vertCount;
 	meshDesc.points.stride = sizeof(PxVec3);
 	meshDesc.points.data = verts;
 
-	meshDesc.triangles.count = triCount;
+	PX_ASSERT(triCount % 3 == 0);
+	meshDesc.triangles.count = triCount / 3;
 	meshDesc.triangles.stride = 3 * sizeof(PxU32);
 	meshDesc.triangles.data = indices32;
+
+#ifdef _DEBUG
+	// Mesh should be validated before cooking wihtout the mesh cleaning
+	bool res = cooking->validateTriangleMesh(meshDesc);
+	PX_ASSERT(res);
+#endif // _DEBUG
 
 	if (!insert)
 	{
