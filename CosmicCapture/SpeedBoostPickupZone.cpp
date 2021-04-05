@@ -1,9 +1,7 @@
 #include "SpeedBoostPickupZone.h"
 
-using namespace physx;
-
 SpeedBoostPickupZone::SpeedBoostPickupZone(std::shared_ptr<Camera> camera, const PxVec3& location) :
-	Entity("models/powerup_stand.obj", "textures/speed_boost_white.png", camera),
+	Entity("models/speed_boost_stand.obj", "textures/speed_boost_white.png", camera),
 	mLocation(location)
 {}
 
