@@ -37,6 +37,8 @@
 using namespace physx;
 float peakTorque = 800.f;
 float maxOmega = 1000.f;
+float gearSwitchTime = 0.5f;
+float clutchStrength = 10.f;
 
 PxRigidStatic* createDrivablePlane(const PxFilterData& simFilterData, PxMaterial* material, PxPhysics* physics)
 {
@@ -424,12 +426,12 @@ PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* p
 
 		//Gears
 		PxVehicleGearsData gears;
-		gears.mSwitchTime = 0.5f;
+		gears.mSwitchTime = gearSwitchTime;
 		driveSimData.setGearsData(gears);
 
 		//Clutch
 		PxVehicleClutchData clutch;
-		clutch.mStrength = 10.0f;
+		clutch.mStrength = clutchStrength;
 		driveSimData.setClutchData(clutch);
 
 		//Ackermann steer accuracy

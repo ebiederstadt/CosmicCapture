@@ -18,6 +18,11 @@ float chassDimZ = 6.0f;
 float whMass = 40.f;
 float whRadius = 0.8f;
 float whWidth = 0.5f;
+float springMaxCompression = 0.3f;
+float springMaxDroop = 0.1f;
+float springStrength = 35000.0f;
+float springDamperRate = 4500.0f;
+
 
 Physics& Physics::Instance()
 {
@@ -367,10 +372,10 @@ void Physics::setupWheelsSimulationData
 		//Set the suspension data.
 		for (PxU32 i = 0; i < numWheels; i++)
 		{
-			suspensions[i].mMaxCompression = 0.3f;
-			suspensions[i].mMaxDroop = 0.1f;
-			suspensions[i].mSpringStrength = 35000.0f;
-			suspensions[i].mSpringDamperRate = 4500.0f;
+			suspensions[i].mMaxCompression = springMaxCompression;
+			suspensions[i].mMaxDroop = springMaxDroop;
+			suspensions[i].mSpringStrength = springStrength;
+			suspensions[i].mSpringDamperRate = springDamperRate;
 			suspensions[i].mSprungMass = suspSprungMasses[i];
 		}
 

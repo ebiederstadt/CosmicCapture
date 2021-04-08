@@ -570,10 +570,12 @@ int main(int argc, char** args) {
 		ImGui::SliderFloat("Projectile speed scaling factor", &scalingFactor, 1.0f, 5.0f);
 
 		ImGui::Text("Car Stuff (Press R after changing values)");
-		ImGui::Text("VehicleCreate.cpp (lines 38,39)");
+		ImGui::Text("VehicleCreate.cpp (lines 38-41)");
 		ImGui::SliderFloat("Engine Peak Torque", &peakTorque, 100.f, 2000.f);
 		ImGui::SliderFloat("Engine Max Omega (Speed)", &maxOmega, 500.f, 2000.f);
-		ImGui::Text("Physics.cpp (lines 14-20)");
+		ImGui::SliderFloat("Gear Switch Time", &gearSwitchTime, 0.f, 50.f);
+		ImGui::SliderFloat("Clutch Strength", &clutchStrength, 0.f, 100.f);
+		ImGui::Text("Physics.cpp (lines 14-24)");
 		ImGui::SliderFloat("Chassis Mass", &chassMass, 1000.f, 2000.f);
 		ImGui::SliderFloat("Chassis Dimension X", &chassDimX, 1.f, 5.f);
 		ImGui::SliderFloat("Chassis Dimension Y", &chassDimY, 1.f, 4.f);
@@ -581,6 +583,10 @@ int main(int argc, char** args) {
 		ImGui::SliderFloat("Wheel Mass", &whMass, 20.f, 60.f);
 		ImGui::SliderFloat("Wheel Radius", &whRadius, 0.1f, 2.f);
 		ImGui::SliderFloat("Wheel Width", &whWidth, 0.1f, 2.f);
+		ImGui::SliderFloat("Spring Max Compression", &springMaxCompression, 0.f, 1.f);
+		ImGui::SliderFloat("Spring Max Droop", &springMaxDroop, 0.f, 1.f);
+		ImGui::SliderFloat("Spring Strength", &springStrength, 0.f, 50000.f);
+		ImGui::SliderFloat("Spring Damper Rate", &springDamperRate, 0.f, 10000.f);
 		ImGui::Text("Vehicle.cpp (lines 8-25");
 		ImGui::SliderFloat("rise rate accel", &riseRateAccel, 0.1f, 500.f);
 		ImGui::SliderFloat("rise rate brake", &riseRateBrake, 0.1f, 500.f);

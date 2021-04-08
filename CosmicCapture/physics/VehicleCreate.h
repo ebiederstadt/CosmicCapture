@@ -36,6 +36,8 @@
 using namespace physx;
 extern float peakTorque;
 extern float maxOmega;
+extern float gearSwitchTime;
+extern float clutchStrength;
 ////////////////////////////////////////////////
 
 PxRigidStatic* createDrivablePlane(const PxFilterData& simFilterData, PxMaterial* material, PxPhysics* physics);
