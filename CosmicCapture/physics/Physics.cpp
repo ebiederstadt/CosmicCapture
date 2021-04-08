@@ -11,7 +11,13 @@
 
 
 using namespace physx;
-
+float chassMass = 1550.f;
+float chassDimX = 3.2f;
+float chassDimY = 2.0f;
+float chassDimZ = 6.0f;
+float whMass = 40.f;
+float whRadius = 0.8f;
+float whWidth = 0.5f;
 
 Physics& Physics::Instance()
 {
@@ -208,8 +214,8 @@ VehicleDesc Physics::initVehicleDesc() const
 	//Set up the chassis mass, dimensions, moment of inertia, and center of mass offset.
 	//The moment of inertia is just the moment of inertia of a cuboid but modified for easier steering.
 	//Center of mass offset is 0.65m above the base of the chassis and 0.25m towards the front.
-	const PxF32 chassisMass = 1550.0f;
-	const PxVec3 chassisDims(3.2f, 2.0f, 6.0f);
+	const PxF32 chassisMass = chassMass;
+	const PxVec3 chassisDims(chassDimX, chassDimY, chassDimZ);
 	const PxVec3 chassisMOI
 	((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * chassisMass / 11.8f,
 	 (chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * 0.8f * chassisMass / 11.8f,
@@ -218,9 +224,9 @@ VehicleDesc Physics::initVehicleDesc() const
 
 	//Set up the wheel mass, radius, width, moment of inertia, and number of wheels.
 	//Moment of inertia is just the moment of inertia of a cylinder.
-	const PxF32 wheelMass = 40.0f;
-	const PxF32 wheelRadius = 0.8f;
-	const PxF32 wheelWidth = 0.5f;
+	const PxF32 wheelMass = whMass;
+	const PxF32 wheelRadius = whRadius;
+	const PxF32 wheelWidth = whWidth;
 	const PxF32 wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
 	const PxU32 nbWheels = 4;
 

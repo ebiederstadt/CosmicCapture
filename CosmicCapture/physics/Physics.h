@@ -76,12 +76,17 @@ struct VehicleDesc
 	ShapeUserData* shapeUserDatas;
 };
 
+extern float chassMass;
+extern float chassDimX;
+extern float chassDimY;
+extern float chassDimZ;
+extern float whMass;
+extern float whRadius;
+extern float whWidth;
 
 class Physics
 {
 public:
-
-
 	bool inReverseMode;
 	static Physics& Instance();
 	void Initialize();

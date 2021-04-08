@@ -34,7 +34,8 @@
 
 
 using namespace physx;
-
+extern float peakTorque;
+extern float maxOmega;
 ////////////////////////////////////////////////
 
 PxRigidStatic* createDrivablePlane(const PxFilterData& simFilterData, PxMaterial* material, PxPhysics* physics);
@@ -62,5 +63,7 @@ PxRigidDynamic* createVehicleActor
 	PxPhysics& physics);
 
 void configureUserData(PxVehicleWheels* vehicle, ActorUserData* actorUserData, ShapeUserData* shapeUserDatas);
+
+
 
 ////////////////////////////////////////////////

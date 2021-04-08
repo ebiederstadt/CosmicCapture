@@ -10,7 +10,7 @@ void ProjectilePickupZone::attachPhysics(Physics& instance) {
 
 	mID = static_cast<int>(State::projectilePickupTriggerBodies.size());
 	
-	PxShape* projectilePickupMarker = instance.gPhysics->createShape(PxSphereGeometry(1.f), *instance.gMaterial, true);
+	PxShape* projectilePickupMarker = instance.gPhysics->createShape(PxSphereGeometry(5.f), *instance.gMaterial, true);
 	projectilePickupMarker->setSimulationFilterData(PxFilterData(COLLISION_FLAG_SCENERY, COLLISION_FLAG_SCENERY_AGAINST, 0, 0));
 	pickupBody = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(mLocation.x, MIN_HEIGHT, mLocation.z)));
 	pickupBody->attachShape(*projectilePickupMarker);

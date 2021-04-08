@@ -96,6 +96,10 @@ struct State
 	inline static bool redArena = true;
 	inline static int arenaTimer = 0;
 
+	inline static bool canPickupFlag = true;
+	inline static bool startPickupFlagTimer = false;
+	inline static float flagTimer = 0.0f;
+
 };
 
 struct Audio
