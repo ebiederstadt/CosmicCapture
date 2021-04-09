@@ -3,7 +3,7 @@
 #include "physics/VehicleFilterShader.h"
 
 SpikeTrapPickupZone::SpikeTrapPickupZone(const std::shared_ptr<Camera>& camera, const PxVec3& location):
-	Entity("models/projectile_sphere.ply", "textures/pink.jpg", camera),
+	Entity("models/powerup_stand.obj", "textures/spike_preview_white.png", camera),
 	mLocation(location)
 {}
 
@@ -33,7 +33,7 @@ void SpikeTrapPickupZone::draw(Physics& instance, const ShaderProgram& depthText
 {
 	PxTransform transform = pickupBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, 1);
+	mGeometry->draw(modelMatrix, depthTexture, depth, 0);
 }
 
 void SpikeTrapPickupZone::simulate(Physics& instance)

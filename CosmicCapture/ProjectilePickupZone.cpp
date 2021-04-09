@@ -1,7 +1,7 @@
 #include "ProjectilePickupZone.h"
 
 ProjectilePickupZone::ProjectilePickupZone(std::shared_ptr<Camera> camera, const PxVec3& location) :
-	Entity("models/projectile_sphere.ply", "textures/wall.jpg", camera),
+	Entity("models/powerup_stand.obj", "textures/rocket_preview_white.png", camera),
 	mLocation(location)
 {}
 
@@ -30,8 +30,9 @@ void ProjectilePickupZone::attachPhysics(Physics& instance) {
 void ProjectilePickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
 	PxTransform transform = pickupBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, 1);
+	mGeometry->draw(modelMatrix, depthTexture, depth, 0);
 }
+
 void ProjectilePickupZone::simulate(Physics& instance) {
 	PxVec3 pos = pickupBody->getGlobalPose().p;
 	if (ascending) {

@@ -175,6 +175,7 @@ int main(int argc, char** args) {
 	Model redGates("models/red_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model blueGates("models/blue_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model skybox("models/skybox.obj", "textures/stars.jpg", sCamera, GL_DYNAMIC_DRAW);
+
 	// Shadow setup start ---------------------------------------------------------------------
 
 	// Configure depth map FBO
@@ -218,11 +219,9 @@ int main(int argc, char** args) {
 	// Entities
 
 	Vehicle car(sCamera, 0, "models/car_body.obj", "textures/car_body_texture.jpg", "textures/green_tire_texture.jpg");
-	//Vehicle car(shaderProgram, sCamera, 0, "textures/test_texture.png");
 
 	car.attachPhysics(physics);
 	State::vehicles[0] = car.getVehicle();
-
 
 	Vehicle opponentCar1(sCamera, 1, "models/blueCar.obj", "textures/blue_car_texture.jpg", "textures/blue_tire_texture.jpg");
 	opponentCar1.attachPhysics(physics);
@@ -349,14 +348,12 @@ int main(int argc, char** args) {
 
 		//arena door switch
 		if (State::arenaSwitch && State::arenaSwitchReady) {
-			//need undraw code here
 			if (State::blueArena) {
 				updateWorldGridArena2();
 				physics.generateRedDoor(); //switch from blue doors to red
 				State::redArena = true;
 				State::blueArena = false;
 				//draw red arena
-				//Model arena("models/redArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 				fmt::print("Button pressed, doors switching\n");
 				fmt::print("Red arena loaded\n");
 			}
@@ -366,7 +363,6 @@ int main(int argc, char** args) {
 				State::blueArena = true;
 				State::redArena = false;
 				//draw blue arena
-				//Model arena("models/blueArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 				fmt::print("Button pressed, doors switching\n");
 				fmt::print("Blue arena loaded\n");
 			}
@@ -443,8 +439,8 @@ int main(int argc, char** args) {
 		walls.draw(simpleDepthShader, true, 1);
 		// don't include skybox in depth map
 
-		if(State::redArena) redGates.draw(simpleDepthShader, true, 1);
-		if(State::blueArena) blueGates.draw(simpleDepthShader, true, 1);
+		if(State::redArena) redGates.draw(simpleDepthShader, true, 2);
+		if(State::blueArena) blueGates.draw(simpleDepthShader, true, 2);
 
 		for (const auto& entity : entities)
 			entity->draw(physics, simpleDepthShader, true);
@@ -477,8 +473,8 @@ int main(int argc, char** args) {
 
 		// Second pass
 
-		arena.draw(shaderProgram, false, 1);
-		walls.draw(shaderProgram, false, 1);
+		arena.draw(shaderProgram, false, 2);
+		walls.draw(shaderProgram, false, 2);
 		skybox.draw(shaderProgram, false, 0);
 
 		if (State::redArena) {
@@ -519,7 +515,6 @@ int main(int argc, char** args) {
 			}
 		}
 
-		//const VehicleDesc vehicleDesc = physics.initVehicleDesc();
 		if (State::killCars[0]) {
 			car.getVehicle()->getRigidDynamicActor()->release();
 			lagCounter = 0;

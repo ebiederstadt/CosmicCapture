@@ -11,20 +11,24 @@ Model::Model(
 	std::shared_ptr<Camera> camera,
 	const unsigned int usage
 ) :
-	mTexture(texturePath, GL_LINEAR),
+	mTexture(texturePath),
 	mCameraPointer(std::move(camera)),
 	mUsage(usage),
 	mModel(physx::PxIdentity)
 {
+	api = TextureAPI::instance();
+	api->create(texturePath);
+
 	readMesh(modelPath);
 }
 
-Model::Model(const char* modelPath, const glm::vec4& textureColor , std::shared_ptr<Camera> camera) :
-	mTexture(textureColor),
+Model::Model(const char* modelPath, const glm::vec4& textureColor, std::shared_ptr<Camera> camera) :
 	mCameraPointer(std::move(camera)),
 	mUsage(GL_STATIC_DRAW),
 	mModel(physx::PxIdentity)
 {
+	api = TextureAPI::instance();
+	mTexture = api->create(textureColor);
 	readMesh(modelPath);
 }
 
@@ -37,7 +41,7 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 
 	if (!depth) {
 		glActiveTexture(GL_TEXTURE0);
-		mTexture.bind();
+		api->bind(mTexture);
 	}
 
 	// Placing lights at opposite ends of x-axis
@@ -53,10 +57,6 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 		glUniform3fv(purpleLightLoc, 1, value_ptr(purpleLight));
 		glUniform3fv(orangeLightLoc, 1, value_ptr(orangeLight));
 
-		//bool lit = false;
-		//const auto litLoc = glGetUniformLocation(shaderID, "lit");
-		//glUniform1i(litLoc, lit);
-
 		const auto viewLoc = glGetUniformLocation(shaderID, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(mCameraPointer->getViewMatrix()));
 
@@ -66,7 +66,6 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 		const auto typeLoc = glGetUniformLocation(shaderID, "type");
 		glUniform1i(typeLoc, type);
 	}
-
 
 	float near_plane = 200.f, far_plane = 600.f;
 	glm::mat4 lightProjection = glm::ortho(-250.f, 250.f, -250.f, 500.f, near_plane, far_plane);
