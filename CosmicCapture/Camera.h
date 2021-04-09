@@ -35,6 +35,8 @@
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 
+#include <vector>
+
 
 class Camera
 {
@@ -47,7 +49,7 @@ public:
 	void				handleAnalogMove(float x, float y);
 
 	[[nodiscard]] glm::mat4 getViewMatrix() const;
-	void updateCamera(const physx::PxMat44& model);
+	void updateCamera(const physx::PxMat44& model, float speed, int &lagCounter, bool isReversing);
 
 	void setEye(const physx::PxVec3& vec) { mEye = vec; }
 
@@ -58,6 +60,7 @@ public:
 	glm::mat4 perspectiveMatrix;
 
 private:
+	std::vector<physx::PxVec3>	lagEyes;
 	physx::PxVec3	mEye;
 	physx::PxVec3	mDir;
 	int				mMouseX;

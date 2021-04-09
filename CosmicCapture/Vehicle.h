@@ -70,7 +70,8 @@ public:
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
 	void simulate(Physics& instance) override;
 	void processInput(const std::map<MovementFlags, bool>& inputs);
-	float getSpeed();
+	float getVelocity();
+	bool isReversing();
 
 	void cleanUpPhysics() override;
 	[[nodiscard]] PxVehicleDrive4W* getVehicle() const { return mVehicle4W; }
