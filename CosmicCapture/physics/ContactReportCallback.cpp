@@ -12,7 +12,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 	for (PxU32 i = 0; i < count; i++)
 	{
 		// Flag pickups
-		if (pairs[i].triggerActor == State::flagPickupBox && pairs[i].otherActor != State::flagBody)
+		if (pairs[i].triggerActor == State::flagPickupBox && pairs[i].otherActor != State::flagBody && State::canPickupFlag)
 		{		
 			if (pairs[i].otherActor == State::vehicles[0]->getRigidDynamicActor() && !State::flagPickedUpBy[0] && !State::flagPickedUp) {
 				State::flagPickedUpBy[0] = true;
@@ -36,7 +36,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		}
 
 		// Flag dropoffs
-		else if (pairs[i].triggerActor == State::flagDropoffBoxes[0] && pairs[i].otherActor == State::vehicles[0]->getRigidDynamicActor() && State::flagPickedUpBy[0])
+		else if (pairs[i].triggerActor == State::flagDropoffBoxes[0] && pairs[i].otherActor == State::vehicles[0]->getRigidDynamicActor() && State::flagPickedUpBy[0] && !State::killCars[0])
 		{
 			fmt::print("player 0 dropped off flag\n");
 			State::flagPickedUpBy[0] = false;

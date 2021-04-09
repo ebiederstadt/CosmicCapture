@@ -5,7 +5,89 @@
 #include <physx/vehicle/PxVehicleUtil.h>
 #include "GlobalState.h"
 
+float riseRateAccel = 200.f;
+float riseRateBrake = 50.f;
+float riseRateHandBrake = 6.f;
+float riseRateSteerLeft = 2.5f;
+float riseRateSteerRight = 2.5f;
+float fallRateAccel = 10.f;
+float fallRateBrake = 10.f;
+float fallRateHandBrake = 10.f;
+float fallRateSteerLeft = 5.f;
+float fallRateSteerRight = 5.f;
+float gSteerVsForwardSpeedData1A = 0.0f;
+float gSteerVsForwardSpeedData1B = 0.75f;
+float gSteerVsForwardSpeedData2A = 5.0f;
+float gSteerVsForwardSpeedData2B = 0.75f;
+float gSteerVsForwardSpeedData3A = 30.0f;
+float gSteerVsForwardSpeedData3B = 0.125f;
+float gSteerVsForwardSpeedData4A = 120.0f;
+float gSteerVsForwardSpeedData4B = 0.1f;
 
+
+// TODO: Might want to think about a better place to store these definitions (so they are not longer globals)
+inline PxVehicleKeySmoothingData gKeySmoothingData =
+{
+	{
+		riseRateAccel, //rise rate eANALOG_INPUT_ACCEL
+		riseRateBrake, //rise rate eANALOG_INPUT_BRAKE		
+		riseRateHandBrake, //rise rate eANALOG_INPUT_HANDBRAKE	
+		riseRateSteerLeft, //rise rate eANALOG_INPUT_STEER_LEFT
+		riseRateSteerRight, //rise rate eANALOG_INPUT_STEER_RIGHT
+	},
+	{
+		fallRateAccel, //fall rate eANALOG_INPUT_ACCEL
+		fallRateBrake, //fall rate eANALOG_INPUT_BRAKE		
+		fallRateHandBrake, //fall rate eANALOG_INPUT_HANDBRAKE	
+		fallRateSteerLeft, //fall rate eANALOG_INPUT_STEER_LEFT
+		fallRateSteerRight //fall rate eANALOG_INPUT_STEER_RIGHT
+	}
+};
+
+inline PxVehiclePadSmoothingData gPadSmoothingData =
+{
+	{
+		riseRateAccel, //rise rate eANALOG_INPUT_ACCEL
+		riseRateBrake, //rise rate eANALOG_INPUT_BRAKE		
+		riseRateHandBrake, //rise rate eANALOG_INPUT_HANDBRAKE	
+		riseRateSteerLeft, //rise rate eANALOG_INPUT_STEER_LEFT
+		riseRateSteerRight, //rise rate eANALOG_INPUT_STEER_RIGHT
+	},
+	{
+		fallRateAccel, //fall rate eANALOG_INPUT_ACCEL
+		fallRateBrake, //fall rate eANALOG_INPUT_BRAKE		
+		fallRateHandBrake, //fall rate eANALOG_INPUT_HANDBRAKE	
+		fallRateSteerLeft, //fall rate eANALOG_INPUT_STEER_LEFT
+		fallRateSteerRight //fall rate eANALOG_INPUT_STEER_RIGHT
+	}
+};
+
+inline PxF32 gSteerVsForwardSpeedData[2 * 8] =
+{
+	gSteerVsForwardSpeedData1A, gSteerVsForwardSpeedData1B,
+	gSteerVsForwardSpeedData2A, gSteerVsForwardSpeedData2B,
+	gSteerVsForwardSpeedData3A, gSteerVsForwardSpeedData3B,
+	gSteerVsForwardSpeedData4A, gSteerVsForwardSpeedData4B,
+	PX_MAX_F32, PX_MAX_F32,
+	PX_MAX_F32, PX_MAX_F32,
+	PX_MAX_F32, PX_MAX_F32,
+	PX_MAX_F32, PX_MAX_F32
+};
+inline PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedData, 4);
+/*
+inline PxF32 gSteerVsForwardSpeedData[2 * 8] =
+{
+	0.0f, 0.75f,
+	5.0f, 0.75f,
+	30.0f, 0.125f,
+	120.0f, 0.1f,
+	PX_MAX_F32, PX_MAX_F32,
+	PX_MAX_F32, PX_MAX_F32,
+	PX_MAX_F32, PX_MAX_F32,
+	PX_MAX_F32, PX_MAX_F32
+};
+inline PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedData, 4);
+*/
 
 Vehicle::Vehicle(std::shared_ptr<Camera> camera, int playerNum, std::string modelPath, std::string bodyTexturePath, std::string tireTexturePath) :
 

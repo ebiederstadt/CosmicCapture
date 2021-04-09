@@ -49,6 +49,19 @@ void Flag::simulate(Physics& instance)
 	float addDeg = 0;
 	float rad = 0;
 
+	if (State::startPickupFlagTimer) {
+		
+		if (State::flagTimer < 60.f) {
+			State::flagTimer += 1.0f;
+		}
+			
+		else {
+			State::flagTimer = 0.0f;
+			State::startPickupFlagTimer = false;
+			State::canPickupFlag = true;
+		}
+	}
+
 	if (State::flagPickedUpBy[0]) {
 
 		PxVec3 pos = State::vehicles[0]->getRigidDynamicActor()->getGlobalPose().p;

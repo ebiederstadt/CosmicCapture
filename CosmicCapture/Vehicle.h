@@ -8,55 +8,24 @@
 #include "physics/VehicleMovement.h"
 
 
-// TODO: Might want to think about a better place to store these definitions (so they are not longer globals)
-inline PxVehicleKeySmoothingData gKeySmoothingData =
-{
-	{
-		200.0f, //rise rate eANALOG_INPUT_ACCEL
-		50.0f, //rise rate eANALOG_INPUT_BRAKE		
-		6.0f, //rise rate eANALOG_INPUT_HANDBRAKE	
-		2.5f, //rise rate eANALOG_INPUT_STEER_LEFT
-		2.5f, //rise rate eANALOG_INPUT_STEER_RIGHT
-	},
-	{
-		10.0f, //fall rate eANALOG_INPUT_ACCEL
-		10.0f, //fall rate eANALOG_INPUT_BRAKE		
-		10.0f, //fall rate eANALOG_INPUT_HANDBRAKE	
-		5.0f, //fall rate eANALOG_INPUT_STEER_LEFT
-		5.0f //fall rate eANALOG_INPUT_STEER_RIGHT
-	}
-};
-
-inline PxVehiclePadSmoothingData gPadSmoothingData =
-{
-	{
-		200.0f, //rise rate eANALOG_INPUT_ACCEL
-		50.0f, //rise rate eANALOG_INPUT_BRAKE		
-		6.0f, //rise rate eANALOG_INPUT_HANDBRAKE	
-		2.5f, //rise rate eANALOG_INPUT_STEER_LEFT
-		2.5f, //rise rate eANALOG_INPUT_STEER_RIGHT
-	},
-	{
-		10.0f, //fall rate eANALOG_INPUT_ACCEL
-		10.0f, //fall rate eANALOG_INPUT_BRAKE		
-		10.0f, //fall rate eANALOG_INPUT_HANDBRAKE	
-		5.0f, //fall rate eANALOG_INPUT_STEER_LEFT
-		5.0f //fall rate eANALOG_INPUT_STEER_RIGHT
-	}
-};
-
-inline PxF32 gSteerVsForwardSpeedData[2 * 8] =
-{
-	0.0f, 0.75f,
-	5.0f, 0.75f,
-	30.0f, 0.125f,
-	120.0f, 0.1f,
-	PX_MAX_F32, PX_MAX_F32,
-	PX_MAX_F32, PX_MAX_F32,
-	PX_MAX_F32, PX_MAX_F32,
-	PX_MAX_F32, PX_MAX_F32
-};
-inline PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedData, 4);
+extern float riseRateAccel;
+extern float riseRateBrake;
+extern float riseRateHandBrake;
+extern float riseRateSteerLeft;
+extern float riseRateSteerRight;
+extern float fallRateAccel;
+extern float fallRateBrake;
+extern float fallRateHandBrake;
+extern float fallRateSteerLeft;
+extern float fallRateSteerRight;
+extern float gSteerVsForwardSpeedData1A;
+extern float gSteerVsForwardSpeedData1B;
+extern float gSteerVsForwardSpeedData2A;
+extern float gSteerVsForwardSpeedData2B;
+extern float gSteerVsForwardSpeedData3A;
+extern float gSteerVsForwardSpeedData3B;
+extern float gSteerVsForwardSpeedData4A;
+extern float gSteerVsForwardSpeedData4B;
 
 
 class Vehicle : public Entity

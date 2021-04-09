@@ -76,12 +76,21 @@ struct VehicleDesc
 	ShapeUserData* shapeUserDatas;
 };
 
+extern float chassMass;
+extern float chassDimX;
+extern float chassDimY;
+extern float chassDimZ;
+extern float whMass;
+extern float whRadius;
+extern float whWidth;
+extern float springMaxCompression;
+extern float springMaxDroop;
+extern float springStrength;
+extern float springDamperRate;
 
 class Physics
 {
 public:
-
-
 	bool inReverseMode;
 	static Physics& Instance();
 	void Initialize();

@@ -27,7 +27,7 @@
 #include "InvisibleBarrier.h"
 
 #include "GlobalState.h"
-
+#include "./physics/VehicleCreate.h"
 
 float angle = -0.25f;
 glm::vec2 g_scale = { 1.f, 1.f };
@@ -411,6 +411,38 @@ int main(int argc, char** args) {
 
 		powerUpManager.simulate(physics);
 
+		if (State::killCars[0]) {
+			State::canPickupFlag = false;
+			State::startPickupFlagTimer = true;
+			car.getVehicle()->getRigidDynamicActor()->release();
+			car.attachPhysics(physics);
+			std::cout << "Respawning player" << std::endl;
+			State::killCars[0] = false;
+		}
+		if (State::killCars[1]) {
+			State::canPickupFlag = false;
+			State::startPickupFlagTimer = true;
+			opponentCar1.getVehicle()->getRigidDynamicActor()->release();
+			opponentCar1.attachPhysics(physics);
+			std::cout << "Respawning opponent 1" << std::endl;
+			State::killCars[1] = false;
+		}
+		if (State::killCars[2]) {
+			State::canPickupFlag = false;
+			State::startPickupFlagTimer = true;
+			opponentCar2.getVehicle()->getRigidDynamicActor()->release();
+			opponentCar2.attachPhysics(physics);
+			std::cout << "Respawning opponent 2" << std::endl;
+			State::killCars[2] = false;
+		}
+		if (State::killCars[3]) {
+			State::canPickupFlag = false;
+			State::startPickupFlagTimer = true;
+			opponentCar3.getVehicle()->getRigidDynamicActor()->release();
+			opponentCar3.attachPhysics(physics);
+			std::cout << "Respawning opponent 3" << std::endl;
+			State::killCars[3] = false;
+		}
 		physics.stepPhysics();
 
 		// Update camera
@@ -565,6 +597,44 @@ int main(int argc, char** args) {
 		ImGui::SliderFloat("Position x", &g_pos.x, -3.0f, 3.0f);
 		ImGui::SliderFloat("Position y", &g_pos.y, -3.0f, 3.0f);
 		ImGui::SliderFloat("Projectile speed scaling factor", &scalingFactor, 1.0f, 5.0f);
+
+		ImGui::Text("Car Stuff (Press R after changing values)");
+		ImGui::Text("VehicleCreate.cpp (lines 38-41)");
+		ImGui::SliderFloat("Engine Peak Torque", &peakTorque, 100.f, 2000.f);
+		ImGui::SliderFloat("Engine Max Omega (Speed)", &maxOmega, 500.f, 2000.f);
+		ImGui::SliderFloat("Gear Switch Time", &gearSwitchTime, 0.f, 50.f);
+		ImGui::SliderFloat("Clutch Strength", &clutchStrength, 0.f, 100.f);
+		ImGui::Text("Physics.cpp (lines 14-24)");
+		ImGui::SliderFloat("Chassis Mass", &chassMass, 1000.f, 2000.f);
+		ImGui::SliderFloat("Chassis Dimension X", &chassDimX, 1.f, 5.f);
+		ImGui::SliderFloat("Chassis Dimension Y", &chassDimY, 1.f, 4.f);
+		ImGui::SliderFloat("Chassis Dimension Z", &chassDimZ, 1.f, 10.f);
+		ImGui::SliderFloat("Wheel Mass", &whMass, 20.f, 60.f);
+		ImGui::SliderFloat("Wheel Radius", &whRadius, 0.1f, 2.f);
+		ImGui::SliderFloat("Wheel Width", &whWidth, 0.1f, 2.f);
+		ImGui::SliderFloat("Spring Max Compression", &springMaxCompression, 0.f, 1.f);
+		ImGui::SliderFloat("Spring Max Droop", &springMaxDroop, 0.f, 1.f);
+		ImGui::SliderFloat("Spring Strength", &springStrength, 0.f, 50000.f);
+		ImGui::SliderFloat("Spring Damper Rate", &springDamperRate, 0.f, 10000.f);
+		ImGui::Text("Vehicle.cpp (lines 8-25");
+		ImGui::SliderFloat("rise rate accel", &riseRateAccel, 0.1f, 500.f);
+		ImGui::SliderFloat("rise rate brake", &riseRateBrake, 0.1f, 500.f);
+		ImGui::SliderFloat("rise rate handbrake", &riseRateHandBrake, 0.1f, 50.f);
+		ImGui::SliderFloat("rise rate steer left", &riseRateSteerLeft, 0.1f, 50.f);
+		ImGui::SliderFloat("rise rate steer right", &riseRateSteerRight, 0.1f, 50.f);
+		ImGui::SliderFloat("fall rate accel", &fallRateAccel, 0.1f, 500.f);
+		ImGui::SliderFloat("fall rate brake", &fallRateBrake, 0.1f, 500.f);
+		ImGui::SliderFloat("fall rate handbrake", &fallRateHandBrake, 0.1f, 50.f);
+		ImGui::SliderFloat("fall rate steer left", &fallRateSteerLeft, 0.1f, 50.f);
+		ImGui::SliderFloat("fall rate steer right", &fallRateSteerRight, 0.1f, 50.f);
+		ImGui::SliderFloat("gSteerVsForwardSpeedData1A", &gSteerVsForwardSpeedData1A, 0.f, 10.f);
+		ImGui::SliderFloat("gSteerVsForwardSpeedData1B", &gSteerVsForwardSpeedData1B, 0.f, 10.f);
+		ImGui::SliderFloat("gSteerVsForwardSpeedData2A", &gSteerVsForwardSpeedData2A, 0.f, 20.f);
+		ImGui::SliderFloat("gSteerVsForwardSpeedData2B", &gSteerVsForwardSpeedData2B, 0.f, 10.f);
+		ImGui::SliderFloat("gSteerVsForwardSpeedData3A", &gSteerVsForwardSpeedData3A, 0.f, 100.f);
+		ImGui::SliderFloat("gSteerVsForwardSpeedData3B", &gSteerVsForwardSpeedData3B, 0.f, 10.f);
+		ImGui::SliderFloat("gSteerVsForwardSpeedData4A", &gSteerVsForwardSpeedData4A, 0.f, 500.f);
+		ImGui::SliderFloat("gSteerVsForwardSpeedData4B", &gSteerVsForwardSpeedData4B, 0.f, 10.f);
 	};
 	
 	// Loop until the user closes the window
