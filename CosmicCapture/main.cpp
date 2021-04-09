@@ -506,8 +506,8 @@ int main(int argc, char** args) {
 
 		// Second pass
 
-		arena.draw(shaderProgram, false, 2);
-		walls.draw(shaderProgram, false, 2);
+		arena.draw(shaderProgram, false, 1);
+		walls.draw(shaderProgram, false, 1);
 		skybox.draw(shaderProgram, false, 0);
 
 		if (State::redArena) {
