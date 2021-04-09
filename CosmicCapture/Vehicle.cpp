@@ -135,7 +135,7 @@ void Vehicle::attachPhysics(Physics& instance)
 		z = -160.f;
 	}
 	const PxTransform startTransform(PxVec3(x, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), z),
-		PxQuat(PxIdentity)); //inline ternary operators are probably not the best choice but they work for now
+		PxQuat(PxIdentity));
 	mVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
 	instance.gScene->addActor(*mVehicle4W->getRigidDynamicActor());
 

@@ -14,7 +14,7 @@ public:
 	void updatePath(PxVec3 playerPos, PxVec3 targetPos);
 	PxVec3 getPlayerToTargetDir(PxVec3 playerDirVec, int playerVehicleRDIndex, PxVec3 targetGlobalPos);
 	PxVec3 getPlayerToTargetDir(PxVec3 playerDirVec, int playerVehicleRDIndex);
-	int dirsToCommand(PxVec3 playerDirVec, PxVec3 targetDirVec);
+	int dirsToCommand(PxVec3 playerDirVec, PxVec3 targetDirVec, bool* sharpTurnFlag);
 	void setPlayerNum(int num);
 	void attachVehicle(PxVehicleDrive4W* vehicle) { mVehicles.push_back(vehicle); }
 private:
@@ -25,7 +25,7 @@ private:
 	std::map<MovementFlags, bool> getCommand(int commandNum);
 	//int getTargetDirection(std::pair<int, int> playerCoords, std::pair<int, int> targetCoords);
 	//int checkDiagonals(std::pair<int, int> currentPos, int targetDir);
-	
+	bool pointingAtGoal(PxVec3 playerDirVec, PxVec3 targetDirVec);
 
 	int playerNum;
 	int counter;
@@ -38,7 +38,8 @@ private:
 	float reverseThresholdSpeed = -10.f;
 	int framesReversing = 0;
 	int reversingMax = 750;
-	int stuckThreshold = 250; //TUNING POINT
+	int stuckThreshold = 200; //TUNING POINT
 	std::pair<int, int> lastPosition;
+	PxVec3 goalPos;
 };
 

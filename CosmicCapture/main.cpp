@@ -42,6 +42,7 @@ void initializeGridCenterCoords() {
 		for (int j = 0; j < 36; j++) {
 			State::worldGridCenterCoords[i][j].first = i * 10.f - 180.f + 5.f;
 			State::worldGridCenterCoords[i][j].second = j * 10.f - 180.f + 5.f;
+			
 			shifted = false;
 			if ((i + 1 < 36) && (i - 1 >= 0) && (j + 1 < 36) && (j - 1 >= 0)) {
 				if (State::worldGrid[i + 1][j] == 0) {
@@ -81,7 +82,7 @@ void initializeGridCenterCoords() {
 				}
 				
 			}
-
+			
 		}
 	}
 }
