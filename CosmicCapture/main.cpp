@@ -170,7 +170,7 @@ int main(int argc, char** args) {
 
 	// The arena model
 
-	Model arena("models/arena.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/arena_test.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model walls("models/walls.obj", "textures/walls_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model redGates("models/red_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model blueGates("models/blue_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
@@ -314,7 +314,7 @@ int main(int argc, char** args) {
 	barriers.attachPhysics(physics);
 	entities.push_back(&barriers);
 
-
+	int lagCounter = 0;
 
 	for (int opponentNum = 1; opponentNum < 4; opponentNum++) {		
 		opponentBrains[opponentNum - 1].updatePath(State::vehicles[opponentNum]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
@@ -418,12 +418,14 @@ int main(int argc, char** args) {
 
 		physics.stepPhysics();
 
+		float velocity = car.getVelocity();
+
 		// Update camera
-		sCamera->updateCamera(car.mGeometry->getModelMatrix());
+		sCamera->updateCamera(car.mGeometry->getModelMatrix(), velocity, lagCounter, car.isReversing());
 
 		//Update sound
-		Audio::engine.setVolume(0.3f + 0.001f*car.getSpeed());
-		//printf("%f \n", car.getSpeed());
+		Audio::engine.setVolume(0.3f + 0.001f*abs(velocity));
+		printf("v: %f\n", velocity);
 
 		shaderProgram.use();
 
@@ -507,6 +509,7 @@ int main(int argc, char** args) {
 			// If the user presses enter, reset the game
 			if (!inputState[MovementFlags::ENTER])
 			{
+				lagCounter = 0;
 				State::scores.fill(0);
 				State::flagPickedUp = false;
 				State::killCars.fill(true);
@@ -519,6 +522,7 @@ int main(int argc, char** args) {
 		//const VehicleDesc vehicleDesc = physics.initVehicleDesc();
 		if (State::killCars[0]) {
 			car.getVehicle()->getRigidDynamicActor()->release();
+			lagCounter = 0;
 			State::flagPickedUpBy[0] = false;
 			State::flagPickedUp = false;
 			car.attachPhysics(physics);

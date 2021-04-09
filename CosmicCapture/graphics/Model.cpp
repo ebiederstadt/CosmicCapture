@@ -71,7 +71,7 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 	float near_plane = 200.f, far_plane = 600.f;
 	glm::mat4 lightProjection = glm::ortho(-250.f, 250.f, -250.f, 500.f, near_plane, far_plane);
 
-	glm::mat4 lightView = lookAt(orangeLight, glm::vec3(-300.0f, 0.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 lightView = lookAt(orangeLight, glm::vec3(-300.0f, -10.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 

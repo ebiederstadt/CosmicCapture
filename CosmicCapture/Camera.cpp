@@ -89,17 +89,38 @@ glm::mat4 Camera::getViewMatrix() const
 	return glm::lookAt(pxVec2glm(mEye), pxVec2glm(center), { 0.0f, 1.0f, 0.0f });
 }
 
-void Camera::updateCamera(const PxMat44& model)
+void Camera::updateCamera(const PxMat44& model, float speed, int &lagCounter, bool isReversing)
 {
 	const auto modelPos = model.column3.getXYZ();
-	auto back = model.column2.getXYZ() * -10.0f;
+	//auto back = model.column2.getXYZ() * (-7.0f - 0.005f * speed);
+	auto back = model.column2.getXYZ() * -7.0f;
+	back.y += 1.0f;
+	if (isReversing) { 
+		back = model.column2.getXYZ() * (-10.0f + 0.0025f * speed);
+		back.y += 0.008f * speed; 
+	}
 
 	PxVec3 viewY = mDir.cross(PxVec3(0, 1, 0)).getNormalized();
 
 	PxQuat qy(angle, viewY);
 	back = qy.rotate(back);
 
-	mEye = modelPos + back;
+	if (lagCounter == 0) {
+		
+		lagEyes.clear();
+		mEye = modelPos + back;
+	}
+
+	if (lagCounter > 7) {
+
+		mEye = lagEyes.front();
+		lagEyes.erase(lagEyes.begin());
+	}
+
+	lagEyes.push_back(modelPos + back);
+	lagCounter++;
+
+	//mEye = modelPos + back;
 	mDir = (modelPos - mEye).getNormalized();
 }
 
