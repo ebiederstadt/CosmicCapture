@@ -28,7 +28,8 @@ ScoreDisplay::ScoreDisplay()
 
 GameUI::GameUI() :
 	mShader("shaders/ui.vert", "shaders/ui.frag"),
-	mFontShader("shaders/font.vert", "shaders/font.frag")
+	mFontShader("shaders/font.vert", "shaders/font.frag"),
+	api(TextureAPI::instance())
 {
 	mShader.compile();
 	mFontShader.compile();
@@ -43,6 +44,8 @@ void GameUI::render()
 {
 	unsigned int shaderID = static_cast<unsigned int>(mShader);
 	mShader.use();
+
+	auto textureAPI = TextureAPI::instance();
 	
 	renderPowerUpDisplay(shaderID);
 	renderCompassDisplay(shaderID);
@@ -54,7 +57,7 @@ void GameUI::renderMenu() const
 	unsigned int shaderID = static_cast<unsigned int>(mShader);
 	mShader.use();
 
-	mTextures.logo.bind();
+	api->bind(mTextures.logo);
 	mat4 model(1.0f);
 	const auto modelLoc = glGetUniformLocation(shaderID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
@@ -68,9 +71,9 @@ void GameUI::renderEndScreen() const
 	mShader.use();
 
 	if (State::scores[0] >= State::winScore)
-		mTextures.winScreen.bind();
+		api->bind(mTextures.winScreen);
 	else
-		mTextures.loseScreen.bind();
+		api->bind(mTextures.loseScreen);
 
 	mat4 model(1.0f);
 	const auto modelLoc = glGetUniformLocation(static_cast<unsigned int>(mShader), "model");
@@ -107,14 +110,14 @@ void GameUI::renderPowerUpDisplay(unsigned int shaderID) const
 	{
 		auto value = State::heldPowerUps[0].value();
 		if (value == PowerUpOptions::SPIKE_TRAP)
-			mTextures.spikeTrapTexture.bind();
+			api->bind(mTextures.spikeTrapTexture);
 		else if (value == PowerUpOptions::SPEED_BOOST)
-			mTextures.speedBoostTexture.bind();
+			api->bind(mTextures.projectileTexture);
 		else if (value == PowerUpOptions::PROJECTILE)
-			mTextures.projectileTexture.bind();
+			api->bind(mTextures.projectileTexture);
 	}
 	else
-		mTextures.blank.bind();
+		api->bind(mTextures.blank);
 
 	mat4 model = translate(mat4{ 1.0f }, { -0.85f, -0.85f, 0.0f });
 	model = scale(model, { 0.25f, 0.25f, 0.0f });
@@ -129,7 +132,7 @@ void GameUI::renderPowerUpDisplay(unsigned int shaderID) const
 
 void GameUI::renderCompassDisplay(unsigned int shaderID) const
 {
-	mTextures.compassTexture.bind();
+	api->bind(mTextures.compassTexture);
 
 	// Decide which direction to rotate the compass
 	mat4 model = translate(mat4{ 1.0f }, { 0.0f, 0.79, 0.0f });
@@ -148,7 +151,7 @@ void GameUI::renderCompassDisplay(unsigned int shaderID) const
 void GameUI::renderScores(unsigned int shaderID)
 {
 	mFontShader.use();
-	mTextures.font.bind();
+	api->bind(mTextures.font);
 
 	float yPos = 0.78f;
 	constexpr float inc = 0.24f;
@@ -190,7 +193,7 @@ void GameUI::renderScores(unsigned int shaderID)
 		mScoreDisplay.carTextures[i].bind();
 		mScoreDisplay.playerDisplays[i].drawData();
 
-		mTextures.font.bind();
+		api->bind(mTextures.font);
 		mFontShader.use();
 	};
 

@@ -23,6 +23,8 @@ public:
 	[[nodiscard]] bool hasOwningVehicle() const { return mOwnerVehicle.has_value(); }
 	[[nodiscard]] bool hasAffectedVehicle() const { return mAffectedVehicle.has_value(); }
 
+	int getID() const { return m_id; }
+
 	bool shouldBeDeleted;
 
 private:
