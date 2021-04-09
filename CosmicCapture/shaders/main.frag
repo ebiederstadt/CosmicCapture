@@ -63,16 +63,20 @@ void main()
 
    // vec4 baseTexture = texture(textureSampler, texCoord);
 	
-	// if(baseTexture.a < 0.01)
-       //  discard; // If the texture is transparent, don't draw the fragment
+	//if(baseTexture.a < 0.01)
+      //discard; // If the texture is transparent, don't draw the fragment
 
     vec3 color = texture(textureSampler, texCoord).rgb;
 
-
+	//Ambient light -> yellow
+	//vec3  amb = vec3(0.8f, 0.3f, 1.0f);
     //Ambient light -> dark blue
-	//vec3  amb = vec3(0.1f, 0.1f, 0.5f);
+	vec3  ambB = vec3(0.0f, 0.0f, 0.5f);
+	vec3 ambR =  vec3(0.5f, 0.0f, 0.0f);
 	// white
-	vec3  amb = vec3(1.0f, 1.0f, 1.0f);
+    vec3  ambW = vec3(1.0f, 1.0f, 1.0f);
+	// white
+    //if(type == 2) amb = vec3(1.0f, 1.0f, 1.0f);
 
 	//Diffuse calculation
 	vec3 plightDir = normalize(purpleLight - fragPos);
@@ -82,7 +86,7 @@ void main()
 	float odiff = max(dot(olightDir, normal), 0.0);
 
 	//Color shift lighting
-	vec3 pCol = vec3(0.8f*pdiff, 0.3f*pdiff, 1.0f*pdiff);
+	vec3 pCol = vec3(0.6f*pdiff, 0.3f*pdiff, 1.0f*pdiff);
 	vec3 oCol = vec3(1.0f*odiff, 0.8f*odiff, 0.0f*odiff);
 
 	// Lighting via view position not implemented yet
@@ -115,10 +119,10 @@ void main()
 	if (type == 0) fragColor = vec4(color, 1.0f);
 
 	//if(lit) fragColor = vec4(color, 1.0f);
-	else if(type == 1) fragColor = vec4((shadow * oCol + 0.3f * pCol + 0.3f*amb)* color,1.0f);
+	else if(type == 1) fragColor = vec4((0.4f*shadow * oCol + (1.0f - shadow) * 0.3f * pCol + 0.15f*ambB + shadow*0.15*ambR + (shadow + 1.0f)*0.1f*ambW)* color,1.0f);
 	//if(lit) fragColor = vec4((shadow * oCol + 0.3f*amb)* color,1.0f);
 
-	else fragColor = vec4((shadow * oCol + (1.0f - shadow)*0.5f*pCol + (shadow + 1.0f)*0.3f*amb + shadow*0.5f*ospec*oCol +(1.0f - shadow)*0.2f*pspec*pCol)* color,1.0f);
+	else fragColor = vec4((shadow * oCol + (1.0f - shadow)*0.5f*pCol + (shadow + 1.0f)*0.3f*ambW + shadow*0.5f*ospec*oCol +(1.0f - shadow)*0.2f*pspec*pCol)* color,1.0f);
 	//else fragColor = vec4(color, 1.0f);
 
 }

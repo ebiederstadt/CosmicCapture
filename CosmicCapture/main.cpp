@@ -171,11 +171,12 @@ int main(int argc, char** args) {
 
 	// The arena model
 
-	Model arena("models/arena.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/arena_test.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model walls("models/walls.obj", "textures/walls_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model redGates("models/red_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model blueGates("models/blue_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model skybox("models/skybox.obj", "textures/stars.jpg", sCamera, GL_DYNAMIC_DRAW);
+
 	// Shadow setup start ---------------------------------------------------------------------
 
 	// Configure depth map FBO
@@ -219,11 +220,9 @@ int main(int argc, char** args) {
 	// Entities
 
 	Vehicle car(sCamera, 0, "models/car_body.obj", "textures/car_body_texture.jpg", "textures/green_tire_texture.jpg");
-	//Vehicle car(shaderProgram, sCamera, 0, "textures/test_texture.png");
 
 	car.attachPhysics(physics);
 	State::vehicles[0] = car.getVehicle();
-
 
 	Vehicle opponentCar1(sCamera, 1, "models/blueCar.obj", "textures/blue_car_texture.jpg", "textures/blue_tire_texture.jpg");
 	opponentCar1.attachPhysics(physics);
@@ -315,7 +314,7 @@ int main(int argc, char** args) {
 	barriers.attachPhysics(physics);
 	entities.push_back(&barriers);
 
-
+	int lagCounter = 0;
 
 	for (int opponentNum = 1; opponentNum < 4; opponentNum++) {		
 		opponentBrains[opponentNum - 1].updatePath(State::vehicles[opponentNum]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
@@ -350,14 +349,12 @@ int main(int argc, char** args) {
 
 		//arena door switch
 		if (State::arenaSwitch && State::arenaSwitchReady) {
-			//need undraw code here
 			if (State::blueArena) {
 				updateWorldGridArena2();
 				physics.generateRedDoor(); //switch from blue doors to red
 				State::redArena = true;
 				State::blueArena = false;
 				//draw red arena
-				//Model arena("models/redArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 				fmt::print("Button pressed, doors switching\n");
 				fmt::print("Red arena loaded\n");
 			}
@@ -367,7 +364,6 @@ int main(int argc, char** args) {
 				State::blueArena = true;
 				State::redArena = false;
 				//draw blue arena
-				//Model arena("models/blueArena.obj", "textures/blank.jpg", shaderProgram, sCamera, GL_DYNAMIC_DRAW);
 				fmt::print("Button pressed, doors switching\n");
 				fmt::print("Blue arena loaded\n");
 			}
@@ -451,12 +447,14 @@ int main(int argc, char** args) {
 		}
 		physics.stepPhysics();
 
+		float velocity = car.getVelocity();
+
 		// Update camera
-		sCamera->updateCamera(car.mGeometry->getModelMatrix());
+		sCamera->updateCamera(car.mGeometry->getModelMatrix(), velocity, lagCounter, car.isReversing());
 
 		//Update sound
-		Audio::engine.setVolume(0.3f + 0.001f*car.getSpeed());
-		//printf("%f \n", car.getSpeed());
+		Audio::engine.setVolume(0.3f + 0.001f*abs(velocity));
+		printf("v: %f\n", velocity);
 
 		shaderProgram.use();
 
@@ -474,8 +472,8 @@ int main(int argc, char** args) {
 		walls.draw(simpleDepthShader, true, 1);
 		// don't include skybox in depth map
 
-		if(State::redArena) redGates.draw(simpleDepthShader, true, 1);
-		if(State::blueArena) blueGates.draw(simpleDepthShader, true, 1);
+		if(State::redArena) redGates.draw(simpleDepthShader, true, 2);
+		if(State::blueArena) blueGates.draw(simpleDepthShader, true, 2);
 
 		for (const auto& entity : entities)
 			entity->draw(physics, simpleDepthShader, true);
@@ -508,8 +506,8 @@ int main(int argc, char** args) {
 
 		// Second pass
 
-		arena.draw(shaderProgram, false, 1);
-		walls.draw(shaderProgram, false, 1);
+		arena.draw(shaderProgram, false, 2);
+		walls.draw(shaderProgram, false, 2);
 		skybox.draw(shaderProgram, false, 0);
 
 		if (State::redArena) {
@@ -540,6 +538,7 @@ int main(int argc, char** args) {
 			// If the user presses enter, reset the game
 			if (!inputState[MovementFlags::ENTER])
 			{
+				lagCounter = 0;
 				State::scores.fill(0);
 				State::flagPickedUp = false;
 				State::killCars.fill(true);
@@ -548,7 +547,6 @@ int main(int argc, char** args) {
 				State::redArena = true;
 			}
 		}
-
 
 		//scott's debugging prints----------------------------------------------------------------------------------------------
 		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;

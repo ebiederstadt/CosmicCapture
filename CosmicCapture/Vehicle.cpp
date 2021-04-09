@@ -278,10 +278,13 @@ void Vehicle::processInput(const std::map<MovementFlags, bool>& inputs)
 	}
 }
 
-float Vehicle::getSpeed() {
-	float speed = abs(mVehicle4W->mDriveDynData.getEngineRotationSpeed());
-
+float Vehicle::getVelocity() {
+	float speed = mVehicle4W->mDriveDynData.getEngineRotationSpeed();
 	return speed;
+}
+
+bool Vehicle::isReversing() {
+	return mInReverseMode;
 }
 
 void Vehicle::cleanUpPhysics()

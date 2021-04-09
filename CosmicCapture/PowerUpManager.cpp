@@ -134,27 +134,27 @@ void PowerUpManager::simulate(Physics& instance)
 		auto* spikeTrap = dynamic_cast<SpikeTrap*>(powerup->get());
 		if (spikeTrap)
 		{
-			auto state = State::spike_trap_states.begin();
-			while (state != State::spike_trap_states.end())
-			{
+			int id = spikeTrap->getID();
+			try {
+				auto state = State::spike_trap_states.at(id);
 				// Catch a player with the spike trap:
-				if (state->second.inUse && ! spikeTrap->hasAffectedVehicle())
+				if (state.inUse && ! spikeTrap->hasAffectedVehicle())
 				{
-					fmt::print("Player {} ran into spike trap\n", state->second.actingUpon);
-					spikeTrap->attachAffectedVehicle(State::vehicles[state->second.actingUpon]);
+					fmt::print("Player {} ran into spike trap\n", state.actingUpon);
+					spikeTrap->attachAffectedVehicle(State::vehicles[state.actingUpon]);
 				}
 
 				// Remove the spike trap once it is placed and trapped somebody
 				if (spikeTrap->shouldBeDeleted)
 				{
-					powerup->get()->cleanUpPhysics();
-					state = State::spike_trap_states.erase(state);
+					spikeTrap->cleanUpPhysics();
 					powerup = mDeployedPowerUps.erase(powerup);
 
 					increment = false; // Don't increment when we erase from the vector
 				}
-				else
-					++state;
+			} catch (std::out_of_range&)
+			{
+				fmt::print("WARNING: Attempting to operate on an invalid spike trap: {}\n", id);
 			}
 		}
 

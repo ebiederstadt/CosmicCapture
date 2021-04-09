@@ -11,6 +11,7 @@
 class Texture
 {
 public:
+	Texture() = default;
 	Texture(const std::string& path, GLuint interpolation, bool flip = true);
 	Texture(const glm::vec4& color);
 
