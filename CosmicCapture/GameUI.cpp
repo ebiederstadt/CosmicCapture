@@ -112,7 +112,7 @@ void GameUI::renderPowerUpDisplay(unsigned int shaderID) const
 		if (value == PowerUpOptions::SPIKE_TRAP)
 			api->bind(mTextures.spikeTrapTexture);
 		else if (value == PowerUpOptions::SPEED_BOOST)
-			api->bind(mTextures.projectileTexture);
+			api->bind(mTextures.speedBoostTexture);
 		else if (value == PowerUpOptions::PROJECTILE)
 			api->bind(mTextures.projectileTexture);
 	}
