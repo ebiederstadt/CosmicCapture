@@ -107,7 +107,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 					if (pairs[i].triggerActor == geom)
 					{
 						fmt::print("Player {} picked up spike trap\n", j);
-						State::heldPowerUps[i] = PowerUpOptions::SPIKE_TRAP;
+						State::heldPowerUps[j] = PowerUpOptions::SPIKE_TRAP;
 						if (j == 0) Audio::spike_trap_pickup.playSound();
 					}
 				}
@@ -245,12 +245,16 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 			}
 
 			// Handle collisions between vehicles and the projectile
-			for (const auto& [id, geometry] : State::projectileList)
+			for (const auto& [id, state] : State::projectileStates)
 			{
+				// Only check for collisions if the projectile is actually active
+				if (!state.active)
+					continue;
+
 				for (int j = 0; j < 4; ++j)
 				{
-					if ((pairHeader.actors[0] == geometry && pairHeader.actors[1] == State::vehicles[j]->getRigidDynamicActor()) ||
-						(pairHeader.actors[0] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[1] == geometry))
+					if ((pairHeader.actors[0] == state.body && pairHeader.actors[1] == State::vehicles[j]->getRigidDynamicActor()) ||
+						(pairHeader.actors[0] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[1] == state.body))
 					{
 						fmt::print("Projectile collided with car #{}\n", j);
 						State::killCars[j] = true;

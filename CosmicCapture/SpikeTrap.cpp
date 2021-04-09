@@ -58,7 +58,12 @@ void SpikeTrap::cleanUpPhysics()
 {
 	fmt::print("Cleaning up spike trap {}\n", m_id);
 	PX_RELEASE(body);
-	PX_RELEASE(State::spike_trap_states[m_id].triggerBody);
+	// Only clean up the physics state when it has actually been created
+	if (State::spike_trap_states[m_id].triggerBody != nullptr)
+		PX_RELEASE(State::spike_trap_states[m_id].triggerBody);
+
+	// In either case, we need to remove the spike trap from the global state as well
+	State::spike_trap_states.erase(m_id);
 }
 
 bool SpikeTrap::processInput(const std::map<MovementFlags, bool>& inputs, Physics& instance)

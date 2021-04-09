@@ -202,6 +202,7 @@
     <ClCompile Include="SpeedBoostPickupZone.cpp" />
     <ClCompile Include="SpikeTrap.cpp" />
     <ClCompile Include="SpikeTrapPickupZone.cpp" />
+    <ClCompile Include="graphics\TextureAPI.cpp" />
     <ClCompile Include="Vehicle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -256,6 +257,7 @@
     <ClInclude Include="SpeedBoostPickupZone.h" />
     <ClInclude Include="SpikeTrap.h" />
     <ClInclude Include="SpikeTrapPickupZone.h" />
+    <ClInclude Include="graphics\TextureAPI.h" />
     <ClInclude Include="Vehicle.h" />
   </ItemGroup>
   <ItemGroup>

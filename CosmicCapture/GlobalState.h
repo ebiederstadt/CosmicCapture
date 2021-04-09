@@ -16,10 +16,16 @@ enum class PowerUpOptions
 
 struct spikeTrapState
 {
-	PxRigidStatic* triggerBody; // The trigger body for the spike trap
+	PxRigidStatic* triggerBody = nullptr; // The trigger body for the spike trap
 	bool active = false; // Spike trap has been deployed and is ready to catch people
 	bool inUse = false; // The spike trap has caught somebody
 	int actingUpon; // Which car the spike trap caught
+};
+
+struct projectileState
+{
+	PxRigidDynamic* body = nullptr; // The body of the projectile
+	bool active = false; // True when the projectile can blow up cars
 };
 
 
@@ -84,7 +90,7 @@ struct State
 	inline static std::map<int, PxRigidStatic*> speedBoostPickupTriggerBodies;
 
 	inline static std::map<int, spikeTrapState> spike_trap_states;
-	inline static std::map<int, PxRigidDynamic*> projectileList;
+	inline static std::map<int, projectileState> projectileStates;
 
 	inline static std::array<bool, 4> killCars = { false, false, false, false };
 

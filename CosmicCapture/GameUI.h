@@ -2,7 +2,7 @@
 
 #include "graphics/Geometry.h"
 #include "graphics/ShaderProgram.h"
-#include "graphics/Texture.h"
+#include "graphics/TextureAPI.h"
 
 #include <physx/PxPhysicsAPI.h>
 
@@ -11,19 +11,36 @@
 // Wrapper for all the textures we are using
 struct GUITextures
 {
-	Texture blank = Texture(CLEAR);
+	GUITextures()
+	{
+		TextureAPI* instance = TextureAPI::instance();
+		blank = instance->create(CLEAR);
+		instance->create("textures/spike_preview.png", GL_LINEAR, false);
+		instance->create("textures/speed_boost.png", GL_LINEAR, false);
+		instance->create("textures/rocket_preview.png", GL_LINEAR, false);
 
-	Texture spikeTrapTexture = Texture("textures/spike_preview.png", GL_LINEAR, false);
-	Texture speedBoostTexture = Texture("textures/speed_boost.png", GL_LINEAR, false);
-	Texture projectileTexture = Texture("textures/rocket_preview.png", GL_LINEAR, false);
+		instance->create("textures/compass.png", GL_LINEAR, false);
 
-	Texture compassTexture = Texture("textures/compass.png", GL_LINEAR, false);
+		instance->create("textures/cosmicLogo.png", GL_LINEAR, false);
+		instance->create("textures/font.bmp", GL_NEAREST, false);
 
-	Texture logo = Texture("textures/cosmicLogo.png", GL_LINEAR, false);
-	Texture font = Texture("textures/font.bmp", GL_NEAREST, false);
+		instance->create("textures/winscreen.png", GL_NEAREST, false);
+		instance->create("textures/losescreen.png", GL_NEAREST, false);
+	}
+	
+	TextureAPI::TextureName blank;
 
-	Texture winScreen = Texture("textures/winscreen.png", GL_NEAREST, false);
-	Texture loseScreen = Texture("textures/losescreen.png", GL_NEAREST, false);
+	TextureAPI::TextureName spikeTrapTexture = "textures/spike_preview.png";
+	TextureAPI::TextureName speedBoostTexture = "textures/speed_boost.png";
+	TextureAPI::TextureName projectileTexture = "textures/rocket_preview.png";
+
+	TextureAPI::TextureName compassTexture = "textures/compass.png";
+
+	TextureAPI::TextureName logo = "textures/cosmicLogo.png";
+	TextureAPI::TextureName font = "textures/font.bmp";
+
+	TextureAPI::TextureName winScreen = "textures/winscreen.png";
+	TextureAPI::TextureName loseScreen = "textures/losescreen.png";
 };
 
 struct ScoreDisplay
@@ -38,7 +55,6 @@ struct ScoreDisplay
 	Texture score = Texture("textures/font.bmp", GL_NEAREST, false);
 
 	// Car Textures
-	// TODO: Update these to be the actual cars
 	std::array<Texture, 4> carTextures = {
 		Texture("textures/greenCar.png", GL_LINEAR, false),
 		Texture("textures/blueCar.png", GL_LINEAR, false),
@@ -64,6 +80,8 @@ private:
 	ShaderProgram mShader;
 	ShaderProgram mFontShader;
 	GUITextures mTextures;
+
+	TextureAPI* api;
 
 	// Powerups
 	GUIGPUGeometry mPowerupDisplay;
