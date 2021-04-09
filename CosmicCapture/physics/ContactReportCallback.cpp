@@ -18,21 +18,24 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				State::flagPickedUpBy[0] = true;
 				fmt::print("player 0 picked up flag\n");
 				Audio::flag_pickup.playSound();
+				State::flagPickedUp = true;
 				
 			}
 			else if (pairs[i].otherActor == State::vehicles[1]->getRigidDynamicActor() && !State::flagPickedUpBy[1] && !State::flagPickedUp) {
 				State::flagPickedUpBy[1] = true;
 				fmt::print("player 1 picked up flag\n");
+				State::flagPickedUp = true;
 			}
 			else if (pairs[i].otherActor == State::vehicles[2]->getRigidDynamicActor() && !State::flagPickedUpBy[2] && !State::flagPickedUp) {
 				State::flagPickedUpBy[2] = true;
 				fmt::print("player 2 picked up flag\n");
+				State::flagPickedUp = true;
 			}
 			else if (pairs[i].otherActor == State::vehicles[3]->getRigidDynamicActor() && !State::flagPickedUpBy[3] && !State::flagPickedUp) {
 				State::flagPickedUpBy[3] = true;
 				fmt::print("player 3 picked up flag\n");
+				State::flagPickedUp = true;
 			}
-			State::flagPickedUp = true;
 		}
 
 		// Flag dropoffs
