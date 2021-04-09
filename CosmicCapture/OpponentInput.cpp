@@ -15,17 +15,22 @@ OpponentInput::OpponentInput(int playerNumber)
 
 
 std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 playerDir) {
+	bool sharpTurn = false;
 	float vehicleSpeed = mVehicles[0]->computeForwardSpeed();
 	std::pair<int, int> current = getGridCoordinates(playerPos.x, playerPos.z);
-	if (current == target) {
+	std::pair<float, float> centre = State::worldGridCenterCoords[target.first][target.second];
+	double dist = std::sqrt(std::pow(playerPos.x - centre.first, 2) + std::pow(playerPos.z - centre.second, 2));
+	double distToGoal = std::sqrt(std::pow(playerPos.x - goalPos.x, 2) + std::pow(playerPos.z - goalPos.y, 2));
+
+	if (dist < 5.f) {
 		if (path.empty()) {
-			path = pathfinder.ehStarSearch(State::worldGrid, current, std::make_pair<int,int>(10,10)); //FIX THIS PROBLEM
+			path = pathfinder.ehStarSearch(State::worldGrid, current, std::make_pair<int,int>(18,18)); //FIX THIS PROBLEM
 		}
 		target = path.top();
 		path.pop();
 	}
 
-	if (current == lastPosition && !reversing) {
+	if (vehicleSpeed < 0.5f && !reversing) {
 		if (stuckCounter >= stuckThreshold) {
 			reversing = true;
 		}
@@ -65,28 +70,31 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 		}
 		else {
 			PxVec3 targetDir = getPlayerToTargetDir(playerDir, playerNum);
-			command = getCommand(dirsToCommand(playerDir, targetDir));
+			command = getCommand(dirsToCommand(playerDir, targetDir, &sharpTurn));
 		}	
 	}
-
-	if  (!command[MovementFlags::LEFT] || !command[MovementFlags::RIGHT]) { //if you are going too fast and trying to turn hit the brakes
-		if (vehicleSpeed > 25.f) {
+	
+	if  (sharpTurn) { //if you are going too fast and trying to turn hit the brakes
+		if (vehicleSpeed > 15.f) {
 			command[MovementFlags::UP] = true;
+			command[MovementFlags::DOWN] = false;
 		}
 	}
-	else {
-		if (vehicleSpeed > 30.f) {
-			command[MovementFlags::UP] = true;
-		}
+	
+	if (distToGoal < 75.f /*&& State::flagPickedUp && pointingAtGoal(playerDir, getPlayerToTargetDir(playerDir, playerNum, goalPos))*/) {
+		command[MovementFlags::ACTION] = false;
+		printf("USING ACTION \n");
 	}
 
 	return command;
 }
 
+
 void OpponentInput::updatePath(PxVec3 playerPos, PxVec3 targetPos) {
 	std::pair<int, int> p = getGridCoordinates(playerPos.x, playerPos.z);
 	std::pair<int, int> t = getGridCoordinates(targetPos.x, targetPos.z);
-	if (p == t) {
+	goalPos = targetPos;
+	if (p == t || State::worldGrid[p.first][p.second] == 0 || State::worldGrid[t.first][t.second] == 0) {
 
 		
 	}
@@ -112,12 +120,11 @@ std::pair<int, int> OpponentInput::getGridCoordinates(float globalPosX, float gl
 
 
 
-
 PxVec3 OpponentInput::getPlayerToTargetDir(PxVec3 playerDirVec, int playerVehicleRDIndex, PxVec3 targetGlobalPos) {
 	std::pair<int, int> targetGridPos = getGridCoordinates(targetGlobalPos.x, targetGlobalPos.y);
 
-	float targetX = State::worldGridCenterCoords[targetGridPos.first][targetGridPos.second].first;
-	float targetZ = State::worldGridCenterCoords[targetGridPos.first][targetGridPos.second].second;
+	float targetX = targetGlobalPos.x;
+	float targetZ = targetGlobalPos.y;
 	PxVec3 playerPos = State::vehicles[playerVehicleRDIndex]->getRigidDynamicActor()->getGlobalPose().p;
 	float playerX = playerPos.x;
 	float playerZ = playerPos.z;
@@ -142,7 +149,21 @@ PxVec3 OpponentInput::getPlayerToTargetDir(PxVec3 playerDirVec, int playerVehicl
 
 }
 
-int OpponentInput::dirsToCommand(PxVec3 playerDirVec, PxVec3 targetDirVec) {
+bool OpponentInput::pointingAtGoal(PxVec3 playerDirVec, PxVec3 targetDirVec) {
+	bool pointingAtGoal = false;
+	float playerX = playerDirVec.x;
+	float playerZ = playerDirVec.z;
+	float targetX = targetDirVec.x;
+	float targetZ = targetDirVec.z;
+	float playerAngleRads = atan2(playerZ, playerX);
+	float targetAngleRads = atan2(targetZ, targetX);
+	float diff = abs(playerAngleRads - targetAngleRads);
+	if (diff < 0.8f) {
+		true;
+	}
+	return pointingAtGoal;
+}
+int OpponentInput::dirsToCommand(PxVec3 playerDirVec, PxVec3 targetDirVec, bool* sharpTurnFlag) {
 	float playerX = playerDirVec.x;
 	float playerZ = playerDirVec.z;
 	float targetX = targetDirVec.x;
@@ -150,10 +171,14 @@ int OpponentInput::dirsToCommand(PxVec3 playerDirVec, PxVec3 targetDirVec) {
 	float playerAngleRads = atan2(playerZ, playerX);
 	float targetAngleRads = atan2(targetZ, targetX);
 	int commandNum = 1;
-
-	if (abs(playerAngleRads - targetAngleRads) < 0.175f) { //TUNING POINT -- magic number = how close you have to be pointing to your target to go straight
+	float diff = abs(playerAngleRads - targetAngleRads);
+	if (diff < 0.175f) { //TUNING POINT -- magic number = how close you have to be pointing to your target to go straight
 		return commandNum;
 	}
+	else if (diff > 1.f) {
+		*sharpTurnFlag = true;
+	}
+	
 	if (playerAngleRads > targetAngleRads) {
 		if ((double)playerAngleRads - targetAngleRads > M_PI) {
 			commandNum = 2;
