@@ -34,8 +34,7 @@ glm::vec2 g_scale = { 1.f, 1.f };
 glm::vec2 g_pos = { 1.0f, 1.0f };
 float scalingFactor = 3.0f;
 
-// TODO: This should be changed to 1!
-int numHumanPlayers = 2;
+int numHumanPlayers = 1;
 
 void initializeGridCenterCoords() {
 	float flatOffset = 4.f; //TUNING POINT
@@ -221,7 +220,6 @@ int main(int argc, char** args) {
 	bool quit = false;
 
 	// Entities
-
 	Vehicle car(sCamera, 0, "models/car_body.obj", "textures/car_body_texture.jpg", "textures/green_tire_texture.jpg");
 
 	car.attachPhysics(physics);
@@ -243,8 +241,6 @@ int main(int argc, char** args) {
 	State::vehicles[3] = opponentCar3.getVehicle();
 	opponentBrains[2].attachVehicle(opponentCar3.getVehicle());
 
-	std::array<Vehicle*, 4> cars = { &car, &opponentCar1,&opponentCar2, &opponentCar3 };
-	
 	Flag flag(sCamera);
 	
 
@@ -319,7 +315,7 @@ int main(int argc, char** args) {
 	barriers.attachPhysics(physics);
 	entities.push_back(&barriers);
 
-	int lagCounter = 0;
+	std::array<int, 4> lagCounters = { 0 ,0, 0, 0 };
 
 	for (int opponentNum = 1; opponentNum < 4; opponentNum++) {		
 		opponentBrains[opponentNum - 1].updatePath(State::vehicles[opponentNum]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
@@ -343,7 +339,8 @@ int main(int argc, char** args) {
 	{
 		// Update camera
 		float velocity = currentCar.getVelocity();
-		sCamera->updateCamera(currentCar.mGeometry->getModelMatrix(), velocity, lagCounter, currentCar.isReversing());
+		sCamera->updateCamera(currentCar.mGeometry->getModelMatrix(), velocity, lagCounters[playerNum], currentCar.isReversing());
+		fmt::print("Lag Counter: {}\n", lagCounters[playerNum]);
 
 		//Update sound
 		Audio::engine.setVolume(0.3f + 0.001f * abs(velocity));
@@ -375,7 +372,6 @@ int main(int argc, char** args) {
 		glViewport(x, y, width, height);
 
 		// Now standard rendering -----------------
-
 		shaderProgram.use();
 
 		float near_plane = 200.f, far_plane = 600.f;
@@ -557,7 +553,7 @@ int main(int argc, char** args) {
 			// If the user presses enter, reset the game
 			if (!inputState[MovementFlags::ENTER])
 			{
-				lagCounter = 0;
+				lagCounters.fill(0);
 				State::scores.fill(0);
 				State::flagPickedUp = false;
 				State::killCars.fill(true);

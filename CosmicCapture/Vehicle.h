@@ -39,11 +39,19 @@ public:
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
 	void simulate(Physics& instance) override;
 	void processInput(const std::map<MovementFlags, bool>& inputs);
-	float getVelocity();
-	bool isReversing();
+	float getVelocity() const;
+	bool isReversing() const;
 
 	void cleanUpPhysics() override;
 	[[nodiscard]] PxVehicleDrive4W* getVehicle() const { return mVehicle4W; }
+
+	void setHuman(bool useKeyboard, int controllerNum = 0);
+	bool isHuman = false;
+	bool useKeyboard = false;
+	bool useController = false;
+	int controllerNumber = 0;
+
+	bool ready = false;
 
 private:
 	PxVehicleDrive4W* mVehicle4W;

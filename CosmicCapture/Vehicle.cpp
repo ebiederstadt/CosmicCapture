@@ -278,12 +278,14 @@ void Vehicle::processInput(const std::map<MovementFlags, bool>& inputs)
 	}
 }
 
-float Vehicle::getVelocity() {
+float Vehicle::getVelocity() const
+{
 	float speed = mVehicle4W->mDriveDynData.getEngineRotationSpeed();
 	return speed;
 }
 
-bool Vehicle::isReversing() {
+bool Vehicle::isReversing() const
+{
 	return mInReverseMode;
 }
 
@@ -291,4 +293,21 @@ void Vehicle::cleanUpPhysics()
 {
 	mVehicle4W->getRigidDynamicActor()->release();
 	mVehicle4W->free();
+}
+
+void Vehicle::setHuman(bool useKeyboard, int controllerNum)
+{
+	isHuman = true;
+	if (useKeyboard)
+	{
+		this->useKeyboard = true;
+		useController = false;
+	}
+
+	else
+	{
+		this->useKeyboard = false;
+		useController = true;
+		controllerNumber = controllerNum;
+	}
 }
