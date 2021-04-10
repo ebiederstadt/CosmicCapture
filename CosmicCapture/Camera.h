@@ -49,7 +49,7 @@ public:
 	void				handleAnalogMove(float x, float y);
 
 	[[nodiscard]] glm::mat4 getViewMatrix() const;
-	void updateCamera(const physx::PxMat44& model, float speed, int &lagCounter, bool isReversing);
+	void updateCamera(const physx::PxMat44& model, float speed, bool isReversing);
 
 	void setEye(const physx::PxVec3& vec) { mEye = vec; }
 
@@ -58,6 +58,8 @@ public:
 	[[nodiscard]] physx::PxTransform getTransform() const;
 
 	glm::mat4 perspectiveMatrix;
+
+	int lagCounter = 0;
 
 private:
 	std::vector<physx::PxVec3>	lagEyes;

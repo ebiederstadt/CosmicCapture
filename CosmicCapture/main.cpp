@@ -249,6 +249,8 @@ int main(int argc, char** args) {
 	State::vehicles[3] = opponentCar3.getVehicle();
 	opponentBrains[2].attachVehicle(opponentCar3.getVehicle());
 
+	std::array<Vehicle*, 4> cars = { &car, &opponentCar1, &opponentCar2, &opponentCar3 };
+
 	Flag flag;
 	flag.attachPhysics(physics);
 
@@ -321,8 +323,6 @@ int main(int argc, char** args) {
 	barriers.attachPhysics(physics);
 	entities.push_back(&barriers);
 
-	std::array<int, 4> lagCounters = { 0 ,0, 0, 0 };
-
 	for (int opponentNum = 1; opponentNum < 4; opponentNum++) {		
 		opponentBrains[opponentNum - 1].updatePath(State::vehicles[opponentNum]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 	}
@@ -341,12 +341,11 @@ int main(int argc, char** args) {
 			gameStarted = true;
 	};
 
-	auto render = [&](int x, int y, int width, int height, const Vehicle& currentCar, int playerNum)
+	auto render = [&](int x, int y, int width, int height, int playerNum)
 	{
 		// Update camera
-		float velocity = currentCar.getVelocity();
-		camera.updateCamera(currentCar.mGeometry->getModelMatrix(), velocity, lagCounters[playerNum], currentCar.isReversing());
-		fmt::print("Lag Counter: {}\n", lagCounters[playerNum]);
+		float velocity = cars[playerNum]->getVelocity();
+		cameras[playerNum]->updateCamera(cars[playerNum]->mGeometry->getModelMatrix(), velocity, cars[playerNum]->isReversing());
 
 		//Update sound
 		Audio::engine.setVolume(0.3f + 0.001f * abs(velocity));
@@ -397,25 +396,25 @@ int main(int argc, char** args) {
 		glActiveTexture(GL_TEXTURE0);
 
 		// Second pass
-		arena.draw(shaderProgram, camera, false,1);
-		walls.draw(shaderProgram, camera, false,1);
-		skybox.draw(shaderProgram, camera, false,0);
+		arena.draw(shaderProgram, *cameras[playerNum], false,1);
+		walls.draw(shaderProgram, *cameras[playerNum], false,1);
+		skybox.draw(shaderProgram, *cameras[playerNum], false,0);
 
 		if (State::redArena) {
-			redGates.draw(shaderProgram, camera, false,1);
+			redGates.draw(shaderProgram, *cameras[playerNum], false,1);
 		}
 		if (State::blueArena) {
-			blueGates.draw(shaderProgram, camera, false,1);
+			blueGates.draw(shaderProgram, *cameras[playerNum], false,1);
 		}
 		for (const auto& entity : entities)
-			entity->draw(physics, shaderProgram, camera, false);
+			entity->draw(physics, shaderProgram, *cameras[playerNum], false);
 
-		powerUpManager.draw(physics, shaderProgram, camera, false);
+		powerUpManager.draw(physics, shaderProgram, *cameras[playerNum], false);
 
 		if (!State::flagPickedUpBy[0])
-			gameUI.setCompassDirection(currentCar.mGeometry->getModelMatrix(), flag.mGeometry->getModelMatrix());
+			gameUI.setCompassDirection(cars[playerNum]->mGeometry->getModelMatrix(), flag.mGeometry->getModelMatrix());
 		else if (State::flagPickedUpBy[0])
-			gameUI.setCompassDirection(currentCar.mGeometry->getModelMatrix(), State::flagDropoffBoxes[playerNum]->getGlobalPose().p);
+			gameUI.setCompassDirection(cars[playerNum]->mGeometry->getModelMatrix(), State::flagDropoffBoxes[playerNum]->getGlobalPose().p);
 
 		gameUI.render();
 	};
@@ -534,19 +533,19 @@ int main(int argc, char** args) {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		if (numHumanPlayers == 1)
-			render(0, 0, width, height, car, 0);
+			render(0, 0, width, height, 0);
 		if (numHumanPlayers == 2) {
-			render(0, 0, width / 2, height, car, 0);
-			render(width / 2, 0, width / 2, height, opponentCar1, 1);
+			render(0, 0, width / 2, height, 0);
+			render(width / 2, 0, width / 2, height, 1);
 		} else if (numHumanPlayers == 3) {
-			render(0, height / 2, width, height / 2, car, 0);
-			render(0, 0,width / 2, height / 2, opponentCar1, 1);
-			render(width / 2, 0, width / 2, height / 2, opponentCar2, 2);
+			render(0, height / 2, width, height / 2, 0);
+			render(0, 0,width / 2, height / 2, 1);
+			render(width / 2, 0, width / 2, height / 2, 2);
 		} else if (numHumanPlayers == 4) {
-			render(0, height / 2, width / 2, height / 2, car, 0);
-			render(width / 2, height / 2, width / 2, height / 2, opponentCar1, 1);
-			render(0, 0, width / 2, height / 2, opponentCar2, 2);
-			render(width / 2, 0, width / 2, height / 2, opponentCar3, 3);
+			render(0, height / 2, width / 2, height / 2, 0);
+			render(width / 2, height / 2, width / 2, height / 2, 1);
+			render(0, 0, width / 2, height / 2, 2);
+			render(width / 2, 0, width / 2, height / 2, 3);
 		}
 
 		// Check to see if any of the players have won
@@ -559,7 +558,10 @@ int main(int argc, char** args) {
 			// If the user presses enter, reset the game
 			if (!inputState[MovementFlags::ENTER])
 			{
-				lagCounters.fill(0);
+				for (auto c : cameras)
+				{
+					c->lagCounter = 0;
+				}
 				State::scores.fill(0);
 				State::flagPickedUp = false;
 				State::killCars.fill(true);
