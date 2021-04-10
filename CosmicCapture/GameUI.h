@@ -67,7 +67,7 @@ class GameUI
 {
 public:
 	GameUI();
-	void render();
+	void render(int offset);
 	void renderMenu() const;
 	void renderEndScreen() const;
 
@@ -98,5 +98,5 @@ private:
 
 	void renderPowerUpDisplay(unsigned int shaderID) const;
 	void renderCompassDisplay(unsigned int shaderID) const;
-	void renderScores(unsigned int shaderID);
+	void renderScores(unsigned int shaderID, int offset);
 };

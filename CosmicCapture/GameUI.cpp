@@ -40,16 +40,14 @@ GameUI::GameUI() :
 	mLogoDisplay.uploadData(quad);
 }
 
-void GameUI::render()
+void GameUI::render(int offset)
 {
 	unsigned int shaderID = static_cast<unsigned int>(mShader);
 	mShader.use();
 
-	auto textureAPI = TextureAPI::instance();
-	
 	renderPowerUpDisplay(shaderID);
 	renderCompassDisplay(shaderID);
-	renderScores(shaderID);
+	renderScores(shaderID, offset);
 }
 
 void GameUI::renderMenu() const
@@ -148,7 +146,7 @@ void GameUI::renderCompassDisplay(unsigned int shaderID) const
 	Texture::unbind();
 }
 
-void GameUI::renderScores(unsigned int shaderID)
+void GameUI::renderScores(unsigned int shaderID, int offset)
 {
 	mFontShader.use();
 	api->bind(mTextures.font);
@@ -198,14 +196,14 @@ void GameUI::renderScores(unsigned int shaderID)
 	};
 
 	// Draw the score for the main player
-	updateScore(0);
-	draw(-0.6f, 0);
+	updateScore(offset);
+	draw(-0.6f, offset);
 
 	// Draw the score for the other players
 	for (int i = 1; i < 4; ++i)
 	{
-		updateScore(i);
-		draw(1.0f, i);
+		updateScore((i + offset) % 4);
+		draw(1.0f, (i + offset) % 4);
 		yPos -= inc;
 	}
 

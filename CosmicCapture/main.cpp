@@ -416,7 +416,7 @@ int main(int argc, char** args) {
 		else if (State::flagPickedUpBy[0])
 			gameUI.setCompassDirection(cars[playerNum]->mGeometry->getModelMatrix(), State::flagDropoffBoxes[playerNum]->getGlobalPose().p);
 
-		gameUI.render();
+		gameUI.render(playerNum);
 	};
 
 	auto mainLoop = [&]()
