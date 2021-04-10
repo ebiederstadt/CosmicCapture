@@ -1,8 +1,8 @@
 #include "SpeedBoost.h"
 #include <iostream>
 
-SpeedBoost::SpeedBoost(std::shared_ptr<Camera> camera) :
-	Entity("models/projectile_sphere.ply", "textures/blue.jpg", camera)
+SpeedBoost::SpeedBoost() :
+	Entity("models/projectile_sphere.ply", "textures/blue.jpg")
 {}
 
 void SpeedBoost::attachPhysics(Physics& instance)
@@ -11,7 +11,7 @@ void SpeedBoost::attachPhysics(Physics& instance)
 	active = true;
 }
 
-void SpeedBoost::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {}
+void SpeedBoost::draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) {}
 
 void SpeedBoost::simulate(Physics& instance) {
 	if (active)

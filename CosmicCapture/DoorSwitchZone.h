@@ -4,9 +4,9 @@
 #include "physics/VehicleFilterShader.h"
 class DoorSwitchZone : public Entity {
 public:
-	DoorSwitchZone(std::shared_ptr<Camera> camera, int doorSwitchZoneNum);
+	DoorSwitchZone(int doorSwitchZoneNum);
 	void attachPhysics(Physics& instance) override;
-	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
+	void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
 

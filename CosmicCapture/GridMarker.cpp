@@ -1,6 +1,6 @@
 #include "GridMarker.h"
-GridMarker::GridMarker(std::shared_ptr<Camera> camera, PxVec3 pos) :
-	Entity("models/flag.ply", "textures/pink.jpg", camera)
+GridMarker::GridMarker(PxVec3 pos) :
+	Entity("models/flag.ply", "textures/pink.jpg")
 {
 	position = pos;
 }
@@ -36,11 +36,11 @@ void GridMarker::attachPhysics(Physics& instance)
 }
 
 
-void GridMarker::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
+void GridMarker::draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) {
 	for (int i = 0; i <  36*36; i++) {
 		PxTransform transform = markerBody[i]->getGlobalPose();
 		PxMat44 modelMatrix(transform);
-		mGeometry->draw(modelMatrix, depthTexture, depth, 1);
+		mGeometry->draw(modelMatrix, shader, camera, depth, 1);
 	}
 }
 void GridMarker::simulate(Physics& instance) {

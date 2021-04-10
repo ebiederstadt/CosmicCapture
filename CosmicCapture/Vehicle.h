@@ -32,11 +32,11 @@ class Vehicle : public Entity
 {
 public:
 
-	Vehicle(std::shared_ptr<Camera> camera, int playerNum, std::string modelPath, std::string bodyTexturePath, std::string tireTexturePath);
+	Vehicle(int playerNum, std::string modelPath, std::string bodyTexturePath, std::string tireTexturePath);
 
 	void attachPhysics(Physics& instance) override;
 
-	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
+	void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
 	void simulate(Physics& instance) override;
 	void processInput(const std::map<MovementFlags, bool>& inputs);
 	float getVelocity() const;

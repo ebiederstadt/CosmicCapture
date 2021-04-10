@@ -7,10 +7,10 @@
 class FlagDropoffZone : public Entity
 {
 public:
-	FlagDropoffZone(std::shared_ptr<Camera> camera, int playerNum);
+	FlagDropoffZone(int playerNum);
 
 	void attachPhysics(Physics& instance) override;
-	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
+	void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
 

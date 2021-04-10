@@ -1,7 +1,7 @@
 #include "DoorSwitchZone.h"
 
-DoorSwitchZone::DoorSwitchZone(std::shared_ptr<Camera> camera, int doorSwitchZoneN) :
-	Entity("models/dropoff_zone.ply", "textures/fancy.jpg", camera)
+DoorSwitchZone::DoorSwitchZone(int doorSwitchZoneN) :
+	Entity("models/dropoff_zone.ply", "textures/fancy.jpg")
 {
 	doorSwitchZoneNum = doorSwitchZoneN;
 }
@@ -45,12 +45,12 @@ void DoorSwitchZone::attachPhysics(Physics& instance)
 	
 }
 
-void DoorSwitchZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
+void DoorSwitchZone::draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth)
 {
 	// Draw the drop-off box
 	PxTransform transform = State::doorSwitchPickupTriggerBody[doorSwitchZoneNum]->getGlobalPose();
 	PxMat44 modelMatrix = PxMat44(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, 1);
+	mGeometry->draw(modelMatrix, shader, camera, depth, 1);
 }
 
 void DoorSwitchZone::simulate(Physics& instance)

@@ -6,11 +6,11 @@
 #include "Colors.h"
 
 
-Flag::Flag(const std::shared_ptr<Camera>& camera) :
-	Entity("models/flag.obj", WHITE, camera)
+Flag::Flag() :
+	Entity("models/flag.obj", WHITE)
 {
 
-	mFlagBody = std::make_unique<Model>("models/flag_body.obj", WHITE, camera);
+	mFlagBody = std::make_unique<Model>("models/flag_body.obj", WHITE);
 }
 
 void Flag::attachPhysics(Physics& instance)
@@ -35,13 +35,13 @@ void Flag::attachPhysics(Physics& instance)
 
 }
 
-void Flag::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
+void Flag::draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth)
 {
 	// Draw the flag
 	PxTransform transform = State::flagBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mFlagBody->draw(modelMatrix, depthTexture, depth, 2);
-	mGeometry->draw(modelMatrix, depthTexture, depth, 2);
+	mFlagBody->draw(modelMatrix, shader, camera, depth, 2);
+	mGeometry->draw(modelMatrix, shader, camera, depth, 2);
 }
 
 void Flag::simulate(Physics& instance)

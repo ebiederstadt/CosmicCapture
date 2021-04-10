@@ -10,34 +10,34 @@
 
 #include "./audio/AudioEngine.h"
 
-PowerUpManager::PowerUpManager(const std::shared_ptr<Camera> camera, Physics& instance)
+PowerUpManager::PowerUpManager(Physics& instance)
 {
-	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(camera, PxVec3(25.0f, 0.f, 25.f)));
+	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(PxVec3(25.0f, 0.f, 25.f)));
 	mPickupZones[0]->attachPhysics(instance);
 
-	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(camera, PxVec3(-25.f, 0.f, 25.f)));
+	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(PxVec3(-25.f, 0.f, 25.f)));
 	mPickupZones[1]->attachPhysics(instance);
 	
-	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(camera, PxVec3(25.f, 0.f, -25.f)));
+	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(PxVec3(25.f, 0.f, -25.f)));
 	mPickupZones[2]->attachPhysics(instance);
 
-	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(camera, PxVec3(60.f, 0.f, 50.f)));
+	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(PxVec3(60.f, 0.f, 50.f)));
 	mPickupZones[3]->attachPhysics(instance);
 
-	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(camera, PxVec3(60, 0.f, -50.f)));
+	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(PxVec3(60, 0.f, -50.f)));
 	mPickupZones[4]->attachPhysics(instance);
 
-	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(camera, PxVec3(-60.0f, 0.f, 50.f)));
+	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(PxVec3(-60.0f, 0.f, 50.f)));
 	mPickupZones[5]->attachPhysics(instance);
 
-	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(camera, PxVec3(-60.0f, 0.f, -50.f)));
+	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(PxVec3(-60.0f, 0.f, -50.f)));
 	mPickupZones[6]->attachPhysics(instance);
 
-	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(camera, PxVec3(-25.f, 0.f, -25.f)));
+	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(PxVec3(-25.f, 0.f, -25.f)));
 	mPickupZones[7]->attachPhysics(instance);
 }
 
-void PowerUpManager::pickup(const std::shared_ptr<Camera> camera, Physics& instance)
+void PowerUpManager::pickup(Physics& instance)
 {
 	for (auto iter = State::heldPowerUps.begin(); iter < State::heldPowerUps.end(); ++iter)
 	{
@@ -50,16 +50,16 @@ void PowerUpManager::pickup(const std::shared_ptr<Camera> camera, Physics& insta
 			{
 				if (iter->value() == PowerUpOptions::PROJECTILE)
 				{
-					mHeldPowerUps[index] = std::make_unique<Projectile>(camera);
+					mHeldPowerUps[index] = std::make_unique<Projectile>();
 					dynamic_cast<Projectile*>(mHeldPowerUps[index].get())->attachVehicle(State::vehicles[index]);
 				} else if (iter->value() == PowerUpOptions::SPEED_BOOST)
 				{
-					mHeldPowerUps[index] = std::make_unique<SpeedBoost>(camera);
+					mHeldPowerUps[index] = std::make_unique<SpeedBoost>();
 					mHeldPowerUps[index]->attachPhysics(instance);
 					dynamic_cast<SpeedBoost*>(mHeldPowerUps[index].get())->attachVehicle(State::vehicles[index]);
 				} else if (iter->value() == PowerUpOptions::SPIKE_TRAP)
 				{
-					mHeldPowerUps[index] = std::make_unique<SpikeTrap>(camera);
+					mHeldPowerUps[index] = std::make_unique<SpikeTrap>();
 					dynamic_cast<SpikeTrap*>(mHeldPowerUps[index].get())->attachOwningVehicle(State::vehicles[index]);
 					mHeldPowerUps[index]->attachPhysics(instance);
 				} else
@@ -192,18 +192,18 @@ void PowerUpManager::simulate(Physics& instance)
 	}
 }
 
-void PowerUpManager::draw(Physics& instance, const ShaderProgram& texture, bool depth)
+void PowerUpManager::draw(Physics& instance, const ShaderProgram& texture, const Camera& camera, bool depth)
 {
 	// Draw pickup zones
 	for (const auto& pickupZone : mPickupZones)
 	{
-		pickupZone->draw(instance, texture, depth);
+		pickupZone->draw(instance, texture, camera, depth);
 	}
 	
 	// Draw powerups
 	for (const auto& powerup : mDeployedPowerUps)
 	{
-		powerup->draw(instance, texture, depth);
+		powerup->draw(instance, texture, camera, depth);
 	}
 }
 

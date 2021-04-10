@@ -155,7 +155,15 @@ int main(int argc, char** args) {
 
 	//physics
 	Physics physics = Physics::Instance();
-	const auto sCamera = std::make_shared<Camera>(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+
+	// Cameras for each of the players
+	Camera camera(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+	Camera camera1(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+	Camera camera2(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+	Camera camera3(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+
+	std::array<Camera*, 4> cameras = { &camera, &camera1, &camera2, &camera3 };
+	
 	physics.Initialize();
 
 	Input input = Input();
@@ -173,11 +181,11 @@ int main(int argc, char** args) {
 
 	// The arena model
 
-	Model arena("models/arena_test.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model walls("models/walls.obj", "textures/walls_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model redGates("models/red_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model blueGates("models/blue_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model skybox("models/skybox.obj", "textures/stars.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/arena_test.obj", "textures/arena_texture.jpg");
+	Model walls("models/walls.obj", "textures/walls_texture.jpg");
+	Model redGates("models/red_gates.obj", "textures/blank.jpg");
+	Model blueGates("models/blue_gates.obj", "textures/blank.jpg");
+	Model skybox("models/skybox.obj", "textures/stars.jpg");
 
 	// Shadow setup start ---------------------------------------------------------------------
 
@@ -220,51 +228,49 @@ int main(int argc, char** args) {
 	bool quit = false;
 
 	// Entities
-	Vehicle car(sCamera, 0, "models/car_body.obj", "textures/car_body_texture.jpg", "textures/green_tire_texture.jpg");
+	Vehicle car(0, "models/car_body.obj", "textures/car_body_texture.jpg", "textures/green_tire_texture.jpg");
 
 	car.attachPhysics(physics);
 	State::vehicles[0] = car.getVehicle();
 
-	Vehicle opponentCar1(sCamera, 1, "models/blueCar.obj", "textures/blue_car_texture.jpg", "textures/blue_tire_texture.jpg");
+	Vehicle opponentCar1(1, "models/blueCar.obj", "textures/blue_car_texture.jpg", "textures/blue_tire_texture.jpg");
 	opponentCar1.attachPhysics(physics);
 	State::vehicles[1] = opponentCar1.getVehicle();
 	opponentBrains[0].attachVehicle(opponentCar1.getVehicle());
 	
-	Vehicle opponentCar2(sCamera, 2, "models/redCar.obj", "textures/red_car_texture.jpg", "textures/red_tire_texture.jpg");
+	Vehicle opponentCar2(2, "models/redCar.obj", "textures/red_car_texture.jpg", "textures/red_tire_texture.jpg");
 	opponentCar2.attachPhysics(physics);
 	opponentBrains[1].attachVehicle(opponentCar2.getVehicle());
 	
 	State::vehicles[2] = opponentCar2.getVehicle();
-	Vehicle opponentCar3(sCamera, 3, "models/yellowCar.obj", "textures/yellow_car_texture.jpg", "textures/yellow_tire_texture.jpg");
+	Vehicle opponentCar3(3, "models/yellowCar.obj", "textures/yellow_car_texture.jpg", "textures/yellow_tire_texture.jpg");
 
 	opponentCar3.attachPhysics(physics);
 	State::vehicles[3] = opponentCar3.getVehicle();
 	opponentBrains[2].attachVehicle(opponentCar3.getVehicle());
 
-	Flag flag(sCamera);
-	
-
+	Flag flag;
 	flag.attachPhysics(physics);
 
-	FlagDropoffZone flagDropoffZone0(sCamera, 0);
+	FlagDropoffZone flagDropoffZone0(0);
 	flagDropoffZone0.attachPhysics(physics);
 
-	FlagDropoffZone flagDropoffZone1(sCamera, 1);
+	FlagDropoffZone flagDropoffZone1(1);
 	flagDropoffZone1.attachPhysics(physics);
 	
-	FlagDropoffZone flagDropoffZone2(sCamera, 2);
+	FlagDropoffZone flagDropoffZone2(2);
 	flagDropoffZone2.attachPhysics(physics);
 
-	FlagDropoffZone flagDropoffZone3(sCamera, 3);
+	FlagDropoffZone flagDropoffZone3(3);
 	flagDropoffZone3.attachPhysics(physics);
 
-	DoorSwitchZone doorSwitchZone0(sCamera, 0);
+	DoorSwitchZone doorSwitchZone0(0);
 	doorSwitchZone0.attachPhysics(physics);
-	DoorSwitchZone doorSwitchZone1(sCamera, 1);
+	DoorSwitchZone doorSwitchZone1(1);
 	doorSwitchZone1.attachPhysics(physics);
-	DoorSwitchZone doorSwitchZone2(sCamera, 2);
+	DoorSwitchZone doorSwitchZone2(2);
 	doorSwitchZone2.attachPhysics(physics);
-	DoorSwitchZone doorSwitchZone3(sCamera, 3);
+	DoorSwitchZone doorSwitchZone3(3);
 	doorSwitchZone3.attachPhysics(physics);
 
 	std::vector<Entity*> entities;
@@ -286,7 +292,7 @@ int main(int argc, char** args) {
 	grid.attachPhysics(physics);
 	entities.push_back(&grid);
 	*/
-	PowerUpManager powerUpManager(sCamera, physics);
+	PowerUpManager powerUpManager(physics);
 
 	// setup audio
 	Audio::soundSystem.initialize();
@@ -311,7 +317,7 @@ int main(int argc, char** args) {
 	Audio::car_crash = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
 	Audio::flag_lost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
 
-	InvisibleBarrier barriers(sCamera, 0);
+	InvisibleBarrier barriers(0);
 	barriers.attachPhysics(physics);
 	entities.push_back(&barriers);
 
@@ -339,7 +345,7 @@ int main(int argc, char** args) {
 	{
 		// Update camera
 		float velocity = currentCar.getVelocity();
-		sCamera->updateCamera(currentCar.mGeometry->getModelMatrix(), velocity, lagCounters[playerNum], currentCar.isReversing());
+		camera.updateCamera(currentCar.mGeometry->getModelMatrix(), velocity, lagCounters[playerNum], currentCar.isReversing());
 		fmt::print("Lag Counter: {}\n", lagCounters[playerNum]);
 
 		//Update sound
@@ -356,17 +362,17 @@ int main(int argc, char** args) {
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		// First pass
-		arena.draw(simpleDepthShader, true, 1);
-		walls.draw(simpleDepthShader, true, 1);
+		arena.draw(simpleDepthShader, camera, true, 1);
+		walls.draw(simpleDepthShader, camera, true,1);
 		// don't include skybox in depth map
 
-		if (State::redArena) redGates.draw(simpleDepthShader, true, 2);
-		if (State::blueArena) blueGates.draw(simpleDepthShader, true, 2);
+		if (State::redArena) redGates.draw(simpleDepthShader, camera, true,2);
+		if (State::blueArena) blueGates.draw(simpleDepthShader, camera, true,2);
 
 		for (const auto& entity : entities)
-			entity->draw(physics, simpleDepthShader, true);
+			entity->draw(physics, simpleDepthShader, camera, true);
 
-		powerUpManager.draw(physics, simpleDepthShader, true);
+		powerUpManager.draw(physics, simpleDepthShader, camera, true);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(x, y, width, height);
@@ -391,20 +397,20 @@ int main(int argc, char** args) {
 		glActiveTexture(GL_TEXTURE0);
 
 		// Second pass
-		arena.draw(shaderProgram, false, 1);
-		walls.draw(shaderProgram, false, 1);
-		skybox.draw(shaderProgram, false, 0);
+		arena.draw(shaderProgram, camera, false,1);
+		walls.draw(shaderProgram, camera, false,1);
+		skybox.draw(shaderProgram, camera, false,0);
 
 		if (State::redArena) {
-			redGates.draw(shaderProgram, false, 1);
+			redGates.draw(shaderProgram, camera, false,1);
 		}
 		if (State::blueArena) {
-			blueGates.draw(shaderProgram, false, 1);
+			blueGates.draw(shaderProgram, camera, false,1);
 		}
 		for (const auto& entity : entities)
-			entity->draw(physics, shaderProgram, false);
+			entity->draw(physics, shaderProgram, camera, false);
 
-		powerUpManager.draw(physics, shaderProgram, false);
+		powerUpManager.draw(physics, shaderProgram, camera, false);
 
 		if (!State::flagPickedUpBy[0])
 			gameUI.setCompassDirection(currentCar.mGeometry->getModelMatrix(), flag.mGeometry->getModelMatrix());
@@ -422,7 +428,7 @@ int main(int argc, char** args) {
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);
     
-		powerUpManager.pickup(sCamera, physics);
+		powerUpManager.pickup(physics);
 		// TODO: Make it so that all players can use powerups
 		powerUpManager.use(physics, inputState, 0);
 
