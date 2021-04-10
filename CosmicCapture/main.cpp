@@ -34,6 +34,9 @@ glm::vec2 g_scale = { 1.f, 1.f };
 glm::vec2 g_pos = { 1.0f, 1.0f };
 float scalingFactor = 3.0f;
 
+// TODO: This should be changed to 1!
+int numHumanPlayers = 2;
+
 void initializeGridCenterCoords() {
 	float flatOffset = 4.f; //TUNING POINT
 	float diagonalOffset = 1.f; //TUNING POINT
@@ -239,6 +242,8 @@ int main(int argc, char** args) {
 	opponentCar3.attachPhysics(physics);
 	State::vehicles[3] = opponentCar3.getVehicle();
 	opponentBrains[2].attachVehicle(opponentCar3.getVehicle());
+
+	std::array<Vehicle*, 4> cars = { &car, &opponentCar1,&opponentCar2, &opponentCar3 };
 	
 	Flag flag(sCamera);
 	
@@ -334,6 +339,85 @@ int main(int argc, char** args) {
 			gameStarted = true;
 	};
 
+	auto render = [&](int x, int y, int width, int height, const Vehicle& currentCar, int playerNum)
+	{
+		// Update camera
+		float velocity = currentCar.getVelocity();
+		sCamera->updateCamera(currentCar.mGeometry->getModelMatrix(), velocity, lagCounter, currentCar.isReversing());
+
+		//Update sound
+		Audio::engine.setVolume(0.3f + 0.001f * abs(velocity));
+		//printf("v: %f\n", velocity);
+
+		shaderProgram.use();
+
+		// first render to depth map ---------------
+		simpleDepthShader.use();
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		// First pass
+		arena.draw(simpleDepthShader, true, 1);
+		walls.draw(simpleDepthShader, true, 1);
+		// don't include skybox in depth map
+
+		if (State::redArena) redGates.draw(simpleDepthShader, true, 2);
+		if (State::blueArena) blueGates.draw(simpleDepthShader, true, 2);
+
+		for (const auto& entity : entities)
+			entity->draw(physics, simpleDepthShader, true);
+
+		powerUpManager.draw(physics, simpleDepthShader, true);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(x, y, width, height);
+
+		// Now standard rendering -----------------
+
+		shaderProgram.use();
+
+		float near_plane = 200.f, far_plane = 600.f;
+
+		auto nearLoc = glGetUniformLocation(shaderID, "near_plane");
+		glUniform1f(nearLoc, near_plane);
+
+		auto farLoc = glGetUniformLocation(shaderID, "far_plane");
+		glUniform1f(farLoc, far_plane);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+
+		glActiveTexture(GL_TEXTURE0);
+
+		// Second pass
+		arena.draw(shaderProgram, false, 1);
+		walls.draw(shaderProgram, false, 1);
+		skybox.draw(shaderProgram, false, 0);
+
+		if (State::redArena) {
+			redGates.draw(shaderProgram, false, 1);
+		}
+		if (State::blueArena) {
+			blueGates.draw(shaderProgram, false, 1);
+		}
+		for (const auto& entity : entities)
+			entity->draw(physics, shaderProgram, false);
+
+		powerUpManager.draw(physics, shaderProgram, false);
+
+		if (!State::flagPickedUpBy[0])
+			gameUI.setCompassDirection(currentCar.mGeometry->getModelMatrix(), flag.mGeometry->getModelMatrix());
+		else if (State::flagPickedUpBy[0])
+			gameUI.setCompassDirection(currentCar.mGeometry->getModelMatrix(), State::flagDropoffBoxes[playerNum]->getGlobalPose().p);
+
+		gameUI.render();
+	};
+
 	auto mainLoop = [&]()
 	{
 		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
@@ -345,7 +429,6 @@ int main(int argc, char** args) {
 		powerUpManager.pickup(sCamera, physics);
 		// TODO: Make it so that all players can use powerups
 		powerUpManager.use(physics, inputState, 0);
-
 
 		//arena door switch
 		if (State::arenaSwitch && State::arenaSwitchReady) {
@@ -447,86 +530,22 @@ int main(int argc, char** args) {
 		}
 		physics.stepPhysics();
 
-		float velocity = car.getVelocity();
-
-		// Update camera
-		sCamera->updateCamera(car.mGeometry->getModelMatrix(), velocity, lagCounter, car.isReversing());
-
-		//Update sound
-		Audio::engine.setVolume(0.3f + 0.001f*abs(velocity));
-		printf("v: %f\n", velocity);
-
-		shaderProgram.use();
-
-		// first render to depth map ---------------
-		simpleDepthShader.use();
-
-		/* Start of stuff to move to the--------------------------------*/
-		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-		glClear(GL_DEPTH_BUFFER_BIT);
-
-		// First pass
-
-		arena.draw(simpleDepthShader, true, 1);
-		walls.draw(simpleDepthShader, true, 1);
-		// don't include skybox in depth map
-
-		if(State::redArena) redGates.draw(simpleDepthShader, true, 2);
-		if(State::blueArena) blueGates.draw(simpleDepthShader, true, 2);
-
-		for (const auto& entity : entities)
-			entity->draw(physics, simpleDepthShader, true);
-
-		powerUpManager.draw(physics, simpleDepthShader, true);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Now standard rendering -----------------
-
-		shaderProgram.use();
-
-		float near_plane = 200.f, far_plane = 600.f;
-
-		auto nearLoc = glGetUniformLocation(shaderID, "near_plane");
-		glUniform1f(nearLoc, near_plane);
-
-		auto farLoc = glGetUniformLocation(shaderID, "far_plane");
-		glUniform1f(farLoc, far_plane);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-
-		glActiveTexture(GL_TEXTURE0);
-
-		// Second pass
-
-		arena.draw(shaderProgram, false, 1);
-		walls.draw(shaderProgram, false, 1);
-		skybox.draw(shaderProgram, false, 0);
-
-		if (State::redArena) {
-			redGates.draw(shaderProgram, false, 1);
+		if (numHumanPlayers == 1)
+			render(0, 0, width, height, car, 0);
+		if (numHumanPlayers == 2) {
+			render(0, 0, width / 2, height, car, 0);
+			render(width / 2, 0, width / 2, height, opponentCar1, 1);
+		} else if (numHumanPlayers == 3) {
+			render(0, height / 2, width, height / 2, car, 0);
+			render(0, 0,width / 2, height / 2, opponentCar1, 1);
+			render(width / 2, 0, width / 2, height / 2, opponentCar2, 2);
+		} else if (numHumanPlayers == 4) {
+			render(0, height / 2, width / 2, height / 2, car, 0);
+			render(width / 2, height / 2, width / 2, height / 2, opponentCar1, 1);
+			render(0, 0, width / 2, height / 2, opponentCar2, 2);
+			render(width / 2, 0, width / 2, height / 2, opponentCar3, 3);
 		}
-		if (State::blueArena) {
-			blueGates.draw(shaderProgram, false, 1);
-		}
-		for (const auto& entity : entities)
-			entity->draw(physics, shaderProgram, false);
-
-		powerUpManager.draw(physics, shaderProgram, false);
-
-		if (!State::flagPickedUpBy[0])
-			gameUI.setCompassDirection(car.mGeometry->getModelMatrix(), flag.mGeometry->getModelMatrix());
-		else if (State::flagPickedUpBy[0])
-			gameUI.setCompassDirection(car.mGeometry->getModelMatrix(), State::flagDropoffBoxes[0]->getGlobalPose().p);
-		
-		gameUI.render();
 
 		// Check to see if any of the players have won
 		if (std::any_of(std::begin(State::scores), std::end(State::scores), [](int score)
@@ -574,6 +593,8 @@ int main(int argc, char** args) {
 		ImGui::SliderFloat("Position x", &g_pos.x, -3.0f, 3.0f);
 		ImGui::SliderFloat("Position y", &g_pos.y, -3.0f, 3.0f);
 		ImGui::SliderFloat("Projectile speed scaling factor", &scalingFactor, 1.0f, 5.0f);
+
+		ImGui::InputInt("Number of players", &numHumanPlayers);
 
 		ImGui::Text("Car Stuff (Press R after changing values)");
 		ImGui::Text("VehicleCreate.cpp (lines 38-41)");
