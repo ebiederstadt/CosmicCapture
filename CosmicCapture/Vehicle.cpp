@@ -209,7 +209,57 @@ void Vehicle::simulate(Physics& instance)
 		                  : PxVehicleIsInAir(vehicleQueryResults[0]);
 }
 
+void Vehicle::processInput(const InputInfo& inputInfo)
+{
+	// Only move the vehicle if the vehicle is human and the input source matches their chosen input source
+	if (isHuman && (
+		(useKeyboard && inputInfo.keyboard) || 
+		(useController && inputInfo.controller && controllerNumber == inputInfo.controllerID)))
+	{
+		moveVehicle(inputInfo.inputState);
+	}
+}
+
 void Vehicle::processInput(const std::map<MovementFlags, bool>& inputs)
+{
+	moveVehicle(inputs);
+}
+
+float Vehicle::getVelocity() const
+{
+	float speed = mVehicle4W->mDriveDynData.getEngineRotationSpeed();
+	return speed;
+}
+
+bool Vehicle::isReversing() const
+{
+	return mInReverseMode;
+}
+
+void Vehicle::cleanUpPhysics()
+{
+	mVehicle4W->getRigidDynamicActor()->release();
+	mVehicle4W->free();
+}
+
+void Vehicle::setHuman(bool useKeyboard, int controllerNum)
+{
+	isHuman = true;
+	if (useKeyboard)
+	{
+		this->useKeyboard = true;
+		useController = false;
+	}
+
+	else
+	{
+		this->useKeyboard = false;
+		useController = true;
+		controllerNumber = controllerNum;
+	}
+}
+
+void Vehicle::moveVehicle(const std::map<MovementFlags, bool>& inputs)
 {
 	for (const auto& [key, keyReleased] : inputs)
 	{
@@ -275,39 +325,5 @@ void Vehicle::processInput(const std::map<MovementFlags, bool>& inputs)
 			}
 			break;
 		}
-	}
-}
-
-float Vehicle::getVelocity() const
-{
-	float speed = mVehicle4W->mDriveDynData.getEngineRotationSpeed();
-	return speed;
-}
-
-bool Vehicle::isReversing() const
-{
-	return mInReverseMode;
-}
-
-void Vehicle::cleanUpPhysics()
-{
-	mVehicle4W->getRigidDynamicActor()->release();
-	mVehicle4W->free();
-}
-
-void Vehicle::setHuman(bool useKeyboard, int controllerNum)
-{
-	isHuman = true;
-	if (useKeyboard)
-	{
-		this->useKeyboard = true;
-		useController = false;
-	}
-
-	else
-	{
-		this->useKeyboard = false;
-		useController = true;
-		controllerNumber = controllerNum;
 	}
 }

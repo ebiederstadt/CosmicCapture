@@ -4,6 +4,7 @@
 ///////////////////////////////
 
 #include <map>
+#include <vector>
 
 #include "SDL/SDL.h"
 
@@ -12,13 +13,45 @@ enum class MovementFlags
     LEFT, RIGHT, UP, DOWN, ACTION, ENTER, RESET
 };
 
+// Information about the input
+struct InputInfo
+{
+    InputInfo()
+    {
+		inputState[MovementFlags::LEFT] = true;
+		inputState[MovementFlags::RIGHT] = true;
+		inputState[MovementFlags::DOWN] = true;
+		inputState[MovementFlags::UP] = true;
+		inputState[MovementFlags::ACTION] = true;
+		inputState[MovementFlags::ENTER] = true;
+		inputState[MovementFlags::RESET] = true;
+    }
+	
+    bool keyboard = false;
+    bool controller = false;
+    int controllerID = 0;
+
+    // Inputs that are not currently held
+    std::map<MovementFlags, bool> inputState;
+
+	void setKeyboard()
+	{
+        keyboard = true;
+        controller = false;
+	}
+
+	void setController(int id)
+	{
+        keyboard = false;
+        controller = true;
+        controllerID = id;
+	}
+};
+
 
 class Input
 {
 public:
-    //--- Constructor
-    Input();
-
     /// <summary>
     /// Process input
     /// </summary>
@@ -26,7 +59,7 @@ public:
     /// <returns>True if the user wants to quit. False otherwise</returns>
     bool HandleInput();
 
-    [[nodiscard]] std::map<MovementFlags, bool> getInputState() const { return mInputMap; }
+    [[nodiscard]] InputInfo getInfo() const { return mInfo; }
 
 	// Mouse stuff
     bool mouseHeld = false;
@@ -36,8 +69,10 @@ public:
 private:
 	SDL_Event mEvent;
 
-    // Inputs that are currently not held
-    std::map<MovementFlags, bool> mInputMap;
+    // Information about the most recent input event
+    InputInfo mInfo;
+
+    std::vector<SDL_GameController*> mControllers;
 
     //Analog joystick dead zone
     const int JOYSTICK_DEAD_ZONE = 8000;

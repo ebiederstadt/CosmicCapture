@@ -72,7 +72,7 @@ void PowerUpManager::pickup(Physics& instance)
 	}
 }
 
-void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>& inputs, int playerNum)
+void PowerUpManager::use(Physics& instance, const InputInfo& inputInfo, int playerNum)
 {
 	if (playerNum < 0 || playerNum > 4)
 	{
@@ -82,7 +82,7 @@ void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>&
 
 	if (dynamic_cast<Projectile*>(mHeldPowerUps[playerNum].get()))
 	{
-		if (!inputs.at(MovementFlags::ACTION))
+		if (!inputInfo.inputState.at(MovementFlags::ACTION))
 		{
 			fmt::print("Using Projectile\n");
 			auto powerup = static_cast<std::unique_ptr<Entity>>(mHeldPowerUps[playerNum].release());
@@ -95,7 +95,7 @@ void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>&
 	} else if (dynamic_cast<SpeedBoost*>(mHeldPowerUps[playerNum].get()))
 	{
 		// Use the powerup when the player presses the use key
-		if (!inputs.at(MovementFlags::ACTION))
+		if (!inputInfo.inputState.at(MovementFlags::ACTION))
 		{
 			auto powerup = static_cast<std::unique_ptr<Entity>>(mHeldPowerUps[playerNum].release());
 			mDeployedPowerUps.push_back(std::move(powerup));
@@ -106,7 +106,7 @@ void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>&
 	} else if (dynamic_cast<SpikeTrap*>(mHeldPowerUps[playerNum].get()))
 	{
 		// Check to see if the spike trap should be placed, and move it into the deployed powerups list if it should
-		if (dynamic_cast<SpikeTrap*>(mHeldPowerUps[playerNum].get())->processInput(inputs, instance))
+		if (dynamic_cast<SpikeTrap*>(mHeldPowerUps[playerNum].get())->processInput(inputInfo.inputState, instance))
 		{
 			auto powerup = static_cast<std::unique_ptr<Entity>>(mHeldPowerUps[playerNum].release());
 			mDeployedPowerUps.push_back(std::move(powerup));

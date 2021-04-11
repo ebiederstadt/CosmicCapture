@@ -233,21 +233,29 @@ int main(int argc, char** args) {
 	car.attachPhysics(physics);
 	State::vehicles[0] = car.getVehicle();
 
+	// First car will use the keyboard to move
+	car.setHuman(true);
+
 	Vehicle opponentCar1(1, "models/blueCar.obj", "textures/blue_car_texture.jpg", "textures/blue_tire_texture.jpg");
 	opponentCar1.attachPhysics(physics);
 	State::vehicles[1] = opponentCar1.getVehicle();
 	opponentBrains[0].attachVehicle(opponentCar1.getVehicle());
+
+	// Second car will use controller 0 to move
+	opponentCar1.setHuman(false, 0);
 	
 	Vehicle opponentCar2(2, "models/redCar.obj", "textures/red_car_texture.jpg", "textures/red_tire_texture.jpg");
 	opponentCar2.attachPhysics(physics);
 	opponentBrains[1].attachVehicle(opponentCar2.getVehicle());
-	
 	State::vehicles[2] = opponentCar2.getVehicle();
-	Vehicle opponentCar3(3, "models/yellowCar.obj", "textures/yellow_car_texture.jpg", "textures/yellow_tire_texture.jpg");
 
+	Vehicle opponentCar3(3, "models/yellowCar.obj", "textures/yellow_car_texture.jpg", "textures/yellow_tire_texture.jpg");
 	opponentCar3.attachPhysics(physics);
 	State::vehicles[3] = opponentCar3.getVehicle();
 	opponentBrains[2].attachVehicle(opponentCar3.getVehicle());
+
+	// Third car will controller 1 to move
+	opponentCar2.setHuman(false, 1);
 
 	std::array<Vehicle*, 4> cars = { &car, &opponentCar1, &opponentCar2, &opponentCar3 };
 
@@ -332,12 +340,12 @@ int main(int argc, char** args) {
 	GameUI gameUI;
 	bool gameStarted = false;
 
-	std::map<MovementFlags, bool> inputState;
+	InputInfo info;
 
 	auto preLoop = [&]()
 	{
 		gameUI.renderMenu();
-		if (!inputState[MovementFlags::ENTER])
+		if (!info.inputState[MovementFlags::ENTER])
 			gameStarted = true;
 	};
 
@@ -421,15 +429,13 @@ int main(int argc, char** args) {
 
 	auto mainLoop = [&]()
 	{
-		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		//printf("%f,%f,%f\n", playerPosition.x, playerPosition.y, playerPosition.z);
-		// Physics simulation
-		// Repeat for all vehicles eventually...
-		car.processInput(inputState);
+		car.processInput(info);
+		opponentCar1.processInput(info);
+		opponentCar2.processInput(info);
     
 		powerUpManager.pickup(physics);
 		// TODO: Make it so that all players can use powerups
-		powerUpManager.use(physics, inputState, 0);
+		powerUpManager.use(physics, info, 0);
 
 		//arena door switch
 		if (State::arenaSwitch && State::arenaSwitchReady) {
@@ -485,8 +491,8 @@ int main(int argc, char** args) {
 				opponentBrains[2].updatePath(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
-		opponentCar1.processInput(opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
-		opponentCar2.processInput(opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
+		//opponentCar1.processInput(opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
+		//opponentCar2.processInput(opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
 		opponentCar3.processInput(opponentBrains[2].getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 
 		aiStuffCounter++;
@@ -556,7 +562,7 @@ int main(int argc, char** args) {
 		{
 			gameUI.renderEndScreen();
 			// If the user presses enter, reset the game
-			if (!inputState[MovementFlags::ENTER])
+			if (!info.inputState[MovementFlags::ENTER])
 			{
 				for (auto c : cameras)
 				{
@@ -643,7 +649,8 @@ int main(int argc, char** args) {
 	while (!quit)
 	{
 		quit = input.HandleInput();
-		inputState = input.getInputState();
+		info = input.getInfo();
+		fmt::print("keyboard: {}, controller: {}, controller ID: {}\n", info.keyboard, info.controller, info.controllerID);
 
 		// Render
 		window.startImGuiFrame();
