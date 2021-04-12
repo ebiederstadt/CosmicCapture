@@ -35,8 +35,8 @@
 
 
 using namespace physx;
-float peakTorque = 800.f;
-float maxOmega = 1000.f;
+float peakTorque = 2000.f;
+float maxOmega = 2000.f;
 float gearSwitchTime = 0.5f;
 float clutchStrength = 10.f;
 

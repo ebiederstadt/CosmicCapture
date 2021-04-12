@@ -25,6 +25,7 @@
 
 #include "OpponentInput.h"
 #include "InvisibleBarrier.h"
+#include "GridMarker.h"
 
 #include "GlobalState.h"
 #include "./physics/VehicleCreate.h"
@@ -35,16 +36,18 @@ glm::vec2 g_pos = { 1.0f, 1.0f };
 float scalingFactor = 3.0f;
 
 void initializeGridCenterCoords() {
-	float flatOffset = 4.f; //TUNING POINT
-	float diagonalOffset = 1.f; //TUNING POINT
+	float flatOffset = 15.f; //TUNING POINT
+	float diagonalOffset = 10.f; //TUNING POINT
 	bool shifted = false;
-	for (int i = 0; i < 36; i++) {
-		for (int j = 0; j < 36; j++) {
-			State::worldGridCenterCoords[i][j].first = i * 10.f - 180.f + 5.f;
-			State::worldGridCenterCoords[i][j].second = j * 10.f - 180.f + 5.f;
+	for (int i = 0; i < 26; i++) {
+		for (int j = 0; j < 26; j++) {
 			
+
+			State::worldGridCenterCoords[i][j].first = i * 50.f - 650.f + 25.f;
+			State::worldGridCenterCoords[i][j].second = j * 50.f - 650.f + 25.f;
+			if (i == 1 || j == 1 || j == 24 || i == 24) continue;
 			shifted = false;
-			if ((i + 1 < 36) && (i - 1 >= 0) && (j + 1 < 36) && (j - 1 >= 0)) {
+			if ((i + 1 < 26) && (i - 1 >= 0) && (j + 1 < 26) && (j - 1 >= 0)) {
 				if (State::worldGrid[i + 1][j] == 0) {
 					State::worldGridCenterCoords[i][j].first -= flatOffset;
 					shifted = true;
@@ -62,6 +65,7 @@ void initializeGridCenterCoords() {
 					shifted = true;
 				}
 
+				/*
 				if (shifted) continue;
 
 				if (State::worldGrid[i - 1][j - 1] == 0) {
@@ -80,13 +84,14 @@ void initializeGridCenterCoords() {
 					State::worldGridCenterCoords[i][j].first += diagonalOffset;
 					State::worldGridCenterCoords[i][j].second -= diagonalOffset;
 				}
-				
+				*/
 			}
+			
 			
 		}
 	}
 }
-	
+/*
 void updateWorldGridArena1() {
 	State::worldGrid[12][17] = 0;
 	State::worldGrid[12][18] = 0;
@@ -142,10 +147,10 @@ void updateWorldGridArena2() {
 	State::worldGrid[33][29] = 0;
 	State::worldGrid[34][29] = 0;
 }
-
+*/
 int main(int argc, char** args) {
 	initializeGridCenterCoords();
-	updateWorldGridArena2();
+	//updateWorldGridArena2();
 	// Window Initialization
 	const GLint width = 1280, height = 720;
 	Window window("Cosmic Capture", width, height);
@@ -171,7 +176,7 @@ int main(int argc, char** args) {
 
 	// The arena model
 
-	Model arena("models/arena_test.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/bigArena.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model walls("models/walls.obj", "textures/walls_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model redGates("models/red_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model blueGates("models/blue_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
@@ -280,6 +285,7 @@ int main(int argc, char** args) {
 	entities.push_back(&doorSwitchZone1);
 	entities.push_back(&doorSwitchZone2);
 	entities.push_back(&doorSwitchZone3);
+	
 	/*
 	GridMarker grid(sCamera, PxVec3());
 	grid.attachPhysics(physics);
@@ -310,9 +316,9 @@ int main(int argc, char** args) {
 	Audio::car_crash = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
 	Audio::flag_lost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
 
-	InvisibleBarrier barriers(sCamera, 0);
-	barriers.attachPhysics(physics);
-	entities.push_back(&barriers);
+	//InvisibleBarrier barriers(sCamera, 0);
+	//barriers.attachPhysics(physics);
+	//entities.push_back(&barriers);
 
 	int lagCounter = 0;
 
@@ -350,7 +356,7 @@ int main(int argc, char** args) {
 		//arena door switch
 		if (State::arenaSwitch && State::arenaSwitchReady) {
 			if (State::blueArena) {
-				updateWorldGridArena2();
+				//updateWorldGridArena2();
 				physics.generateRedDoor(); //switch from blue doors to red
 				State::redArena = true;
 				State::blueArena = false;
@@ -359,7 +365,7 @@ int main(int argc, char** args) {
 				fmt::print("Red arena loaded\n");
 			}
 			else if (State::redArena) {
-				updateWorldGridArena1();
+				//updateWorldGridArena1();
 				physics.generateBlueDoor(); //switch from red doors to blue
 				State::blueArena = true;
 				State::redArena = false;

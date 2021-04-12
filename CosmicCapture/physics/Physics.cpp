@@ -18,9 +18,9 @@ float chassDimZ = 6.0f;
 float whMass = 40.f;
 float whRadius = 0.8f;
 float whWidth = 0.5f;
-float springMaxCompression = 0.3f;
-float springMaxDroop = 0.1f;
-float springStrength = 35000.0f;
+float springMaxCompression = 1.f;
+float springMaxDroop = 1.f;
+float springStrength = 50000.0f;
 float springDamperRate = 4500.0f;
 
 
@@ -86,7 +86,7 @@ void Physics::Initialize()
 	gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
 	gScene->addActor(*gGroundPlane);
 
-	blueDoorMesh = readMesh("./models/blueArena.obj");
+	blueDoorMesh = readMesh("./models/bigArena.obj");
 
 	blueDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(blueDoorMesh), *gMaterial, true); //create shape
 	blueDoorShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
@@ -98,7 +98,7 @@ void Physics::Initialize()
 	PX_RELEASE(blueDoorBody);
 
 	//redDoorMesh = readMesh("./models/red_gates.obj");
-	redDoorMesh = readMesh("./models/redArena.obj");
+	redDoorMesh = readMesh("./models/bigArena.obj");
 
 	redDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(redDoorMesh), *gMaterial, true); //create shape
 	redDoorShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
