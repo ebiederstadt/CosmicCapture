@@ -117,20 +117,6 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			}
 		}
 
-		//Button switch
-		if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody[0] && !State::arenaSwitch) {
-			State::arenaSwitch = true;
-		}
-		if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody[1] && !State::arenaSwitch) {
-			State::arenaSwitch = true;
-		}
-		if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody[2] && !State::arenaSwitch) {
-			State::arenaSwitch = true;
-		}
-		if (pairs[i].triggerActor == State::doorSwitchPickupTriggerBody[3] && !State::arenaSwitch) {
-			State::arenaSwitch = true;
-		}
-
 		// Handle colliding into the spike trap
 		for (auto& [id, spikeTrapState] : State::spike_trap_states)
 		{

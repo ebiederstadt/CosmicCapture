@@ -83,7 +83,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 	
 	if (distToGoal < 75.f /*&& State::flagPickedUp && pointingAtGoal(playerDir, getPlayerToTargetDir(playerDir, playerNum, goalPos))*/) {
 		command[MovementFlags::ACTION] = false;
-		printf("USING ACTION \n");
+		//printf("USING ACTION \n");
 	}
 
 	return command;
