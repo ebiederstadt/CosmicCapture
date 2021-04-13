@@ -419,9 +419,9 @@ int main(int argc, char** args) {
 
 		powerUpManager.draw(physics, shaderProgram, *cameras[playerNum], false);
 
-		if (!State::flagPickedUpBy[0])
+		if (!State::flagPickedUpBy[playerNum])
 			gameUI.setCompassDirection(cars[playerNum]->mGeometry->getModelMatrix(), flag.mGeometry->getModelMatrix());
-		else if (State::flagPickedUpBy[0])
+		else if (State::flagPickedUpBy[playerNum])
 			gameUI.setCompassDirection(cars[playerNum]->mGeometry->getModelMatrix(), State::flagDropoffBoxes[playerNum]->getGlobalPose().p);
 
 		gameUI.render(playerNum);
