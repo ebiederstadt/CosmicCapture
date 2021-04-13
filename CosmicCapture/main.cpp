@@ -34,8 +34,6 @@ glm::vec2 g_scale = { 1.f, 1.f };
 glm::vec2 g_pos = { 1.0f, 1.0f };
 float scalingFactor = 3.0f;
 
-int numHumanPlayers = 1;
-
 void initializeGridCenterCoords() {
 	float flatOffset = 4.f; //TUNING POINT
 	float diagonalOffset = 1.f; //TUNING POINT
@@ -249,6 +247,7 @@ int main(int argc, char** args) {
 	opponentBrains[2].attachVehicle(opponentCar3.getVehicle());
 
 	std::array<Vehicle*, 4> cars = { &car, &opponentCar1, &opponentCar2, &opponentCar3 };
+	int numHumanPlayers = 0;
 
 	Flag flag;
 	flag.attachPhysics(physics);
@@ -418,12 +417,16 @@ int main(int argc, char** args) {
 	auto mainLoop = [&]()
 	{
 		car.processInput(info);
-		opponentCar1.processInput(info);
-		opponentCar2.processInput(info);
+		if (numHumanPlayers >= 2) opponentCar1.processInput(info);
+		if (numHumanPlayers >= 3) opponentCar2.processInput(info);
+		if (numHumanPlayers >= 4) opponentCar3.processInput(info);
 
 		powerUpManager.pickup(physics);
-		// TODO: Make it so that all players can use powerups
+
 		powerUpManager.use(physics, info, 0);
+		if (numHumanPlayers >= 2) powerUpManager.use(physics, info, 1);
+		if (numHumanPlayers >= 3) powerUpManager.use(physics, info, 2);
+		if (numHumanPlayers >= 4) powerUpManager.use(physics, info, 3);
 
 		//arena door switch
 		if (State::arenaSwitch && State::arenaSwitchReady) {
@@ -455,7 +458,8 @@ int main(int argc, char** args) {
 
 
 		//forgive me--------------------
-		if (aiStuffCounter % 3 == 0) { //stagger pathfinding on different frames
+		// TODO: Only compute the AI paths that are actually needed
+		if (aiStuffCounter % 3 == 0 && numHumanPlayers < 2) { //stagger pathfinding on different frames
 			if (State::flagPickedUpBy[1]) {
 				opponentBrains[0].updatePath(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
 			}
@@ -463,7 +467,7 @@ int main(int argc, char** args) {
 				opponentBrains[0].updatePath(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
-		else if (aiStuffCounter % 3 == 1) {
+		else if (aiStuffCounter % 3 == 1 && numHumanPlayers < 3) {
 			if (State::flagPickedUpBy[2]) {
 				opponentBrains[1].updatePath(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, State::flagDropoffBoxes[2]->getGlobalPose().p);
 			}
@@ -471,7 +475,7 @@ int main(int argc, char** args) {
 				opponentBrains[1].updatePath(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
-		else {
+		else if (numHumanPlayers < 4) {
 			if (State::flagPickedUpBy[3]) {
 				opponentBrains[2].updatePath(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, State::flagDropoffBoxes[3]->getGlobalPose().p);
 			}
@@ -479,9 +483,10 @@ int main(int argc, char** args) {
 				opponentBrains[2].updatePath(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
-		//opponentCar1.processInput(opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
-		//opponentCar2.processInput(opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
-		opponentCar3.processInput(opponentBrains[2].getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
+
+		if (numHumanPlayers < 2) opponentCar1.processInput(opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
+		if (numHumanPlayers < 3) opponentCar2.processInput(opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
+		if (numHumanPlayers < 4) opponentCar3.processInput(opponentBrains[2].getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 
 		aiStuffCounter++;
 		//------------------------------*/
@@ -528,16 +533,10 @@ int main(int argc, char** args) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		if (numHumanPlayers == 1)
 			render(0, 0, width, height, 0);
-		if (numHumanPlayers == 2) {
-			render(0, 0, width / 2, height, 0);
-			render(width / 2, 0, width / 2, height, 1);
-		}
-		else if (numHumanPlayers == 3) {
-			render(0, height / 2, width, height / 2, 0);
-			render(0, 0, width / 2, height / 2, 1);
-			render(width / 2, 0, width / 2, height / 2, 2);
-		}
-		else if (numHumanPlayers == 4) {
+
+		// If there are more then one human players, draw the four player layout so that there are not
+		// weird aspect ratios
+		if (numHumanPlayers > 1) {
 			render(0, height / 2, width / 2, height / 2, 0);
 			render(width / 2, height / 2, width / 2, height / 2, 1);
 			render(0, 0, width / 2, height / 2, 2);
@@ -593,8 +592,6 @@ int main(int argc, char** args) {
 			ImGui::SliderFloat("Position x", &g_pos.x, -3.0f, 3.0f);
 			ImGui::SliderFloat("Position y", &g_pos.y, -3.0f, 3.0f);
 			ImGui::SliderFloat("Projectile speed scaling factor", &scalingFactor, 1.0f, 5.0f);
-
-			ImGui::InputInt("Number of players", &numHumanPlayers);
 
 			ImGui::Text("Car Stuff (Press R after changing values)");
 			ImGui::Text("VehicleCreate.cpp (lines 38-41)");
@@ -698,7 +695,10 @@ int main(int argc, char** args) {
 			}
 
 			if (humanCount >= 1 && readyCount == humanCount)
+			{
 				playersSelected = true;
+				numHumanPlayers = humanCount;
+			}
 
 			// Render all four players
 			render(0, height / 2, width / 2, height / 2, 0);
