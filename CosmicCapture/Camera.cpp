@@ -89,7 +89,7 @@ glm::mat4 Camera::getViewMatrix() const
 	return glm::lookAt(pxVec2glm(mEye), pxVec2glm(center), { 0.0f, 1.0f, 0.0f });
 }
 
-void Camera::updateCamera(const PxMat44& model, float speed, bool isReversing)
+void Camera::updateCamera(const PxMat44& model, float speed, bool isReversing, bool reverseCamera)
 {
 	const auto modelPos = model.column3.getXYZ();
 	//auto back = model.column2.getXYZ() * (-7.0f - 0.005f * speed);
@@ -99,6 +99,9 @@ void Camera::updateCamera(const PxMat44& model, float speed, bool isReversing)
 		back = model.column2.getXYZ() * (-10.0f + 0.0025f * speed);
 		back.y += 0.008f * speed; 
 	}
+
+	if (reverseCamera)
+		back = -back;
 
 	PxVec3 viewY = mDir.cross(PxVec3(0, 1, 0)).getNormalized();
 

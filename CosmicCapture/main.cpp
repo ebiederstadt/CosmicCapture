@@ -337,11 +337,11 @@ int main(int argc, char** args) {
 			gameStarted = true;
 	};
 
-	auto render = [&](int x, int y, int width, int height, int playerNum)
+	auto render = [&](int x, int y, int width, int height, int playerNum, bool isReversing = false)
 	{
 		// Update camera
 		float velocity = cars[playerNum]->getVelocity();
-		cameras[playerNum]->updateCamera(cars[playerNum]->mGeometry->getModelMatrix(), velocity, cars[playerNum]->isReversing());
+		cameras[playerNum]->updateCamera(cars[playerNum]->mGeometry->getModelMatrix(), velocity, cars[playerNum]->isReversing(), isReversing);
 
 		//Update sound
 		Audio::engine.setVolume(0.3f + 0.001f * abs(velocity));
@@ -681,16 +681,16 @@ int main(int argc, char** args) {
 			}
 
 			// Render all four players
-			render(0, height / 2, width / 2, height / 2, 0);
+			render(0, height / 2, width / 2, height / 2, 0, true);
 			gameUI.renderPlayerSelect(car.isHuman, car.ready);
 
-			render(width / 2, height / 2, width / 2, height / 2, 1);
+			render(width / 2, height / 2, width / 2, height / 2, 1, true);
 			gameUI.renderPlayerSelect(opponentCar1.isHuman, opponentCar1.ready);
 
-			render(0, 0, width / 2, height / 2, 2);
+			render(0, 0, width / 2, height / 2, 2, true);
 			gameUI.renderPlayerSelect(opponentCar2.isHuman, opponentCar2.ready);
 
-			render(width / 2, 0, width / 2, height / 2, 3);
+			render(width / 2, 0, width / 2, height / 2, 3, true);
 			gameUI.renderPlayerSelect(opponentCar3.isHuman, opponentCar3.ready);
 
 		}
@@ -698,28 +698,24 @@ int main(int argc, char** args) {
 			mainLoop();
 		else if (gameFinished)
 		{
-
-			render(0, height / 2, width / 2, height / 2, 0);
-			gameUI.renderEndScreen(0);
-
 			if (numHumanPlayers == 1)
 			{
-				render(0, 0, width, height, 0);
+				render(0, 0, width, height, 0, true);
 				gameUI.renderEndScreen(0);
 			}
 
 			if (numHumanPlayers > 1)
 			{
-				render(0, height / 2, width / 2, height / 2, 0);
+				render(0, height / 2, width / 2, height / 2, 0, true);
 				gameUI.renderEndScreen(0);
 
-				render(width / 2, height / 2, width / 2, height / 2, 1);
+				render(width / 2, height / 2, width / 2, height / 2, 1, true);
 				gameUI.renderEndScreen(1);
 
-				render(0, 0, width / 2, height / 2, 2);
+				render(0, 0, width / 2, height / 2, 2, true);
 				gameUI.renderEndScreen(2);
 
-				render(width / 2, 0, width / 2, height / 2, 3);
+				render(width / 2, 0, width / 2, height / 2, 3, true);
 				gameUI.renderEndScreen(3);
 			}
 

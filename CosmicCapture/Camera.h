@@ -49,7 +49,7 @@ public:
 	void				handleAnalogMove(float x, float y);
 
 	[[nodiscard]] glm::mat4 getViewMatrix() const;
-	void updateCamera(const physx::PxMat44& model, float speed, bool isReversing);
+	void updateCamera(const physx::PxMat44& model, float speed, bool isReversing, bool reverseCamera);
 
 	void setEye(const physx::PxVec3& vec) { mEye = vec; }
 
