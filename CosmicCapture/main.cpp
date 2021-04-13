@@ -44,7 +44,7 @@ void initializeGridCenterCoords() {
 		for (int j = 0; j < 36; j++) {
 			State::worldGridCenterCoords[i][j].first = i * 10.f - 180.f + 5.f;
 			State::worldGridCenterCoords[i][j].second = j * 10.f - 180.f + 5.f;
-			
+
 			shifted = false;
 			if ((i + 1 < 36) && (i - 1 >= 0) && (j + 1 < 36) && (j - 1 >= 0)) {
 				if (State::worldGrid[i + 1][j] == 0) {
@@ -82,13 +82,13 @@ void initializeGridCenterCoords() {
 					State::worldGridCenterCoords[i][j].first += diagonalOffset;
 					State::worldGridCenterCoords[i][j].second -= diagonalOffset;
 				}
-				
+
 			}
-			
+
 		}
 	}
 }
-	
+
 void updateWorldGridArena1() {
 	State::worldGrid[12][17] = 0;
 	State::worldGrid[12][18] = 0;
@@ -163,7 +163,7 @@ int main(int argc, char** args) {
 	Camera camera3(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
 
 	std::array<Camera*, 4> cameras = { &camera, &camera1, &camera2, &camera3 };
-	
+
 	physics.Initialize();
 
 	Input input = Input();
@@ -199,12 +199,12 @@ int main(int argc, char** args) {
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-	             SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+		SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	float borderColor[] = {1.0, 1.0, 1.0, 1.0, 1.0};
+	float borderColor[] = { 1.0, 1.0, 1.0, 1.0, 1.0 };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	// attach depth texture as FBO's depth buffer
@@ -258,7 +258,7 @@ int main(int argc, char** args) {
 
 	FlagDropoffZone flagDropoffZone1(1);
 	flagDropoffZone1.attachPhysics(physics);
-	
+
 	FlagDropoffZone flagDropoffZone2(2);
 	flagDropoffZone2.attachPhysics(physics);
 
@@ -318,12 +318,12 @@ int main(int argc, char** args) {
 	barriers.attachPhysics(physics);
 	entities.push_back(&barriers);
 
-	for (int opponentNum = 1; opponentNum < 4; opponentNum++) {		
+	for (int opponentNum = 1; opponentNum < 4; opponentNum++) {
 		opponentBrains[opponentNum - 1].updatePath(State::vehicles[opponentNum]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 	}
 	int aiStuffCounter = 0;
-	
-	
+
+
 	GameUI gameUI;
 	bool gameStarted = false;
 	bool playersSelected = false;
@@ -358,11 +358,11 @@ int main(int argc, char** args) {
 
 		// First pass
 		arena.draw(simpleDepthShader, camera, true, 1);
-		walls.draw(simpleDepthShader, camera, true,1);
+		walls.draw(simpleDepthShader, camera, true, 1);
 		// don't include skybox in depth map
 
-		if (State::redArena) redGates.draw(simpleDepthShader, camera, true,2);
-		if (State::blueArena) blueGates.draw(simpleDepthShader, camera, true,2);
+		if (State::redArena) redGates.draw(simpleDepthShader, camera, true, 2);
+		if (State::blueArena) blueGates.draw(simpleDepthShader, camera, true, 2);
 
 		for (const auto& entity : entities)
 			entity->draw(physics, simpleDepthShader, camera, true);
@@ -392,15 +392,15 @@ int main(int argc, char** args) {
 		glActiveTexture(GL_TEXTURE0);
 
 		// Second pass
-		arena.draw(shaderProgram, *cameras[playerNum], false,1);
-		walls.draw(shaderProgram, *cameras[playerNum], false,1);
-		skybox.draw(shaderProgram, *cameras[playerNum], false,0);
+		arena.draw(shaderProgram, *cameras[playerNum], false, 1);
+		walls.draw(shaderProgram, *cameras[playerNum], false, 1);
+		skybox.draw(shaderProgram, *cameras[playerNum], false, 0);
 
 		if (State::redArena) {
-			redGates.draw(shaderProgram, *cameras[playerNum], false,1);
+			redGates.draw(shaderProgram, *cameras[playerNum], false, 1);
 		}
 		if (State::blueArena) {
-			blueGates.draw(shaderProgram, *cameras[playerNum], false,1);
+			blueGates.draw(shaderProgram, *cameras[playerNum], false, 1);
 		}
 		for (const auto& entity : entities)
 			entity->draw(physics, shaderProgram, *cameras[playerNum], false);
@@ -420,7 +420,7 @@ int main(int argc, char** args) {
 		car.processInput(info);
 		opponentCar1.processInput(info);
 		opponentCar2.processInput(info);
-    
+
 		powerUpManager.pickup(physics);
 		// TODO: Make it so that all players can use powerups
 		powerUpManager.use(physics, info, 0);
@@ -531,11 +531,13 @@ int main(int argc, char** args) {
 		if (numHumanPlayers == 2) {
 			render(0, 0, width / 2, height, 0);
 			render(width / 2, 0, width / 2, height, 1);
-		} else if (numHumanPlayers == 3) {
+		}
+		else if (numHumanPlayers == 3) {
 			render(0, height / 2, width, height / 2, 0);
-			render(0, 0,width / 2, height / 2, 1);
+			render(0, 0, width / 2, height / 2, 1);
 			render(width / 2, 0, width / 2, height / 2, 2);
-		} else if (numHumanPlayers == 4) {
+		}
+		else if (numHumanPlayers == 4) {
 			render(0, height / 2, width / 2, height / 2, 0);
 			render(width / 2, height / 2, width / 2, height / 2, 1);
 			render(0, 0, width / 2, height / 2, 2);
@@ -544,9 +546,9 @@ int main(int argc, char** args) {
 
 		// Check to see if any of the players have won
 		if (std::any_of(std::begin(State::scores), std::end(State::scores), [](int score)
-		{
+			{
 				return score >= State::winScore;
-		}))
+			}))
 		{
 			gameUI.renderEndScreen();
 			// If the user presses enter, reset the game
@@ -572,70 +574,70 @@ int main(int argc, char** args) {
 			}
 		}
 
-		//scott's debugging prints----------------------------------------------------------------------------------------------
-		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		//PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
-		//PxVec3 playerToTarget = opponentBrains[0].getPlayerToTargetDir(playerDir, 0, State::flagBody->getGlobalPose().p);
-		//int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
-		//int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
-		//int dir = opponentBrains[1].getOrientation(playerDir);
-		//printf("%f - %f - %f\n" , State::vehicles[1]->computeForwardSpeed(), State::vehicles[2]->computeForwardSpeed(), State::vehicles[3]->computeForwardSpeed() );
-		//printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
-		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
-		//-----------------------------------------------------------------------------------------------------------------------
+			//scott's debugging prints----------------------------------------------------------------------------------------------
+			//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
+			//PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
+			//PxVec3 playerToTarget = opponentBrains[0].getPlayerToTargetDir(playerDir, 0, State::flagBody->getGlobalPose().p);
+			//int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
+			//int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
+			//int dir = opponentBrains[1].getOrientation(playerDir);
+			//printf("%f - %f - %f\n" , State::vehicles[1]->computeForwardSpeed(), State::vehicles[2]->computeForwardSpeed(), State::vehicles[3]->computeForwardSpeed() );
+			//printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
+			//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
+			//-----------------------------------------------------------------------------------------------------------------------
 
-		ImGui::Text("Camera Position");
-		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
-		ImGui::SliderFloat("x Scale", &g_scale.x, 0.01f, 3.0f);
-		ImGui::SliderFloat("y Scale", &g_scale.y, 0.01f, 3.0f);
-		ImGui::SliderFloat("Position x", &g_pos.x, -3.0f, 3.0f);
-		ImGui::SliderFloat("Position y", &g_pos.y, -3.0f, 3.0f);
-		ImGui::SliderFloat("Projectile speed scaling factor", &scalingFactor, 1.0f, 5.0f);
+			ImGui::Text("Camera Position");
+			ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
+			ImGui::SliderFloat("x Scale", &g_scale.x, 0.01f, 3.0f);
+			ImGui::SliderFloat("y Scale", &g_scale.y, 0.01f, 3.0f);
+			ImGui::SliderFloat("Position x", &g_pos.x, -3.0f, 3.0f);
+			ImGui::SliderFloat("Position y", &g_pos.y, -3.0f, 3.0f);
+			ImGui::SliderFloat("Projectile speed scaling factor", &scalingFactor, 1.0f, 5.0f);
 
-		ImGui::InputInt("Number of players", &numHumanPlayers);
+			ImGui::InputInt("Number of players", &numHumanPlayers);
 
-		ImGui::Text("Car Stuff (Press R after changing values)");
-		ImGui::Text("VehicleCreate.cpp (lines 38-41)");
-		ImGui::SliderFloat("Engine Peak Torque", &peakTorque, 100.f, 2000.f);
-		ImGui::SliderFloat("Engine Max Omega (Speed)", &maxOmega, 500.f, 2000.f);
-		ImGui::SliderFloat("Gear Switch Time", &gearSwitchTime, 0.f, 50.f);
-		ImGui::SliderFloat("Clutch Strength", &clutchStrength, 0.f, 100.f);
-		ImGui::Text("Physics.cpp (lines 14-24)");
-		ImGui::SliderFloat("Chassis Mass", &chassMass, 1000.f, 2000.f);
-		ImGui::SliderFloat("Chassis Dimension X", &chassDimX, 1.f, 5.f);
-		ImGui::SliderFloat("Chassis Dimension Y", &chassDimY, 1.f, 4.f);
-		ImGui::SliderFloat("Chassis Dimension Z", &chassDimZ, 1.f, 10.f);
-		ImGui::SliderFloat("Wheel Mass", &whMass, 20.f, 60.f);
-		ImGui::SliderFloat("Wheel Radius", &whRadius, 0.1f, 2.f);
-		ImGui::SliderFloat("Wheel Width", &whWidth, 0.1f, 2.f);
-		ImGui::SliderFloat("Spring Max Compression", &springMaxCompression, 0.f, 1.f);
-		ImGui::SliderFloat("Spring Max Droop", &springMaxDroop, 0.f, 1.f);
-		ImGui::SliderFloat("Spring Strength", &springStrength, 0.f, 50000.f);
-		ImGui::SliderFloat("Spring Damper Rate", &springDamperRate, 0.f, 10000.f);
-		ImGui::Text("Vehicle.cpp (lines 8-25");
-		ImGui::SliderFloat("rise rate accel", &riseRateAccel, 0.1f, 500.f);
-		ImGui::SliderFloat("rise rate brake", &riseRateBrake, 0.1f, 500.f);
-		ImGui::SliderFloat("rise rate handbrake", &riseRateHandBrake, 0.1f, 50.f);
-		ImGui::SliderFloat("rise rate steer left", &riseRateSteerLeft, 0.1f, 50.f);
-		ImGui::SliderFloat("rise rate steer right", &riseRateSteerRight, 0.1f, 50.f);
-		ImGui::SliderFloat("fall rate accel", &fallRateAccel, 0.1f, 500.f);
-		ImGui::SliderFloat("fall rate brake", &fallRateBrake, 0.1f, 500.f);
-		ImGui::SliderFloat("fall rate handbrake", &fallRateHandBrake, 0.1f, 50.f);
-		ImGui::SliderFloat("fall rate steer left", &fallRateSteerLeft, 0.1f, 50.f);
-		ImGui::SliderFloat("fall rate steer right", &fallRateSteerRight, 0.1f, 50.f);
-		ImGui::SliderFloat("gSteerVsForwardSpeedData1A", &gSteerVsForwardSpeedData1A, 0.f, 10.f);
-		ImGui::SliderFloat("gSteerVsForwardSpeedData1B", &gSteerVsForwardSpeedData1B, 0.f, 10.f);
-		ImGui::SliderFloat("gSteerVsForwardSpeedData2A", &gSteerVsForwardSpeedData2A, 0.f, 20.f);
-		ImGui::SliderFloat("gSteerVsForwardSpeedData2B", &gSteerVsForwardSpeedData2B, 0.f, 10.f);
-		ImGui::SliderFloat("gSteerVsForwardSpeedData3A", &gSteerVsForwardSpeedData3A, 0.f, 100.f);
-		ImGui::SliderFloat("gSteerVsForwardSpeedData3B", &gSteerVsForwardSpeedData3B, 0.f, 10.f);
-		ImGui::SliderFloat("gSteerVsForwardSpeedData4A", &gSteerVsForwardSpeedData4A, 0.f, 500.f);
-		ImGui::SliderFloat("gSteerVsForwardSpeedData4B", &gSteerVsForwardSpeedData4B, 0.f, 10.f);
+			ImGui::Text("Car Stuff (Press R after changing values)");
+			ImGui::Text("VehicleCreate.cpp (lines 38-41)");
+			ImGui::SliderFloat("Engine Peak Torque", &peakTorque, 100.f, 2000.f);
+			ImGui::SliderFloat("Engine Max Omega (Speed)", &maxOmega, 500.f, 2000.f);
+			ImGui::SliderFloat("Gear Switch Time", &gearSwitchTime, 0.f, 50.f);
+			ImGui::SliderFloat("Clutch Strength", &clutchStrength, 0.f, 100.f);
+			ImGui::Text("Physics.cpp (lines 14-24)");
+			ImGui::SliderFloat("Chassis Mass", &chassMass, 1000.f, 2000.f);
+			ImGui::SliderFloat("Chassis Dimension X", &chassDimX, 1.f, 5.f);
+			ImGui::SliderFloat("Chassis Dimension Y", &chassDimY, 1.f, 4.f);
+			ImGui::SliderFloat("Chassis Dimension Z", &chassDimZ, 1.f, 10.f);
+			ImGui::SliderFloat("Wheel Mass", &whMass, 20.f, 60.f);
+			ImGui::SliderFloat("Wheel Radius", &whRadius, 0.1f, 2.f);
+			ImGui::SliderFloat("Wheel Width", &whWidth, 0.1f, 2.f);
+			ImGui::SliderFloat("Spring Max Compression", &springMaxCompression, 0.f, 1.f);
+			ImGui::SliderFloat("Spring Max Droop", &springMaxDroop, 0.f, 1.f);
+			ImGui::SliderFloat("Spring Strength", &springStrength, 0.f, 50000.f);
+			ImGui::SliderFloat("Spring Damper Rate", &springDamperRate, 0.f, 10000.f);
+			ImGui::Text("Vehicle.cpp (lines 8-25");
+			ImGui::SliderFloat("rise rate accel", &riseRateAccel, 0.1f, 500.f);
+			ImGui::SliderFloat("rise rate brake", &riseRateBrake, 0.1f, 500.f);
+			ImGui::SliderFloat("rise rate handbrake", &riseRateHandBrake, 0.1f, 50.f);
+			ImGui::SliderFloat("rise rate steer left", &riseRateSteerLeft, 0.1f, 50.f);
+			ImGui::SliderFloat("rise rate steer right", &riseRateSteerRight, 0.1f, 50.f);
+			ImGui::SliderFloat("fall rate accel", &fallRateAccel, 0.1f, 500.f);
+			ImGui::SliderFloat("fall rate brake", &fallRateBrake, 0.1f, 500.f);
+			ImGui::SliderFloat("fall rate handbrake", &fallRateHandBrake, 0.1f, 50.f);
+			ImGui::SliderFloat("fall rate steer left", &fallRateSteerLeft, 0.1f, 50.f);
+			ImGui::SliderFloat("fall rate steer right", &fallRateSteerRight, 0.1f, 50.f);
+			ImGui::SliderFloat("gSteerVsForwardSpeedData1A", &gSteerVsForwardSpeedData1A, 0.f, 10.f);
+			ImGui::SliderFloat("gSteerVsForwardSpeedData1B", &gSteerVsForwardSpeedData1B, 0.f, 10.f);
+			ImGui::SliderFloat("gSteerVsForwardSpeedData2A", &gSteerVsForwardSpeedData2A, 0.f, 20.f);
+			ImGui::SliderFloat("gSteerVsForwardSpeedData2B", &gSteerVsForwardSpeedData2B, 0.f, 10.f);
+			ImGui::SliderFloat("gSteerVsForwardSpeedData3A", &gSteerVsForwardSpeedData3A, 0.f, 100.f);
+			ImGui::SliderFloat("gSteerVsForwardSpeedData3B", &gSteerVsForwardSpeedData3B, 0.f, 10.f);
+			ImGui::SliderFloat("gSteerVsForwardSpeedData4A", &gSteerVsForwardSpeedData4A, 0.f, 500.f);
+			ImGui::SliderFloat("gSteerVsForwardSpeedData4B", &gSteerVsForwardSpeedData4B, 0.f, 10.f);
 	};
 
 	bool keyboardUsed = false;
 	std::vector<int> controllerNumbersUsed;
-	
+
 	// Loop until the user closes the window
 	while (!quit)
 	{
@@ -700,11 +702,18 @@ int main(int argc, char** args) {
 
 			// Render all four players
 			render(0, height / 2, width / 2, height / 2, 0);
-			render(width / 2, height / 2, width / 2, height / 2, 1);
-			render(0, 0, width / 2, height / 2, 2);
-			render(width / 2, 0, width / 2, height / 2, 3);
+			gameUI.renderPlayerSelect(car.isHuman, car.ready);
 
-			}
+			render(width / 2, height / 2, width / 2, height / 2, 1);
+			gameUI.renderPlayerSelect(opponentCar1.isHuman, opponentCar1.ready);
+
+			render(0, 0, width / 2, height / 2, 2);
+			gameUI.renderPlayerSelect(opponentCar2.isHuman, opponentCar2.ready);
+
+			render(width / 2, 0, width / 2, height / 2, 3);
+			gameUI.renderPlayerSelect(opponentCar3.isHuman, opponentCar3.ready);
+
+		}
 
 		else
 			mainLoop();
