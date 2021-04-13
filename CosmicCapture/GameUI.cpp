@@ -40,14 +40,14 @@ GameUI::GameUI() :
 	mLogoDisplay.uploadData(quad);
 }
 
-void GameUI::render(int offset)
+void GameUI::render(int playerNum)
 {
 	unsigned int shaderID = static_cast<unsigned int>(mShader);
 	mShader.use();
 
-	renderPowerUpDisplay(shaderID);
+	renderPowerUpDisplay(shaderID, playerNum);
 	renderCompassDisplay(shaderID);
-	renderScores(shaderID, offset);
+	renderScores(shaderID, playerNum);
 }
 
 void GameUI::renderMenu() const
@@ -125,17 +125,21 @@ void GameUI::setCompassDirection(const PxMat44& carMatrix, const PxVec3& targetP
 	mCompassAngle = atan2(carDirection.z, carDirection.x) - atan2(targetDirection.z, targetDirection.x);
 }
 
-void GameUI::renderPowerUpDisplay(unsigned int shaderID) const
+void GameUI::renderPowerUpDisplay(unsigned int shaderID, int playerNum) const
 {
 	if (State::heldPowerUps[0].has_value())
 	{
-		auto value = State::heldPowerUps[0].value();
-		if (value == PowerUpOptions::SPIKE_TRAP)
-			api->bind(mTextures.spikeTrapTexture);
-		else if (value == PowerUpOptions::SPEED_BOOST)
-			api->bind(mTextures.speedBoostTexture);
-		else if (value == PowerUpOptions::PROJECTILE)
-			api->bind(mTextures.projectileTexture);
+		auto heldPowerup = State::heldPowerUps[playerNum];
+		if (heldPowerup.has_value())
+		{
+			auto value = heldPowerup.value();
+			if (value == PowerUpOptions::SPIKE_TRAP)
+				api->bind(mTextures.spikeTrapTexture);
+			else if (value == PowerUpOptions::SPEED_BOOST)
+				api->bind(mTextures.speedBoostTexture);
+			else if (value == PowerUpOptions::PROJECTILE)
+				api->bind(mTextures.projectileTexture);
+		}
 	}
 	else
 		api->bind(mTextures.blank);
