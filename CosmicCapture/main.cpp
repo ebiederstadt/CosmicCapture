@@ -233,17 +233,11 @@ int main(int argc, char** args) {
 	car.attachPhysics(physics);
 	State::vehicles[0] = car.getVehicle();
 
-	// First car will use the keyboard to move
-	car.setHuman(true);
-
 	Vehicle opponentCar1(1, "models/blueCar.obj", "textures/blue_car_texture.jpg", "textures/blue_tire_texture.jpg");
 	opponentCar1.attachPhysics(physics);
 	State::vehicles[1] = opponentCar1.getVehicle();
 	opponentBrains[0].attachVehicle(opponentCar1.getVehicle());
 
-	// Second car will use controller 0 to move
-	opponentCar1.setHuman(false, 0);
-	
 	Vehicle opponentCar2(2, "models/redCar.obj", "textures/red_car_texture.jpg", "textures/red_tire_texture.jpg");
 	opponentCar2.attachPhysics(physics);
 	opponentBrains[1].attachVehicle(opponentCar2.getVehicle());
@@ -253,9 +247,6 @@ int main(int argc, char** args) {
 	opponentCar3.attachPhysics(physics);
 	State::vehicles[3] = opponentCar3.getVehicle();
 	opponentBrains[2].attachVehicle(opponentCar3.getVehicle());
-
-	// Third car will controller 1 to move
-	opponentCar2.setHuman(false, 1);
 
 	std::array<Vehicle*, 4> cars = { &car, &opponentCar1, &opponentCar2, &opponentCar3 };
 
@@ -297,11 +288,7 @@ int main(int argc, char** args) {
 	entities.push_back(&doorSwitchZone1);
 	entities.push_back(&doorSwitchZone2);
 	entities.push_back(&doorSwitchZone3);
-	/*
-	GridMarker grid(sCamera, PxVec3());
-	grid.attachPhysics(physics);
-	entities.push_back(&grid);
-	*/
+
 	PowerUpManager powerUpManager(physics);
 
 	// setup audio
@@ -339,6 +326,7 @@ int main(int argc, char** args) {
 	
 	GameUI gameUI;
 	bool gameStarted = false;
+	bool playersSelected = false;
 
 	InputInfo info;
 
@@ -644,13 +632,15 @@ int main(int argc, char** args) {
 		ImGui::SliderFloat("gSteerVsForwardSpeedData4A", &gSteerVsForwardSpeedData4A, 0.f, 500.f);
 		ImGui::SliderFloat("gSteerVsForwardSpeedData4B", &gSteerVsForwardSpeedData4B, 0.f, 10.f);
 	};
+
+	bool keyboardUsed = false;
+	std::vector<int> controllerNumbersUsed;
 	
 	// Loop until the user closes the window
 	while (!quit)
 	{
 		quit = input.HandleInput();
 		info = input.getInfo();
-		fmt::print("keyboard: {}, controller: {}, controller ID: {}\n", info.keyboard, info.controller, info.controllerID);
 
 		// Render
 		window.startImGuiFrame();
@@ -661,6 +651,61 @@ int main(int argc, char** args) {
 
 		if (!gameStarted)
 			preLoop();
+		else if (gameStarted && !playersSelected)
+		{
+			if (input.inputReleased(MovementFlags::ACTION))
+			{
+				for (auto* const player : cars)
+				{
+					if (!player->isHuman)
+					{
+						if (info.controller &&
+							std::find(controllerNumbersUsed.begin(), controllerNumbersUsed.end(), info.controllerID) == controllerNumbersUsed.end())
+						{
+							player->setHuman(false, info.controllerID);
+							controllerNumbersUsed.push_back(info.controllerID);
+							break;
+						}
+						if (!info.controller && !keyboardUsed)
+						{
+							player->setHuman(true);
+							keyboardUsed = true;
+							break;
+						}
+					}
+					// If the player is already set as a human and the input is coming from their inputs, set them as ready
+					if (player->isHuman && ((player->useController && info.controller && player->controllerNumber == info.controllerID) || (player->useKeyboard && info.keyboard)))
+					{
+						player->ready = true;
+						fmt::print("The player is ready!\n");
+					}
+				}
+			}
+
+			// If at least one player is a human, and all the human players are ready then all players are ready
+			int humanCount = 0;
+			int readyCount = 0;
+			for (auto* const player : cars)
+			{
+				if (player->isHuman)
+				{
+					humanCount += 1;
+					if (player->ready)
+						readyCount += 1;
+				}
+			}
+
+			if (humanCount >= 1 && readyCount == humanCount)
+				playersSelected = true;
+
+			// Render all four players
+			render(0, height / 2, width / 2, height / 2, 0);
+			render(width / 2, height / 2, width / 2, height / 2, 1);
+			render(0, 0, width / 2, height / 2, 2);
+			render(width / 2, 0, width / 2, height / 2, 3);
+
+			}
+
 		else
 			mainLoop();
 

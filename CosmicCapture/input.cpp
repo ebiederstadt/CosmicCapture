@@ -60,8 +60,9 @@ bool Input::HandleInput()
 void Input::HandleKeys()
 {
     mInfo.setKeyboard();
-	
     const bool keyReleased = mEvent.type == SDL_KEYUP;
+    mInfo.prevInputState = mInfo.inputState;
+
 	switch (mEvent.key.keysym.sym) {
 	case SDLK_a:
         mInfo.inputState[MovementFlags::LEFT] = keyReleased;
@@ -92,6 +93,7 @@ void Input::HandleKeys()
 void Input::HandleButtons()
 {
     mInfo.setController(mEvent.jdevice.which);
+    mInfo.prevInputState = mInfo.inputState;
 	
     const bool buttonReleased = mEvent.type == SDL_JOYBUTTONUP;
 	// Will add cases as more buttons become necessary
@@ -131,11 +133,8 @@ void Input::HandleButtons()
 
 void Input::HandleJoystick() {
 
-    //if(mEvent.caxis.value < -JOYSTICK_DEAD_ZONE || mEvent.caxis.value > JOYSTICK_DEAD_ZONE)
-
-    //X axis motion
-
     mInfo.setController(mEvent.jdevice.which);
+    mInfo.prevInputState = mInfo.inputState;
 
     if (mEvent.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX)
     {

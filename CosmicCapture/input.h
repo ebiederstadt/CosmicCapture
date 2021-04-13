@@ -25,6 +25,8 @@ struct InputInfo
 		inputState[MovementFlags::ACTION] = true;
 		inputState[MovementFlags::ENTER] = true;
 		inputState[MovementFlags::RESET] = true;
+
+        prevInputState = inputState;
     }
 	
     bool keyboard = false;
@@ -33,6 +35,9 @@ struct InputInfo
 
     // Inputs that are not currently held
     std::map<MovementFlags, bool> inputState;
+
+    // Inputs that where not held last frame
+    std::map<MovementFlags, bool> prevInputState;
 
 	void setKeyboard()
 	{
@@ -64,6 +69,17 @@ public:
 	// Mouse stuff
     bool mouseHeld = false;
     int mouseX, mouseY;
+
+    // Returns true when the input was held on the previous frame and is now released
+    bool inputReleased(const MovementFlags& movementFlag) {
+        if (!mInfo.prevInputState[movementFlag] && mInfo.inputState[movementFlag])
+        {
+            mInfo.prevInputState[movementFlag] = true;
+            return true;
+        }
+
+        return false;
+    }
 
 
 private:

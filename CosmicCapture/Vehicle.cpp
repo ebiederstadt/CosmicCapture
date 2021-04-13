@@ -249,6 +249,7 @@ void Vehicle::setHuman(bool useKeyboard, int controllerNum)
 	{
 		this->useKeyboard = true;
 		useController = false;
+		fmt::print("Setting player {} as a human using the keyboard\n", player);
 	}
 
 	else
@@ -256,6 +257,7 @@ void Vehicle::setHuman(bool useKeyboard, int controllerNum)
 		this->useKeyboard = false;
 		useController = true;
 		controllerNumber = controllerNum;
+		fmt::print("Setting player {} as a human using a controller\n", player);
 	}
 }
 
