@@ -77,7 +77,7 @@ public:
 	GameUI();
 	void render(int playerNum);
 	void renderMenu() const;
-	void renderEndScreen() const;
+	void renderEndScreen(int playerNum) const;
 
 	void renderPlayerSelect(bool selected, bool ready = false) const;
 

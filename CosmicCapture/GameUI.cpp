@@ -64,11 +64,11 @@ void GameUI::renderMenu() const
 	Texture::unbind();
 }
 
-void GameUI::renderEndScreen() const
+void GameUI::renderEndScreen(int playerNum) const
 {
 	mShader.use();
 
-	if (State::scores[0] >= State::winScore)
+	if (State::scores[playerNum] >= State::winScore)
 		api->bind(mTextures.winScreen);
 	else
 		api->bind(mTextures.loseScreen);
@@ -127,19 +127,15 @@ void GameUI::setCompassDirection(const PxMat44& carMatrix, const PxVec3& targetP
 
 void GameUI::renderPowerUpDisplay(unsigned int shaderID, int playerNum) const
 {
-	if (State::heldPowerUps[0].has_value())
+	if (State::heldPowerUps[playerNum].has_value())
 	{
-		auto heldPowerup = State::heldPowerUps[playerNum];
-		if (heldPowerup.has_value())
-		{
-			auto value = heldPowerup.value();
-			if (value == PowerUpOptions::SPIKE_TRAP)
-				api->bind(mTextures.spikeTrapTexture);
-			else if (value == PowerUpOptions::SPEED_BOOST)
-				api->bind(mTextures.speedBoostTexture);
-			else if (value == PowerUpOptions::PROJECTILE)
-				api->bind(mTextures.projectileTexture);
-		}
+		auto value = State::heldPowerUps[playerNum].value();
+		if (value == PowerUpOptions::SPIKE_TRAP)
+			api->bind(mTextures.spikeTrapTexture);
+		else if (value == PowerUpOptions::SPEED_BOOST)
+			api->bind(mTextures.speedBoostTexture);
+		else if (value == PowerUpOptions::PROJECTILE)
+			api->bind(mTextures.projectileTexture);
 	}
 	else
 		api->bind(mTextures.blank);
