@@ -28,10 +28,6 @@ struct InputInfo
 
         prevInputState = inputState;
     }
-	
-    bool keyboard = false;
-    bool controller = false;
-    int controllerID = 0;
 
     // Inputs that are not currently held
     std::map<MovementFlags, bool> inputState;
@@ -39,17 +35,15 @@ struct InputInfo
     // Inputs that where not held last frame
     std::map<MovementFlags, bool> prevInputState;
 
-	void setKeyboard()
+	bool inputReleased(const MovementFlags& movementFlag)
 	{
-        keyboard = true;
-        controller = false;
-	}
+        if (!prevInputState[movementFlag] && inputState[movementFlag])
+        {
+            prevInputState[movementFlag] = true;
+            return true;
+        }
 
-	void setController(int id)
-	{
-        keyboard = false;
-        controller = true;
-        controllerID = id;
+        return false;
 	}
 };
 
@@ -64,29 +58,22 @@ public:
     /// <returns>True if the user wants to quit. False otherwise</returns>
     bool HandleInput();
 
-    [[nodiscard]] InputInfo getInfo() const { return mInfo; }
+    [[nodiscard]] InputInfo getInfo() const;
+    [[nodiscard]] InputInfo getInfo(int controllerID) const;
+    [[nodiscard]] std::map<int, InputInfo> getAllControllerInfo() const { return mControllerInfo; }
 
 	// Mouse stuff
     bool mouseHeld = false;
     int mouseX, mouseY;
 
-    // Returns true when the input was held on the previous frame and is now released
-    bool inputReleased(const MovementFlags& movementFlag) {
-        if (!mInfo.prevInputState[movementFlag] && mInfo.inputState[movementFlag])
-        {
-            mInfo.prevInputState[movementFlag] = true;
-            return true;
-        }
-
-        return false;
-    }
-
-
 private:
 	SDL_Event mEvent;
 
-    // Information about the most recent input event
-    InputInfo mInfo;
+    // Information about input events that come from controllers
+    std::map<int, InputInfo> mControllerInfo;
+
+    // Information about input events that come from keyboards
+    InputInfo mKeyboardInfo;
 
     std::vector<SDL_GameController*> mControllers;
 

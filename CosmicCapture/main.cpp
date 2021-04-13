@@ -330,6 +330,17 @@ int main(int argc, char** args) {
 
 	InputInfo info;
 
+	auto processVehicleInput = [&input, &info](Vehicle& v)
+	{
+		if (v.useKeyboard)
+			v.processInput(info);
+		else if (v.useController)
+		{
+			auto info = input.getInfo(v.controllerNumber);
+			v.processInput(info);
+		}
+	};
+
 	auto preLoop = [&]()
 	{
 		gameUI.renderMenu();
@@ -417,10 +428,10 @@ int main(int argc, char** args) {
 
 	auto mainLoop = [&]()
 	{
-		car.processInput(info);
-		if (numHumanPlayers >= 2) opponentCar1.processInput(info);
-		if (numHumanPlayers >= 3) opponentCar2.processInput(info);
-		if (numHumanPlayers >= 4) opponentCar3.processInput(info);
+		processVehicleInput(car);
+		if (numHumanPlayers >= 2) processVehicleInput(opponentCar1);
+		if (numHumanPlayers >= 3) processVehicleInput(opponentCar2);
+		if (numHumanPlayers >= 4) processVehicleInput(opponentCar3);
 
 		powerUpManager.pickup(physics);
 
@@ -611,7 +622,6 @@ int main(int argc, char** args) {
 		ImGui::SliderFloat("gSteerVsForwardSpeedData4A", &gSteerVsForwardSpeedData4A, 0.f, 500.f);
 		ImGui::SliderFloat("gSteerVsForwardSpeedData4B", &gSteerVsForwardSpeedData4B, 0.f, 10.f);
 	};
-
 	bool keyboardUsed = false;
 	std::vector<int> controllerNumbersUsed;
 
@@ -619,7 +629,7 @@ int main(int argc, char** args) {
 	while (!quit)
 	{
 		quit = input.HandleInput();
-		info = input.getInfo();
+		info = input.getInfo(); // Get the keyboard info
 
 		// Render
 		window.startImGuiFrame();
@@ -632,31 +642,45 @@ int main(int argc, char** args) {
 			preLoop();
 		else if (gameStarted && !playersSelected)
 		{
-			if (input.inputReleased(MovementFlags::ACTION))
+			auto controllerInfo = input.getAllControllerInfo();
+
+			// First handle the keyboard inputs
+			if (info.inputReleased(MovementFlags::ACTION))
 			{
 				for (auto* const player : cars)
 				{
-					if (!player->isHuman)
+					if (!player->isHuman && !keyboardUsed)
 					{
-						if (info.controller &&
-							std::find(controllerNumbersUsed.begin(), controllerNumbersUsed.end(), info.controllerID) == controllerNumbersUsed.end())
-						{
-							player->setHuman(false, info.controllerID);
-							controllerNumbersUsed.push_back(info.controllerID);
-							break;
-						}
-						if (!info.controller && !keyboardUsed)
-						{
-							player->setHuman(true);
-							keyboardUsed = true;
-							break;
-						}
+						player->setHuman(true);
+						keyboardUsed = true;
+						break;
 					}
-					// If the player is already set as a human and the input is coming from their inputs, set them as ready
-					if (player->isHuman && ((player->useController && info.controller && player->controllerNumber == info.controllerID) || (player->useKeyboard && info.keyboard)))
+					if (player->isHuman && player->useKeyboard)
 					{
 						player->ready = true;
-						fmt::print("The player is ready!\n");
+						fmt::print("Keyboard player is ready!\n");
+					}
+				}
+			}
+
+			// Then handle the controller inputs
+			for (auto& [id, c_info] : controllerInfo)
+			{
+				if (c_info.inputReleased(MovementFlags::ACTION))
+				{
+					for (auto* const player : cars)
+					{
+						if (!player->isHuman && std::find(controllerNumbersUsed.begin(), controllerNumbersUsed.end(), id) == controllerNumbersUsed.end())
+						{
+							player->setHuman(false, id);
+							controllerNumbersUsed.push_back(id);
+							break;
+						}
+						if (player->isHuman && player->useController && player->controllerNumber == id)
+						{
+							player->ready = true;
+							fmt::print("Controller player is ready!\n");
+						}
 					}
 				}
 			}

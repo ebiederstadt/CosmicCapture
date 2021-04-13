@@ -1,7 +1,8 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_gamecontroller.h>
-#include "input.h"
+#include <fmt/core.h>
 
+#include "input.h"
 
 
 /*
@@ -16,7 +17,8 @@ bool Input::HandleInput()
 {
     bool quit = false;
     SDL_GameController* controller;
-	
+    const InputInfo controllerInfo;
+
 	while (SDL_PollEvent(&mEvent) != 0) {
 		switch (mEvent.type)
 		{
@@ -42,8 +44,13 @@ bool Input::HandleInput()
 			HandleMouseMove();
 			break;
         case SDL_CONTROLLERDEVICEADDED:
+            // Store the controller so that it can be released correctly later on
             controller = SDL_GameControllerOpen(mControllers.size());
             mControllers.push_back(controller);
+
+            // Dedicate a slot in the input list for this controller
+            mControllerInfo[mEvent.jdevice.which] = controllerInfo;
+			
             break;
         case SDL_CONTROLLERDEVICEREMOVED:
             if (mEvent.jdevice.which > 0 && mEvent.jdevice.which < mControllers.size())
@@ -57,33 +64,43 @@ bool Input::HandleInput()
     return quit;
 }
 
+InputInfo Input::getInfo() const
+{
+	return mKeyboardInfo;
+}
+
+InputInfo Input::getInfo(int controllerID) const
+{
+    return mControllerInfo.at(controllerID);
+}
+
 void Input::HandleKeys()
 {
-    mInfo.setKeyboard();
+    // The first item in the info list always references the keyboard input
     const bool keyReleased = mEvent.type == SDL_KEYUP;
-    mInfo.prevInputState = mInfo.inputState;
+    mKeyboardInfo.prevInputState = mKeyboardInfo.inputState;
 
 	switch (mEvent.key.keysym.sym) {
 	case SDLK_a:
-        mInfo.inputState[MovementFlags::LEFT] = keyReleased;
+        mKeyboardInfo.inputState[MovementFlags::LEFT] = keyReleased;
 		break;
 	case SDLK_d:
-        mInfo.inputState[MovementFlags::RIGHT] = keyReleased;
+        mKeyboardInfo.inputState[MovementFlags::RIGHT] = keyReleased;
 		break;
 	case SDLK_w:
-        mInfo.inputState[MovementFlags::UP] = keyReleased;
+        mKeyboardInfo.inputState[MovementFlags::UP] = keyReleased;
 		break;
 	case SDLK_s:
-        mInfo.inputState[MovementFlags::DOWN] = keyReleased;
+        mKeyboardInfo.inputState[MovementFlags::DOWN] = keyReleased;
 		break;
     case SDLK_SPACE:
-        mInfo.inputState[MovementFlags::ACTION] = keyReleased;
+        mKeyboardInfo.inputState[MovementFlags::ACTION] = keyReleased;
         break;
     case SDLK_RETURN:
-        mInfo.inputState[MovementFlags::ENTER] = keyReleased;
+        mKeyboardInfo.inputState[MovementFlags::ENTER] = keyReleased;
         break;
     case SDLK_r:
-        mInfo.inputState[MovementFlags::RESET] = keyReleased;
+        mKeyboardInfo.inputState[MovementFlags::RESET] = keyReleased;
         break;
 	default:
 		break;
@@ -92,23 +109,24 @@ void Input::HandleKeys()
 
 void Input::HandleButtons()
 {
-    mInfo.setController(mEvent.jdevice.which);
-    mInfo.prevInputState = mInfo.inputState;
+	const int controllerID = mEvent.jdevice.which;
+    auto& info = mControllerInfo.at(controllerID);
+    info.prevInputState = info.inputState;
 	
     const bool buttonReleased = mEvent.type == SDL_JOYBUTTONUP;
 	// Will add cases as more buttons become necessary
 	switch (mEvent.cbutton.button) {
 	case SDL_CONTROLLER_BUTTON_A: //a to go forward
-        mInfo.inputState[MovementFlags::UP] = buttonReleased;
+        info.inputState[MovementFlags::UP] = buttonReleased;
 		break;
 	case SDL_CONTROLLER_BUTTON_B://b to brake
-        mInfo.inputState[MovementFlags::DOWN] = buttonReleased;
+        info.inputState[MovementFlags::DOWN] = buttonReleased;
 		break;
 	case SDL_CONTROLLER_BUTTON_X:
-        mInfo.inputState[MovementFlags::ACTION] = buttonReleased;
+        info.inputState[MovementFlags::ACTION] = buttonReleased;
 		break;
 	case SDL_CONTROLLER_BUTTON_Y:
-        mInfo.inputState[MovementFlags::RESET] = buttonReleased;
+        info.inputState[MovementFlags::RESET] = buttonReleased;
 		break;
 	case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
 		break;
@@ -123,7 +141,7 @@ void Input::HandleButtons()
 	case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
 		break;
 	case SDL_CONTROLLER_BUTTON_START:
-        mInfo.inputState[MovementFlags::ENTER] = buttonReleased;
+        info.inputState[MovementFlags::ENTER] = buttonReleased;
 		break;
 	default:
 		return;
@@ -133,27 +151,28 @@ void Input::HandleButtons()
 
 void Input::HandleJoystick() {
 
-    mInfo.setController(mEvent.jdevice.which);
-    mInfo.prevInputState = mInfo.inputState;
+	const int controllerID = mEvent.jdevice.which;
+    auto& info = mControllerInfo.at(controllerID);
+    info.prevInputState = info.inputState;
 
     if (mEvent.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX)
     {
         //Left of dead zone
         if (mEvent.caxis.value < -JOYSTICK_DEAD_ZONE)
         {
-            mInfo.inputState[MovementFlags::LEFT] = false;
-            mInfo.inputState[MovementFlags::RIGHT] = true;
+            info.inputState[MovementFlags::LEFT] = false;
+            info.inputState[MovementFlags::RIGHT] = true;
         }
         //Right of dead zone
         if (mEvent.caxis.value > JOYSTICK_DEAD_ZONE)
         {
-            mInfo.inputState[MovementFlags::RIGHT] = false;
-            mInfo.inputState[MovementFlags::LEFT] = true;
+            info.inputState[MovementFlags::RIGHT] = false;
+            info.inputState[MovementFlags::LEFT] = true;
         }
         //no joystick movement at all, dead center
         if (mEvent.caxis.value <= JOYSTICK_DEAD_ZONE && mEvent.caxis.value >= -JOYSTICK_DEAD_ZONE) {
-            mInfo.inputState[MovementFlags::LEFT] = true;
-            mInfo.inputState[MovementFlags::RIGHT] = true;
+            info.inputState[MovementFlags::LEFT] = true;
+            info.inputState[MovementFlags::RIGHT] = true;
         }
         
 

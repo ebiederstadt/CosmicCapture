@@ -38,10 +38,13 @@ public:
 
 	void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
 	void simulate(Physics& instance) override;
+
 	// General input method
 	void processInput(const InputInfo& inputInfo);
+
 	// AI input method
 	void processInput(const std::map<MovementFlags, bool>& inputs);
+
 	float getVelocity() const;
 	bool isReversing() const;
 

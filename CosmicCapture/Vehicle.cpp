@@ -211,13 +211,10 @@ void Vehicle::simulate(Physics& instance)
 
 void Vehicle::processInput(const InputInfo& inputInfo)
 {
-	// Only move the vehicle if the vehicle is human and the input source matches their chosen input source
-	if (isHuman && (
-		(useKeyboard && inputInfo.keyboard) || 
-		(useController && inputInfo.controller && controllerNumber == inputInfo.controllerID)))
-	{
+	// Only move the vehicle if the vehicle is human
+	// Input source handling should be handled by the calling site
+	if (isHuman)
 		moveVehicle(inputInfo.inputState);
-	}
 }
 
 void Vehicle::processInput(const std::map<MovementFlags, bool>& inputs)
