@@ -58,9 +58,9 @@ public:
     /// <returns>True if the user wants to quit. False otherwise</returns>
     bool HandleInput();
 
-    [[nodiscard]] InputInfo getInfo() const;
-    [[nodiscard]] InputInfo getInfo(int controllerID) const;
-    [[nodiscard]] std::map<int, InputInfo> getAllControllerInfo() const { return mControllerInfo; }
+    [[nodiscard]] InputInfo* getInfo();
+    [[nodiscard]] InputInfo* getInfo(int controllerID);
+    [[nodiscard]] std::map<int, InputInfo>* getAllControllerInfo() { return &mControllerInfo; }
 
 	// Mouse stuff
     bool mouseHeld = false;

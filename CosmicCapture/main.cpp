@@ -328,23 +328,23 @@ int main(int argc, char** args) {
 	bool playersSelected = false;
 	bool gameFinished = false;
 
-	InputInfo info;
+	InputInfo* info;
 
 	auto processVehicleInput = [&input, &info](Vehicle& v)
 	{
 		if (v.useKeyboard)
-			v.processInput(info);
+			v.processInput(*info);
 		else if (v.useController)
 		{
 			auto info = input.getInfo(v.controllerNumber);
-			v.processInput(info);
+			v.processInput(*info);
 		}
 	};
 
 	auto preLoop = [&]()
 	{
 		gameUI.renderMenu();
-		if (!info.inputState[MovementFlags::ENTER])
+		if (!info->inputState[MovementFlags::ENTER])
 			gameStarted = true;
 	};
 
@@ -435,10 +435,10 @@ int main(int argc, char** args) {
 
 		powerUpManager.pickup(physics);
 
-		powerUpManager.use(physics, info, 0);
-		if (numHumanPlayers >= 2) powerUpManager.use(physics, info, 1);
-		if (numHumanPlayers >= 3) powerUpManager.use(physics, info, 2);
-		if (numHumanPlayers >= 4) powerUpManager.use(physics, info, 3);
+		powerUpManager.use(physics, *info, 0);
+		if (numHumanPlayers >= 2) powerUpManager.use(physics, *info, 1);
+		if (numHumanPlayers >= 3) powerUpManager.use(physics, *info, 2);
+		if (numHumanPlayers >= 4) powerUpManager.use(physics, *info, 3);
 
 		//arena door switch
 		if (State::arenaSwitch && State::arenaSwitchReady) {
@@ -645,7 +645,7 @@ int main(int argc, char** args) {
 			auto controllerInfo = input.getAllControllerInfo();
 
 			// First handle the keyboard inputs
-			if (info.inputReleased(MovementFlags::ACTION))
+			if (info->inputReleased(MovementFlags::ACTION))
 			{
 				for (auto* const player : cars)
 				{
@@ -664,7 +664,7 @@ int main(int argc, char** args) {
 			}
 
 			// Then handle the controller inputs
-			for (auto& [id, c_info] : controllerInfo)
+			for (auto& [id, c_info] : *controllerInfo)
 			{
 				if (c_info.inputReleased(MovementFlags::ACTION))
 				{
@@ -744,7 +744,7 @@ int main(int argc, char** args) {
 			}
 
 			// If any of the players press enter, reset the game
-			if (!info.inputState[MovementFlags::ENTER])
+			if (!info->inputState[MovementFlags::ENTER])
 			{
 				for (auto* c : cameras)
 				{

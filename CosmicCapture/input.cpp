@@ -64,14 +64,14 @@ bool Input::HandleInput()
     return quit;
 }
 
-InputInfo Input::getInfo() const
+InputInfo* Input::getInfo()
 {
-	return mKeyboardInfo;
+	return &mKeyboardInfo;
 }
 
-InputInfo Input::getInfo(int controllerID) const
+InputInfo* Input::getInfo(int controllerID)
 {
-    return mControllerInfo.at(controllerID);
+    return &mControllerInfo.at(controllerID);
 }
 
 void Input::HandleKeys()
@@ -109,8 +109,7 @@ void Input::HandleKeys()
 
 void Input::HandleButtons()
 {
-	const int controllerID = mEvent.jdevice.which;
-    auto& info = mControllerInfo.at(controllerID);
+    auto& info = mControllerInfo.at(mEvent.jdevice.which);
     info.prevInputState = info.inputState;
 	
     const bool buttonReleased = mEvent.type == SDL_JOYBUTTONUP;
