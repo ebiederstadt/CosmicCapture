@@ -336,8 +336,19 @@ int main(int argc, char** args) {
 			v.processInput(*info);
 		else if (v.useController)
 		{
-			auto info = input.getInfo(v.controllerNumber);
-			v.processInput(*info);
+			const auto controllerInfo = input.getInfo(v.controllerNumber);
+			v.processInput(*controllerInfo);
+		}
+	};
+
+	auto processPowerupInput = [&](Vehicle& v, int playerNum)
+	{
+		if (v.useKeyboard)
+			powerUpManager.use(physics, *info, playerNum);
+		else if (v.useController)
+		{
+			const auto controllerInfo = input.getInfo(v.controllerNumber);
+			powerUpManager.use(physics, *controllerInfo, playerNum);
 		}
 	};
 
@@ -435,10 +446,10 @@ int main(int argc, char** args) {
 
 		powerUpManager.pickup(physics);
 
-		powerUpManager.use(physics, *info, 0);
-		if (numHumanPlayers >= 2) powerUpManager.use(physics, *info, 1);
-		if (numHumanPlayers >= 3) powerUpManager.use(physics, *info, 2);
-		if (numHumanPlayers >= 4) powerUpManager.use(physics, *info, 3);
+		processPowerupInput(car, 0);
+		if (numHumanPlayers >= 2) processPowerupInput(opponentCar1, 1);
+		if (numHumanPlayers >= 3) processPowerupInput(opponentCar2, 2);
+		if (numHumanPlayers >= 4) processPowerupInput(opponentCar3, 3);
 
 		//arena door switch
 		if (State::arenaSwitch && State::arenaSwitchReady) {
