@@ -41,8 +41,6 @@ void initializeGridCenterCoords() {
 	bool shifted = false;
 	for (int i = 0; i < 26; i++) {
 		for (int j = 0; j < 26; j++) {
-			
-
 			State::worldGridCenterCoords[i][j].first = i * 50.f - 650.f + 25.f;
 			State::worldGridCenterCoords[i][j].second = j * 50.f - 650.f + 25.f;
 			if (i == 1 || j == 1 || j == 24 || i == 24) continue;
@@ -282,7 +280,7 @@ int main(int argc, char** args) {
 	FlagDropoffZone flagDropoffZone3(3);
 	flagDropoffZone3.attachPhysics(physics);
 
-	DoorSwitchZone doorSwitchZone();
+	DoorSwitchZone doorSwitchZone;
 	doorSwitchZone.attachPhysics(physics);
 
 	std::vector<Entity*> entities;
@@ -395,8 +393,11 @@ int main(int argc, char** args) {
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
+
 		// First pass
-		arena.draw(simpleDepthShader, camera, true, 1);
+		centerArea.draw(simpleDepthShader, camera, true, 1);
+		arenaPlane.draw(simpleDepthShader, camera, true, 1);
+		innerWalls.draw(simpleDepthShader, camera, true, 1);
 		walls.draw(simpleDepthShader, camera, true, 1);
 		// don't include skybox in depth map
 
@@ -431,15 +432,17 @@ int main(int argc, char** args) {
 		glActiveTexture(GL_TEXTURE0);
 
 		// Second pass
-		arena.draw(shaderProgram, *cameras[playerNum], false, 1);
+		centerArea.draw(shaderProgram, *cameras[playerNum], false, 1);
+		arenaPlane.draw(shaderProgram, *cameras[playerNum], false, 1);
+		innerWalls.draw(shaderProgram, *cameras[playerNum], false, 1);
 		walls.draw(shaderProgram, *cameras[playerNum], false, 1);
 		skybox.draw(shaderProgram, *cameras[playerNum], false, 0);
-
+		
 		if (State::redArena) {
-			redGates.draw(shaderProgram, *cameras[playerNum], false, 1);
+			redGates.draw(shaderProgram, *cameras[playerNum], false, 2);
 		}
 		if (State::blueArena) {
-			blueGates.draw(shaderProgram, *cameras[playerNum], false, 1);
+			blueGates.draw(shaderProgram, *cameras[playerNum], false, 2);
 		}
 		for (const auto& entity : entities)
 			entity->draw(physics, shaderProgram, *cameras[playerNum], false);
@@ -792,7 +795,7 @@ int main(int argc, char** args) {
 				playersSelected = true; // No need to reset who is playing if they want to play again
 
 				if (State::blueArena) {
-					updateWorldGridArena2();
+					//updateWorldGridArena2();
 					physics.generateRedDoor(); //switch from blue doors to red
 					State::redArena = true;
 					State::blueArena = false;
