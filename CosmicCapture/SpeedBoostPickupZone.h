@@ -6,9 +6,9 @@
 
 class SpeedBoostPickupZone : public Entity {
 public:
-	SpeedBoostPickupZone(std::shared_ptr<Camera> camera, const physx::PxVec3& pos);
+	SpeedBoostPickupZone(const physx::PxVec3& pos);
 	void attachPhysics(Physics& instance) override;
-	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
+	void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
 

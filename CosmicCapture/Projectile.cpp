@@ -2,8 +2,8 @@
 
 extern float scalingFactor;
 
-Projectile::Projectile(std::shared_ptr<Camera> camera) :
-	Entity("models/rocket.obj", "textures/rocket_texture.png", camera)
+Projectile::Projectile() :
+	Entity("models/rocket.obj", "textures/rocket_texture.png")
 {
 	// Initialize the state without initializing the physx body
 	projectileState state;
@@ -25,11 +25,11 @@ void Projectile::attachPhysics(Physics& instance) {
 	instance.gScene->addActor(*State::projectileStates[mID].body);
 }
 
-void Projectile::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
+void Projectile::draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) {
 
 	PxTransform transform = State::projectileStates[mID].body->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, 2);
+	mGeometry->draw(modelMatrix, shader, camera, depth, 2);
 }
 
 void Projectile::simulate(Physics& instance) {

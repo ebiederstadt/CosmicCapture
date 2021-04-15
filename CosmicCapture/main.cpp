@@ -84,6 +84,13 @@ void initializeGridCenterCoords() {
 					State::worldGridCenterCoords[i][j].first += diagonalOffset;
 					State::worldGridCenterCoords[i][j].second -= diagonalOffset;
 				}
+
+			}
+
+		}
+	}
+}
+
 				*/
 			}
 			
@@ -158,7 +165,15 @@ int main(int argc, char** args) {
 
 	//physics
 	Physics physics = Physics::Instance();
-	const auto sCamera = std::make_shared<Camera>(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+
+	// Cameras for each of the players
+	Camera camera(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+	Camera camera1(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+	Camera camera2(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+	Camera camera3(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+
+	std::array<Camera*, 4> cameras = { &camera, &camera1, &camera2, &camera3 };
+
 	physics.Initialize();
 
 	Input input = Input();
@@ -175,19 +190,18 @@ int main(int argc, char** args) {
 	simpleDepthShader.compile();
 
 	// The arena model
-
-	Model arenaPlane("models/arena_plane.obj", "textures/arena_plane_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model arenaPlane("models/arena_plane.obj", "textures/arena_plane_texture.jpg", GL_DYNAMIC_DRAW);
 	//Model arenaPlane("models/arena_plane.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model centerArea("models/center_area.obj", "textures/center_area_texture.jpg", sCamera, GL_DYNAMIC_DRAW, true);
+	Model centerArea("models/center_area.obj", "textures/center_area_texture.jpg", GL_DYNAMIC_DRAW, true);
 	//Model centerArea("models/center_area.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model innerWalls("models/inner_walls.obj", "textures/pillars_texture.jpg", sCamera, GL_DYNAMIC_DRAW, true);
+	Model innerWalls("models/inner_walls.obj", "textures/pillars_texture.jpg", GL_DYNAMIC_DRAW, true);
 	//Model innerWalls("models/inner_walls.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model walls("models/walls.obj", "textures/walls_texture.jpg", sCamera, GL_DYNAMIC_DRAW, true);
+	Model walls("models/walls.obj", "textures/walls_texture.jpg", GL_DYNAMIC_DRAW, true);
 	//Model walls("models/walls.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model redGates("models/red_gates.obj", "textures/red_gates.png", sCamera, GL_DYNAMIC_DRAW);
-	Model blueGates("models/blue_gates.obj", "textures/blue_gates.png", sCamera, GL_DYNAMIC_DRAW);
-	//Model skybox("models/skybox.obj", "textures/stars.jpg", sCamera, GL_DYNAMIC_DRAW, true);
-	Model skybox("models/skybox.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model redGates("models/red_gates.obj", "textures/red_gates.png", GL_DYNAMIC_DRAW);
+	Model blueGates("models/blue_gates.obj", "textures/blue_gates.png", GL_DYNAMIC_DRAW);
+	Model skybox("models/skybox.obj", "textures/stars.jpg", GL_DYNAMIC_DRAW, true);
+	//Model skybox("models/skybox.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 
 	// Shadow setup start ---------------------------------------------------------------------
 
@@ -201,12 +215,12 @@ int main(int argc, char** args) {
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-	             SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+		SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	float borderColor[] = {1.0, 1.0, 1.0, 1.0, 1.0};
+	float borderColor[] = { 1.0, 1.0, 1.0, 1.0, 1.0 };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	// attach depth texture as FBO's depth buffer
@@ -230,46 +244,45 @@ int main(int argc, char** args) {
 	bool quit = false;
 
 	// Entities
-
-	Vehicle car(sCamera, 0, "models/car_body.obj", "textures/car_body_texture.jpg", "textures/green_tire_texture.jpg");
+	Vehicle car(0, "models/car_body.obj", "textures/car_body_texture.jpg", "textures/green_tire_texture.jpg");
 
 	car.attachPhysics(physics);
 	State::vehicles[0] = car.getVehicle();
 
-	Vehicle opponentCar1(sCamera, 1, "models/blueCar.obj", "textures/blue_car_texture.jpg", "textures/blue_tire_texture.jpg");
+	Vehicle opponentCar1(1, "models/blueCar.obj", "textures/blue_car_texture.jpg", "textures/blue_tire_texture.jpg");
 	opponentCar1.attachPhysics(physics);
 	State::vehicles[1] = opponentCar1.getVehicle();
 	opponentBrains[0].attachVehicle(opponentCar1.getVehicle());
-	
-	Vehicle opponentCar2(sCamera, 2, "models/redCar.obj", "textures/red_car_texture.jpg", "textures/red_tire_texture.jpg");
+
+	Vehicle opponentCar2(2, "models/redCar.obj", "textures/red_car_texture.jpg", "textures/red_tire_texture.jpg");
 	opponentCar2.attachPhysics(physics);
 	opponentBrains[1].attachVehicle(opponentCar2.getVehicle());
-	
 	State::vehicles[2] = opponentCar2.getVehicle();
-	Vehicle opponentCar3(sCamera, 3, "models/yellowCar.obj", "textures/yellow_car_texture.jpg", "textures/yellow_tire_texture.jpg");
 
+	Vehicle opponentCar3(3, "models/yellowCar.obj", "textures/yellow_car_texture.jpg", "textures/yellow_tire_texture.jpg");
 	opponentCar3.attachPhysics(physics);
 	State::vehicles[3] = opponentCar3.getVehicle();
 	opponentBrains[2].attachVehicle(opponentCar3.getVehicle());
-	
-	Flag flag(sCamera);
-	
 
+	std::array<Vehicle*, 4> cars = { &car, &opponentCar1, &opponentCar2, &opponentCar3 };
+	int numHumanPlayers = 0;
+
+	Flag flag;
 	flag.attachPhysics(physics);
 
-	FlagDropoffZone flagDropoffZone0(sCamera, 0);
+	FlagDropoffZone flagDropoffZone0(0);
 	flagDropoffZone0.attachPhysics(physics);
 
-	FlagDropoffZone flagDropoffZone1(sCamera, 1);
+	FlagDropoffZone flagDropoffZone1(1);
 	flagDropoffZone1.attachPhysics(physics);
-	
-	FlagDropoffZone flagDropoffZone2(sCamera, 2);
+
+	FlagDropoffZone flagDropoffZone2(2);
 	flagDropoffZone2.attachPhysics(physics);
 
-	FlagDropoffZone flagDropoffZone3(sCamera, 3);
+	FlagDropoffZone flagDropoffZone3(3);
 	flagDropoffZone3.attachPhysics(physics);
 
-	DoorSwitchZone doorSwitchZone(sCamera);
+	DoorSwitchZone doorSwitchZone();
 	doorSwitchZone.attachPhysics(physics);
 
 	std::vector<Entity*> entities;
@@ -282,6 +295,8 @@ int main(int argc, char** args) {
 	entities.push_back(&opponentCar1);
 	entities.push_back(&opponentCar2);
 	entities.push_back(&opponentCar3);
+
+	PowerUpManager powerUpManager(physics);
 	entities.push_back(&doorSwitchZone);
 
 
@@ -290,7 +305,6 @@ int main(int argc, char** args) {
 	grid.attachPhysics(physics);
 	entities.push_back(&grid);
 	*/
-	PowerUpManager powerUpManager(sCamera, physics);
 
 	// setup audio
 	Audio::soundSystem.initialize();
@@ -315,42 +329,144 @@ int main(int argc, char** args) {
 	Audio::car_crash = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
 	Audio::flag_lost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
 
-	//InvisibleBarrier barriers(sCamera, 0);
+
+	//InvisibleBarrier barriers(0);
 	//barriers.attachPhysics(physics);
 	//entities.push_back(&barriers);
 
-	int lagCounter = 0;
-
-	for (int opponentNum = 1; opponentNum < 4; opponentNum++) {		
+	for (int opponentNum = 1; opponentNum < 4; opponentNum++) {
 		opponentBrains[opponentNum - 1].updatePath(State::vehicles[opponentNum]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 	}
 	int aiStuffCounter = 0;
-	
-	
+
+
 	GameUI gameUI;
 	bool gameStarted = false;
+	bool playersSelected = false;
+	bool gameFinished = false;
 
-	std::map<MovementFlags, bool> inputState;
+	InputInfo* info;
+
+	auto processVehicleInput = [&input, &info](Vehicle& v)
+	{
+		if (v.useKeyboard)
+			v.processInput(*info);
+		else if (v.useController)
+		{
+			const auto controllerInfo = input.getInfo(v.controllerNumber);
+			v.processInput(*controllerInfo);
+		}
+	};
+
+	auto processPowerupInput = [&](Vehicle& v, int playerNum)
+	{
+		if (v.useKeyboard)
+			powerUpManager.use(physics, *info, playerNum);
+		else if (v.useController)
+		{
+			const auto controllerInfo = input.getInfo(v.controllerNumber);
+			powerUpManager.use(physics, *controllerInfo, playerNum);
+		}
+	};
 
 	auto preLoop = [&]()
 	{
 		gameUI.renderMenu();
-		if (!inputState[MovementFlags::ENTER])
+		if (!info->inputState[MovementFlags::ENTER])
 			gameStarted = true;
+	};
+
+	auto render = [&](int x, int y, int width, int height, int playerNum, bool isReversing = false)
+	{
+		// Update camera
+		float velocity = cars[playerNum]->getVelocity();
+		cameras[playerNum]->updateCamera(cars[playerNum]->mGeometry->getModelMatrix(), velocity, cars[playerNum]->isReversing(), isReversing);
+
+		//Update sound
+		Audio::engine.setVolume(0.3f + 0.001f * abs(velocity));
+		//printf("v: %f\n", velocity);
+
+		shaderProgram.use();
+
+		// first render to depth map ---------------
+		simpleDepthShader.use();
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		// First pass
+		arena.draw(simpleDepthShader, camera, true, 1);
+		walls.draw(simpleDepthShader, camera, true, 1);
+		// don't include skybox in depth map
+
+		if (State::redArena) redGates.draw(simpleDepthShader, camera, true, 2);
+		if (State::blueArena) blueGates.draw(simpleDepthShader, camera, true, 2);
+
+		for (const auto& entity : entities)
+			entity->draw(physics, simpleDepthShader, camera, true);
+
+		powerUpManager.draw(physics, simpleDepthShader, camera, true);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(x, y, width, height);
+
+		// Now standard rendering -----------------
+		shaderProgram.use();
+
+		float near_plane = 200.f, far_plane = 600.f;
+
+		auto nearLoc = glGetUniformLocation(shaderID, "near_plane");
+		glUniform1f(nearLoc, near_plane);
+
+		auto farLoc = glGetUniformLocation(shaderID, "far_plane");
+		glUniform1f(farLoc, far_plane);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+
+		glActiveTexture(GL_TEXTURE0);
+
+		// Second pass
+		arena.draw(shaderProgram, *cameras[playerNum], false, 1);
+		walls.draw(shaderProgram, *cameras[playerNum], false, 1);
+		skybox.draw(shaderProgram, *cameras[playerNum], false, 0);
+
+		if (State::redArena) {
+			redGates.draw(shaderProgram, *cameras[playerNum], false, 1);
+		}
+		if (State::blueArena) {
+			blueGates.draw(shaderProgram, *cameras[playerNum], false, 1);
+		}
+		for (const auto& entity : entities)
+			entity->draw(physics, shaderProgram, *cameras[playerNum], false);
+
+		powerUpManager.draw(physics, shaderProgram, *cameras[playerNum], false);
+
+		if (!State::flagPickedUpBy[playerNum])
+			gameUI.setCompassDirection(cars[playerNum]->mGeometry->getModelMatrix(), flag.mGeometry->getModelMatrix());
+		else if (State::flagPickedUpBy[playerNum])
+			gameUI.setCompassDirection(cars[playerNum]->mGeometry->getModelMatrix(), State::flagDropoffBoxes[playerNum]->getGlobalPose().p);
+
+		gameUI.render(playerNum);
 	};
 
 	auto mainLoop = [&]()
 	{
-		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		//printf("%f,%f,%f\n", playerPosition.x, playerPosition.y, playerPosition.z);
-		// Physics simulation
-		// Repeat for all vehicles eventually...
-		car.processInput(inputState);
-    
-		powerUpManager.pickup(sCamera, physics);
-		// TODO: Make it so that all players can use powerups
-		powerUpManager.use(physics, inputState, 0);
+		processVehicleInput(car);
+		if (numHumanPlayers >= 2) processVehicleInput(opponentCar1);
+		if (numHumanPlayers >= 3) processVehicleInput(opponentCar2);
+		if (numHumanPlayers >= 4) processVehicleInput(opponentCar3);
 
+		powerUpManager.pickup(physics);
+
+		processPowerupInput(car, 0);
+		if (numHumanPlayers >= 2) processPowerupInput(opponentCar1, 1);
+		if (numHumanPlayers >= 3) processPowerupInput(opponentCar2, 2);
+		if (numHumanPlayers >= 4) processPowerupInput(opponentCar3, 3);
 
 		//arena door switch
 		if (State::arenaSwitch && !State::arenaSwitchReady) {
@@ -378,7 +494,8 @@ int main(int argc, char** args) {
 		}
 
 		//forgive me--------------------
-		if (aiStuffCounter % 3 == 0) { //stagger pathfinding on different frames
+		// TODO: Only compute the AI paths that are actually needed
+		if (aiStuffCounter % 3 == 0 && numHumanPlayers < 2) { //stagger pathfinding on different frames
 			if (State::flagPickedUpBy[1]) {
 				opponentBrains[0].updatePath(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, State::flagDropoffBoxes[1]->getGlobalPose().p);
 			}
@@ -386,7 +503,7 @@ int main(int argc, char** args) {
 				opponentBrains[0].updatePath(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
-		else if (aiStuffCounter % 3 == 1) {
+		else if (aiStuffCounter % 3 == 1 && numHumanPlayers < 3) {
 			if (State::flagPickedUpBy[2]) {
 				opponentBrains[1].updatePath(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, State::flagDropoffBoxes[2]->getGlobalPose().p);
 			}
@@ -394,7 +511,7 @@ int main(int argc, char** args) {
 				opponentBrains[1].updatePath(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
-		else {
+		else if (numHumanPlayers < 4) {
 			if (State::flagPickedUpBy[3]) {
 				opponentBrains[2].updatePath(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, State::flagDropoffBoxes[3]->getGlobalPose().p);
 			}
@@ -403,9 +520,9 @@ int main(int argc, char** args) {
 			}
 		}
 
-		opponentCar1.processInput(opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
-		opponentCar2.processInput(opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
-		opponentCar3.processInput(opponentBrains[2].getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
+		if (numHumanPlayers < 2) opponentCar1.processInput(opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
+		if (numHumanPlayers < 3) opponentCar2.processInput(opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
+		if (numHumanPlayers < 4) opponentCar3.processInput(opponentBrains[2].getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
 
 		aiStuffCounter++;
 		//------------------------------*/
@@ -457,116 +574,26 @@ int main(int argc, char** args) {
 		}
 		physics.stepPhysics();
 
-		float velocity = car.getVelocity();
-
-		// Update camera
-		sCamera->updateCamera(car.mGeometry->getModelMatrix(), velocity, lagCounter, car.isReversing());
-
-		//Update sound
-		Audio::engine.setVolume(0.3f + 0.001f*abs(velocity));
-		//printf("v: %f\n", velocity);
-
-		shaderProgram.use();
-
-		// first render to depth map ---------------
-		simpleDepthShader.use();
-
-		/* Start of stuff to move to the--------------------------------*/
-		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-		glClear(GL_DEPTH_BUFFER_BIT);
-
-		// First pass
-
-		arenaPlane.draw(simpleDepthShader, true, 1);
-		centerArea.draw(simpleDepthShader, true, 1);
-		innerWalls.draw(simpleDepthShader, true, 1);
-		walls.draw(simpleDepthShader, true, 1);
-		// don't include skybox in depth map
-
-		if(State::redArena) redGates.draw(simpleDepthShader, true, 2);
-		if(State::blueArena) blueGates.draw(simpleDepthShader, true, 2);
-
-		for (const auto& entity : entities)
-			entity->draw(physics, simpleDepthShader, true);
-
-		powerUpManager.draw(physics, simpleDepthShader, true);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		if (numHumanPlayers == 1)
+			render(0, 0, width, height, 0);
 
-		// Now standard rendering -----------------
-
-		shaderProgram.use();
-
-		float near_plane = 200.f, far_plane = 600.f;
-
-		auto nearLoc = glGetUniformLocation(shaderID, "near_plane");
-		glUniform1f(nearLoc, near_plane);
-
-		auto farLoc = glGetUniformLocation(shaderID, "far_plane");
-		glUniform1f(farLoc, far_plane);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-
-		glActiveTexture(GL_TEXTURE0);
-
-		// Second pass
-
-		arenaPlane.draw(shaderProgram, false, 1);
-		centerArea.draw(shaderProgram, false, 1);
-		innerWalls.draw(shaderProgram, false, 1);
-		walls.draw(shaderProgram, false, 1);
-		skybox.draw(shaderProgram, false, 0);
-
-		if (State::redArena) {
-			redGates.draw(shaderProgram, false, 2);
+		// If there are more then one human players, draw the four player layout so that there are not
+		// weird aspect ratios
+		if (numHumanPlayers > 1) {
+			render(0, height / 2, width / 2, height / 2, 0);
+			render(width / 2, height / 2, width / 2, height / 2, 1);
+			render(0, 0, width / 2, height / 2, 2);
+			render(width / 2, 0, width / 2, height / 2, 3);
 		}
-		if (State::blueArena) {
-			blueGates.draw(shaderProgram, false, 2);
-		}
-		for (const auto& entity : entities)
-			entity->draw(physics, shaderProgram, false);
-
-		powerUpManager.draw(physics, shaderProgram, false);
-
-		if (!State::flagPickedUpBy[0])
-			gameUI.setCompassDirection(car.mGeometry->getModelMatrix(), flag.mGeometry->getModelMatrix());
-		else if (State::flagPickedUpBy[0])
-			gameUI.setCompassDirection(car.mGeometry->getModelMatrix(), State::flagDropoffBoxes[0]->getGlobalPose().p);
-		
-		gameUI.render();
 
 		// Check to see if any of the players have won
-		if (std::any_of(std::begin(State::scores), std::end(State::scores), [](int score)
-		{
+		if (std::any_of(std::begin(State::scores), std::end(State::scores), [](int score){
 				return score >= State::winScore;
-		}))
+			}))
 		{
-			gameUI.renderEndScreen();
-			// If the user presses enter, reset the game
-			if (!inputState[MovementFlags::ENTER])
-			{
-				lagCounter = 0;
-				State::scores.fill(0);
-				State::flagPickedUp = false;
-				State::killCars.fill(true);
-				State::flagPickedUpBy.fill(false);
-
-				if (State::blueArena) {
-					//updateWorldGridArena2();
-					physics.generateRedDoor(); //switch from blue doors to red
-					State::redArena = true;
-					State::blueArena = false;
-					//draw red arena
-					fmt::print("Red arena loaded\n");
-				}
-			}
+			gameFinished = true;
+			gameStarted = false;
 		}
 
 		//scott's debugging prints----------------------------------------------------------------------------------------------
@@ -627,12 +654,14 @@ int main(int argc, char** args) {
 		ImGui::SliderFloat("gSteerVsForwardSpeedData4A", &gSteerVsForwardSpeedData4A, 0.f, 500.f);
 		ImGui::SliderFloat("gSteerVsForwardSpeedData4B", &gSteerVsForwardSpeedData4B, 0.f, 10.f);
 	};
-	
+	bool keyboardUsed = false;
+	std::vector<int> controllerNumbersUsed;
+
 	// Loop until the user closes the window
 	while (!quit)
 	{
 		quit = input.HandleInput();
-		inputState = input.getInputState();
+		info = input.getInfo(); // Get the keyboard info
 
 		// Render
 		window.startImGuiFrame();
@@ -641,10 +670,137 @@ int main(int argc, char** args) {
 		ImGui::Begin("Framerate Counter!");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-		if (!gameStarted)
+		if (!gameStarted && !gameFinished)
 			preLoop();
-		else
+		else if (gameStarted && !playersSelected)
+		{
+			auto controllerInfo = input.getAllControllerInfo();
+
+			// First handle the keyboard inputs
+			if (info->inputReleased(MovementFlags::ACTION))
+			{
+				for (auto* const player : cars)
+				{
+					if (!player->isHuman && !keyboardUsed)
+					{
+						player->setHuman(true);
+						keyboardUsed = true;
+						break;
+					}
+					if (player->isHuman && player->useKeyboard)
+					{
+						player->ready = true;
+						fmt::print("Keyboard player is ready!\n");
+					}
+				}
+			}
+
+			// Then handle the controller inputs
+			for (auto& [id, c_info] : *controllerInfo)
+			{
+				if (c_info.inputReleased(MovementFlags::ACTION))
+				{
+					for (auto* const player : cars)
+					{
+						if (!player->isHuman && std::find(controllerNumbersUsed.begin(), controllerNumbersUsed.end(), id) == controllerNumbersUsed.end())
+						{
+							player->setHuman(false, id);
+							controllerNumbersUsed.push_back(id);
+							break;
+						}
+						if (player->isHuman && player->useController && player->controllerNumber == id)
+						{
+							player->ready = true;
+							fmt::print("Controller player is ready!\n");
+						}
+					}
+				}
+			}
+
+			// If at least one player is a human, and all the human players are ready then all players are ready
+			int humanCount = 0;
+			int readyCount = 0;
+			for (auto* const player : cars)
+			{
+				if (player->isHuman)
+				{
+					humanCount += 1;
+					if (player->ready)
+						readyCount += 1;
+				}
+			}
+
+			if (humanCount >= 1 && readyCount == humanCount)
+			{
+				playersSelected = true;
+				numHumanPlayers = humanCount;
+			}
+
+			// Render all four players
+			render(0, height / 2, width / 2, height / 2, 0, true);
+			gameUI.renderPlayerSelect(car.isHuman, car.ready);
+
+			render(width / 2, height / 2, width / 2, height / 2, 1, true);
+			gameUI.renderPlayerSelect(opponentCar1.isHuman, opponentCar1.ready);
+
+			render(0, 0, width / 2, height / 2, 2, true);
+			gameUI.renderPlayerSelect(opponentCar2.isHuman, opponentCar2.ready);
+
+			render(width / 2, 0, width / 2, height / 2, 3, true);
+			gameUI.renderPlayerSelect(opponentCar3.isHuman, opponentCar3.ready);
+
+		}
+		else if (gameStarted && !gameFinished)
 			mainLoop();
+		else if (gameFinished)
+		{
+			if (numHumanPlayers == 1)
+			{
+				render(0, 0, width, height, 0, true);
+				gameUI.renderEndScreen(0);
+			}
+
+			if (numHumanPlayers > 1)
+			{
+				render(0, height / 2, width / 2, height / 2, 0, true);
+				gameUI.renderEndScreen(0);
+
+				render(width / 2, height / 2, width / 2, height / 2, 1, true);
+				gameUI.renderEndScreen(1);
+
+				render(0, 0, width / 2, height / 2, 2, true);
+				gameUI.renderEndScreen(2);
+
+				render(width / 2, 0, width / 2, height / 2, 3, true);
+				gameUI.renderEndScreen(3);
+			}
+
+			// If any of the players press enter, reset the game
+			if (!info->inputState[MovementFlags::ENTER])
+			{
+				for (auto* c : cameras)
+				{
+					c->lagCounter = 0;
+				}
+				State::scores.fill(0);
+				State::flagPickedUp = false;
+				State::killCars.fill(true);
+				State::flagPickedUpBy.fill(false);
+
+				gameFinished = false;
+				gameStarted = false;
+				playersSelected = true; // No need to reset who is playing if they want to play again
+
+				if (State::blueArena) {
+					updateWorldGridArena2();
+					physics.generateRedDoor(); //switch from blue doors to red
+					State::redArena = true;
+					State::blueArena = false;
+					//draw red arena
+					fmt::print("Red arena loaded\n");
+				}
+			}
+		}
 
 		ImGui::End();
 

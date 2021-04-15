@@ -1,7 +1,7 @@
 #include "DoorSwitchZone.h"
 
-DoorSwitchZone::DoorSwitchZone(std::shared_ptr<Camera> camera) :
-	Entity("models/dropoff_zone.ply", "textures/fancy.jpg", camera)
+DoorSwitchZone::DoorSwitchZone() :
+	Entity("models/dropoff_zone.ply", "textures/fancy.jpg")
 {
 
 }
@@ -12,9 +12,8 @@ void DoorSwitchZone::attachPhysics(Physics& instance)
 	
 }
 
-void DoorSwitchZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
+void DoorSwitchZone::draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth)
 {
-
 }
 
 void DoorSwitchZone::simulate(Physics& instance)

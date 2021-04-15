@@ -28,8 +28,6 @@ public:
 	void startImGuiFrame() const;
 	static void renderImGuiFrame();
 
-	SDL_Event event{};
-
 private:
 	std::unique_ptr<SDL_Window, WindowDeleter> mWindow;
 	SDL_GLContext mContext;

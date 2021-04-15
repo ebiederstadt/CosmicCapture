@@ -8,9 +8,9 @@
 class ProjectilePickupZone : public Entity
 {
 public:
-	ProjectilePickupZone(std::shared_ptr<Camera> camera, const PxVec3& location);
+	ProjectilePickupZone(const PxVec3& location);
 	void attachPhysics(Physics& instance) override;
-	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
+	void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
 

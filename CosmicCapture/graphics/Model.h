@@ -22,28 +22,25 @@ public:
 	/// </summary>
 	/// <param name="modelPath">Path to a file representing the 3D model</param>
 	/// <param name="texturePath">Path to the image texture to use with the model</param>
-	/// <param name="camera">Camera object to use with the model</param>
 	/// <param name="usage">openGL Usage type. Default is GL_STATIC_DRAW</param>
 	Model(
 		const char* modelPath,
 		const char* texturePath,
-		std::shared_ptr<Camera> camera,
 		unsigned int usage = GL_STATIC_DRAW,
 		bool isRepeating = false
 	);
-	Model(const char* modelPath, const glm::vec4& textureColor, std::shared_ptr<Camera> camera);
+	Model(const char* modelPath, const glm::vec4& textureColor);
 
 	// Draw things where the position/rotation/scale changes
-	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, bool depth, int type);
+	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type);
 
 	// Draw things that stay in the same place
-	void draw(const ShaderProgram& shaderProgram, bool depth, int type);
+	void draw(const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type);
 
 	[[nodiscard]] physx::PxMat44 getModelMatrix() const { return mModel; }
 
 private:
 	std::vector<Mesh> mMeshes; // Each model is made of one or more meshes 
-	std::shared_ptr<Camera> mCameraPointer; // Camera object is shared among all the meshes
 
 	TextureAPI* api;
 	TextureAPI::TextureName mTexture; // Assuming that each texture is unique to each model (may need to rework)

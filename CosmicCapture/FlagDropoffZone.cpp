@@ -1,7 +1,7 @@
 #include "FlagDropoffZone.h"
 
-FlagDropoffZone::FlagDropoffZone(std::shared_ptr<Camera> camera, int player) :
-	Entity("models/dropoff_zone.ply", "textures/dropflaghere.jpg", camera)
+FlagDropoffZone::FlagDropoffZone(int player) :
+	Entity("models/target.obj", "textures/target.png")
 {
 	playerNum = player;
 }
@@ -45,12 +45,12 @@ void FlagDropoffZone::attachPhysics(Physics& instance)
 	instance.gScene->addActor(*State::flagDropoffBoxes[playerNum]);
 }
 
-void FlagDropoffZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
+void FlagDropoffZone::draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth)
 {
 	// Draw the drop-off box
 	PxTransform transform = State::flagDropoffBoxes[playerNum]->getGlobalPose();
 	PxMat44 modelMatrix = PxMat44(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, 1);
+	mGeometry->draw(modelMatrix, shader, camera, depth, 1);
 }
 
 void FlagDropoffZone::simulate(Physics& instance)

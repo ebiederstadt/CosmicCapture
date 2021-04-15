@@ -10,12 +10,12 @@
 class PowerUpManager
 {
 public:
-	PowerUpManager(std::shared_ptr<Camera> camera, Physics& instance);
+	PowerUpManager(Physics& instance);
 	
-	void pickup(std::shared_ptr<Camera>, Physics&);
-	void use(Physics& instance, const std::map<MovementFlags, bool>& inputs, int playerNum);
+	void pickup(Physics&);
+	void use(Physics& instance, const InputInfo& inputInfo, int playerNum);
 	void simulate(Physics& instance);
-	void draw(Physics& instance, const ShaderProgram& texture, bool depth);
+	void draw(Physics& instance, const ShaderProgram& texture, const Camera& camera, bool depth);
 	void cleanUp();
 
 private:

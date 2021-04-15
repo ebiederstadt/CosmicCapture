@@ -6,8 +6,8 @@
 
 #include "Colors.h"
 
-SpikeTrap::SpikeTrap(const std::shared_ptr<Camera>& camera): Entity(
-	"models/spike_trap.obj", WHITE, camera)
+SpikeTrap::SpikeTrap(): Entity(
+	"models/spike_trap.obj", WHITE)
 {
 	spikeTrapState state;
 	m_id = static_cast<int>(State::spike_trap_states.size());
@@ -15,13 +15,13 @@ SpikeTrap::SpikeTrap(const std::shared_ptr<Camera>& camera): Entity(
 	State::spike_trap_states[m_id] = state;
 }
 
-void SpikeTrap::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
+void SpikeTrap::draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth)
 {
 	// Only draw when actually placed
 	if (!hasOwningVehicle())
 	{
 	const PxMat44 modelMatrix(body->getGlobalPose());
-		mGeometry->draw(modelMatrix, depthTexture, depth, 1);
+		mGeometry->draw(modelMatrix, shader, camera, depth, 1);
 	}
 }
 

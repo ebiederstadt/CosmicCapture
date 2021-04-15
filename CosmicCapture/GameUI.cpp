@@ -40,16 +40,14 @@ GameUI::GameUI() :
 	mLogoDisplay.uploadData(quad);
 }
 
-void GameUI::render()
+void GameUI::render(int playerNum)
 {
 	unsigned int shaderID = static_cast<unsigned int>(mShader);
 	mShader.use();
 
-	auto textureAPI = TextureAPI::instance();
-	
-	renderPowerUpDisplay(shaderID);
+	renderPowerUpDisplay(shaderID, playerNum);
 	renderCompassDisplay(shaderID);
-	renderScores(shaderID);
+	renderScores(shaderID, playerNum);
 }
 
 void GameUI::renderMenu() const
@@ -66,14 +64,37 @@ void GameUI::renderMenu() const
 	Texture::unbind();
 }
 
-void GameUI::renderEndScreen() const
+void GameUI::renderEndScreen(int playerNum) const
 {
 	mShader.use();
 
-	if (State::scores[0] >= State::winScore)
+	if (State::scores[playerNum] >= State::winScore)
 		api->bind(mTextures.winScreen);
 	else
 		api->bind(mTextures.loseScreen);
+
+	mat4 model(1.0f);
+	const auto modelLoc = glGetUniformLocation(static_cast<unsigned int>(mShader), "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+
+	mLogoDisplay.drawData();
+
+	Texture::unbind();
+}
+
+void GameUI::renderPlayerSelect(bool selected, bool ready) const
+{
+	mShader.use();
+
+	if (!selected)
+		api->bind(mTextures.playerSelect);
+	else
+	{
+		if (!ready)
+			api->bind(mTextures.notReady);
+		else
+			api->bind(mTextures.ready);
+	}
 
 	mat4 model(1.0f);
 	const auto modelLoc = glGetUniformLocation(static_cast<unsigned int>(mShader), "model");
@@ -104,11 +125,11 @@ void GameUI::setCompassDirection(const PxMat44& carMatrix, const PxVec3& targetP
 	mCompassAngle = atan2(carDirection.z, carDirection.x) - atan2(targetDirection.z, targetDirection.x);
 }
 
-void GameUI::renderPowerUpDisplay(unsigned int shaderID) const
+void GameUI::renderPowerUpDisplay(unsigned int shaderID, int playerNum) const
 {
-	if (State::heldPowerUps[0].has_value())
+	if (State::heldPowerUps[playerNum].has_value())
 	{
-		auto value = State::heldPowerUps[0].value();
+		auto value = State::heldPowerUps[playerNum].value();
 		if (value == PowerUpOptions::SPIKE_TRAP)
 			api->bind(mTextures.spikeTrapTexture);
 		else if (value == PowerUpOptions::SPEED_BOOST)
@@ -148,7 +169,7 @@ void GameUI::renderCompassDisplay(unsigned int shaderID) const
 	Texture::unbind();
 }
 
-void GameUI::renderScores(unsigned int shaderID)
+void GameUI::renderScores(unsigned int shaderID, int offset)
 {
 	mFontShader.use();
 	api->bind(mTextures.font);
@@ -198,14 +219,14 @@ void GameUI::renderScores(unsigned int shaderID)
 	};
 
 	// Draw the score for the main player
-	updateScore(0);
-	draw(-0.6f, 0);
+	updateScore(offset);
+	draw(-0.6f, offset);
 
 	// Draw the score for the other players
 	for (int i = 1; i < 4; ++i)
 	{
-		updateScore(i);
-		draw(1.0f, i);
+		updateScore((i + offset) % 4);
+		draw(1.0f, (i + offset) % 4);
 		yPos -= inc;
 	}
 

@@ -2,8 +2,8 @@
 #include "GlobalState.h"
 #include "physics/VehicleFilterShader.h"
 
-SpikeTrapPickupZone::SpikeTrapPickupZone(const std::shared_ptr<Camera>& camera, const PxVec3& location):
-	Entity("models/powerup_stand.obj", "textures/spike_preview_white.png", camera),
+SpikeTrapPickupZone::SpikeTrapPickupZone(const PxVec3& location):
+	Entity("models/powerup_stand.obj", "textures/spike_preview_white.png"),
 	mLocation(location)
 {}
 
@@ -29,11 +29,11 @@ void SpikeTrapPickupZone::attachPhysics(Physics& instance)
 	State::spikeTrapPickupTriggerBodies[mID] = body;
 }
 
-void SpikeTrapPickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth)
+void SpikeTrapPickupZone::draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth)
 {
 	PxTransform transform = pickupBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, 0);
+	mGeometry->draw(modelMatrix, shader, camera, depth, 0);
 }
 
 void SpikeTrapPickupZone::simulate(Physics& instance)

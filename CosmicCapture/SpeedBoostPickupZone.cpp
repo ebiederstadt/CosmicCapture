@@ -1,7 +1,7 @@
 #include "SpeedBoostPickupZone.h"
 
-SpeedBoostPickupZone::SpeedBoostPickupZone(std::shared_ptr<Camera> camera, const PxVec3& location) :
-	Entity("models/powerup_stand.obj", "textures/speed_boost_white.png", camera),
+SpeedBoostPickupZone::SpeedBoostPickupZone(const PxVec3& location) :
+	Entity("models/powerup_stand.obj", "textures/speed_boost_white.png"),
 	mLocation(location)
 {}
 
@@ -27,10 +27,10 @@ void SpeedBoostPickupZone::attachPhysics(Physics& instance) {
 	State::speedBoostPickupTriggerBodies[mID] = body;
 }
 
-void SpeedBoostPickupZone::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {
+void SpeedBoostPickupZone::draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) {
 	PxTransform transform = pickupBody->getGlobalPose();
 	PxMat44 modelMatrix(transform);
-	mGeometry->draw(modelMatrix, depthTexture, depth, 0);
+	mGeometry->draw(modelMatrix, shader, camera, depth, 0);
 }
 
 void SpeedBoostPickupZone::simulate(Physics& instance) {

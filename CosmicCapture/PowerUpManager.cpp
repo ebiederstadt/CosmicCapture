@@ -10,8 +10,9 @@
 
 #include "./audio/AudioEngine.h"
 
-PowerUpManager::PowerUpManager(const std::shared_ptr<Camera> camera, Physics& instance)
+PowerUpManager::PowerUpManager(Physics& instance)
 {
+
 	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(camera, PxVec3(0.f, 0.f, 560.f)));
 	mPickupZones[0]->attachPhysics(instance);
 	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(camera, PxVec3(0.0f, 0.f, -560.f)));
@@ -42,7 +43,7 @@ PowerUpManager::PowerUpManager(const std::shared_ptr<Camera> camera, Physics& in
 	
 }
 
-void PowerUpManager::pickup(const std::shared_ptr<Camera> camera, Physics& instance)
+void PowerUpManager::pickup(Physics& instance)
 {
 	for (auto iter = State::heldPowerUps.begin(); iter < State::heldPowerUps.end(); ++iter)
 	{
@@ -55,16 +56,16 @@ void PowerUpManager::pickup(const std::shared_ptr<Camera> camera, Physics& insta
 			{
 				if (iter->value() == PowerUpOptions::PROJECTILE)
 				{
-					mHeldPowerUps[index] = std::make_unique<Projectile>(camera);
+					mHeldPowerUps[index] = std::make_unique<Projectile>();
 					dynamic_cast<Projectile*>(mHeldPowerUps[index].get())->attachVehicle(State::vehicles[index]);
 				} else if (iter->value() == PowerUpOptions::SPEED_BOOST)
 				{
-					mHeldPowerUps[index] = std::make_unique<SpeedBoost>(camera);
+					mHeldPowerUps[index] = std::make_unique<SpeedBoost>();
 					mHeldPowerUps[index]->attachPhysics(instance);
 					dynamic_cast<SpeedBoost*>(mHeldPowerUps[index].get())->attachVehicle(State::vehicles[index]);
 				} else if (iter->value() == PowerUpOptions::SPIKE_TRAP)
 				{
-					mHeldPowerUps[index] = std::make_unique<SpikeTrap>(camera);
+					mHeldPowerUps[index] = std::make_unique<SpikeTrap>();
 					dynamic_cast<SpikeTrap*>(mHeldPowerUps[index].get())->attachOwningVehicle(State::vehicles[index]);
 					mHeldPowerUps[index]->attachPhysics(instance);
 				} else
@@ -77,8 +78,11 @@ void PowerUpManager::pickup(const std::shared_ptr<Camera> camera, Physics& insta
 	}
 }
 
-void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>& inputs, int playerNum)
+void PowerUpManager::use(Physics& instance, const InputInfo& inputInfo, int playerNum)
 {
+	// TODO: We don't have access to which player the powerup is acting on here
+	// As a result, everybody will use the powerup at the same time, even if they did not
+	// actually want to use the powerup
 	if (playerNum < 0 || playerNum > 4)
 	{
 		fmt::print("WARNING: Attempting to use powerups on a player that does not exist");
@@ -87,7 +91,7 @@ void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>&
 
 	if (dynamic_cast<Projectile*>(mHeldPowerUps[playerNum].get()))
 	{
-		if (!inputs.at(MovementFlags::ACTION))
+		if (!inputInfo.inputState.at(MovementFlags::ACTION))
 		{
 			fmt::print("Using Projectile\n");
 			auto powerup = static_cast<std::unique_ptr<Entity>>(mHeldPowerUps[playerNum].release());
@@ -100,7 +104,7 @@ void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>&
 	} else if (dynamic_cast<SpeedBoost*>(mHeldPowerUps[playerNum].get()))
 	{
 		// Use the powerup when the player presses the use key
-		if (!inputs.at(MovementFlags::ACTION))
+		if (!inputInfo.inputState.at(MovementFlags::ACTION))
 		{
 			auto powerup = static_cast<std::unique_ptr<Entity>>(mHeldPowerUps[playerNum].release());
 			mDeployedPowerUps.push_back(std::move(powerup));
@@ -111,7 +115,7 @@ void PowerUpManager::use(Physics& instance, const std::map<MovementFlags, bool>&
 	} else if (dynamic_cast<SpikeTrap*>(mHeldPowerUps[playerNum].get()))
 	{
 		// Check to see if the spike trap should be placed, and move it into the deployed powerups list if it should
-		if (dynamic_cast<SpikeTrap*>(mHeldPowerUps[playerNum].get())->processInput(inputs, instance))
+		if (dynamic_cast<SpikeTrap*>(mHeldPowerUps[playerNum].get())->processInput(inputInfo.inputState, instance))
 		{
 			auto powerup = static_cast<std::unique_ptr<Entity>>(mHeldPowerUps[playerNum].release());
 			mDeployedPowerUps.push_back(std::move(powerup));
@@ -197,18 +201,18 @@ void PowerUpManager::simulate(Physics& instance)
 	}
 }
 
-void PowerUpManager::draw(Physics& instance, const ShaderProgram& texture, bool depth)
+void PowerUpManager::draw(Physics& instance, const ShaderProgram& texture, const Camera& camera, bool depth)
 {
 	// Draw pickup zones
 	for (const auto& pickupZone : mPickupZones)
 	{
-		pickupZone->draw(instance, texture, depth);
+		pickupZone->draw(instance, texture, camera, depth);
 	}
 	
 	// Draw powerups
 	for (const auto& powerup : mDeployedPowerUps)
 	{
-		powerup->draw(instance, texture, depth);
+		powerup->draw(instance, texture, camera, depth);
 	}
 }
 

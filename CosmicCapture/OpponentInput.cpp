@@ -107,7 +107,6 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 	*/
 	if (subTargetting) {
 		command[MovementFlags::ACTION] = false;
-		//printf("USING ACTION \n");
 	}
 
 	return command;

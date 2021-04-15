@@ -3,8 +3,8 @@
 #include "Colors.h"
 
 
-InvisibleBarrier::InvisibleBarrier(std::shared_ptr<Camera> camera, int type) : 
-	Entity("models/blocking_cube.ply", "textures/blank.jpg", camera)
+InvisibleBarrier::InvisibleBarrier(int type) : 
+	Entity("models/blocking_cube.ply", "textures/blank.jpg")
 {
 	barrierType = type;
 }
@@ -43,7 +43,7 @@ void InvisibleBarrier::attachPhysics(Physics& instance) {
 
 	
 }
-void InvisibleBarrier::draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) {}
+void InvisibleBarrier::draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) {}
 void InvisibleBarrier::simulate(Physics& instance) {}
 void InvisibleBarrier::cleanUpPhysics() {
 	for (int i = 0; i < barrierBodies.size(); i++) {

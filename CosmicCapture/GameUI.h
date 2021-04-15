@@ -26,6 +26,10 @@ struct GUITextures
 
 		instance->create("textures/winscreen.png", GL_NEAREST, false);
 		instance->create("textures/losescreen.png", GL_NEAREST, false);
+
+		instance->create("textures/playerSelect.png", GL_NEAREST, false);
+		instance->create("textures/notReady.png", GL_NEAREST, false);
+		instance->create("textures/ready.png", GL_NEAREST, false);
 	}
 	
 	TextureAPI::TextureName blank;
@@ -41,6 +45,10 @@ struct GUITextures
 
 	TextureAPI::TextureName winScreen = "textures/winscreen.png";
 	TextureAPI::TextureName loseScreen = "textures/losescreen.png";
+
+	TextureAPI::TextureName playerSelect = "textures/playerSelect.png";
+	TextureAPI::TextureName notReady = "textures/notReady.png";
+	TextureAPI::TextureName ready = "textures/ready.png";
 };
 
 struct ScoreDisplay
@@ -67,9 +75,11 @@ class GameUI
 {
 public:
 	GameUI();
-	void render();
+	void render(int playerNum);
 	void renderMenu() const;
-	void renderEndScreen() const;
+	void renderEndScreen(int playerNum) const;
+
+	void renderPlayerSelect(bool selected, bool ready = false) const;
 
 	void setCompassDirection(const physx::PxMat44& carMatrix, const physx::PxMat44& targetMatrix);
 	void setCompassDirection(const physx::PxMat44& carMatrix, const physx::PxVec3& targetPos);
@@ -96,7 +106,7 @@ private:
 
 	ScoreDisplay mScoreDisplay;
 
-	void renderPowerUpDisplay(unsigned int shaderID) const;
+	void renderPowerUpDisplay(unsigned int shaderID, int playerNum) const;
 	void renderCompassDisplay(unsigned int shaderID) const;
-	void renderScores(unsigned int shaderID);
+	void renderScores(unsigned int shaderID, int offset);
 };
