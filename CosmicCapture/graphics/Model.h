@@ -28,7 +28,8 @@ public:
 		const char* modelPath,
 		const char* texturePath,
 		std::shared_ptr<Camera> camera,
-		unsigned int usage = GL_STATIC_DRAW
+		unsigned int usage = GL_STATIC_DRAW,
+		bool isRepeating = false
 	);
 	Model(const char* modelPath, const glm::vec4& textureColor, std::shared_ptr<Camera> camera);
 
