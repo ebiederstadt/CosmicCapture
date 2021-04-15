@@ -417,8 +417,15 @@ int main(int argc, char** args) {
 
 	auto preLoop = [&]()
 	{
+		auto controllerInfo= input.getAllControllerInfo();
+		bool controllerPressed = false;
+		for (auto& [id, c_info] : *controllerInfo)
+		{
+			if (c_info.inputReleased(MovementFlags::ENTER))
+				controllerPressed = true;
+		}
 		gameUI.renderMenu();
-		if (!info->inputState[MovementFlags::ENTER])
+		if (!info->inputState[MovementFlags::ENTER] || controllerPressed)
 			gameStarted = true;
 	};
 
