@@ -118,6 +118,10 @@ void updateWorldGridArena2() {
 	State::worldGrid[18][15] = 1;
 	State::worldGrid[18][16] = 1;
 	State::worldGrid[18][17] = 1;
+	State::worldGrid[10][12] = 1;
+	State::worldGrid[10][13] = 1;
+	State::worldGrid[15][12] = 1;
+	State::worldGrid[15][13] = 1;
 
 	State::worldGrid[1][6] = 0;
 	State::worldGrid[2][6] = 0;
@@ -139,6 +143,10 @@ void updateWorldGridArena2() {
 	State::worldGrid[15][18] = 0;
 	State::worldGrid[16][18] = 0;
 	State::worldGrid[17][18] = 0;
+	State::worldGrid[12][10] = 0;
+	State::worldGrid[13][10] = 0;
+	State::worldGrid[12][15] = 0;
+	State::worldGrid[13][15] = 0;
 
 }
 void updateWorldGridArena1() {
@@ -162,6 +170,10 @@ void updateWorldGridArena1() {
 	State::worldGrid[18][15] = 0;
 	State::worldGrid[18][16] = 0;
 	State::worldGrid[18][17] = 0;
+	State::worldGrid[10][12] = 0;
+	State::worldGrid[10][13] = 0;
+	State::worldGrid[15][12] = 0;
+	State::worldGrid[15][13] = 0;
 
 	State::worldGrid[1][6] = 1;
 	State::worldGrid[2][6] = 1;
@@ -183,6 +195,10 @@ void updateWorldGridArena1() {
 	State::worldGrid[15][18] = 1;
 	State::worldGrid[16][18] = 1;
 	State::worldGrid[17][18] = 1;
+	State::worldGrid[12][10] = 1;
+	State::worldGrid[13][10] = 1;
+	State::worldGrid[12][15] = 1;
+	State::worldGrid[13][15] = 1;
 }
 
 int main(int argc, char** args) {
