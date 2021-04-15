@@ -262,14 +262,8 @@ int main(int argc, char** args) {
 	FlagDropoffZone flagDropoffZone3(sCamera, 3);
 	flagDropoffZone3.attachPhysics(physics);
 
-	DoorSwitchZone doorSwitchZone0(sCamera, 0);
-	doorSwitchZone0.attachPhysics(physics);
-	DoorSwitchZone doorSwitchZone1(sCamera, 1);
-	doorSwitchZone1.attachPhysics(physics);
-	DoorSwitchZone doorSwitchZone2(sCamera, 2);
-	doorSwitchZone2.attachPhysics(physics);
-	DoorSwitchZone doorSwitchZone3(sCamera, 3);
-	doorSwitchZone3.attachPhysics(physics);
+	DoorSwitchZone doorSwitchZone(sCamera);
+	doorSwitchZone.attachPhysics(physics);
 
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
@@ -281,11 +275,9 @@ int main(int argc, char** args) {
 	entities.push_back(&opponentCar1);
 	entities.push_back(&opponentCar2);
 	entities.push_back(&opponentCar3);
-	entities.push_back(&doorSwitchZone0);
-	entities.push_back(&doorSwitchZone1);
-	entities.push_back(&doorSwitchZone2);
-	entities.push_back(&doorSwitchZone3);
-	
+	entities.push_back(&doorSwitchZone);
+
+
 	/*
 	GridMarker grid(sCamera, PxVec3());
 	grid.attachPhysics(physics);
@@ -354,7 +346,7 @@ int main(int argc, char** args) {
 
 
 		//arena door switch
-		if (State::arenaSwitch && State::arenaSwitchReady) {
+		if (State::arenaSwitch && !State::arenaSwitchReady) {
 			if (State::blueArena) {
 				//updateWorldGridArena2();
 				physics.generateRedDoor(); //switch from blue doors to red
@@ -374,13 +366,9 @@ int main(int argc, char** args) {
 				fmt::print("Blue arena loaded\n");
 			}
 			State::arenaSwitch = false;
-			State::arenaSwitchReady = false;
+			State::arenaSwitchReady = true;
 			State::arenaTimer = 0;
 		}
-		if (State::arenaSwitch && !State::arenaSwitchReady) {
-			State::arenaSwitch = false;
-		}
-
 
 		//forgive me--------------------
 		if (aiStuffCounter % 3 == 0) { //stagger pathfinding on different frames
@@ -421,6 +409,8 @@ int main(int argc, char** args) {
 		powerUpManager.simulate(physics);
 
 		if (State::killCars[0]) {
+			State::flagPickedUpBy[0] = false;
+			State::flagPickedUp = false;
 			State::canPickupFlag = false;
 			State::startPickupFlagTimer = true;
 			car.getVehicle()->getRigidDynamicActor()->release();
@@ -429,6 +419,8 @@ int main(int argc, char** args) {
 			State::killCars[0] = false;
 		}
 		if (State::killCars[1]) {
+			State::flagPickedUpBy[1] = false;
+			State::flagPickedUp = false;
 			State::canPickupFlag = false;
 			State::startPickupFlagTimer = true;
 			opponentCar1.getVehicle()->getRigidDynamicActor()->release();
@@ -437,6 +429,8 @@ int main(int argc, char** args) {
 			State::killCars[1] = false;
 		}
 		if (State::killCars[2]) {
+			State::flagPickedUpBy[2] = false;
+			State::flagPickedUp = false;
 			State::canPickupFlag = false;
 			State::startPickupFlagTimer = true;
 			opponentCar2.getVehicle()->getRigidDynamicActor()->release();
@@ -445,6 +439,8 @@ int main(int argc, char** args) {
 			State::killCars[2] = false;
 		}
 		if (State::killCars[3]) {
+			State::flagPickedUpBy[3] = false;
+			State::flagPickedUp = false;
 			State::canPickupFlag = false;
 			State::startPickupFlagTimer = true;
 			opponentCar3.getVehicle()->getRigidDynamicActor()->release();
@@ -461,7 +457,7 @@ int main(int argc, char** args) {
 
 		//Update sound
 		Audio::engine.setVolume(0.3f + 0.001f*abs(velocity));
-		printf("v: %f\n", velocity);
+		//printf("v: %f\n", velocity);
 
 		shaderProgram.use();
 

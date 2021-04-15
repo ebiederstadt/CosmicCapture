@@ -86,7 +86,7 @@ void Physics::Initialize()
 	gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
 	gScene->addActor(*gGroundPlane);
 
-	blueDoorMesh = readMesh("./models/bigArena.obj");
+	blueDoorMesh = readMesh("./models/bigArenaBlue.obj");
 
 	blueDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(blueDoorMesh), *gMaterial, true); //create shape
 	blueDoorShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
@@ -98,7 +98,8 @@ void Physics::Initialize()
 	PX_RELEASE(blueDoorBody);
 
 	//redDoorMesh = readMesh("./models/red_gates.obj");
-	redDoorMesh = readMesh("./models/bigArena.obj");
+	redDoorMesh = readMesh("./models/bigArenaRed.obj");
+
 
 	redDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(redDoorMesh), *gMaterial, true); //create shape
 	redDoorShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
