@@ -96,66 +96,114 @@ void initializeGridCenterCoords() {
 		}
 	}
 }
-/*
-void updateWorldGridArena1() {
-	State::worldGrid[12][17] = 0;
-	State::worldGrid[12][18] = 0;
-	State::worldGrid[23][17] = 0;
-	State::worldGrid[23][18] = 0;
-	State::worldGrid[7][1] = 0;
-	State::worldGrid[7][2] = 0;
-	State::worldGrid[29][1] = 0;
-	State::worldGrid[29][2] = 0;
-	State::worldGrid[7][33] = 0;
-	State::worldGrid[7][34] = 0;
-	State::worldGrid[29][33] = 0;
-	State::worldGrid[29][34] = 0;
 
-	State::worldGrid[17][12] = 1;
-	State::worldGrid[18][12] = 1;
-	State::worldGrid[17][23] = 1;
-	State::worldGrid[18][23] = 1;
-	State::worldGrid[1][7] = 1;
-	State::worldGrid[2][7] = 1;
-	State::worldGrid[1][29] = 1;
-	State::worldGrid[2][29] = 1;
-	State::worldGrid[33][7] = 1;
-	State::worldGrid[34][7] = 1;
-	State::worldGrid[33][29] = 1;
-	State::worldGrid[34][29] = 1;
-
-}
 void updateWorldGridArena2() {
-	State::worldGrid[12][17] = 1;
-	State::worldGrid[12][18] = 1;
-	State::worldGrid[23][17] = 1;
-	State::worldGrid[23][18] = 1;
-	State::worldGrid[7][1] = 1;
-	State::worldGrid[7][2] = 1;
-	State::worldGrid[29][1] = 1;
-	State::worldGrid[29][2] = 1;
-	State::worldGrid[7][33] = 1;
-	State::worldGrid[7][34] = 1;
-	State::worldGrid[29][33] = 1;
-	State::worldGrid[29][34] = 1;
+	State::worldGrid[6][1] = 1;
+	State::worldGrid[6][2] = 1;
+	State::worldGrid[6][23] = 1;
+	State::worldGrid[6][24] = 1;
+	State::worldGrid[7][8] = 1;
+	State::worldGrid[7][9] = 1;
+	State::worldGrid[7][10] = 1;
+	State::worldGrid[7][15] = 1;
+	State::worldGrid[7][16] = 1;
+	State::worldGrid[7][17] = 1;
+	State::worldGrid[19][1] = 1;
+	State::worldGrid[19][2] = 1;
+	State::worldGrid[19][23] = 1;
+	State::worldGrid[19][24] = 1;
+	State::worldGrid[18][8] = 1;
+	State::worldGrid[18][9] = 1;
+	State::worldGrid[18][10] = 1;
+	State::worldGrid[18][15] = 1;
+	State::worldGrid[18][16] = 1;
+	State::worldGrid[18][17] = 1;
+	State::worldGrid[10][12] = 1;
+	State::worldGrid[10][13] = 1;
+	State::worldGrid[15][12] = 1;
+	State::worldGrid[15][13] = 1;
 
-	State::worldGrid[17][12] = 0;
-	State::worldGrid[18][12] = 0;
-	State::worldGrid[17][23] = 0;
-	State::worldGrid[18][23] = 0;
-	State::worldGrid[1][7] = 0;
-	State::worldGrid[2][7] = 0;
-	State::worldGrid[1][29] = 0;
-	State::worldGrid[2][29] = 0;
-	State::worldGrid[33][7] = 0;
-	State::worldGrid[34][7] = 0;
-	State::worldGrid[33][29] = 0;
-	State::worldGrid[34][29] = 0;
+	State::worldGrid[1][6] = 0;
+	State::worldGrid[2][6] = 0;
+	State::worldGrid[23][6] = 0;
+	State::worldGrid[24][6] = 0;
+	State::worldGrid[8][7] = 0;
+	State::worldGrid[9][7] = 0;
+	State::worldGrid[10][7] = 0;
+	State::worldGrid[15][7] = 0;
+	State::worldGrid[16][7] = 0;
+	State::worldGrid[17][7] = 0;
+	State::worldGrid[1][19] = 0;
+	State::worldGrid[2][19] = 0;
+	State::worldGrid[23][19] = 0;
+	State::worldGrid[24][19] = 0;
+	State::worldGrid[8][18] = 0;
+	State::worldGrid[9][18] = 0;
+	State::worldGrid[10][18] = 0;
+	State::worldGrid[15][18] = 0;
+	State::worldGrid[16][18] = 0;
+	State::worldGrid[17][18] = 0;
+	State::worldGrid[12][10] = 0;
+	State::worldGrid[13][10] = 0;
+	State::worldGrid[12][15] = 0;
+	State::worldGrid[13][15] = 0;
+
 }
-*/
+void updateWorldGridArena1() {
+	State::worldGrid[6][1] = 0;
+	State::worldGrid[6][2] = 0;
+	State::worldGrid[6][23] = 0;
+	State::worldGrid[6][24] = 0;
+	State::worldGrid[7][8] = 0;
+	State::worldGrid[7][9] = 0;
+	State::worldGrid[7][10] = 0;
+	State::worldGrid[7][15] = 0;
+	State::worldGrid[7][16] = 0;
+	State::worldGrid[7][17] = 0;
+	State::worldGrid[19][1] = 0;
+	State::worldGrid[19][2] = 0;
+	State::worldGrid[19][23] = 0;
+	State::worldGrid[19][24] = 0;
+	State::worldGrid[18][8] = 0;
+	State::worldGrid[18][9] = 0;
+	State::worldGrid[18][10] = 0;
+	State::worldGrid[18][15] = 0;
+	State::worldGrid[18][16] = 0;
+	State::worldGrid[18][17] = 0;
+	State::worldGrid[10][12] = 0;
+	State::worldGrid[10][13] = 0;
+	State::worldGrid[15][12] = 0;
+	State::worldGrid[15][13] = 0;
+
+	State::worldGrid[1][6] = 1;
+	State::worldGrid[2][6] = 1;
+	State::worldGrid[23][6] = 1;
+	State::worldGrid[24][6] = 1;
+	State::worldGrid[8][7] = 1;
+	State::worldGrid[9][7] = 1;
+	State::worldGrid[10][7] = 1;
+	State::worldGrid[15][7] = 1;
+	State::worldGrid[16][7] = 1;
+	State::worldGrid[17][7] = 1;
+	State::worldGrid[1][19] = 1;
+	State::worldGrid[2][19] = 1;
+	State::worldGrid[23][19] = 1;
+	State::worldGrid[24][19] = 1;
+	State::worldGrid[8][18] = 1;
+	State::worldGrid[9][18] = 1;
+	State::worldGrid[10][18] = 1;
+	State::worldGrid[15][18] = 1;
+	State::worldGrid[16][18] = 1;
+	State::worldGrid[17][18] = 1;
+	State::worldGrid[12][10] = 1;
+	State::worldGrid[13][10] = 1;
+	State::worldGrid[12][15] = 1;
+	State::worldGrid[13][15] = 1;
+}
+
 int main(int argc, char** args) {
 	initializeGridCenterCoords();
-	//updateWorldGridArena2();
+	updateWorldGridArena2();
 	// Window Initialization
 	const GLint width = 1280, height = 720;
 	Window window("Cosmic Capture", width, height);
@@ -474,7 +522,7 @@ int main(int argc, char** args) {
 		//arena door switch
 		if (State::arenaSwitch && !State::arenaSwitchReady) {
 			if (State::blueArena) {
-				//updateWorldGridArena2();
+				updateWorldGridArena2();
 				physics.generateRedDoor(); //switch from blue doors to red
 				State::redArena = true;
 				State::blueArena = false;
@@ -483,7 +531,7 @@ int main(int argc, char** args) {
 				fmt::print("Red arena loaded\n");
 			}
 			else if (State::redArena) {
-				//updateWorldGridArena1();
+				updateWorldGridArena1();
 				physics.generateBlueDoor(); //switch from red doors to blue
 				State::blueArena = true;
 				State::redArena = false;
@@ -795,7 +843,7 @@ int main(int argc, char** args) {
 				playersSelected = true; // No need to reset who is playing if they want to play again
 
 				if (State::blueArena) {
-					//updateWorldGridArena2();
+					updateWorldGridArena2();
 					physics.generateRedDoor(); //switch from blue doors to red
 					State::redArena = true;
 					State::blueArena = false;
