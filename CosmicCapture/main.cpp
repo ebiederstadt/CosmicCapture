@@ -171,7 +171,7 @@ int main(int argc, char** args) {
 
 	// The arena model
 
-	Model arena("models/arena_test.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model arena("models/bigArena.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model walls("models/walls.obj", "textures/walls_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model redGates("models/red_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model blueGates("models/blue_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
@@ -302,9 +302,9 @@ int main(int argc, char** args) {
 	Audio::car_crash = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
 	Audio::flag_lost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
 
-	InvisibleBarrier barriers(sCamera, 0);
-	barriers.attachPhysics(physics);
-	entities.push_back(&barriers);
+	//InvisibleBarrier barriers(sCamera, 0);
+	//barriers.attachPhysics(physics);
+	//entities.push_back(&barriers);
 
 	int lagCounter = 0;
 
@@ -329,7 +329,7 @@ int main(int argc, char** args) {
 	auto mainLoop = [&]()
 	{
 		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		//("%f,%f,%f\n", playerPosition.x, playerPosition.y, playerPosition.z);
+		//printf("%f,%f,%f\n", playerPosition.x, playerPosition.y, playerPosition.z);
 		// Physics simulation
 		// Repeat for all vehicles eventually...
 		car.processInput(inputState);

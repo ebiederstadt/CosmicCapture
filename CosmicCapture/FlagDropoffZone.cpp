@@ -11,20 +11,20 @@ void FlagDropoffZone::attachPhysics(Physics& instance)
 	float x = 0;
 	float z = 0;
 	if (playerNum == 0) {
-		x = 160.f;
-		z = 160.f;
+		x = 560.f;
+		z = 560.f;
 	}
 	else if (playerNum == 1) {
-		x = -160.f;
-		z = 160.f;
+		x = -560.f;
+		z = 560.f;
 	}
 	else if (playerNum == 2) {
-		x = 160.f;
-		z = -160.f;
+		x = 560.f;
+		z = -560.f;
 	}
 	else {
-		x = -160.f;
-		z = -160.f;
+		x = -560.f;
+		z = -560.f;
 	}
 
 	PxShape* dropoffZone = instance.gPhysics->createShape(PxBoxGeometry(1.0f, 0.1f, 1.0f), *instance.gMaterial, true);
