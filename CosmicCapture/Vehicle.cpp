@@ -18,9 +18,9 @@ float fallRateSteerRight = 5.f;
 float gSteerVsForwardSpeedData1A = 0.0f;
 float gSteerVsForwardSpeedData1B = 0.75f;
 float gSteerVsForwardSpeedData2A = 5.0f;
-float gSteerVsForwardSpeedData2B = 0.75f;
+float gSteerVsForwardSpeedData2B = 0.7f;
 float gSteerVsForwardSpeedData3A = 30.0f;
-float gSteerVsForwardSpeedData3B = 0.125f;
+float gSteerVsForwardSpeedData3B = 0.3f;
 float gSteerVsForwardSpeedData4A = 120.0f;
 float gSteerVsForwardSpeedData4B = 0.1f;
 
@@ -119,20 +119,20 @@ void Vehicle::attachPhysics(Physics& instance)
 	float x = 0; 
 	float z = 0;
 	if (player == 0) {
-		x = 160.f;
-		z = 160.f;
+		x = 575;
+		z = 575;
 	}
 	else if (player == 1) {
-		x = -160.f;
-		z = 160.f;
+		x = -575;
+		z = 575;
 	}
 	else if (player == 2) {
-		x = 160.f;
-		z = -160.f;
+		x = 575;
+		z = -575;
 	}
 	else {
-		x = -160.f;
-		z = -160.f;
+		x = -575;
+		z = -575;
 	}
 	const PxTransform startTransform(PxVec3(x, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), z),
 		PxQuat(PxIdentity));

@@ -25,6 +25,7 @@
 
 #include "OpponentInput.h"
 #include "InvisibleBarrier.h"
+#include "GridMarker.h"
 
 #include "GlobalState.h"
 #include "./physics/VehicleCreate.h"
@@ -35,16 +36,18 @@ glm::vec2 g_pos = { 1.0f, 1.0f };
 float scalingFactor = 3.0f;
 
 void initializeGridCenterCoords() {
-	float flatOffset = 4.f; //TUNING POINT
-	float diagonalOffset = 1.f; //TUNING POINT
+	float flatOffset = 15.f; //TUNING POINT
+	float diagonalOffset = 10.f; //TUNING POINT
 	bool shifted = false;
-	for (int i = 0; i < 36; i++) {
-		for (int j = 0; j < 36; j++) {
-			State::worldGridCenterCoords[i][j].first = i * 10.f - 180.f + 5.f;
-			State::worldGridCenterCoords[i][j].second = j * 10.f - 180.f + 5.f;
+	for (int i = 0; i < 26; i++) {
+		for (int j = 0; j < 26; j++) {
 			
+
+			State::worldGridCenterCoords[i][j].first = i * 50.f - 650.f + 25.f;
+			State::worldGridCenterCoords[i][j].second = j * 50.f - 650.f + 25.f;
+			if (i == 1 || j == 1 || j == 24 || i == 24) continue;
 			shifted = false;
-			if ((i + 1 < 36) && (i - 1 >= 0) && (j + 1 < 36) && (j - 1 >= 0)) {
+			if ((i + 1 < 26) && (i - 1 >= 0) && (j + 1 < 26) && (j - 1 >= 0)) {
 				if (State::worldGrid[i + 1][j] == 0) {
 					State::worldGridCenterCoords[i][j].first -= flatOffset;
 					shifted = true;
@@ -62,6 +65,7 @@ void initializeGridCenterCoords() {
 					shifted = true;
 				}
 
+				/*
 				if (shifted) continue;
 
 				if (State::worldGrid[i - 1][j - 1] == 0) {
@@ -80,13 +84,14 @@ void initializeGridCenterCoords() {
 					State::worldGridCenterCoords[i][j].first += diagonalOffset;
 					State::worldGridCenterCoords[i][j].second -= diagonalOffset;
 				}
-				
+				*/
 			}
+			
 			
 		}
 	}
 }
-	
+/*
 void updateWorldGridArena1() {
 	State::worldGrid[12][17] = 0;
 	State::worldGrid[12][18] = 0;
@@ -142,10 +147,10 @@ void updateWorldGridArena2() {
 	State::worldGrid[33][29] = 0;
 	State::worldGrid[34][29] = 0;
 }
-
+*/
 int main(int argc, char** args) {
 	initializeGridCenterCoords();
-	updateWorldGridArena2();
+	//updateWorldGridArena2();
 	// Window Initialization
 	const GLint width = 1280, height = 720;
 	Window window("Cosmic Capture", width, height);
@@ -264,14 +269,8 @@ int main(int argc, char** args) {
 	FlagDropoffZone flagDropoffZone3(sCamera, 3);
 	flagDropoffZone3.attachPhysics(physics);
 
-	DoorSwitchZone doorSwitchZone0(sCamera, 0);
-	doorSwitchZone0.attachPhysics(physics);
-	DoorSwitchZone doorSwitchZone1(sCamera, 1);
-	doorSwitchZone1.attachPhysics(physics);
-	DoorSwitchZone doorSwitchZone2(sCamera, 2);
-	doorSwitchZone2.attachPhysics(physics);
-	DoorSwitchZone doorSwitchZone3(sCamera, 3);
-	doorSwitchZone3.attachPhysics(physics);
+	DoorSwitchZone doorSwitchZone(sCamera);
+	doorSwitchZone.attachPhysics(physics);
 
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
@@ -283,10 +282,9 @@ int main(int argc, char** args) {
 	entities.push_back(&opponentCar1);
 	entities.push_back(&opponentCar2);
 	entities.push_back(&opponentCar3);
-	entities.push_back(&doorSwitchZone0);
-	entities.push_back(&doorSwitchZone1);
-	entities.push_back(&doorSwitchZone2);
-	entities.push_back(&doorSwitchZone3);
+	entities.push_back(&doorSwitchZone);
+
+
 	/*
 	GridMarker grid(sCamera, PxVec3());
 	grid.attachPhysics(physics);
@@ -355,9 +353,9 @@ int main(int argc, char** args) {
 
 
 		//arena door switch
-		if (State::arenaSwitch && State::arenaSwitchReady) {
+		if (State::arenaSwitch && !State::arenaSwitchReady) {
 			if (State::blueArena) {
-				updateWorldGridArena2();
+				//updateWorldGridArena2();
 				physics.generateRedDoor(); //switch from blue doors to red
 				State::redArena = true;
 				State::blueArena = false;
@@ -366,7 +364,7 @@ int main(int argc, char** args) {
 				fmt::print("Red arena loaded\n");
 			}
 			else if (State::redArena) {
-				updateWorldGridArena1();
+				//updateWorldGridArena1();
 				physics.generateBlueDoor(); //switch from red doors to blue
 				State::blueArena = true;
 				State::redArena = false;
@@ -375,13 +373,9 @@ int main(int argc, char** args) {
 				fmt::print("Blue arena loaded\n");
 			}
 			State::arenaSwitch = false;
-			State::arenaSwitchReady = false;
+			State::arenaSwitchReady = true;
 			State::arenaTimer = 0;
 		}
-		if (State::arenaSwitch && !State::arenaSwitchReady) {
-			State::arenaSwitch = false;
-		}
-
 
 		//forgive me--------------------
 		if (aiStuffCounter % 3 == 0) { //stagger pathfinding on different frames
@@ -408,6 +402,7 @@ int main(int argc, char** args) {
 				opponentBrains[2].updatePath(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
 			}
 		}
+
 		opponentCar1.processInput(opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
 		opponentCar2.processInput(opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
 		opponentCar3.processInput(opponentBrains[2].getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
@@ -421,6 +416,8 @@ int main(int argc, char** args) {
 		powerUpManager.simulate(physics);
 
 		if (State::killCars[0]) {
+			State::flagPickedUpBy[0] = false;
+			State::flagPickedUp = false;
 			State::canPickupFlag = false;
 			State::startPickupFlagTimer = true;
 			car.getVehicle()->getRigidDynamicActor()->release();
@@ -429,6 +426,8 @@ int main(int argc, char** args) {
 			State::killCars[0] = false;
 		}
 		if (State::killCars[1]) {
+			State::flagPickedUpBy[1] = false;
+			State::flagPickedUp = false;
 			State::canPickupFlag = false;
 			State::startPickupFlagTimer = true;
 			opponentCar1.getVehicle()->getRigidDynamicActor()->release();
@@ -437,6 +436,8 @@ int main(int argc, char** args) {
 			State::killCars[1] = false;
 		}
 		if (State::killCars[2]) {
+			State::flagPickedUpBy[2] = false;
+			State::flagPickedUp = false;
 			State::canPickupFlag = false;
 			State::startPickupFlagTimer = true;
 			opponentCar2.getVehicle()->getRigidDynamicActor()->release();
@@ -445,6 +446,8 @@ int main(int argc, char** args) {
 			State::killCars[2] = false;
 		}
 		if (State::killCars[3]) {
+			State::flagPickedUpBy[3] = false;
+			State::flagPickedUp = false;
 			State::canPickupFlag = false;
 			State::startPickupFlagTimer = true;
 			opponentCar3.getVehicle()->getRigidDynamicActor()->release();
@@ -461,7 +464,7 @@ int main(int argc, char** args) {
 
 		//Update sound
 		Audio::engine.setVolume(0.3f + 0.001f*abs(velocity));
-		printf("v: %f\n", velocity);
+		//printf("v: %f\n", velocity);
 
 		shaderProgram.use();
 
@@ -554,8 +557,15 @@ int main(int argc, char** args) {
 				State::flagPickedUp = false;
 				State::killCars.fill(true);
 				State::flagPickedUpBy.fill(false);
-				State::blueArena = false;
-				State::redArena = true;
+
+				if (State::blueArena) {
+					//updateWorldGridArena2();
+					physics.generateRedDoor(); //switch from blue doors to red
+					State::redArena = true;
+					State::blueArena = false;
+					//draw red arena
+					fmt::print("Red arena loaded\n");
+				}
 			}
 		}
 
