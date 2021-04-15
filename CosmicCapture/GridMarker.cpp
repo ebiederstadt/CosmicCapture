@@ -8,10 +8,10 @@ GridMarker::GridMarker(PxVec3 pos) :
 void GridMarker::attachPhysics(Physics& instance)
 {
 	int counter = 0;
-	for (int i = 0; i < 36; i++) {
-		for (int j = 0; j < 36; j++) {
+	for (int i = 0; i < 26; i++) {
+		for (int j = 0; j < 26; j++) {
 			PxVec3 p(State::worldGridCenterCoords[i][j].first, 2.f, State::worldGridCenterCoords[i][j].second);
-			PxShape* marker = instance.gPhysics->createShape(PxBoxGeometry(0.1f, 2.f, 0.1f), *instance.gMaterial, true); //create flag shape
+			PxShape* marker = instance.gPhysics->createShape(PxBoxGeometry(5.1f, 25.f, 5.1f), *instance.gMaterial, true); //create flag shape
 			marker->setSimulationFilterData(PxFilterData(COLLISION_FLAG_SCENERY, COLLISION_FLAG_SCENERY_AGAINST, 0, 0));
 			markerBody[counter] = instance.gPhysics->createRigidStatic(PxTransform(p));
 			markerBody[counter]->attachShape(*marker);
@@ -37,7 +37,7 @@ void GridMarker::attachPhysics(Physics& instance)
 
 
 void GridMarker::draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) {
-	for (int i = 0; i <  36*36; i++) {
+	for (int i = 0; i <  26*26; i++) {
 		PxTransform transform = markerBody[i]->getGlobalPose();
 		PxMat44 modelMatrix(transform);
 		mGeometry->draw(modelMatrix, shader, camera, depth, 1);

@@ -11,6 +11,7 @@ Flag::Flag() :
 {
 
 	mFlagBody = std::make_unique<Model>("models/flag_body.obj", WHITE);
+	lastPos = PxVec3(0.f, 2.f, 0.f);
 }
 
 void Flag::attachPhysics(Physics& instance)
@@ -46,6 +47,10 @@ void Flag::draw(Physics& instance, const ShaderProgram& shader, const Camera& ca
 
 void Flag::simulate(Physics& instance)
 {
+	if (State::resetFlag) {
+		State::resetFlag = false;
+		resetLastPos();
+	}
 	float addDeg = 0;
 	float rad = 0;
 
@@ -81,21 +86,30 @@ void Flag::simulate(Physics& instance)
 	}
 	else if (State::flagPickedUpBy[1]) {
 		PxVec3 pos = State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p;
+		lastPos = pos;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else if (State::flagPickedUpBy[2]) {
 		PxVec3 pos = State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p;
+		lastPos = pos;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else if (State::flagPickedUpBy[3]) {
 		PxVec3 pos = State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p;
+		lastPos = pos;
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
 	}
 	else {
-		State::flagBody->setGlobalPose(PxTransform(PxVec3(0.f, 2.f, 0.f)));
+		State::flagBody->setGlobalPose(PxTransform(PxVec3(lastPos.x, 2.f, lastPos.z)));
+		State::flagPickupBox->setGlobalPose(PxTransform(PxVec3(lastPos.x, 2.f, lastPos.z)));
 	}
 }
 
+void Flag::resetLastPos() {
+	lastPos = PxVec3(0.f, 2.f, 0.f);
+	State::flagBody->setGlobalPose(PxTransform(PxVec3(0.f, 2.f, 0.f)));
+	State::flagPickupBox->setGlobalPose(PxTransform(PxVec3(0.f, 2.f, 0.f)));
+}
 void Flag::cleanUpPhysics()
 {
 	PX_RELEASE(State::flagPickupBox);

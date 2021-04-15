@@ -12,7 +12,7 @@ class Texture
 {
 public:
 	Texture() = default;
-	Texture(const std::string& path, GLuint interpolation, bool flip = true);
+	Texture(const std::string& path, GLuint interpolation, bool flip = false, bool repeat = false);
 	Texture(const glm::vec4& color);
 
 	void bind() const { glBindTexture(GL_TEXTURE_2D, mID); }

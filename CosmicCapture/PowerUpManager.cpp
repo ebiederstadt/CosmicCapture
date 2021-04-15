@@ -12,29 +12,35 @@
 
 PowerUpManager::PowerUpManager(Physics& instance)
 {
-	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(PxVec3(25.0f, 0.f, 25.f)));
+
+	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(camera, PxVec3(0.f, 0.f, 560.f)));
 	mPickupZones[0]->attachPhysics(instance);
-
-	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(PxVec3(-25.f, 0.f, 25.f)));
+	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(camera, PxVec3(0.0f, 0.f, -560.f)));
 	mPickupZones[1]->attachPhysics(instance);
-	
-	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(PxVec3(25.f, 0.f, -25.f)));
+	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(camera, PxVec3(560.0f, 0.f, 0.f)));
 	mPickupZones[2]->attachPhysics(instance);
-
-	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(PxVec3(60.f, 0.f, 50.f)));
+	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(camera, PxVec3(-560.0f, 0.f, 0.f)));
 	mPickupZones[3]->attachPhysics(instance);
 
-	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(PxVec3(60, 0.f, -50.f)));
+	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(camera, PxVec3(0.f, 0.f, 180.f)));
 	mPickupZones[4]->attachPhysics(instance);
-
-	mPickupZones.push_back(std::make_unique<SpeedBoostPickupZone>(PxVec3(-60.0f, 0.f, 50.f)));
+	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(camera, PxVec3(0.f, 0.f, -180.f)));
 	mPickupZones[5]->attachPhysics(instance);
-
-	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(PxVec3(-60.0f, 0.f, -50.f)));
+	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(camera, PxVec3(180.f, 0.f, 0.f)));
 	mPickupZones[6]->attachPhysics(instance);
-
-	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(PxVec3(-25.f, 0.f, -25.f)));
+	mPickupZones.push_back(std::make_unique<SpikeTrapPickupZone>(camera, PxVec3(-180.f, 0.f, 0.f)));
 	mPickupZones[7]->attachPhysics(instance);
+	
+	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(camera, PxVec3(0.f, 0.f, 350.f)));
+	mPickupZones[8]->attachPhysics(instance);
+	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(camera, PxVec3(0.f, 0.f, -350.f)));
+	mPickupZones[9]->attachPhysics(instance);
+	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(camera, PxVec3(-350.f, 0.f, 0.f)));
+	mPickupZones[10]->attachPhysics(instance);
+	mPickupZones.push_back(std::make_unique<ProjectilePickupZone>(camera, PxVec3(350.f, 0.f, 0.f)));
+	mPickupZones[11]->attachPhysics(instance);
+
+	
 }
 
 void PowerUpManager::pickup(Physics& instance)

@@ -8,14 +8,15 @@
 Model::Model(
 	const char* modelPath,
 	const char* texturePath,
-	const unsigned int usage
+	const unsigned int usage,
+	bool isRepeating
 ) :
 	mTexture(texturePath),
 	mUsage(usage),
 	mModel(physx::PxIdentity)
 {
 	api = TextureAPI::instance();
-	api->create(texturePath);
+	api->create(texturePath, GL_LINEAR, false, isRepeating);
 
 	readMesh(modelPath);
 }
@@ -42,8 +43,8 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 	}
 
 	// Placing lights at opposite ends of x-axis
-	glm::vec3 purpleLight = glm::vec3(-300.0f, 300.0f, 0.0f);
-	glm::vec3 orangeLight = glm::vec3(300.0f, 300.0f, 0.0f);
+	glm::vec3 purpleLight = glm::vec3(-500.0f, 500.0f, 0.0f);
+	glm::vec3 orangeLight = glm::vec3(500.0f, 500.0f, 0.0f);
 
 	if (!depth) {
 
@@ -64,10 +65,10 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 		glUniform1i(typeLoc, type);
 	}
 
-	float near_plane = 200.f, far_plane = 600.f;
-	glm::mat4 lightProjection = glm::ortho(-250.f, 250.f, -250.f, 500.f, near_plane, far_plane);
+	float near_plane = 100.f, far_plane = 1000.f;
+	glm::mat4 lightProjection = glm::ortho(-650.f, 650.f, -650.f, 800.f, near_plane, far_plane);
 
-	glm::mat4 lightView = lookAt(orangeLight, glm::vec3(-300.0f, -10.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 lightView = lookAt(orangeLight, glm::vec3(-500.0f, -10.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 
