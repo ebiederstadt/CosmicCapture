@@ -44,7 +44,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			fmt::print("player 0 dropped off flag\n");
 			State::flagPickedUpBy[0] = false;
 			State::flagPickedUp = false;
-			State::scores[0]++;
+			if(State::scores[0] < 10)State::scores[0]++;
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
 			}
@@ -55,7 +55,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			fmt::print("player 1 dropped off flag\n");
 			State::flagPickedUpBy[1] = false;
 			State::flagPickedUp = false;
-			State::scores[1]++;
+			if (State::scores[1] < 10)State::scores[1]++;
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
 			}
@@ -65,7 +65,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			fmt::print("player 2 dropped off flag\n");
 			State::flagPickedUpBy[2] = false;
 			State::flagPickedUp = false;
-			State::scores[2]++;
+			if (State::scores[2] < 10)State::scores[2]++;
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
 			}
@@ -75,7 +75,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			fmt::print("player 3 dropped off flag\n");
 			State::flagPickedUpBy[3] = false;
 			State::flagPickedUp = false;
-			State::scores[3]++;
+			if (State::scores[3] < 10)State::scores[3]++;
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
 			}
