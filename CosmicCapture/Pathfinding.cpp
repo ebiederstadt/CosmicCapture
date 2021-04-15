@@ -30,7 +30,7 @@ bool Pathfinding::isDestination(int row, int col, Pair dest)
 //    return (double)abs(row - dest.first) + (double)abs(row - dest.second);
 //}
 double Pathfinding::calculateHValue(int row, int col, Pair dest)
-{
+{   
     return std::sqrt(std::pow(row - dest.first, 2) + std::pow(col - dest.second, 2)); //euclidean distance
 }
 
@@ -156,8 +156,9 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             else if (closedList[i - 1][j] == false
                 && isUnBlocked(grid, i - 1, j)
                 == true) {
-                gNew = cellDetails[i][j].g * 50.0 + 1.0;
+                gNew = cellDetails[i][j].g  + 1.0;
                 hNew = calculateHValue(i - 1, j, dest);
+                if (grid[i - 1][j] > 1) hNew = hNew + 10;
                 fNew = gNew + hNew;
 
 
@@ -191,8 +192,9 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             else if (closedList[i + 1][j] == false
                 && isUnBlocked(grid, i + 1, j)
                 == true) {
-                gNew = cellDetails[i][j].g * 50.0 + 1.0;
+                gNew = cellDetails[i][j].g  + 1.0;
                 hNew = calculateHValue(i + 1, j, dest);
+                if (grid[i + 1][j] > 1) hNew = hNew + 10;
                 fNew = gNew + hNew;
 
 
@@ -227,8 +229,9 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             else if (closedList[i][j + 1] == false
                 && isUnBlocked(grid, i, j + 1)
                 == true) {
-                gNew = cellDetails[i][j].g * 50.0 + 1.0;
+                gNew = cellDetails[i][j].g  + 1.0;
                 hNew = calculateHValue(i, j + 1, dest);
+                if (grid[i][j+1] > 1) hNew = hNew + 10;
                 fNew = gNew + hNew;
 
                 if (cellDetails[i][j + 1].f == FLT_MAX
@@ -261,8 +264,9 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             else if (closedList[i][j - 1] == false
                 && isUnBlocked(grid, i, j - 1)
                 == true) {
-                gNew = cellDetails[i][j].g * 50.0 + 1.0;
+                gNew = cellDetails[i][j].g  + 1.0;
                 hNew = calculateHValue(i, j - 1, dest);
+                if (grid[i - 1][j] - 1) hNew = hNew + 10;
                 fNew = gNew + hNew;
 
 
@@ -294,8 +298,9 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             else if (closedList[i - 1][j + 1] == false
                 && isUnBlocked(grid, i - 1, j + 1)
                 == true) {
-                gNew = cellDetails[i][j].g * 50.0 + 1.414;
+                gNew = cellDetails[i][j].g  + 1.414;
                 hNew = calculateHValue(i - 1, j + 1, dest);
+                if (grid[i - 1][j +1] > 1) hNew = hNew + 10;
                 fNew = gNew + hNew;
 
                 if (cellDetails[i - 1][j + 1].f == FLT_MAX
@@ -330,8 +335,9 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             else if (closedList[i - 1][j - 1] == false
                 && isUnBlocked(grid, i - 1, j - 1)
                 == true) {
-                gNew = cellDetails[i][j].g * 50.0 + 1.414;
+                gNew = cellDetails[i][j].g  + 1.414;
                 hNew = calculateHValue(i - 1, j - 1, dest);
+                if (grid[i - 1][j - 1] > 1) hNew = hNew + 10;
                 fNew = gNew + hNew;
 
                 if (cellDetails[i - 1][j - 1].f == FLT_MAX
@@ -364,8 +370,9 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             else if (closedList[i + 1][j + 1] == false
                 && isUnBlocked(grid, i + 1, j + 1)
                 == true) {
-                gNew = cellDetails[i][j].g * 50.0 + 1.414;
+                gNew = cellDetails[i][j].g  + 1.414;
                 hNew = calculateHValue(i + 1, j + 1, dest);
+                if (grid[i + 1][j + 1] > 1) hNew = hNew + 10;
                 fNew = gNew + hNew;
 
                 if (cellDetails[i + 1][j + 1].f == FLT_MAX
@@ -398,8 +405,9 @@ std::stack<Pair> Pathfinding::ehStarSearch(int grid[][COL], Pair src, Pair dest)
             else if (closedList[i + 1][j - 1] == false
                 && isUnBlocked(grid, i + 1, j - 1)
                 == true) {
-                gNew = cellDetails[i][j].g * 50.0 + 1.414;
+                gNew = cellDetails[i][j].g  + 1.414;
                 hNew = calculateHValue(i + 1, j - 1, dest);
+                if (grid[i + 1][j - 1] > 1) hNew = hNew + 10;
                 fNew = gNew + hNew;
 
 
