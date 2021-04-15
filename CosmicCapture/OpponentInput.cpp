@@ -21,7 +21,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 	std::pair<float, float> centre = State::worldGridCenterCoords[target.first][target.second];
 	double dist = std::sqrt(std::pow(playerPos.x - centre.first, 2) + std::pow(playerPos.z - centre.second, 2));
 	double distToGoal = std::sqrt(std::pow(playerPos.x - goalPos.x, 2) + std::pow(playerPos.z - goalPos.z, 2));
-	if (distToGoal < 75.f) {
+	if (distToGoal < 25.f) {
 		subTargetting = true;
 	}
 	else {
@@ -124,7 +124,6 @@ void OpponentInput::updatePath(PxVec3 playerPos, PxVec3 targetPos) {
 
 	}
 	else {
-		subTargetting = false;
 		path = pathfinder.ehStarSearch(State::worldGrid, p, t);
 		if (path.size() > 1) {
 			path.pop();
@@ -139,8 +138,8 @@ std::map<MovementFlags, bool> OpponentInput::followPath() {
 }
 
 std::pair<int, int> OpponentInput::getGridCoordinates(float globalPosX, float globalPosZ) {
-	int xIndex = std::min((int)((globalPosX + 650.f) / 50.f), 25);
-	int zIndex = std::min((int)((globalPosZ + 650.f) / 50.f), 25);
+	int xIndex = std::min((int)((globalPosX + 325.f) / 25.f), 25);
+	int zIndex = std::min((int)((globalPosZ + 325.f) / 25.f), 25);
 	std::pair p(xIndex, zIndex);
 	return p;
 }
@@ -150,10 +149,10 @@ std::pair<int, int> OpponentInput::getGridCoordinates(float globalPosX, float gl
 
 
 PxVec3 OpponentInput::getPlayerToTargetDir(PxVec3 playerDirVec, int playerVehicleRDIndex, PxVec3 targetGlobalPos) {
-	std::pair<int, int> targetGridPos = getGridCoordinates(targetGlobalPos.x, targetGlobalPos.y);
+	//std::pair<int, int> targetGridPos = getGridCoordinates(targetGlobalPos.x, targetGlobalPos.y);
 
 	float targetX = targetGlobalPos.x;
-	float targetZ = targetGlobalPos.y;
+	float targetZ = targetGlobalPos.z;
 	PxVec3 playerPos = State::vehicles[playerVehicleRDIndex]->getRigidDynamicActor()->getGlobalPose().p;
 	float playerX = playerPos.x;
 	float playerZ = playerPos.z;

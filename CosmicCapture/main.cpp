@@ -36,13 +36,13 @@ glm::vec2 g_pos = { 1.0f, 1.0f };
 float scalingFactor = 3.0f;
 
 void initializeGridCenterCoords() {
-	float flatOffset = 15.f; //TUNING POINT
+	float flatOffset = 10.f; //TUNING POINT
 	float diagonalOffset = 10.f; //TUNING POINT
 	bool shifted = false;
 	for (int i = 0; i < 26; i++) {
 		for (int j = 0; j < 26; j++) {
-			State::worldGridCenterCoords[i][j].first = i * 50.f - 650.f + 25.f;
-			State::worldGridCenterCoords[i][j].second = j * 50.f - 650.f + 25.f;
+			State::worldGridCenterCoords[i][j].first = i * 25.f - 325.f + 12.5f;
+			State::worldGridCenterCoords[i][j].second = j * 25.f - 325.f + 12.5f;
 			if (i == 1 || j == 1 || j == 24 || i == 24) continue;
 			shifted = false;
 			if ((i + 1 < 26) && (i - 1 >= 0) && (j + 1 < 26) && (j - 1 >= 0)) {
@@ -376,9 +376,9 @@ int main(int argc, char** args) {
 	Audio::flag_lost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
 
 
-	//InvisibleBarrier barriers(0);
-	//barriers.attachPhysics(physics);
-	//entities.push_back(&barriers);
+	InvisibleBarrier barriers(0);
+	barriers.attachPhysics(physics);
+	entities.push_back(&barriers);
 
 	for (int opponentNum = 1; opponentNum < 4; opponentNum++) {
 		opponentBrains[opponentNum - 1].updatePath(State::vehicles[opponentNum]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);

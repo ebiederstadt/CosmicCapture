@@ -11,20 +11,20 @@ void FlagDropoffZone::attachPhysics(Physics& instance)
 	float x = 0;
 	float z = 0;
 	if (playerNum == 0) {
-		x = 575.f;
-		z = 575.f;
+		x = 570.f / 2.f;
+		z = 570 / 2.f;
 	}
 	else if (playerNum == 1) {
-		x = -575.f;
-		z = 575.f;
+		x = -570 / 2.f;
+		z = 570 / 2.f;
 	}
 	else if (playerNum == 2) {
-		x = 575.f;
-		z = -575.f;
+		x = 570 / 2.f;
+		z = -570 / 2.f;
 	}
 	else {
-		x = -575.f;
-		z = -575.f;
+		x = -570 / 2.f;
+		z = -570 / 2.f;
 	}
 
 	PxShape* dropoffZone = instance.gPhysics->createShape(PxBoxGeometry(1.0f, 0.1f, 1.0f), *instance.gMaterial, true);
@@ -36,7 +36,7 @@ void FlagDropoffZone::attachPhysics(Physics& instance)
 	instance.gScene->addActor(*dropoffZoneBody);
 	//----------------------------------------------------------
 	//Trigger Shapes--------------------------------------------
-	PxShape* dropoffShape = instance.gPhysics->createShape(PxBoxGeometry(25.f, 25.f, 25.f), *instance.gMaterial, true);
+	PxShape* dropoffShape = instance.gPhysics->createShape(PxBoxGeometry(10.f, 10.f, 10.f), *instance.gMaterial, true);
 	//trigger box for dropping off the flag
 	dropoffShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	dropoffShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);

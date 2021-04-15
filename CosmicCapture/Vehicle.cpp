@@ -119,20 +119,20 @@ void Vehicle::attachPhysics(Physics& instance)
 	float x = 0; 
 	float z = 0;
 	if (player == 0) {
-		x = 575;
-		z = 575;
+		x = 570 / 2.f;
+		z = 570 / 2.f;
 	}
 	else if (player == 1) {
-		x = -575;
-		z = 575;
+		x = -570 / 2.f;
+		z = 570 / 2.f;
 	}
 	else if (player == 2) {
-		x = 575;
-		z = -575;
+		x = 570 / 2.f;
+		z = -570 / 2.f;
 	}
 	else {
-		x = -575;
-		z = -575;
+		x = -570 / 2.f;
+		z = -570 / 2.f;
 	}
 	const PxTransform startTransform(PxVec3(x, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), z),
 		PxQuat(PxIdentity));
