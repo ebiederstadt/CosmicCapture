@@ -548,7 +548,7 @@ int main(int argc, char** args) {
 				State::flagPickedUpBy.fill(false);
 
 				if (State::blueArena) {
-					updateWorldGridArena2();
+					//updateWorldGridArena2();
 					physics.generateRedDoor(); //switch from blue doors to red
 					State::redArena = true;
 					State::blueArena = false;
