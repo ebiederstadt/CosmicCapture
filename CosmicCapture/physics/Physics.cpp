@@ -97,9 +97,7 @@ void Physics::Initialize()
 
 	PX_RELEASE(blueDoorBody);
 
-	//redDoorMesh = readMesh("./models/red_gates.obj");
 	redDoorMesh = readMesh("./models/bigArenaRed.obj");
-
 
 	redDoorShape = gPhysics->createShape(PxTriangleMeshGeometry(redDoorMesh), *gMaterial, true); //create shape
 	redDoorShape->setSimulationFilterData(PxFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_OBSTACLE_AGAINST, 0, 0));//set filter data for collisions
@@ -108,6 +106,8 @@ void Physics::Initialize()
 	redDoorShape->release(); //free shape 
 	gScene->addActor(*redDoorBody); //add rigid body to scene
 	//generateRedDoor();
+
+	
 
 	//----------------------------------------------------------*/
 

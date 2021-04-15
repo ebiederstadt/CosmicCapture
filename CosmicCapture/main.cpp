@@ -176,18 +176,25 @@ int main(int argc, char** args) {
 
 	// The arena model
 
-	Model arena("models/bigArena.obj", "textures/arena_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model walls("models/walls.obj", "textures/walls_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model redGates("models/red_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model blueGates("models/blue_gates.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model skybox("models/skybox.obj", "textures/stars.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model arenaPlane("models/arena_plane.obj", "textures/arena_plane_texture.jpg", sCamera, GL_DYNAMIC_DRAW);
+	//Model arenaPlane("models/arena_plane.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model centerArea("models/center_area.obj", "textures/center_area_texture.jpg", sCamera, GL_DYNAMIC_DRAW, true);
+	//Model centerArea("models/center_area.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model innerWalls("models/inner_walls.obj", "textures/pillars_texture.jpg", sCamera, GL_DYNAMIC_DRAW, true);
+	//Model innerWalls("models/inner_walls.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model walls("models/walls.obj", "textures/walls_texture.jpg", sCamera, GL_DYNAMIC_DRAW, true);
+	//Model walls("models/walls.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
+	Model redGates("models/red_gates.obj", "textures/red_gates.png", sCamera, GL_DYNAMIC_DRAW);
+	Model blueGates("models/blue_gates.obj", "textures/blue_gates.png", sCamera, GL_DYNAMIC_DRAW);
+	//Model skybox("models/skybox.obj", "textures/stars.jpg", sCamera, GL_DYNAMIC_DRAW, true);
+	Model skybox("models/skybox.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 
 	// Shadow setup start ---------------------------------------------------------------------
 
 	// Configure depth map FBO
 	unsigned int depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
-	const unsigned int SHADOW_WIDTH = 1024 * 15, SHADOW_HEIGHT = 1024 * 15;
+	const unsigned int SHADOW_WIDTH = 1024 * 4, SHADOW_HEIGHT = 1024 * 4;
 
 	// create depth texture
 	unsigned int depthMap;
@@ -471,7 +478,9 @@ int main(int argc, char** args) {
 
 		// First pass
 
-		arena.draw(simpleDepthShader, true, 1);
+		arenaPlane.draw(simpleDepthShader, true, 1);
+		centerArea.draw(simpleDepthShader, true, 1);
+		innerWalls.draw(simpleDepthShader, true, 1);
 		walls.draw(simpleDepthShader, true, 1);
 		// don't include skybox in depth map
 
@@ -509,15 +518,17 @@ int main(int argc, char** args) {
 
 		// Second pass
 
-		arena.draw(shaderProgram, false, 1);
+		arenaPlane.draw(shaderProgram, false, 1);
+		centerArea.draw(shaderProgram, false, 1);
+		innerWalls.draw(shaderProgram, false, 1);
 		walls.draw(shaderProgram, false, 1);
 		skybox.draw(shaderProgram, false, 0);
 
 		if (State::redArena) {
-			redGates.draw(shaderProgram, false, 1);
+			redGates.draw(shaderProgram, false, 2);
 		}
 		if (State::blueArena) {
-			blueGates.draw(shaderProgram, false, 1);
+			blueGates.draw(shaderProgram, false, 2);
 		}
 		for (const auto& entity : entities)
 			entity->draw(physics, shaderProgram, false);

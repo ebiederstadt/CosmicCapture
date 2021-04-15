@@ -13,12 +13,12 @@ TextureAPI* TextureAPI::instance()
 	return api;
 }
 
-void TextureAPI::create(const TextureName& name, unsigned int interpolation, bool flip)
+void TextureAPI::create(const TextureName& name, unsigned int interpolation, bool flip, bool repeat)
 {
 	// Only insert a new texture if it does not exist in the table of textures
 	if (mTextures.count(name) == 0)
 	{
-		mTextures[name] = Texture(name, interpolation, flip);
+		mTextures[name] = Texture(name, interpolation, flip, repeat);
 	}
 }
 
