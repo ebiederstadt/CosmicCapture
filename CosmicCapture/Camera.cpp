@@ -42,7 +42,7 @@ extern float angle;
 
 
 Camera::Camera(const PxVec3& eye, const PxVec3& dir, float aspect) :
-	perspectiveMatrix(glm::perspective(glm::radians(60.0f), aspect, 0.1f, 1000.0f))
+	perspectiveMatrix(glm::perspective(glm::radians(60.0f), aspect, 0.1f, 3000.0f))
 {
 	mEye = eye;
 	mDir = dir.getNormalized();
