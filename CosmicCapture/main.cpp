@@ -654,7 +654,7 @@ int main(int argc, char** args) {
 		//int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
 		//int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
 		//int dir = opponentBrains[1].getOrientation(playerDir);
-		//printf("%f - %f - %f\n" , State::vehicles[1]->computeForwardSpeed(), State::vehicles[2]->computeForwardSpeed(), State::vehicles[3]->computeForwardSpeed() );
+		printf("%f - %f - %f - %f\n" , State::vehicles[0]->computeForwardSpeed(), State::vehicles[1]->computeForwardSpeed(), State::vehicles[2]->computeForwardSpeed(), State::vehicles[3]->computeForwardSpeed() );
 		//printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
 		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//-----------------------------------------------------------------------------------------------------------------------
