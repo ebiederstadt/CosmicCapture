@@ -14,8 +14,10 @@ public:
 	void draw(Physics& instance, const ShaderProgram& depthTexture, bool depth) override;
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
+	void resetLastPos();
 
 private:
 	std::unique_ptr<Model> mFlagBody;
+	PxVec3 lastPos;
 };
 

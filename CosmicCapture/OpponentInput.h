@@ -33,6 +33,7 @@ private:
 	std::pair<int, int> target;
 	Pathfinding pathfinder;
 
+	bool subTargetting = false;
 	bool reversing = false;
 	int stuckCounter;
 	float reverseThresholdSpeed = -10.f;
