@@ -18,11 +18,11 @@ float fallRateSteerRight = 5.f;
 float gSteerVsForwardSpeedData1A = 0.0f;
 float gSteerVsForwardSpeedData1B = 0.75f;
 float gSteerVsForwardSpeedData2A = 5.0f;
-float gSteerVsForwardSpeedData2B = 0.75f;
+float gSteerVsForwardSpeedData2B = 0.7f;
 float gSteerVsForwardSpeedData3A = 30.0f;
-float gSteerVsForwardSpeedData3B = 0.5f;
+float gSteerVsForwardSpeedData3B = 0.3f;
 float gSteerVsForwardSpeedData4A = 120.0f;
-float gSteerVsForwardSpeedData4B = 0.5f;
+float gSteerVsForwardSpeedData4B = 0.1f;
 
 
 // TODO: Might want to think about a better place to store these definitions (so they are not longer globals)

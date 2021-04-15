@@ -46,6 +46,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				State::killCars[j] = true;
 			}
 			Audio::flag_return.playSound();
+			State::resetFlag = true;
 		}
 		else if (pairs[i].triggerActor == State::flagDropoffBoxes[1] && pairs[i].otherActor == State::vehicles[1]->getRigidDynamicActor() && State::flagPickedUpBy[1])
 		{
@@ -56,6 +57,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
 			}
+			State::resetFlag = true;
 		}
 		else if (pairs[i].triggerActor == State::flagDropoffBoxes[2] && pairs[i].otherActor == State::vehicles[2]->getRigidDynamicActor() && State::flagPickedUpBy[2])
 		{
@@ -66,6 +68,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
 			}
+			State::resetFlag = true;
 		}
 		else if (pairs[i].triggerActor == State::flagDropoffBoxes[3] && pairs[i].otherActor == State::vehicles[3]->getRigidDynamicActor() && State::flagPickedUpBy[3])
 		{
@@ -76,6 +79,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
 			}
+			State::resetFlag = true;
 		}
 
 		// Powerups

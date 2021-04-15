@@ -20,13 +20,18 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 	std::pair<int, int> current = getGridCoordinates(playerPos.x, playerPos.z);
 	std::pair<float, float> centre = State::worldGridCenterCoords[target.first][target.second];
 	double dist = std::sqrt(std::pow(playerPos.x - centre.first, 2) + std::pow(playerPos.z - centre.second, 2));
-	double distToGoal = std::sqrt(std::pow(playerPos.x - goalPos.x, 2) + std::pow(playerPos.z - goalPos.y, 2));
-	if (distToGoal < 30.f) subTargetting = true;
+	double distToGoal = std::sqrt(std::pow(playerPos.x - goalPos.x, 2) + std::pow(playerPos.z - goalPos.z, 2));
+	if (distToGoal < 75.f) {
+		subTargetting = true;
+	}
+	else {
+		subTargetting = false;
+	}
 	if (subTargetting) {
-		if (distToGoal < 3.f) {
+		if (distToGoal < 1.f) {
 			subTargetting = false;
 			if (path.empty()) {
-				path = pathfinder.ehStarSearch(State::worldGrid, current, std::make_pair<int, int>(12, 12)); //FIX THIS PROBLEM
+				path = pathfinder.ehStarSearch(State::worldGrid, current, getGridCoordinates(goalPos.x, goalPos.z)); //FIX THIS PROBLEM
 			}
 			target = path.top();
 			path.pop();
@@ -35,7 +40,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 	else {
 		if (dist < 10.f) {
 			if (path.empty()) {
-				path = pathfinder.ehStarSearch(State::worldGrid, current, std::make_pair<int, int>(12, 12)); //FIX THIS PROBLEM
+				path = pathfinder.ehStarSearch(State::worldGrid, current, getGridCoordinates(goalPos.x, goalPos.z)); //FIX THIS PROBLEM
 			}
 			target = path.top();
 			path.pop();
@@ -92,15 +97,15 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 			command = getCommand(dirsToCommand(playerDir, targetDir, &sharpTurn));
 		}	
 	}
-	
+	/*
 	if  (sharpTurn) { //if you are going too fast and trying to turn hit the brakes
 		if (vehicleSpeed > 25.f) {
 			command[MovementFlags::UP] = true;
 			command[MovementFlags::DOWN] = false;
 		}
 	}
-	
-	if (distToGoal < 75.f /*&& State::flagPickedUp && pointingAtGoal(playerDir, getPlayerToTargetDir(playerDir, playerNum, goalPos))*/) {
+	*/
+	if (subTargetting) {
 		command[MovementFlags::ACTION] = false;
 		printf("USING ACTION \n");
 	}
@@ -114,7 +119,7 @@ void OpponentInput::updatePath(PxVec3 playerPos, PxVec3 targetPos) {
 	std::pair<int, int> t = getGridCoordinates(targetPos.x, targetPos.z);
 	goalPos = targetPos;
 	if (p == t) {
-		subTargetting = true;	
+
 	}
 	else if (State::worldGrid[p.first][p.second] == 0 || State::worldGrid[t.first][t.second] == 0) {
 
