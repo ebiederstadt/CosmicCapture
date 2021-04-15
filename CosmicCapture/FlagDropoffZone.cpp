@@ -1,7 +1,7 @@
 #include "FlagDropoffZone.h"
 
 FlagDropoffZone::FlagDropoffZone(int player) :
-	Entity("models/dropoff_zone.ply", "textures/dropflaghere.jpg")
+	Entity("models/target.obj", "textures/target.png")
 {
 	playerNum = player;
 }
