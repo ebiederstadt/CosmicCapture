@@ -2,6 +2,7 @@
 #include <openal/al.h>
 #include <openal/alc.h>
 #include "AudioInstance.h" 
+#include "../Globalstate.h"
 
 AudioInstance::AudioInstance(ALuint* buffer) {
 	
@@ -24,7 +25,7 @@ AudioInstance::~AudioInstance() {
 	}
 	void AudioInstance::setVolume(float volume) {
 
-		if (volume > 0.6f) volume = 0.6f;
+		if (volume > 0.3f) volume = 0.3f;
 		alSourcef(source, AL_GAIN, volume);
 	}
 	void AudioInstance::AudioInstance::stopSound() {

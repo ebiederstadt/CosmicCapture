@@ -72,6 +72,9 @@ struct State
 
 	inline static PxVehicleDrive4W* vehicles[4] = { nullptr, nullptr, nullptr, nullptr };
 
+	//Human players
+	inline static int numHumanPlayers = 0;
+
 	// Scores and powerups
 	inline static std::array<int, 4> scores = {0, 0, 0, 0};
 	inline static int winScore = 3;
@@ -116,5 +119,10 @@ struct Audio
 	inline static AudioInstance projectile_explosion = soundSystem.createInstance(audioConstants::SOUND_FILE_EXPLOSION);
 	inline static AudioInstance car_crash = soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
 	inline static AudioInstance flag_lost = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
+	inline static AudioInstance gate_switch = soundSystem.createInstance(audioConstants::SOUND_FILE_GATE_SWITCH);
+
+	inline static AudioInstance engine2 = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE2);
+	inline static AudioInstance engine3 = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE3);
+	inline static AudioInstance engine4 = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE4);
 
 };

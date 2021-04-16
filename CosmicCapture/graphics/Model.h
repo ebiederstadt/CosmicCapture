@@ -35,7 +35,7 @@ public:
 	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type);
 
 	// Draw things that stay in the same place
-	void draw(const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type);
+	void draw(const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type, int offset = 0);
 
 	[[nodiscard]] physx::PxMat44 getModelMatrix() const { return mModel; }
 
