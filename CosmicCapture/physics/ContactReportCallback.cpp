@@ -368,6 +368,13 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 							State::flagPickedUp = false;
 						}
 					}
+					if ((pairHeader.actors[0] == state.body && pairHeader.actors[1] == State::flagBody) || (pairHeader.actors[0] == State::flagBody && pairHeader.actors[1] == state.body)) {
+						if (State::flagPickedUpBy[j]) {
+							State::killCars[j] = true;
+							State::flagPickedUpBy[j] = false;
+							State::flagPickedUp = false;
+						}
+					}
 				}
 			}
 		
