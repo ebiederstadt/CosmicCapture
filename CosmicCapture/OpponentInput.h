@@ -43,7 +43,7 @@ private:
 	int stuckThreshold = 200; //TUNING POINT
 
 	bool recentlyUsedAction = false;
-	int actionDelay = 1000;
+	int actionDelay = 100;
 	int actionCounter = 0;
 
 	std::pair<int, int> lastPosition;

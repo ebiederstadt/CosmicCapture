@@ -211,7 +211,7 @@ bool OpponentInput::pointingAtGoal(PxVec3 playerDirVec, PxVec3 targetDirVec) {
 	float playerAngleRads = atan2(playerZ, playerX);
 	float targetAngleRads = atan2(targetZ, targetX);
 	float diff = abs(playerAngleRads - targetAngleRads);
-	if (diff < 0.5f) {
+	if (diff < 0.1f) {
 		pointingAtGoal = true;
 	}
 	return pointingAtGoal;
