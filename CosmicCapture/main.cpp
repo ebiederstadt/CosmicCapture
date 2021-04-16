@@ -312,7 +312,6 @@ int main(int argc, char** args) {
 	opponentBrains[2].attachVehicle(opponentCar3.getVehicle());
 
 	std::array<Vehicle*, 4> cars = { &car, &opponentCar1, &opponentCar2, &opponentCar3 };
-	State::numHumanPlayers = 0;
 
 	Flag flag;
 	flag.attachPhysics(physics);
@@ -443,16 +442,34 @@ int main(int argc, char** args) {
 
 	auto render = [&](int x, int y, int width, int height, int playerNum, bool isReversing = false)
 	{
+
+		State::numHumanPlayers = 2;
+
+		// Engine for non-first players
+		if (!Audio::engine2.isSoundPlaying() && State::numHumanPlayers > 1) {
+			Audio::engine2.playSound();
+		}
+
+		// Engine for non-first players
+		if (!Audio::engine3.isSoundPlaying() && State::numHumanPlayers > 2) {
+			Audio::engine3.playSound();
+		}
+
+		// Engine for non-first players
+		if (!Audio::engine4.isSoundPlaying() && State::numHumanPlayers > 3) {
+			Audio::engine4.playSound();
+		}
+
 		// Update camera
 		float velocity = cars[playerNum]->getVelocity();
 		cameras[playerNum]->updateCamera(cars[playerNum]->mGeometry->getModelMatrix(), velocity, cars[playerNum]->isReversing(), isReversing);
 
 		//Update sound - lower start, growth and cap of engine volume with multiplayer
 		if (State::numHumanPlayers > 1) {
-			if(playerNum == 0) Audio::engine.setVolume(0.05f + 0.00005f * abs(velocity));
-			if(playerNum == 1) Audio::engine2.setVolume(0.05f + 0.00005f * abs(velocity));
-			if(playerNum == 2) Audio::engine3.setVolume(0.05f + 0.00005f * abs(velocity));
-			if(playerNum == 3) Audio::engine4.setVolume(0.05f + 0.00005f * abs(velocity));
+			if(playerNum == 0) Audio::engine.setVolume(0.1f + 0.0001f * abs(velocity));
+			if(playerNum == 1) Audio::engine2.setVolume(0.1f + 0.0001f * abs(velocity));
+			if(playerNum == 2) Audio::engine3.setVolume(0.1f + 0.0001f * abs(velocity));
+			if(playerNum == 3) Audio::engine4.setVolume(0.1f + 0.0001f * abs(velocity));
 		}
 		else Audio::engine.setVolume(0.1f + 0.0001f * abs(velocity));
 		//printf("v: %f\n", velocity);
@@ -559,13 +576,6 @@ int main(int argc, char** args) {
 
 		gameUI.render(playerNum);
 	};
-
-	// Engine for non-first players
-	if (!Audio::engine2.isSoundPlaying() && State::numHumanPlayers > 1) {
-		Audio::engine2.playSound();
-		Audio::engine3.playSound();
-		Audio::engine4.playSound();
-	}
 
 	auto mainLoop = [&]()
 	{
@@ -914,6 +924,7 @@ int main(int argc, char** args) {
 				}
 			}
 		}
+
 
 		ImGui::End();
 
