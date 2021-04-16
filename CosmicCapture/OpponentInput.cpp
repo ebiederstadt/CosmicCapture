@@ -102,27 +102,39 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 	}
 
 	command[MovementFlags::ACTION] = true;
-	if (State::heldPowerUps[playerNum] == PowerUpOptions::SPIKE_TRAP) {
-		if (State::flagPickedUpBy[playerNum]) {
-			command[MovementFlags::ACTION] = false;
-		}
-		else {
-
-		}
-	}
-	else if (State::heldPowerUps[playerNum] == PowerUpOptions::SPEED_BOOST) {
-		command[MovementFlags::ACTION] = false;
-	}
-	else if (State::heldPowerUps[playerNum] == PowerUpOptions::PROJECTILE) {
-		if (State::flagPickedUp) {
+	if (!recentlyUsedAction) {
+		if (State::heldPowerUps[playerNum] == PowerUpOptions::SPIKE_TRAP) {
 			if (State::flagPickedUpBy[playerNum]) {
-
+				command[MovementFlags::ACTION] = false;
+				recentlyUsedAction = true;
 			}
 			else {
-				if (subTargetting && pointingAtGoal(playerDir, getPlayerToTargetDir(playerDir, playerNum, goalPos))) {
-					command[MovementFlags::ACTION] = false;
+
+			}
+		}
+		else if (State::heldPowerUps[playerNum] == PowerUpOptions::SPEED_BOOST) {
+			command[MovementFlags::ACTION] = false;
+			recentlyUsedAction = true;
+		}
+		else if (State::heldPowerUps[playerNum] == PowerUpOptions::PROJECTILE) {
+			if (State::flagPickedUp) {
+				if (State::flagPickedUpBy[playerNum]) {
+
+				}
+				else {
+					if (subTargetting && pointingAtGoal(playerDir, getPlayerToTargetDir(playerDir, playerNum, goalPos))) {
+						command[MovementFlags::ACTION] = false;
+						recentlyUsedAction = true;
+					}
 				}
 			}
+		}
+	}
+	else {
+		actionCounter++;
+		if (actionCounter > actionDelay) {
+			actionCounter = 0;
+			recentlyUsedAction = false;
 		}
 	}
 	return command;

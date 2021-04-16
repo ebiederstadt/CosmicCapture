@@ -41,6 +41,11 @@ private:
 	int framesReversing = 0;
 	int reversingMax = 750;
 	int stuckThreshold = 200; //TUNING POINT
+
+	bool recentlyUsedAction = false;
+	int actionDelay = 1000;
+	int actionCounter = 0;
+
 	std::pair<int, int> lastPosition;
 	PxVec3 goalPos;
 };
