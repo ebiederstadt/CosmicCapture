@@ -120,6 +120,7 @@ struct Audio
 	inline static AudioInstance car_crash = soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
 	inline static AudioInstance flag_lost = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
 	inline static AudioInstance gate_switch = soundSystem.createInstance(audioConstants::SOUND_FILE_GATE_SWITCH);
+	inline static AudioInstance caught = soundSystem.createInstance(audioConstants::SOUND_FILE_CAUGHT);
 
 	inline static AudioInstance engine2 = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE2);
 	inline static AudioInstance engine3 = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE3);

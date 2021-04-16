@@ -171,7 +171,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				{
 					if (pairs[i].otherActor == State::vehicles[j]->getRigidDynamicActor())
 					{
-						if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) Audio::collision.playSound();
+						if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) Audio::caught.playSound();
 						spikeTrapState.actingUpon = j;
 						fmt::print("Ran into spike trap!\n");
 						spikeTrapState.active = false;

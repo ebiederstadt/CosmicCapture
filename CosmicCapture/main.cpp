@@ -374,6 +374,7 @@ int main(int argc, char** args) {
 	Audio::car_crash = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
 	Audio::flag_lost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
 	Audio::gate_switch = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_GATE_SWITCH);
+	Audio::caught = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_CAUGHT);
 
 	//AudioEngine soundSystem2 = AudioEngine();
 	//soundSystem2.initialize();

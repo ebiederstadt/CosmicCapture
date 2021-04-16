@@ -226,6 +226,15 @@ AudioEngine::~AudioEngine() {}
             alSourcefv(sources[16], AL_VELOCITY, source0Vel);
             alSourcei(sources[16], AL_BUFFER, bufferArray[16]);
 
+            loadWavFile("audio_files/caught.wav", bufferArray + 17);
+            CheckError();
+
+            alSourcef(sources[17], AL_PITCH, 1.0f);
+            alSourcef(sources[17], AL_GAIN, 3.0f);
+            alSourcefv(sources[17], AL_POSITION, source0Pos);
+            alSourcefv(sources[17], AL_VELOCITY, source0Vel);
+            alSourcei(sources[17], AL_BUFFER, bufferArray[17]);
+
         }
         
     }
