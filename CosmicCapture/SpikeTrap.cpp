@@ -12,6 +12,14 @@ SpikeTrap::SpikeTrap(): Entity(
 	spikeTrapState state;
 	m_id = static_cast<int>(State::spike_trap_states.size());
 
+	// Check to see if the ID we are using is already being used by somebody else
+	auto search = State::spike_trap_states.find(m_id);
+	while (search != State::spike_trap_states.end())
+	{
+		m_id += 1;
+		search = State::spike_trap_states.find(m_id);
+	}
+
 	State::spike_trap_states[m_id] = state;
 }
 
