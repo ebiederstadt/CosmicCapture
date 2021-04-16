@@ -769,7 +769,7 @@ int main(int argc, char** args) {
 		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//-----------------------------------------------------------------------------------------------------------------------
 
-		ImGui::Text("Camera Position");
+		/*ImGui::Text("Camera Position");
 		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
 		ImGui::SliderFloat("x Scale", &g_scale.x, 0.01f, 3.0f);
 		ImGui::SliderFloat("y Scale", &g_scale.y, 0.01f, 3.0f);
@@ -813,7 +813,7 @@ int main(int argc, char** args) {
 		ImGui::SliderFloat("gSteerVsForwardSpeedData3A", &gSteerVsForwardSpeedData3A, 0.f, 100.f);
 		ImGui::SliderFloat("gSteerVsForwardSpeedData3B", &gSteerVsForwardSpeedData3B, 0.f, 10.f);
 		ImGui::SliderFloat("gSteerVsForwardSpeedData4A", &gSteerVsForwardSpeedData4A, 0.f, 500.f);
-		ImGui::SliderFloat("gSteerVsForwardSpeedData4B", &gSteerVsForwardSpeedData4B, 0.f, 10.f);
+		ImGui::SliderFloat("gSteerVsForwardSpeedData4B", &gSteerVsForwardSpeedData4B, 0.f, 10.f); */
 	};
 	bool keyboardUsed = false;
 	std::vector<int> controllerNumbersUsed;
@@ -825,11 +825,11 @@ int main(int argc, char** args) {
 		info = input.getInfo(); // Get the keyboard info
 
 		// Render
-		window.startImGuiFrame();
+		//window.startImGuiFrame();
 		Window::clear();
 
-		ImGui::Begin("Framerate Counter!");
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		//ImGui::Begin("Framerate Counter!");
+		//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 		if (!gameStarted && !gameFinished)
 			preLoop();
@@ -964,9 +964,9 @@ int main(int argc, char** args) {
 		}
 
 
-		ImGui::End();
+		//ImGui::End();
 
-		Window::renderImGuiFrame();
+		//Window::renderImGuiFrame();
 		window.swap();
 	}
 	//cleanup
