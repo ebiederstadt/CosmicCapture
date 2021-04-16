@@ -80,9 +80,6 @@ void PowerUpManager::pickup(Physics& instance)
 
 void PowerUpManager::use(Physics& instance, const InputInfo& inputInfo, int playerNum)
 {
-	// TODO: We don't have access to which player the powerup is acting on here
-	// As a result, everybody will use the powerup at the same time, even if they did not
-	// actually want to use the powerup
 	if (playerNum < 0 || playerNum > 4)
 	{
 		fmt::print("WARNING: Attempting to use powerups on a player that does not exist");
@@ -127,9 +124,6 @@ void PowerUpManager::use(Physics& instance, const InputInfo& inputInfo, int play
 }
 void PowerUpManager::use(Physics& instance, std::map<MovementFlags, bool> inputState, int playerNum)
 {
-	// TODO: We don't have access to which player the powerup is acting on here
-	// As a result, everybody will use the powerup at the same time, even if they did not
-	// actually want to use the powerup
 	if (playerNum < 0 || playerNum > 4)
 	{
 		fmt::print("WARNING: Attempting to use powerups on a player that does not exist");
@@ -140,7 +134,7 @@ void PowerUpManager::use(Physics& instance, std::map<MovementFlags, bool> inputS
 	{
 		if (!inputState.at(MovementFlags::ACTION))
 		{
-			fmt::print("Using Projectile\n");
+			fmt::print("Player {} using projectile\n", playerNum);
 			auto powerup = static_cast<std::unique_ptr<Entity>>(mHeldPowerUps[playerNum].release());
 			powerup->attachPhysics(instance);
 			mDeployedPowerUps.push_back(std::move(powerup));
