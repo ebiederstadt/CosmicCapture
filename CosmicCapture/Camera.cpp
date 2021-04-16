@@ -92,7 +92,7 @@ glm::mat4 Camera::getViewMatrix() const
 void Camera::updateCamera(const PxMat44& model, float speed, bool isReversing, bool reverseCamera)
 {
 	const auto modelPos = model.column3.getXYZ();
-	auto back = model.column2.getXYZ() * (-7.0f - 0.005f * speed);
+	auto back = model.column2.getXYZ() * (-7.0f - 0.0005f * speed);
 	//auto back = model.column2.getXYZ() * -7.0f;
 	back.y += 1.0f;
 	if (isReversing) { 
