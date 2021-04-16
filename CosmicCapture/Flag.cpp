@@ -86,18 +86,24 @@ void Flag::simulate(Physics& instance)
 	}
 	else if (State::flagPickedUpBy[1]) {
 		PxVec3 pos = State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p;
-		lastPos = pos;
-		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
+		PxMat33 rot = PxMat33(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().q);
+
+		PxVec3 offset = rot * PxVec3(0.0f, 0.0f, 1.0f);
+		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x - 1.8f * offset.x, pos.y + 1.8f, pos.z - 1.8f * offset.z)));
 	}
 	else if (State::flagPickedUpBy[2]) {
 		PxVec3 pos = State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p;
-		lastPos = pos;
-		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
+		PxMat33 rot = PxMat33(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().q);
+
+		PxVec3 offset = rot * PxVec3(0.0f, 0.0f, 1.0f);
+		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x - 1.8f * offset.x, pos.y + 1.8f, pos.z - 1.8f * offset.z)));
 	}
 	else if (State::flagPickedUpBy[3]) {
 		PxVec3 pos = State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p;
-		lastPos = pos;
-		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x, pos.y + 2.0f, pos.z)));
+		PxMat33 rot = PxMat33(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().q);
+
+		PxVec3 offset = rot * PxVec3(0.0f, 0.0f, 1.0f);
+		State::flagBody->setGlobalPose(PxTransform(PxVec3(pos.x - 1.8f * offset.x, pos.y + 1.8f, pos.z - 1.8f * offset.z)));
 	}
 	else {
 		State::flagBody->setGlobalPose(PxTransform(PxVec3(lastPos.x, 2.f, lastPos.z)));
