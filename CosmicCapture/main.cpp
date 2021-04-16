@@ -358,11 +358,11 @@ int main(int argc, char** args) {
 	Audio::soundSystem.initializeBuffers();
 	Audio::music = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
 	Audio::music.loop();
-	Audio::music.setVolume(0.35f);
+	Audio::music.setVolume(0.20f);
 	Audio::music.playSound();
 	Audio::engine = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
 	Audio::engine.loop();
-	Audio::engine.setVolume(0.3f);
+	Audio::engine.setVolume(0.1f);
 	Audio::engine.playSound();
 	Audio::collision = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_COLLISION);
 	Audio::projectile = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE);
@@ -375,6 +375,7 @@ int main(int argc, char** args) {
 	Audio::projectile_explosion = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_EXPLOSION);
 	Audio::car_crash = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
 	Audio::flag_lost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
+	Audio::gate_switch = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_GATE_SWITCH);
 
 
 	InvisibleBarrier barriers(0);
@@ -430,7 +431,7 @@ int main(int argc, char** args) {
 		cameras[playerNum]->updateCamera(cars[playerNum]->mGeometry->getModelMatrix(), velocity, cars[playerNum]->isReversing(), isReversing);
 
 		//Update sound
-		Audio::engine.setVolume(0.3f + 0.001f * abs(velocity));
+		Audio::engine.setVolume(0.1f + 0.0001f * abs(velocity));
 		//printf("v: %f\n", velocity);
 
 		shaderProgram.use();
@@ -442,6 +443,14 @@ int main(int argc, char** args) {
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
+		float const SWITCH_INTERVAL = 80.f;
+		float const ABS_FRAME_GATE_OFFSET = (120.f / SWITCH_INTERVAL) * 0.3f;  // 120.f because that's what switch interval 0.3f works for
+		float timeDiff = State::arenaTimer - (DoorSwitchZone::AFFECTION_TIME - SWITCH_INTERVAL);
+		float gateDownOffset = -timeDiff * ABS_FRAME_GATE_OFFSET;
+		float gateUpOffset = -(SWITCH_INTERVAL - timeDiff) * ABS_FRAME_GATE_OFFSET;
+
+		// start audio 50 frames before door animation
+		if (timeDiff == -25.f) Audio::gate_switch.playSound();
 
 		// First pass
 		centerArea.draw(simpleDepthShader, camera, true, 1);
@@ -451,8 +460,20 @@ int main(int argc, char** args) {
 		walls.draw(simpleDepthShader, camera, true, 1);
 		// don't include skybox in depth map
 
-		if (State::redArena) redGates.draw(simpleDepthShader, camera, true, 2);
-		if (State::blueArena) blueGates.draw(simpleDepthShader, camera, true, 2);
+		if (State::redArena) {
+			if (gateDownOffset < 0) {
+				redGates.draw(simpleDepthShader, camera, true, 2, gateDownOffset);
+				blueGates.draw(simpleDepthShader, camera, true, 2, gateUpOffset);
+			}
+			else redGates.draw(simpleDepthShader, camera, true, 2);
+		}
+		if (State::blueArena) {
+			if (gateDownOffset < 0) {
+				redGates.draw(simpleDepthShader, camera, true, 2, gateUpOffset);
+				blueGates.draw(simpleDepthShader, camera, true, 2, gateDownOffset);
+			}
+			else redGates.draw(simpleDepthShader, camera, true, 2);
+		}
 
 		for (const auto& entity : entities)
 			entity->draw(physics, simpleDepthShader, camera, true);
@@ -490,10 +511,18 @@ int main(int argc, char** args) {
 		skybox.draw(shaderProgram, *cameras[playerNum], false, 0);
 		
 		if (State::redArena) {
-			redGates.draw(shaderProgram, *cameras[playerNum], false, 2);
+			if (gateDownOffset < 0) {
+				redGates.draw(shaderProgram, *cameras[playerNum], false, 2, gateDownOffset);
+			    blueGates.draw(shaderProgram, *cameras[playerNum], false, 2, gateUpOffset);
+
+			} else redGates.draw(shaderProgram, *cameras[playerNum], false, 2);
 		}
 		if (State::blueArena) {
-			blueGates.draw(shaderProgram, *cameras[playerNum], false, 2);
+			if (gateDownOffset < 0) {
+				redGates.draw(shaderProgram, *cameras[playerNum], false, 2, gateUpOffset);
+				blueGates.draw(shaderProgram, *cameras[playerNum], false, 2, gateDownOffset);
+			}
+			else blueGates.draw(shaderProgram, *cameras[playerNum], false, 2);
 		}
 		for (const auto& entity : entities)
 			entity->draw(physics, shaderProgram, *cameras[playerNum], false);

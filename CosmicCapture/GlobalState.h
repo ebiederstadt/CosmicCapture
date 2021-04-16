@@ -116,5 +116,6 @@ struct Audio
 	inline static AudioInstance projectile_explosion = soundSystem.createInstance(audioConstants::SOUND_FILE_EXPLOSION);
 	inline static AudioInstance car_crash = soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
 	inline static AudioInstance flag_lost = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
+	inline static AudioInstance gate_switch = soundSystem.createInstance(audioConstants::SOUND_FILE_GATE_SWITCH);
 
 };

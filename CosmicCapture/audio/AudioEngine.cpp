@@ -188,6 +188,15 @@ AudioEngine::~AudioEngine() {}
         alSourcefv(sources[12], AL_POSITION, source0Pos);
         alSourcefv(sources[12], AL_VELOCITY, source0Vel);
         alSourcei(sources[12], AL_BUFFER, bufferArray[12]);
+
+        loadWavFile("audio_files/door_switch.wav", bufferArray + 13);
+        CheckError();
+
+        alSourcef(sources[13], AL_PITCH, 1.0f);
+        alSourcef(sources[13], AL_GAIN, 3.0f);
+        alSourcefv(sources[13], AL_POSITION, source0Pos);
+        alSourcefv(sources[13], AL_VELOCITY, source0Vel);
+        alSourcei(sources[13], AL_BUFFER, bufferArray[13]);
         
     }
 	AudioInstance& AudioEngine::createInstance(int soundFile) {

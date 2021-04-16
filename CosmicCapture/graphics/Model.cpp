@@ -84,9 +84,10 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 	if (!depth) Texture::unbind();
 }
 
-void Model::draw(const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type)
+void Model::draw(const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type, int offset)
 {
-	draw(physx::PxMat44(physx::PxIdentity), shaderProgram, camera, depth, type);
+	physx::PxMat44 ytransform = physx::PxMat44(physx::PxIdentity, physx::PxVec3(0.f, offset, 0.f));
+	draw(ytransform, shaderProgram, camera, depth, type);
 }
 
 
