@@ -190,7 +190,7 @@ void PowerUpManager::simulate(Physics& instance)
 			try {
 				auto state = State::spike_trap_states.at(id);
 				// Catch a player with the spike trap:
-				if (state.inUse && ! spikeTrap->hasAffectedVehicle())
+				if (state.inUse && !spikeTrap->hasAffectedVehicle())
 				{
 					fmt::print("Player {} ran into spike trap\n", state.actingUpon);
 					spikeTrap->attachAffectedVehicle(State::vehicles[state.actingUpon]);

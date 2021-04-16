@@ -164,9 +164,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		{
 			if (pairs[i].triggerActor == spikeTrapState.triggerBody && spikeTrapState.active)
 			{
-				fmt::print("Ran into spike trap!\n");
-				spikeTrapState.active = false;
-				spikeTrapState.inUse = true;
+				
 
 				// Check to see which player ran into this spiketrap
 				for (int j = 0; j < 4; ++j)
@@ -175,6 +173,9 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 					{
 						if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) Audio::collision.playSound();
 						spikeTrapState.actingUpon = j;
+						fmt::print("Ran into spike trap!\n");
+						spikeTrapState.active = false;
+						spikeTrapState.inUse = true;
 						break;
 					}
 				}

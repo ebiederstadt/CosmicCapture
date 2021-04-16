@@ -652,17 +652,17 @@ int main(int argc, char** args) {
 		}
 
 
-		if (numHumanPlayers < 2) {
+		if (State::numHumanPlayers < 2) {
 			std::map<MovementFlags, bool>  command = opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ());
 			opponentCar1.processInput(command);
 			powerUpManager.use(physics, command, 1);
 		}
-		if (numHumanPlayers < 3) {
+		if (State::numHumanPlayers < 3) {
 			const std::map<MovementFlags, bool>  command = opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ());
 			opponentCar2.processInput(command);
 			powerUpManager.use(physics, command, 2);
 		}
-		if (numHumanPlayers < 4) {
+		if (State::numHumanPlayers < 4) {
 			const std::map<MovementFlags, bool>  command = opponentBrains[2].getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ());
 			opponentCar3.processInput(command);
 			powerUpManager.use(physics, command, 3);
