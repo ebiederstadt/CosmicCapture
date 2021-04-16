@@ -320,7 +320,7 @@ void Vehicle::moveVehicle(const std::map<MovementFlags, bool>& inputs)
 
 		case MovementFlags::RESET:
 			if (!keyReleased) {
-				State::killCars[0] = true;
+				State::killCars[player] = true;
 			}
 			break;
 		}
