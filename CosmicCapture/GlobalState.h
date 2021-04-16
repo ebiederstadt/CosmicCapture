@@ -121,4 +121,8 @@ struct Audio
 	inline static AudioInstance flag_lost = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
 	inline static AudioInstance gate_switch = soundSystem.createInstance(audioConstants::SOUND_FILE_GATE_SWITCH);
 
+	inline static AudioInstance engine2 = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE2);
+	inline static AudioInstance engine3 = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE3);
+	inline static AudioInstance engine4 = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE4);
+
 };

@@ -358,7 +358,6 @@ int main(int argc, char** args) {
 	Audio::soundSystem.initializeBuffers();
 	Audio::music = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
 	Audio::music.loop();
-	Audio::music.setVolume(0.20f);
 	Audio::music.playSound();
 	Audio::engine = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
 	Audio::engine.loop();
@@ -377,6 +376,24 @@ int main(int argc, char** args) {
 	Audio::flag_lost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
 	Audio::gate_switch = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_GATE_SWITCH);
 
+	//AudioEngine soundSystem2 = AudioEngine();
+	//soundSystem2.initialize();
+	//soundSystem2.initializeBuffers(true);
+	Audio::engine2 = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE2);
+	Audio::engine2.loop();
+	Audio::engine2.setVolume(0.05f);
+	//AudioEngine soundSystem3 = AudioEngine();
+	//soundSystem3.initialize();
+	//soundSystem3.initializeBuffers(true);
+	Audio::engine3 = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE3);
+	Audio::engine3.loop();
+	Audio::engine3.setVolume(0.05f);
+	//AudioEngine soundSystem4 = AudioEngine();
+	//soundSystem4.initialize();
+	//soundSystem4.initializeBuffers(true);
+	Audio::engine4 = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE4);
+	Audio::engine4.loop();
+	Audio::engine4.setVolume(0.05f);
 
 	InvisibleBarrier barriers(0);
 	barriers.attachPhysics(physics);
@@ -430,8 +447,14 @@ int main(int argc, char** args) {
 		float velocity = cars[playerNum]->getVelocity();
 		cameras[playerNum]->updateCamera(cars[playerNum]->mGeometry->getModelMatrix(), velocity, cars[playerNum]->isReversing(), isReversing);
 
-		//Update sound
-		Audio::engine.setVolume(0.1f + 0.0001f * abs(velocity));
+		//Update sound - lower start, growth and cap of engine volume with multiplayer
+		if (State::numHumanPlayers > 1) {
+			if(playerNum == 0) Audio::engine.setVolume(0.05f + 0.00005f * abs(velocity));
+			if(playerNum == 1) Audio::engine2.setVolume(0.05f + 0.00005f * abs(velocity));
+			if(playerNum == 2) Audio::engine3.setVolume(0.05f + 0.00005f * abs(velocity));
+			if(playerNum == 3) Audio::engine4.setVolume(0.05f + 0.00005f * abs(velocity));
+		}
+		else Audio::engine.setVolume(0.1f + 0.0001f * abs(velocity));
 		//printf("v: %f\n", velocity);
 
 		shaderProgram.use();
@@ -472,7 +495,7 @@ int main(int argc, char** args) {
 				redGates.draw(simpleDepthShader, camera, true, 2, gateUpOffset);
 				blueGates.draw(simpleDepthShader, camera, true, 2, gateDownOffset);
 			}
-			else redGates.draw(simpleDepthShader, camera, true, 2);
+			else blueGates.draw(simpleDepthShader, camera, true, 2);
 		}
 
 		for (const auto& entity : entities)
@@ -536,6 +559,13 @@ int main(int argc, char** args) {
 
 		gameUI.render(playerNum);
 	};
+
+	// Engine for non-first players
+	if (!Audio::engine2.isSoundPlaying() && State::numHumanPlayers > 1) {
+		Audio::engine2.playSound();
+		Audio::engine3.playSound();
+		Audio::engine4.playSound();
+	}
 
 	auto mainLoop = [&]()
 	{

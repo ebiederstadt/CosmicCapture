@@ -11,8 +11,16 @@
 
 namespace audioConstants
 {
-	// effects
-	const int SOUND_FILE_ENGINE = 1;
+	// engine (can be instanced multiple times)
+	const int SOUND_FILE_ENGINE = 0;
+	const int SOUND_FILE_ENGINE2 = 14;
+	const int SOUND_FILE_ENGINE3 = 15;
+	const int SOUND_FILE_ENGINE4 = 16;
+
+	//music tracks
+	const int SOUND_FILE_MAIN_TRACK = 1;
+
+	//other effects
 	const int SOUND_FILE_COLLISION = 2;
 	const int SOUND_FILE_PROJECTILE = 3;
 	const int SOUND_FILE_FLAG_PICKUP = 4;
@@ -26,8 +34,6 @@ namespace audioConstants
 	const int SOUND_FILE_FLAG_LOST = 12;
 	const int SOUND_FILE_GATE_SWITCH = 13;
 
-	//music tracks
-	const int SOUND_FILE_MAIN_TRACK = 0;
 
 }
 
@@ -37,7 +43,7 @@ class AudioEngine
 		AudioEngine();
 		~AudioEngine();
 		void initialize();
-		void initializeBuffers();
+		void initializeBuffers(bool engineOnly = false);
 		AudioInstance& createInstance(int soundFile);
 		void killSources();
 
@@ -46,8 +52,8 @@ class AudioEngine
 		bool _strcmp(const char* bse, const char* cp);
 		bool loadWavFile(const char* filename, ALuint* buffer);
 
-		static const int NUM_TOTAL = 14;
-		static const int NUM_EFFECTS = 13;
+		static const int NUM_TOTAL = 17;
+		static const int NUM_EFFECTS = 16;
 		static const int NUM_TRACKS = 1;
 		const char* soundEffects[NUM_EFFECTS];
 		const char* musicTracks[NUM_TRACKS];

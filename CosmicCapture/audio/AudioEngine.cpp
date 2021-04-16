@@ -65,13 +65,13 @@ AudioEngine::~AudioEngine() {}
         alListenerfv(AL_ORIENTATION, listenerOri);
 
     }
-	void AudioEngine::initializeBuffers() {
+	void AudioEngine::initializeBuffers(bool engineOnly) {
 
         // Generate buffers for sound
         alGenSources(NUM_TOTAL, sources);
         CheckError();
     
-        loadWavFile("audio_files/track.wav", bufferArray);
+        loadWavFile("audio_files/engine.wav", bufferArray);
         CheckError();
 
         alSourcef(sources[0], AL_PITCH, 1.0f);
@@ -80,123 +80,153 @@ AudioEngine::~AudioEngine() {}
         alSourcefv(sources[0], AL_VELOCITY, source0Vel);
         alSourcei(sources[0], AL_BUFFER, bufferArray[0]);
 
-        
-        loadWavFile("audio_files/engine.wav", bufferArray + 1);
-        CheckError();
+        if (!engineOnly) {
 
-        alSourcef(sources[1], AL_PITCH, 1.0f);
-        alSourcef(sources[1], AL_GAIN, 1.0f);
-        alSourcefv(sources[1], AL_POSITION, source0Pos);
-        alSourcefv(sources[1], AL_VELOCITY, source0Vel);
-        alSourcei(sources[1], AL_BUFFER, bufferArray[1]);
+            loadWavFile("audio_files/track.wav", bufferArray + 1);
+            CheckError();
 
-        loadWavFile("audio_files/collision.wav", bufferArray + 2);
-        CheckError();
+            alSourcef(sources[1], AL_PITCH, 1.0f);
+            alSourcef(sources[1], AL_GAIN, 0.25f);
+            alSourcefv(sources[1], AL_POSITION, source0Pos);
+            alSourcefv(sources[1], AL_VELOCITY, source0Vel);
+            alSourcei(sources[1], AL_BUFFER, bufferArray[1]);
 
-        alSourcef(sources[2], AL_PITCH, 1.0f);
-        alSourcef(sources[2], AL_GAIN, 1.0f);
-        alSourcefv(sources[2], AL_POSITION, source0Pos);
-        alSourcefv(sources[2], AL_VELOCITY, source0Vel);
-        alSourcei(sources[2], AL_BUFFER, bufferArray[2]);
+            loadWavFile("audio_files/collision.wav", bufferArray + 2);
+            CheckError();
 
-        loadWavFile("audio_files/projectile.wav", bufferArray + 3);
-        CheckError();
+            alSourcef(sources[2], AL_PITCH, 1.0f);
+            alSourcef(sources[2], AL_GAIN, 1.0f);
+            alSourcefv(sources[2], AL_POSITION, source0Pos);
+            alSourcefv(sources[2], AL_VELOCITY, source0Vel);
+            alSourcei(sources[2], AL_BUFFER, bufferArray[2]);
 
-        alSourcef(sources[3], AL_PITCH, 1.0f);
-        alSourcef(sources[3], AL_GAIN, 3.5f);
-        alSourcefv(sources[3], AL_POSITION, source0Pos);
-        alSourcefv(sources[3], AL_VELOCITY, source0Vel);
-        alSourcei(sources[3], AL_BUFFER, bufferArray[3]);
+            loadWavFile("audio_files/projectile.wav", bufferArray + 3);
+            CheckError();
 
-        loadWavFile("audio_files/flag_pickup.wav", bufferArray + 4);
-        CheckError();
+            alSourcef(sources[3], AL_PITCH, 1.0f);
+            alSourcef(sources[3], AL_GAIN, 3.5f);
+            alSourcefv(sources[3], AL_POSITION, source0Pos);
+            alSourcefv(sources[3], AL_VELOCITY, source0Vel);
+            alSourcei(sources[3], AL_BUFFER, bufferArray[3]);
 
-        alSourcef(sources[4], AL_PITCH, 1.0f);
-        alSourcef(sources[4], AL_GAIN, 1.0f);
-        alSourcefv(sources[4], AL_POSITION, source0Pos);
-        alSourcefv(sources[4], AL_VELOCITY, source0Vel);
-        alSourcei(sources[4], AL_BUFFER, bufferArray[4]);
+            loadWavFile("audio_files/flag_pickup.wav", bufferArray + 4);
+            CheckError();
 
-        loadWavFile("audio_files/projectile_pickup.wav", bufferArray + 5);
-        CheckError();
+            alSourcef(sources[4], AL_PITCH, 1.0f);
+            alSourcef(sources[4], AL_GAIN, 1.0f);
+            alSourcefv(sources[4], AL_POSITION, source0Pos);
+            alSourcefv(sources[4], AL_VELOCITY, source0Vel);
+            alSourcei(sources[4], AL_BUFFER, bufferArray[4]);
 
-        alSourcef(sources[5], AL_PITCH, 1.0f);
-        alSourcef(sources[5], AL_GAIN, 0.4f);
-        alSourcefv(sources[5], AL_POSITION, source0Pos);
-        alSourcefv(sources[5], AL_VELOCITY, source0Vel);
-        alSourcei(sources[5], AL_BUFFER, bufferArray[5]);
+            loadWavFile("audio_files/projectile_pickup.wav", bufferArray + 5);
+            CheckError();
 
-        loadWavFile("audio_files/spike_trap_pickup.wav", bufferArray + 6);
-        CheckError();
+            alSourcef(sources[5], AL_PITCH, 1.0f);
+            alSourcef(sources[5], AL_GAIN, 0.4f);
+            alSourcefv(sources[5], AL_POSITION, source0Pos);
+            alSourcefv(sources[5], AL_VELOCITY, source0Vel);
+            alSourcei(sources[5], AL_BUFFER, bufferArray[5]);
 
-        alSourcef(sources[6], AL_PITCH, 1.0f);
-        alSourcef(sources[6], AL_GAIN, 0.4f);
-        alSourcefv(sources[6], AL_POSITION, source0Pos);
-        alSourcefv(sources[6], AL_VELOCITY, source0Vel);
-        alSourcei(sources[6], AL_BUFFER, bufferArray[6]);
+            loadWavFile("audio_files/spike_trap_pickup.wav", bufferArray + 6);
+            CheckError();
 
-        loadWavFile("audio_files/speed_boost_pickup.wav", bufferArray + 7);
-        CheckError();
+            alSourcef(sources[6], AL_PITCH, 1.0f);
+            alSourcef(sources[6], AL_GAIN, 0.4f);
+            alSourcefv(sources[6], AL_POSITION, source0Pos);
+            alSourcefv(sources[6], AL_VELOCITY, source0Vel);
+            alSourcei(sources[6], AL_BUFFER, bufferArray[6]);
 
-        alSourcef(sources[7], AL_PITCH, 1.0f);
-        alSourcef(sources[7], AL_GAIN, 0.4f);
-        alSourcefv(sources[7], AL_POSITION, source0Pos);
-        alSourcefv(sources[7], AL_VELOCITY, source0Vel);
-        alSourcei(sources[7], AL_BUFFER, bufferArray[7]);
+            loadWavFile("audio_files/speed_boost_pickup.wav", bufferArray + 7);
+            CheckError();
 
-        loadWavFile("audio_files/flag_return.wav", bufferArray + 8);
-        CheckError();
+            alSourcef(sources[7], AL_PITCH, 1.0f);
+            alSourcef(sources[7], AL_GAIN, 0.4f);
+            alSourcefv(sources[7], AL_POSITION, source0Pos);
+            alSourcefv(sources[7], AL_VELOCITY, source0Vel);
+            alSourcei(sources[7], AL_BUFFER, bufferArray[7]);
 
-        alSourcef(sources[8], AL_PITCH, 1.0f);
-        alSourcef(sources[8], AL_GAIN, 1.0f);
-        alSourcefv(sources[8], AL_POSITION, source0Pos);
-        alSourcefv(sources[8], AL_VELOCITY, source0Vel);
-        alSourcei(sources[8], AL_BUFFER, bufferArray[8]);
+            loadWavFile("audio_files/flag_return.wav", bufferArray + 8);
+            CheckError();
 
-        loadWavFile("audio_files/speed_boost.wav", bufferArray + 9);
-        CheckError();
+            alSourcef(sources[8], AL_PITCH, 1.0f);
+            alSourcef(sources[8], AL_GAIN, 1.0f);
+            alSourcefv(sources[8], AL_POSITION, source0Pos);
+            alSourcefv(sources[8], AL_VELOCITY, source0Vel);
+            alSourcei(sources[8], AL_BUFFER, bufferArray[8]);
 
-        alSourcef(sources[9], AL_PITCH, 0.6f);
-        alSourcef(sources[9], AL_GAIN, 0.8f);
-        alSourcefv(sources[9], AL_POSITION, source0Pos);
-        alSourcefv(sources[9], AL_VELOCITY, source0Vel);
-        alSourcei(sources[9], AL_BUFFER, bufferArray[9]);
+            loadWavFile("audio_files/speed_boost.wav", bufferArray + 9);
+            CheckError();
 
-        loadWavFile("audio_files/car_crash.wav", bufferArray + 10);
-        CheckError();
+            alSourcef(sources[9], AL_PITCH, 0.6f);
+            alSourcef(sources[9], AL_GAIN, 0.8f);
+            alSourcefv(sources[9], AL_POSITION, source0Pos);
+            alSourcefv(sources[9], AL_VELOCITY, source0Vel);
+            alSourcei(sources[9], AL_BUFFER, bufferArray[9]);
 
-        alSourcef(sources[10], AL_PITCH, 1.0f);
-        alSourcef(sources[10], AL_GAIN, 1.5f);
-        alSourcefv(sources[10], AL_POSITION, source0Pos);
-        alSourcefv(sources[10], AL_VELOCITY, source0Vel);
-        alSourcei(sources[10], AL_BUFFER, bufferArray[10]);
+            loadWavFile("audio_files/car_crash.wav", bufferArray + 10);
+            CheckError();
 
-        loadWavFile("audio_files/projectile_explosion.wav", bufferArray + 11);
-        CheckError();
+            alSourcef(sources[10], AL_PITCH, 1.0f);
+            alSourcef(sources[10], AL_GAIN, 1.5f);
+            alSourcefv(sources[10], AL_POSITION, source0Pos);
+            alSourcefv(sources[10], AL_VELOCITY, source0Vel);
+            alSourcei(sources[10], AL_BUFFER, bufferArray[10]);
 
-        alSourcef(sources[11], AL_PITCH, 1.0f);
-        alSourcef(sources[11], AL_GAIN, 0.8f);
-        alSourcefv(sources[11], AL_POSITION, source0Pos);
-        alSourcefv(sources[11], AL_VELOCITY, source0Vel);
-        alSourcei(sources[11], AL_BUFFER, bufferArray[11]);
+            loadWavFile("audio_files/projectile_explosion.wav", bufferArray + 11);
+            CheckError();
 
-        loadWavFile("audio_files/flag_lost.wav", bufferArray + 12);
-        CheckError();
+            alSourcef(sources[11], AL_PITCH, 1.0f);
+            alSourcef(sources[11], AL_GAIN, 0.8f);
+            alSourcefv(sources[11], AL_POSITION, source0Pos);
+            alSourcefv(sources[11], AL_VELOCITY, source0Vel);
+            alSourcei(sources[11], AL_BUFFER, bufferArray[11]);
 
-        alSourcef(sources[12], AL_PITCH, 1.0f);
-        alSourcef(sources[12], AL_GAIN, 1.0f);
-        alSourcefv(sources[12], AL_POSITION, source0Pos);
-        alSourcefv(sources[12], AL_VELOCITY, source0Vel);
-        alSourcei(sources[12], AL_BUFFER, bufferArray[12]);
+            loadWavFile("audio_files/flag_lost.wav", bufferArray + 12);
+            CheckError();
 
-        loadWavFile("audio_files/door_switch.wav", bufferArray + 13);
-        CheckError();
+            alSourcef(sources[12], AL_PITCH, 1.0f);
+            alSourcef(sources[12], AL_GAIN, 1.0f);
+            alSourcefv(sources[12], AL_POSITION, source0Pos);
+            alSourcefv(sources[12], AL_VELOCITY, source0Vel);
+            alSourcei(sources[12], AL_BUFFER, bufferArray[12]);
 
-        alSourcef(sources[13], AL_PITCH, 1.0f);
-        alSourcef(sources[13], AL_GAIN, 3.0f);
-        alSourcefv(sources[13], AL_POSITION, source0Pos);
-        alSourcefv(sources[13], AL_VELOCITY, source0Vel);
-        alSourcei(sources[13], AL_BUFFER, bufferArray[13]);
+            loadWavFile("audio_files/door_switch.wav", bufferArray + 13);
+            CheckError();
+
+            alSourcef(sources[13], AL_PITCH, 1.0f);
+            alSourcef(sources[13], AL_GAIN, 3.0f);
+            alSourcefv(sources[13], AL_POSITION, source0Pos);
+            alSourcefv(sources[13], AL_VELOCITY, source0Vel);
+            alSourcei(sources[13], AL_BUFFER, bufferArray[13]);
+
+            loadWavFile("audio_files/engine.wav", bufferArray + 14);
+            CheckError();
+
+            alSourcef(sources[14], AL_PITCH, 1.0f);
+            alSourcef(sources[14], AL_GAIN, 1.0f);
+            alSourcefv(sources[14], AL_POSITION, source0Pos);
+            alSourcefv(sources[14], AL_VELOCITY, source0Vel);
+            alSourcei(sources[14], AL_BUFFER, bufferArray[14]);
+
+            loadWavFile("audio_files/engine.wav", bufferArray + 15);
+            CheckError();
+
+            alSourcef(sources[15], AL_PITCH, 1.0f);
+            alSourcef(sources[15], AL_GAIN, 1.0f);
+            alSourcefv(sources[15], AL_POSITION, source0Pos);
+            alSourcefv(sources[15], AL_VELOCITY, source0Vel);
+            alSourcei(sources[15], AL_BUFFER, bufferArray[15]);
+
+            loadWavFile("audio_files/engine.wav", bufferArray + 16);
+            CheckError();
+
+            alSourcef(sources[16], AL_PITCH, 1.0f);
+            alSourcef(sources[16], AL_GAIN, 1.0f);
+            alSourcefv(sources[16], AL_POSITION, source0Pos);
+            alSourcefv(sources[16], AL_VELOCITY, source0Vel);
+            alSourcei(sources[16], AL_BUFFER, bufferArray[16]);
+
+        }
         
     }
 	AudioInstance& AudioEngine::createInstance(int soundFile) {
