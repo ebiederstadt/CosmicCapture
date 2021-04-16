@@ -239,13 +239,14 @@ int main(int argc, char** args) {
 	Model arenaPlane("models/arena_plane.obj", "textures/arena_plane_texture.jpg", GL_DYNAMIC_DRAW);
 	//Model arenaPlane("models/arena_plane.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model centerArea("models/center_area.obj", "textures/center_area_texture.jpg", GL_DYNAMIC_DRAW, true);
+	Model dome("models/dome.obj", "textures/dome.jpg", GL_DYNAMIC_DRAW, true);
 	//Model centerArea("models/center_area.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model innerWalls("models/inner_walls.obj", "textures/pillars_texture.jpg", GL_DYNAMIC_DRAW, true);
 	//Model innerWalls("models/inner_walls.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model walls("models/walls.obj", "textures/walls_texture.jpg", GL_DYNAMIC_DRAW, true);
+	Model walls("models/walls.obj", "textures/pillars_texture.jpg", GL_DYNAMIC_DRAW, true);
 	//Model walls("models/walls.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
-	Model redGates("models/red_gates.obj", "textures/red_gates.png", GL_DYNAMIC_DRAW);
-	Model blueGates("models/blue_gates.obj", "textures/blue_gates.png", GL_DYNAMIC_DRAW);
+	Model redGates("models/red_gates.obj", "textures/red_gates.jpg", GL_DYNAMIC_DRAW);
+	Model blueGates("models/blue_gates.obj", "textures/blue_gates.jpg", GL_DYNAMIC_DRAW);
 	Model skybox("models/skybox.obj", "textures/stars.jpg", GL_DYNAMIC_DRAW, true);
 	//Model skybox("models/skybox.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 
@@ -254,7 +255,7 @@ int main(int argc, char** args) {
 	// Configure depth map FBO
 	unsigned int depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
-	const unsigned int SHADOW_WIDTH = 1024 * 4, SHADOW_HEIGHT = 1024 * 4;
+	const unsigned int SHADOW_WIDTH = 1024 * 12, SHADOW_HEIGHT = 1024 * 12;
 
 	// create depth texture
 	unsigned int depthMap;
@@ -446,6 +447,7 @@ int main(int argc, char** args) {
 		centerArea.draw(simpleDepthShader, camera, true, 1);
 		arenaPlane.draw(simpleDepthShader, camera, true, 1);
 		innerWalls.draw(simpleDepthShader, camera, true, 1);
+		dome.draw(simpleDepthShader, camera, true, 1);
 		walls.draw(simpleDepthShader, camera, true, 1);
 		// don't include skybox in depth map
 
@@ -463,7 +465,7 @@ int main(int argc, char** args) {
 		// Now standard rendering -----------------
 		shaderProgram.use();
 
-		float near_plane = 200.f, far_plane = 600.f;
+		float near_plane = 100.f, far_plane = 800.f;
 
 		auto nearLoc = glGetUniformLocation(shaderID, "near_plane");
 		glUniform1f(nearLoc, near_plane);
@@ -483,6 +485,7 @@ int main(int argc, char** args) {
 		centerArea.draw(shaderProgram, *cameras[playerNum], false, 1);
 		arenaPlane.draw(shaderProgram, *cameras[playerNum], false, 1);
 		innerWalls.draw(shaderProgram, *cameras[playerNum], false, 1);
+		dome.draw(shaderProgram, *cameras[playerNum], false, 1);
 		walls.draw(shaderProgram, *cameras[playerNum], false, 1);
 		skybox.draw(shaderProgram, *cameras[playerNum], false, 0);
 		

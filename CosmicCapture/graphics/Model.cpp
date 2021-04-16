@@ -43,8 +43,8 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 	}
 
 	// Placing lights at opposite ends of x-axis
-	glm::vec3 purpleLight = glm::vec3(-500.0f, 500.0f, 0.0f);
-	glm::vec3 orangeLight = glm::vec3(500.0f, 500.0f, 0.0f);
+	glm::vec3 purpleLight = glm::vec3(-400.0f, 400.0f, 0.0f);
+	glm::vec3 orangeLight = glm::vec3(400.0f, 400.0f, 0.0f);
 
 	if (!depth) {
 
@@ -65,8 +65,8 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 		glUniform1i(typeLoc, type);
 	}
 
-	float near_plane = 100.f, far_plane = 1000.f;
-	glm::mat4 lightProjection = glm::ortho(-650.f, 650.f, -650.f, 800.f, near_plane, far_plane);
+	float near_plane = 100.f, far_plane = 800.f;
+	glm::mat4 lightProjection = glm::ortho(-500.f, 500.f, -500.f, 700.f, near_plane, far_plane);
 
 	glm::mat4 lightView = lookAt(orangeLight, glm::vec3(-500.0f, -10.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -162,6 +162,7 @@ void Model::processMesh(aiMesh* mesh)
 		auto highestIndex = *std::max_element(std::begin(geometry.indices), std::end(geometry.indices));
 		if (highestIndex >= numVertices)
 		{
+			fmt::print("Invalid Index: {}", highestIndex);
 			fmt::print("Invalid Index: {}", highestIndex);
 			throw std::runtime_error("Failed to load model");
 		}

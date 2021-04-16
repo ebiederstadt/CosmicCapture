@@ -36,7 +36,7 @@ float shadowCalc(float dotLightNormal)
 	float depth = texture(shadowMap, pos.xy).r;
 
 	// remove shadow irregularities 
-	float bias = max(0.05/15 * (1.0 - dotLightNormal), 0.005/15);
+	float bias = max(0.05/12 * (1.0 - dotLightNormal), 0.005/12);
 	//float bias = 0.5;
 
 	// Used to get blur on shadow 
