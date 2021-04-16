@@ -20,6 +20,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				eng1.mMaxOmega = 600;
 				eng1.mPeakTorque = 2000;
 				State::vehicles[0]->mDriveSimData.setEngineData(eng1);
+				State::slowCar0 = true;
 				fmt::print("player 0 picked up flag\n");
 				Audio::flag_pickup.playSound();
 				State::flagPickedUp = true;
@@ -31,6 +32,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				eng1.mMaxOmega = 600;
 				eng1.mPeakTorque = 2000;
 				State::vehicles[1]->mDriveSimData.setEngineData(eng1);
+				State::slowCar1 = true;
 				fmt::print("player 1 picked up flag\n");
 				if (State::numHumanPlayers > 1) Audio::flag_pickup.playSound();
 				State::flagPickedUp = true;
@@ -41,6 +43,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				eng1.mMaxOmega = 600;
 				eng1.mPeakTorque = 2000;
 				State::vehicles[2]->mDriveSimData.setEngineData(eng1);
+				State::slowCar2 = true;
 				fmt::print("player 2 picked up flag\n");
 				if (State::numHumanPlayers > 2) Audio::flag_pickup.playSound();
 				State::flagPickedUp = true;
@@ -51,6 +54,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				eng1.mMaxOmega = 600;
 				eng1.mPeakTorque = 2000;
 				State::vehicles[3]->mDriveSimData.setEngineData(eng1);
+				State::slowCar3 = true;
 				fmt::print("player 3 picked up flag\n");
 				if (State::numHumanPlayers > 3) Audio::flag_pickup.playSound();
 				State::flagPickedUp = true;
@@ -67,6 +71,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			eng1.mPeakTorque = 2000;
 			State::vehicles[0]->mDriveSimData.setEngineData(eng1);
 			State::flagPickedUp = false;
+			State::slowCar0 = false;
 			if(State::scores[0] < 10)State::scores[0]++;
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
@@ -83,6 +88,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			eng1.mPeakTorque = 2000;
 			State::vehicles[1]->mDriveSimData.setEngineData(eng1);
 			State::flagPickedUp = false;
+			State::slowCar1 = false;
 			if (State::scores[1] < 10)State::scores[1]++;
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
@@ -99,6 +105,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			eng1.mPeakTorque = 2000;
 			State::vehicles[2]->mDriveSimData.setEngineData(eng1);
 			State::flagPickedUp = false;
+			State::slowCar2 = false;
 			if (State::scores[2] < 10)State::scores[2]++;
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
@@ -114,7 +121,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			eng1.mMaxOmega = 2000;
 			eng1.mPeakTorque = 2000;
 			State::vehicles[3]->mDriveSimData.setEngineData(eng1);
-			State::flagPickedUp = false;
+			State::slowCar3 = false;
 			if (State::scores[3] < 10)State::scores[3]++;
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
