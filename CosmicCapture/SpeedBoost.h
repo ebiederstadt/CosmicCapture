@@ -24,5 +24,5 @@ private:
 	bool active = false;
 
 	float affectionTimer = 0;
-	constexpr static float AFFECTION_TIME = 1.0f * 60.0f; // The boost will speed up the player for 1 second
+	constexpr static float AFFECTION_TIME = 1.0f * 1.0f; // The boost will speed up the player for 1 frames
 };

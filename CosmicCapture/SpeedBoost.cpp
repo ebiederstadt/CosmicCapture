@@ -20,7 +20,9 @@ void SpeedBoost::simulate(Physics& instance) {
 		affectionTimer += 1.0f;
 		if (affectionTimer <= AFFECTION_TIME)
 		{
-			mVehicles[0]->mDriveDynData.setEngineRotationSpeed((mVehicles[0]->mDriveDynData.getEngineRotationSpeed() + 500) * 2);
+			mVehicles[0]->getRigidDynamicActor()->addForce(mVehicles[0]->getRigidDynamicActor()->getLinearVelocity()*1.5f, PxForceMode::eVELOCITY_CHANGE, true);
+			printf("%f\n", mVehicles[0]->computeForwardSpeed());
+			
 		}
 		else
 		{
