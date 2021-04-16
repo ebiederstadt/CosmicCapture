@@ -7,10 +7,10 @@
 
 
 Flag::Flag() :
-	Entity("models/flag.obj", WHITE)
+	Entity("models/flag.obj", "textures/flag_texture.png")
 {
 
-	mFlagBody = std::make_unique<Model>("models/flag_body.obj", WHITE);
+	mFlagBody = std::make_unique<Model>("models/flag_body.obj", "textures/flag_body_texture.png");
 	lastPos = PxVec3(0.f, 2.f, 0.f);
 }
 

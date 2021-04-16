@@ -1,6 +1,6 @@
 #include "GridMarker.h"
 GridMarker::GridMarker(PxVec3 pos) :
-	Entity("models/flag.ply", "textures/pink.jpg")
+	Entity("models/flag.obj", "textures/pink.jpg")
 {
 	position = pos;
 }
