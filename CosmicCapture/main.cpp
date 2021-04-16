@@ -586,9 +586,25 @@ int main(int argc, char** args) {
 			opponentCar3.processInput(command);
 			powerUpManager.use(physics, command, 3);
 		}
-
 		aiStuffCounter++;
+		PxVehicleEngineData eng1;
+		eng1.mMaxOmega = 1000;
+		eng1.mPeakTorque = 2000;
+		opponentCar3.getVehicle()->mDriveSimData.setEngineData(eng1);
 		//------------------------------*/
+		if (State::flagPickedUpBy[0]) {
+
+		}
+		else if (State::flagPickedUpBy[1]) {
+
+		}
+		else if (State::flagPickedUpBy[2]) {
+
+		}
+		else if (State::flagPickedUpBy[3]) {
+
+		}
+
 
 		for (const auto& entity : entities)
 			entity->simulate(physics);

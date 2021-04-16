@@ -97,9 +97,6 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 			command = getCommand(dirsToCommand(playerDir, targetDir, &sharpTurn));
 		}	
 	}
-	if (State::flagPickedUpBy[playerNum] && vehicleSpeed > 35.f) {
-		command[MovementFlags::UP] = true;
-	}
 
 	command[MovementFlags::ACTION] = true;
 	if (!recentlyUsedAction) {

@@ -16,6 +16,10 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		{		
 			if (pairs[i].otherActor == State::vehicles[0]->getRigidDynamicActor() && !State::flagPickedUpBy[0] && !State::flagPickedUp) {
 				State::flagPickedUpBy[0] = true;
+				PxVehicleEngineData eng1;
+				eng1.mMaxOmega = 600;
+				eng1.mPeakTorque = 2000;
+				State::vehicles[0]->mDriveSimData.setEngineData(eng1);
 				fmt::print("player 0 picked up flag\n");
 				Audio::flag_pickup.playSound();
 				State::flagPickedUp = true;
@@ -23,16 +27,28 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			}
 			else if (pairs[i].otherActor == State::vehicles[1]->getRigidDynamicActor() && !State::flagPickedUpBy[1] && !State::flagPickedUp) {
 				State::flagPickedUpBy[1] = true;
+				PxVehicleEngineData eng1;
+				eng1.mMaxOmega = 600;
+				eng1.mPeakTorque = 2000;
+				State::vehicles[1]->mDriveSimData.setEngineData(eng1);
 				fmt::print("player 1 picked up flag\n");
 				State::flagPickedUp = true;
 			}
 			else if (pairs[i].otherActor == State::vehicles[2]->getRigidDynamicActor() && !State::flagPickedUpBy[2] && !State::flagPickedUp) {
 				State::flagPickedUpBy[2] = true;
+				PxVehicleEngineData eng1;
+				eng1.mMaxOmega = 600;
+				eng1.mPeakTorque = 2000;
+				State::vehicles[2]->mDriveSimData.setEngineData(eng1);
 				fmt::print("player 2 picked up flag\n");
 				State::flagPickedUp = true;
 			}
 			else if (pairs[i].otherActor == State::vehicles[3]->getRigidDynamicActor() && !State::flagPickedUpBy[3] && !State::flagPickedUp) {
 				State::flagPickedUpBy[3] = true;
+				PxVehicleEngineData eng1;
+				eng1.mMaxOmega = 600;
+				eng1.mPeakTorque = 2000;
+				State::vehicles[3]->mDriveSimData.setEngineData(eng1);
 				fmt::print("player 3 picked up flag\n");
 				State::flagPickedUp = true;
 			}
@@ -43,6 +59,10 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		{
 			fmt::print("player 0 dropped off flag\n");
 			State::flagPickedUpBy[0] = false;
+			PxVehicleEngineData eng1;
+			eng1.mMaxOmega = 2000;
+			eng1.mPeakTorque = 2000;
+			State::vehicles[0]->mDriveSimData.setEngineData(eng1);
 			State::flagPickedUp = false;
 			if(State::scores[0] < 10)State::scores[0]++;
 			for (int j = 0; j < 4; j++) {
@@ -55,6 +75,10 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		{
 			fmt::print("player 1 dropped off flag\n");
 			State::flagPickedUpBy[1] = false;
+			PxVehicleEngineData eng1;
+			eng1.mMaxOmega = 2000;
+			eng1.mPeakTorque = 2000;
+			State::vehicles[1]->mDriveSimData.setEngineData(eng1);
 			State::flagPickedUp = false;
 			if (State::scores[1] < 10)State::scores[1]++;
 			for (int j = 0; j < 4; j++) {
@@ -66,6 +90,10 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		{
 			fmt::print("player 2 dropped off flag\n");
 			State::flagPickedUpBy[2] = false;
+			PxVehicleEngineData eng1;
+			eng1.mMaxOmega = 2000;
+			eng1.mPeakTorque = 2000;
+			State::vehicles[2]->mDriveSimData.setEngineData(eng1);
 			State::flagPickedUp = false;
 			if (State::scores[2] < 10)State::scores[2]++;
 			for (int j = 0; j < 4; j++) {
@@ -77,6 +105,10 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		{
 			fmt::print("player 3 dropped off flag\n");
 			State::flagPickedUpBy[3] = false;
+			PxVehicleEngineData eng1;
+			eng1.mMaxOmega = 2000;
+			eng1.mPeakTorque = 2000;
+			State::vehicles[3]->mDriveSimData.setEngineData(eng1);
 			State::flagPickedUp = false;
 			if (State::scores[3] < 10)State::scores[3]++;
 			for (int j = 0; j < 4; j++) {
@@ -158,11 +190,19 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::flagPickedUpBy[0] = false;
 					State::flagPickedUp = false;
 					Audio::flag_lost.playSound();
+					PxVehicleEngineData eng1;
+					eng1.mMaxOmega = 2000;
+					eng1.mPeakTorque = 2000;
+					State::vehicles[0]->mDriveSimData.setEngineData(eng1);
 				}
 				else if (State::flagPickedUpBy[1]) {
 					State::killCars[1] = true;
 					State::flagPickedUpBy[1] = false;
 					State::flagPickedUp = false;
+					PxVehicleEngineData eng1;
+					eng1.mMaxOmega = 2000;
+					eng1.mPeakTorque = 2000;
+					State::vehicles[1]->mDriveSimData.setEngineData(eng1);
 				}
 				printf("Car 0 and Car 1 have hit\n");
 				Audio::car_crash.playSound();
@@ -173,11 +213,19 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::flagPickedUpBy[0] = false;
 					State::flagPickedUp = false;
 					Audio::flag_lost.playSound();
+					PxVehicleEngineData eng1;
+					eng1.mMaxOmega = 2000;
+					eng1.mPeakTorque = 2000;
+					State::vehicles[0]->mDriveSimData.setEngineData(eng1);
 				}
 				else if (State::flagPickedUpBy[2]) {
 					State::killCars[2] = true;
 					State::flagPickedUpBy[2] = false;
 					State::flagPickedUp = false;
+					PxVehicleEngineData eng1;
+					eng1.mMaxOmega = 2000;
+					eng1.mPeakTorque = 2000;
+					State::vehicles[2]->mDriveSimData.setEngineData(eng1);
 				}
 				printf("Car 0 and Car 2 have hit\n");
 				Audio::car_crash.playSound();
@@ -188,11 +236,19 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::flagPickedUpBy[0] = false;
 					State::flagPickedUp = false;
 					Audio::flag_lost.playSound();
+					PxVehicleEngineData eng1;
+					eng1.mMaxOmega = 2000;
+					eng1.mPeakTorque = 2000;
+					State::vehicles[0]->mDriveSimData.setEngineData(eng1);
 				}
 				else if (State::flagPickedUpBy[3]) {
 					State::killCars[3] = true;
 					State::flagPickedUpBy[3] = false;
 					State::flagPickedUp = false;
+					PxVehicleEngineData eng1;
+					eng1.mMaxOmega = 2000;
+					eng1.mPeakTorque = 2000;
+					State::vehicles[3]->mDriveSimData.setEngineData(eng1);
 				}
 				printf("Car 0 and Car 3 have hit\n");
 				Audio::car_crash.playSound();
@@ -202,11 +258,19 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::killCars[1] = true;
 					State::flagPickedUpBy[1] = false;
 					State::flagPickedUp = false;
+					PxVehicleEngineData eng1;
+					eng1.mMaxOmega = 2000;
+					eng1.mPeakTorque = 2000;
+					State::vehicles[1]->mDriveSimData.setEngineData(eng1);
 				}
 				else if (State::flagPickedUpBy[2]) {
 					State::killCars[2] = true;
 					State::flagPickedUpBy[2] = false;
 					State::flagPickedUp = false;
+					PxVehicleEngineData eng1;
+					eng1.mMaxOmega = 2000;
+					eng1.mPeakTorque = 2000;
+					State::vehicles[2]->mDriveSimData.setEngineData(eng1);
 				}
 				printf("Car 1 and Car 2 have hit\n");
 			}
@@ -215,11 +279,19 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::killCars[1] = true;
 					State::flagPickedUpBy[1] = false;
 					State::flagPickedUp = false;
+					PxVehicleEngineData eng1;
+					eng1.mMaxOmega = 2000;
+					eng1.mPeakTorque = 2000;
+					State::vehicles[1]->mDriveSimData.setEngineData(eng1);
 				}
 				else if (State::flagPickedUpBy[3]) {
 					State::killCars[3] = true;
 					State::flagPickedUpBy[3] = false;
 					State::flagPickedUp = false;
+					PxVehicleEngineData eng1;
+					eng1.mMaxOmega = 2000;
+					eng1.mPeakTorque = 2000;
+					State::vehicles[3]->mDriveSimData.setEngineData(eng1);
 				}
 				printf("Car 1 and Car 3 have hit\n");
 			}
@@ -228,11 +300,19 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::killCars[2] = true;
 					State::flagPickedUpBy[2] = false;
 					State::flagPickedUp = false;
+					PxVehicleEngineData eng1;
+					eng1.mMaxOmega = 2000;
+					eng1.mPeakTorque = 2000;
+					State::vehicles[2]->mDriveSimData.setEngineData(eng1);
 				}
 				else if (State::flagPickedUpBy[3]) {
 					State::killCars[3] = true;
 					State::flagPickedUpBy[3] = false;
 					State::flagPickedUp = false;
+					PxVehicleEngineData eng1;
+					eng1.mMaxOmega = 2000;
+					eng1.mPeakTorque = 2000;
+					State::vehicles[3]->mDriveSimData.setEngineData(eng1);
 				}
 				printf("Car 2 and Car 3 have hit\n");
 			}
