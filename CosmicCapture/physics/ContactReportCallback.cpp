@@ -248,7 +248,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor())){
 
-				if (State::numHumanPlayers > 1) Audio::car_crash.playSound();
+				if (State::numHumanPlayers > 2) Audio::car_crash.playSound();
 				if (State::flagPickedUpBy[2]) {
 					State::killCars[2] = true;
 					State::flagPickedUpBy[2] = false;
