@@ -21,7 +21,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 	std::pair<float, float> centre = State::worldGridCenterCoords[target.first][target.second];
 	double dist = std::sqrt(std::pow(playerPos.x - centre.first, 2) + std::pow(playerPos.z - centre.second, 2));
 	double distToGoal = std::sqrt(std::pow(playerPos.x - goalPos.x, 2) + std::pow(playerPos.z - goalPos.z, 2));
-	if (distToGoal < 75.f) {
+	if (distToGoal < 25.f) {
 		subTargetting = true;
 	}
 	else {
@@ -31,7 +31,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 		if (distToGoal < 1.f) {
 			subTargetting = false;
 			if (path.empty()) {
-				path = pathfinder.ehStarSearch(State::worldGrid, current, getGridCoordinates(goalPos.x, goalPos.z)); //FIX THIS PROBLEM
+				path = pathfinder.ehStarSearch(State::worldGrid, current, getGridCoordinates(goalPos.x, goalPos.z));
 			}
 			target = path.top();
 			path.pop();
@@ -40,7 +40,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 	else {
 		if (dist < 10.f) {
 			if (path.empty()) {
-				path = pathfinder.ehStarSearch(State::worldGrid, current, getGridCoordinates(goalPos.x, goalPos.z)); //FIX THIS PROBLEM
+				path = pathfinder.ehStarSearch(State::worldGrid, current, getGridCoordinates(goalPos.x, goalPos.z));
 			}
 			target = path.top();
 			path.pop();
@@ -97,18 +97,43 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 			command = getCommand(dirsToCommand(playerDir, targetDir, &sharpTurn));
 		}	
 	}
-	/*
-	if  (sharpTurn) { //if you are going too fast and trying to turn hit the brakes
-		if (vehicleSpeed > 25.f) {
-			command[MovementFlags::UP] = true;
-			command[MovementFlags::DOWN] = false;
+
+	command[MovementFlags::ACTION] = true;
+	if (!recentlyUsedAction) {
+		if (State::heldPowerUps[playerNum] == PowerUpOptions::SPIKE_TRAP) {
+			if (State::flagPickedUpBy[playerNum]) {
+				command[MovementFlags::ACTION] = false;
+				recentlyUsedAction = true;
+			}
+			else {
+
+			}
+		}
+		else if (State::heldPowerUps[playerNum] == PowerUpOptions::SPEED_BOOST) {
+			command[MovementFlags::ACTION] = false;
+			recentlyUsedAction = true;
+		}
+		else if (State::heldPowerUps[playerNum] == PowerUpOptions::PROJECTILE) {
+			if (State::flagPickedUp) {
+				if (State::flagPickedUpBy[playerNum]) {
+
+				}
+				else {
+					if (subTargetting && pointingAtGoal(playerDir, getPlayerToTargetDir(playerDir, playerNum, goalPos))) {
+						command[MovementFlags::ACTION] = false;
+						recentlyUsedAction = true;
+					}
+				}
+			}
 		}
 	}
-	*/
-	if (subTargetting) {
-		command[MovementFlags::ACTION] = false;
+	else {
+		actionCounter++;
+		if (actionCounter > actionDelay) {
+			actionCounter = 0;
+			recentlyUsedAction = false;
+		}
 	}
-
 	return command;
 }
 
@@ -124,7 +149,6 @@ void OpponentInput::updatePath(PxVec3 playerPos, PxVec3 targetPos) {
 
 	}
 	else {
-		subTargetting = false;
 		path = pathfinder.ehStarSearch(State::worldGrid, p, t);
 		if (path.size() > 1) {
 			path.pop();
@@ -139,8 +163,8 @@ std::map<MovementFlags, bool> OpponentInput::followPath() {
 }
 
 std::pair<int, int> OpponentInput::getGridCoordinates(float globalPosX, float globalPosZ) {
-	int xIndex = std::min((int)((globalPosX + 650.f) / 50.f), 25);
-	int zIndex = std::min((int)((globalPosZ + 650.f) / 50.f), 25);
+	int xIndex = std::min((int)((globalPosX + 325.f) / 25.f), 25);
+	int zIndex = std::min((int)((globalPosZ + 325.f) / 25.f), 25);
 	std::pair p(xIndex, zIndex);
 	return p;
 }
@@ -150,10 +174,10 @@ std::pair<int, int> OpponentInput::getGridCoordinates(float globalPosX, float gl
 
 
 PxVec3 OpponentInput::getPlayerToTargetDir(PxVec3 playerDirVec, int playerVehicleRDIndex, PxVec3 targetGlobalPos) {
-	std::pair<int, int> targetGridPos = getGridCoordinates(targetGlobalPos.x, targetGlobalPos.y);
+	//std::pair<int, int> targetGridPos = getGridCoordinates(targetGlobalPos.x, targetGlobalPos.y);
 
 	float targetX = targetGlobalPos.x;
-	float targetZ = targetGlobalPos.y;
+	float targetZ = targetGlobalPos.z;
 	PxVec3 playerPos = State::vehicles[playerVehicleRDIndex]->getRigidDynamicActor()->getGlobalPose().p;
 	float playerX = playerPos.x;
 	float playerZ = playerPos.z;
@@ -187,8 +211,8 @@ bool OpponentInput::pointingAtGoal(PxVec3 playerDirVec, PxVec3 targetDirVec) {
 	float playerAngleRads = atan2(playerZ, playerX);
 	float targetAngleRads = atan2(targetZ, targetX);
 	float diff = abs(playerAngleRads - targetAngleRads);
-	if (diff < 0.8f) {
-		true;
+	if (diff < 0.1f) {
+		pointingAtGoal = true;
 	}
 	return pointingAtGoal;
 }

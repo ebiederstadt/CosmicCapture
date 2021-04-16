@@ -36,13 +36,13 @@ glm::vec2 g_pos = { 1.0f, 1.0f };
 float scalingFactor = 3.0f;
 
 void initializeGridCenterCoords() {
-	float flatOffset = 15.f; //TUNING POINT
+	float flatOffset = 10.f; //TUNING POINT
 	float diagonalOffset = 10.f; //TUNING POINT
 	bool shifted = false;
 	for (int i = 0; i < 26; i++) {
 		for (int j = 0; j < 26; j++) {
-			State::worldGridCenterCoords[i][j].first = i * 50.f - 650.f + 25.f;
-			State::worldGridCenterCoords[i][j].second = j * 50.f - 650.f + 25.f;
+			State::worldGridCenterCoords[i][j].first = i * 25.f - 325.f + 12.5f;
+			State::worldGridCenterCoords[i][j].second = j * 25.f - 325.f + 12.5f;
 			if (i == 1 || j == 1 || j == 24 || i == 24) continue;
 			shifted = false;
 			if ((i + 1 < 26) && (i - 1 >= 0) && (j + 1 < 26) && (j - 1 >= 0)) {
@@ -376,9 +376,9 @@ int main(int argc, char** args) {
 	Audio::flag_lost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
 
 
-	//InvisibleBarrier barriers(0);
-	//barriers.attachPhysics(physics);
-	//entities.push_back(&barriers);
+	InvisibleBarrier barriers(0);
+	barriers.attachPhysics(physics);
+	entities.push_back(&barriers);
 
 	for (int opponentNum = 1; opponentNum < 4; opponentNum++) {
 		opponentBrains[opponentNum - 1].updatePath(State::vehicles[opponentNum]->getRigidDynamicActor()->getGlobalPose().p, State::flagBody->getGlobalPose().p);
@@ -578,12 +578,40 @@ int main(int argc, char** args) {
 			}
 		}
 
-		if (numHumanPlayers < 2) opponentCar1.processInput(opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
-		if (numHumanPlayers < 3) opponentCar2.processInput(opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
-		if (numHumanPlayers < 4) opponentCar3.processInput(opponentBrains[2].getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
-
+		if (numHumanPlayers < 2) {
+			std::map<MovementFlags, bool>  command = opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ());
+			opponentCar1.processInput(command);
+			powerUpManager.use(physics, command, 1);
+		}
+		if (numHumanPlayers < 3) {
+			const std::map<MovementFlags, bool>  command = opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ());
+			opponentCar2.processInput(command);
+			powerUpManager.use(physics, command, 2);
+		}
+		if (numHumanPlayers < 4) {
+			const std::map<MovementFlags, bool>  command = opponentBrains[2].getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ());
+			opponentCar3.processInput(command);
+			powerUpManager.use(physics, command, 3);
+		}
 		aiStuffCounter++;
+		PxVehicleEngineData eng1;
+		eng1.mMaxOmega = 1000;
+		eng1.mPeakTorque = 2000;
+		opponentCar3.getVehicle()->mDriveSimData.setEngineData(eng1);
 		//------------------------------*/
+		if (State::flagPickedUpBy[0]) {
+
+		}
+		else if (State::flagPickedUpBy[1]) {
+
+		}
+		else if (State::flagPickedUpBy[2]) {
+
+		}
+		else if (State::flagPickedUpBy[3]) {
+
+		}
+
 
 		for (const auto& entity : entities)
 			entity->simulate(physics);
@@ -661,7 +689,7 @@ int main(int argc, char** args) {
 		//int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
 		//int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
 		//int dir = opponentBrains[1].getOrientation(playerDir);
-		//printf("%f - %f - %f\n" , State::vehicles[1]->computeForwardSpeed(), State::vehicles[2]->computeForwardSpeed(), State::vehicles[3]->computeForwardSpeed() );
+		//printf("%f - %f - %f - %f\n" , State::vehicles[0]->computeForwardSpeed(), State::vehicles[1]->computeForwardSpeed(), State::vehicles[2]->computeForwardSpeed(), State::vehicles[3]->computeForwardSpeed() );
 		//printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
 		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//-----------------------------------------------------------------------------------------------------------------------
