@@ -8,6 +8,15 @@ Projectile::Projectile() :
 	// Initialize the state without initializing the physx body
 	projectileState state;
 	mID = static_cast<int>(State::projectileStates.size());
+
+	// Check to see if the ID we are using is already being used by somebody else
+	auto search = State::projectileStates.find(mID);
+	while (search != State::projectileStates.end())
+	{
+		mID += 1;
+		search = State::projectileStates.find(mID);
+	}
+	
 	State::projectileStates[mID] = state;
 }
 

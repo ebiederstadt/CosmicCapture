@@ -31,7 +31,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 		if (distToGoal < 1.f) {
 			subTargetting = false;
 			if (path.empty()) {
-				path = pathfinder.ehStarSearch(State::worldGrid, current, getGridCoordinates(goalPos.x, goalPos.z)); //FIX THIS PROBLEM
+				path = pathfinder.ehStarSearch(State::worldGrid, current, getGridCoordinates(goalPos.x, goalPos.z));
 			}
 			target = path.top();
 			path.pop();
@@ -40,7 +40,7 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 	else {
 		if (dist < 10.f) {
 			if (path.empty()) {
-				path = pathfinder.ehStarSearch(State::worldGrid, current, getGridCoordinates(goalPos.x, goalPos.z)); //FIX THIS PROBLEM
+				path = pathfinder.ehStarSearch(State::worldGrid, current, getGridCoordinates(goalPos.x, goalPos.z));
 			}
 			target = path.top();
 			path.pop();
@@ -97,22 +97,43 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 			command = getCommand(dirsToCommand(playerDir, targetDir, &sharpTurn));
 		}	
 	}
-	/*
-	if  (sharpTurn) { //if you are going too fast and trying to turn hit the brakes
-		if (vehicleSpeed > 25.f) {
-			command[MovementFlags::UP] = true;
-			command[MovementFlags::DOWN] = false;
+
+	command[MovementFlags::ACTION] = true;
+	if (!recentlyUsedAction) {
+		if (State::heldPowerUps[playerNum] == PowerUpOptions::SPIKE_TRAP) {
+			if (State::flagPickedUpBy[playerNum]) {
+				command[MovementFlags::ACTION] = false;
+				recentlyUsedAction = true;
+			}
+			else {
+
+			}
+		}
+		else if (State::heldPowerUps[playerNum] == PowerUpOptions::SPEED_BOOST) {
+			command[MovementFlags::ACTION] = false;
+			recentlyUsedAction = true;
+		}
+		else if (State::heldPowerUps[playerNum] == PowerUpOptions::PROJECTILE) {
+			if (State::flagPickedUp) {
+				if (State::flagPickedUpBy[playerNum]) {
+
+				}
+				else {
+					if (subTargetting && pointingAtGoal(playerDir, getPlayerToTargetDir(playerDir, playerNum, goalPos))) {
+						command[MovementFlags::ACTION] = false;
+						recentlyUsedAction = true;
+					}
+				}
+			}
 		}
 	}
-	*/
-	if (State::flagPickedUpBy[playerNum] && vehicleSpeed > 35.f) {
-		command[MovementFlags::UP] = true;
-		//command[MovementFlags::DOWN] = false;
+	else {
+		actionCounter++;
+		if (actionCounter > actionDelay) {
+			actionCounter = 0;
+			recentlyUsedAction = false;
+		}
 	}
-	if (subTargetting) {
-		command[MovementFlags::ACTION] = false;
-	}
-
 	return command;
 }
 
@@ -190,8 +211,8 @@ bool OpponentInput::pointingAtGoal(PxVec3 playerDirVec, PxVec3 targetDirVec) {
 	float playerAngleRads = atan2(playerZ, playerX);
 	float targetAngleRads = atan2(targetZ, targetX);
 	float diff = abs(playerAngleRads - targetAngleRads);
-	if (diff < 0.8f) {
-		true;
+	if (diff < 0.1f) {
+		pointingAtGoal = true;
 	}
 	return pointingAtGoal;
 }

@@ -12,6 +12,14 @@ SpikeTrap::SpikeTrap(): Entity(
 	spikeTrapState state;
 	m_id = static_cast<int>(State::spike_trap_states.size());
 
+	// Check to see if the ID we are using is already being used by somebody else
+	auto search = State::spike_trap_states.find(m_id);
+	while (search != State::spike_trap_states.end())
+	{
+		m_id += 1;
+		search = State::spike_trap_states.find(m_id);
+	}
+
 	State::spike_trap_states[m_id] = state;
 }
 
@@ -84,7 +92,7 @@ bool SpikeTrap::processInput(const std::map<MovementFlags, bool>& inputs, Physic
 			spikeTrapMarker->release();
 			instance.gScene->addActor(*body);
 
-			PxShape* speedboostPickupTriggerShape = instance.gPhysics->createShape(PxBoxGeometry(1.1f, 2.f, 1.1f), *instance.gMaterial, true);
+			PxShape* speedboostPickupTriggerShape = instance.gPhysics->createShape(PxBoxGeometry(10.f, 2.f, 10.f), *instance.gMaterial, true);
 			//trigger box for running into the spike trap
 			speedboostPickupTriggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 			speedboostPickupTriggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);

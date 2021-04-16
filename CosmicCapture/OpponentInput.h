@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "Pathfinding.h"
 #include "GlobalState.h"
+#include "PowerUpManager.h"
 #include <algorithm>
 
 class OpponentInput
@@ -36,10 +37,15 @@ private:
 	bool subTargetting = false;
 	bool reversing = false;
 	int stuckCounter;
-	float reverseThresholdSpeed = -10.f;
+	float reverseThresholdSpeed = -15.f;
 	int framesReversing = 0;
 	int reversingMax = 750;
 	int stuckThreshold = 200; //TUNING POINT
+
+	bool recentlyUsedAction = false;
+	int actionDelay = 100;
+	int actionCounter = 0;
+
 	std::pair<int, int> lastPosition;
 	PxVec3 goalPos;
 };
