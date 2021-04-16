@@ -101,13 +101,9 @@ std::map<MovementFlags, bool> OpponentInput::getInput(PxVec3 playerPos, PxVec3 p
 	command[MovementFlags::ACTION] = true;
 	if (!recentlyUsedAction) {
 		if (State::heldPowerUps[playerNum] == PowerUpOptions::SPIKE_TRAP) {
-			if (State::flagPickedUpBy[playerNum]) {
-				command[MovementFlags::ACTION] = false;
-				recentlyUsedAction = true;
-			}
-			else {
-
-			}
+			command[MovementFlags::ACTION] = false;
+			recentlyUsedAction = true;
+		
 		}
 		else if (State::heldPowerUps[playerNum] == PowerUpOptions::SPEED_BOOST) {
 			command[MovementFlags::ACTION] = false;

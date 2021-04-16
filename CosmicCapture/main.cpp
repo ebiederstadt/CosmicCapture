@@ -671,9 +671,6 @@ int main(int argc, char** args) {
 
 		aiStuffCounter++;
 
-		std::cout << State::vehicles[0]->mDriveSimData.getEngineData().mMaxOmega << std::endl;
-
-
 		for (const auto& entity : entities)
 			entity->simulate(physics);
 
@@ -681,7 +678,7 @@ int main(int argc, char** args) {
 
 		if (State::slowCar0) {
 			PxVehicleEngineData eng1;
-			eng1.mMaxOmega = 1000;
+			eng1.mMaxOmega = 800;
 			eng1.mPeakTorque = 2000;
 			car.getVehicle()->mDriveSimData.setEngineData(eng1);
 		}
@@ -693,7 +690,7 @@ int main(int argc, char** args) {
 		}
 		if (State::slowCar1) {
 			PxVehicleEngineData eng1;
-			eng1.mMaxOmega = 1000;
+			eng1.mMaxOmega = 800;
 			eng1.mPeakTorque = 2000;
 			opponentCar1.getVehicle()->mDriveSimData.setEngineData(eng1);
 		}
@@ -705,7 +702,7 @@ int main(int argc, char** args) {
 		}
 		if (State::slowCar2) {
 			PxVehicleEngineData eng1;
-			eng1.mMaxOmega = 1000;
+			eng1.mMaxOmega = 800;
 			eng1.mPeakTorque = 2000;
 			opponentCar2.getVehicle()->mDriveSimData.setEngineData(eng1);
 		}
@@ -717,7 +714,7 @@ int main(int argc, char** args) {
 		}
 		if (State::slowCar3) {
 			PxVehicleEngineData eng1;
-			eng1.mMaxOmega = 1000;
+			eng1.mMaxOmega = 800;
 			eng1.mPeakTorque = 2000;
 			opponentCar3.getVehicle()->mDriveSimData.setEngineData(eng1);
 		}

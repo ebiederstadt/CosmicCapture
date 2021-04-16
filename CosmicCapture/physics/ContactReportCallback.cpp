@@ -16,10 +16,6 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		{		
 			if (pairs[i].otherActor == State::vehicles[0]->getRigidDynamicActor() && !State::flagPickedUpBy[0] && !State::flagPickedUp) {
 				State::flagPickedUpBy[0] = true;
-				PxVehicleEngineData eng1;
-				eng1.mMaxOmega = 600;
-				eng1.mPeakTorque = 2000;
-				State::vehicles[0]->mDriveSimData.setEngineData(eng1);
 				State::slowCar0 = true;
 				fmt::print("player 0 picked up flag\n");
 				Audio::flag_pickup.playSound();
@@ -28,10 +24,6 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			}
 			else if (pairs[i].otherActor == State::vehicles[1]->getRigidDynamicActor() && !State::flagPickedUpBy[1] && !State::flagPickedUp) {
 				State::flagPickedUpBy[1] = true;
-				PxVehicleEngineData eng1;
-				eng1.mMaxOmega = 600;
-				eng1.mPeakTorque = 2000;
-				State::vehicles[1]->mDriveSimData.setEngineData(eng1);
 				State::slowCar1 = true;
 				fmt::print("player 1 picked up flag\n");
 				if (State::numHumanPlayers > 1) Audio::flag_pickup.playSound();
@@ -39,10 +31,6 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			}
 			else if (pairs[i].otherActor == State::vehicles[2]->getRigidDynamicActor() && !State::flagPickedUpBy[2] && !State::flagPickedUp) {
 				State::flagPickedUpBy[2] = true;
-				PxVehicleEngineData eng1;
-				eng1.mMaxOmega = 600;
-				eng1.mPeakTorque = 2000;
-				State::vehicles[2]->mDriveSimData.setEngineData(eng1);
 				State::slowCar2 = true;
 				fmt::print("player 2 picked up flag\n");
 				if (State::numHumanPlayers > 2) Audio::flag_pickup.playSound();
@@ -50,10 +38,6 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			}
 			else if (pairs[i].otherActor == State::vehicles[3]->getRigidDynamicActor() && !State::flagPickedUpBy[3] && !State::flagPickedUp) {
 				State::flagPickedUpBy[3] = true;
-				PxVehicleEngineData eng1;
-				eng1.mMaxOmega = 600;
-				eng1.mPeakTorque = 2000;
-				State::vehicles[3]->mDriveSimData.setEngineData(eng1);
 				State::slowCar3 = true;
 				fmt::print("player 3 picked up flag\n");
 				if (State::numHumanPlayers > 3) Audio::flag_pickup.playSound();
