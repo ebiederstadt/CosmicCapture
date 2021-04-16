@@ -571,9 +571,21 @@ int main(int argc, char** args) {
 			}
 		}
 
-		if (numHumanPlayers < 2) opponentCar1.processInput(opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ()));
-		if (numHumanPlayers < 3) opponentCar2.processInput(opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ()));
-		if (numHumanPlayers < 4) opponentCar3.processInput(opponentBrains[2].getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ()));
+		if (numHumanPlayers < 2) {
+			std::map<MovementFlags, bool>  command = opponentBrains[0].getInput(State::vehicles[1]->getRigidDynamicActor()->getGlobalPose().p, opponentCar1.mGeometry->getModelMatrix().column2.getXYZ());
+			opponentCar1.processInput(command);
+			powerUpManager.use(physics, command, 1);
+		}
+		if (numHumanPlayers < 3) {
+			const std::map<MovementFlags, bool>  command = opponentBrains[1].getInput(State::vehicles[2]->getRigidDynamicActor()->getGlobalPose().p, opponentCar2.mGeometry->getModelMatrix().column2.getXYZ());
+			opponentCar2.processInput(command);
+			powerUpManager.use(physics, command, 2);
+		}
+		if (numHumanPlayers < 4) {
+			const std::map<MovementFlags, bool>  command = opponentBrains[2].getInput(State::vehicles[3]->getRigidDynamicActor()->getGlobalPose().p, opponentCar3.mGeometry->getModelMatrix().column2.getXYZ());
+			opponentCar3.processInput(command);
+			powerUpManager.use(physics, command, 3);
+		}
 
 		aiStuffCounter++;
 		//------------------------------*/
@@ -654,7 +666,7 @@ int main(int argc, char** args) {
 		//int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
 		//int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
 		//int dir = opponentBrains[1].getOrientation(playerDir);
-		printf("%f - %f - %f - %f\n" , State::vehicles[0]->computeForwardSpeed(), State::vehicles[1]->computeForwardSpeed(), State::vehicles[2]->computeForwardSpeed(), State::vehicles[3]->computeForwardSpeed() );
+		//printf("%f - %f - %f - %f\n" , State::vehicles[0]->computeForwardSpeed(), State::vehicles[1]->computeForwardSpeed(), State::vehicles[2]->computeForwardSpeed(), State::vehicles[3]->computeForwardSpeed() );
 		//printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
 		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
 		//-----------------------------------------------------------------------------------------------------------------------

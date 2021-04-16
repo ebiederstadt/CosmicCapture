@@ -14,6 +14,7 @@ public:
 	
 	void pickup(Physics&);
 	void use(Physics& instance, const InputInfo& inputInfo, int playerNum);
+	void use(Physics& instance, std::map<MovementFlags, bool> inputState, int playerNum);
 	void simulate(Physics& instance);
 	void draw(Physics& instance, const ShaderProgram& texture, const Camera& camera, bool depth);
 	void cleanUp();
