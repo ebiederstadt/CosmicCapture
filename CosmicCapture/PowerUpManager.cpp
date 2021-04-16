@@ -99,7 +99,7 @@ void PowerUpManager::use(Physics& instance, const InputInfo& inputInfo, int play
 			mDeployedPowerUps.push_back(std::move(powerup));
 			State::heldPowerUps[playerNum].reset();
 
-			if (playerNum == 0) Audio::projectile.playSound();
+			if (playerNum == 0 || State::numHumanPlayers > 1) Audio::projectile.playSound();
 		}
 	} else if (dynamic_cast<SpeedBoost*>(mHeldPowerUps[playerNum].get()))
 	{
@@ -110,7 +110,7 @@ void PowerUpManager::use(Physics& instance, const InputInfo& inputInfo, int play
 			mDeployedPowerUps.push_back(std::move(powerup));
 			State::heldPowerUps[playerNum].reset();
 
-			if (playerNum == 0) Audio::speed_boost.playSound();
+			if (playerNum == 0 || State::numHumanPlayers > 1) Audio::speed_boost.playSound();
 		}
 	} else if (dynamic_cast<SpikeTrap*>(mHeldPowerUps[playerNum].get()))
 	{
@@ -121,7 +121,7 @@ void PowerUpManager::use(Physics& instance, const InputInfo& inputInfo, int play
 			mDeployedPowerUps.push_back(std::move(powerup));
 			State::heldPowerUps[playerNum].reset();
 
-			if (playerNum == 0) Audio::collision.playSound();
+			if (playerNum == 0 || State::numHumanPlayers > 1) Audio::collision.playSound();
 		}
 	}
 }

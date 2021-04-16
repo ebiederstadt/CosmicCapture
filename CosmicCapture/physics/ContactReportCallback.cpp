@@ -95,7 +95,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 					if (pairs[i].triggerActor == geom)
 					{
 						fmt::print("Player {} picked up projectile.\n", j);
-						if(j == 0) Audio::projectile_pickup.playSound();
+						if(j == 0 || State::numHumanPlayers > 1) Audio::projectile_pickup.playSound();
 						State::heldPowerUps[j] = PowerUpOptions::PROJECTILE;
 					}
 				}
@@ -105,7 +105,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 					{
 						fmt::print("Player {} picked up speed boost.\n", j);
 						State::heldPowerUps[j] = PowerUpOptions::SPEED_BOOST;
-						if (j == 0) Audio::speed_boost_pickup.playSound();
+						if (j == 0 || State::numHumanPlayers > 1) Audio::speed_boost_pickup.playSound();
 					}
 				}
 
@@ -115,7 +115,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 					{
 						fmt::print("Player {} picked up spike trap\n", j);
 						State::heldPowerUps[j] = PowerUpOptions::SPIKE_TRAP;
-						if (j == 0) Audio::spike_trap_pickup.playSound();
+						if (j == 0 || State::numHumanPlayers > 1) Audio::spike_trap_pickup.playSound();
 					}
 				}
 			}
@@ -135,7 +135,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				{
 					if (pairs[i].otherActor == State::vehicles[j]->getRigidDynamicActor())
 					{
-						if(j == 0) Audio::collision.playSound();
+						if(j == 0 || State::numHumanPlayers > 1) Audio::collision.playSound();
 						spikeTrapState.actingUpon = j;
 						break;
 					}
@@ -152,6 +152,8 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 
 		if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND) {
 			//car hits
+			if(State::numHumanPlayers > 1) Audio::flag_lost.playSound();
+			if(State::numHumanPlayers > 1) Audio::flag_lost.playSound();
 			if ((pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 				if (State::flagPickedUpBy[0]) {
 					State::killCars[0] = true;
@@ -243,7 +245,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 				// Only check for collisions if the projectile is actually active
 				if (!state.active)
 					continue;
-
+				if (State::numHumanPlayers > 1) Audio::projectile_explosion.playSound();
 				for (int j = 0; j < 4; ++j)
 				{
 					if ((pairHeader.actors[0] == state.body && pairHeader.actors[1] == State::vehicles[j]->getRigidDynamicActor()) ||
@@ -263,14 +265,17 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 				}
 			}
 		
-			//arena hits (only for player)
-			if ((pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::redDoorBody) || (pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::blueDoorBody)) {
-				Audio::collision.playSound();
-				printf("hit red arena\n");
-			}
-			if ((pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::blueDoorBody) || (pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::blueDoorBody)) {
-				Audio::collision.playSound();
-				printf("hit blue arena\n");
+			//arena hits (only for first player -> adapted for multiplayer)
+			for (int j = 0; j < 4; ++j)
+			{
+				if ((pairHeader.actors[0] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::redDoorBody) || (pairHeader.actors[1] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::redDoorBody)) {
+					if(State::numHumanPlayers > 1 || j == 0) Audio::collision.playSound();
+					printf("hit red arena\n");
+				}
+				if ((pairHeader.actors[0] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::blueDoorBody) || (pairHeader.actors[1] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::blueDoorBody)) {
+					if (State::numHumanPlayers > 1 || j == 0) Audio::collision.playSound();
+					printf("hit blue arena\n");
+				}
 			}
 		}
 	}

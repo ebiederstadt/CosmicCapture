@@ -72,6 +72,9 @@ struct State
 
 	inline static PxVehicleDrive4W* vehicles[4] = { nullptr, nullptr, nullptr, nullptr };
 
+	//Human players
+	inline static int numHumanPlayers = 0;
+
 	// Scores and powerups
 	inline static std::array<int, 4> scores = {0, 0, 0, 0};
 	inline static int winScore = 3;
