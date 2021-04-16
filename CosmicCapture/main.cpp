@@ -443,7 +443,8 @@ int main(int argc, char** args) {
 	auto render = [&](int x, int y, int width, int height, int playerNum, bool isReversing = false)
 	{
 
-		State::numHumanPlayers = 2;
+		// TESTING ONLY - DO NOT HAVE ON OTHERWISE
+		//State::numHumanPlayers = 2;
 
 		// Engine for non-first players
 		if (!Audio::engine2.isSoundPlaying() && State::numHumanPlayers > 1) {
