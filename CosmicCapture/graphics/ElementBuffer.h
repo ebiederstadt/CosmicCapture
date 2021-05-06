@@ -21,7 +21,7 @@ public:
 	explicit operator unsigned int() const { return mID; }
 
 	void bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mID); }
-	void uploadData(GLsizeiptr size, void* data, GLenum usage) const;
+	void uploadData(GLsizeiptr size, void* data) const;
 
 private:
 	unsigned int mID{};

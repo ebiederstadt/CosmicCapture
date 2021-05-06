@@ -60,8 +60,7 @@ public:
 	/// Upload data to openGL Buffers on the GPU
 	/// </summary>
 	/// <param name="cpuGeom">CPU Geometry to use</param>
-	/// <param name="usage">OpenGL Usage Hint.</param>
-	void uploadData(const CpuGeometry& cpuGeom, unsigned int usage);
+	void uploadData(const CpuGeometry& cpuGeom);
 	void drawData() const override;
 
 private:

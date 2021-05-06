@@ -21,7 +21,7 @@ public:
 	VertexBuffer(VertexBuffer&& other) noexcept;
 
 	void bind() const { glBindBuffer(GL_ARRAY_BUFFER, mID); }
-	void uploadData(GLsizeiptr size, const void* data, GLenum usage) const;
+	void uploadData(GLsizeiptr size, const void* data) const;
 
 private:
 	unsigned int mID{};

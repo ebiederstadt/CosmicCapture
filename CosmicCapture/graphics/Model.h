@@ -22,11 +22,9 @@ public:
 	/// </summary>
 	/// <param name="modelPath">Path to a file representing the 3D model</param>
 	/// <param name="texturePath">Path to the image texture to use with the model</param>
-	/// <param name="usage">openGL Usage type. Default is GL_STATIC_DRAW</param>
 	Model(
 		const char* modelPath,
-		const char* texturePath,
-		unsigned int usage = GL_STATIC_DRAW
+		const char* texturePath
 	);
 
 	// Draw things where the position/rotation/scale changes
@@ -42,8 +40,6 @@ private:
 
 	TextureAPI* api;
 	TextureAPI::TextureName mTexture; // Assuming that each texture is unique to each model (may need to rework)
-
-	unsigned int mUsage;
 
 	physx::PxMat44 mModel;
 	void setModel(const physx::PxMat44& m) { mModel = m; }

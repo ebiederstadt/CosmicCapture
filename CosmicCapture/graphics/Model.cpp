@@ -7,11 +7,9 @@
 
 Model::Model(
 	const char* modelPath,
-	const char* texturePath,
-	const unsigned int usage
+	const char* texturePath
 ) :
 	mTexture(texturePath),
-	mUsage(usage),
 	mModel(physx::PxIdentity)
 {
 	api = TextureAPI::instance();
@@ -166,5 +164,5 @@ void Model::processMesh(aiMesh* mesh)
 	// TODO: material stuff :)
 
 	// Move into a vector, without copying it
-	mMeshes.emplace_back(geometry,mUsage);
+	mMeshes.emplace_back(geometry);
 }
