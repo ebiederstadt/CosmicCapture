@@ -205,7 +205,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					eng1.mPeakTorque = 2000;
 					State::vehicles[1]->mDriveSimData.setEngineData(eng1);
 				}
-				printf("Car 0 and Car 1 have hit\n");
+				fmt::print("Car 0 and Car 1 have hit\n");
 				GameAudio::play(GameSounds::CAR_CRASH);
 			}
 			if ((pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor())|| (pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
@@ -231,7 +231,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					eng1.mPeakTorque = 2000;
 					State::vehicles[2]->mDriveSimData.setEngineData(eng1);
 				}
-				printf("Car 0 and Car 2 have hit\n");
+				fmt::print("Car 0 and Car 2 have hit\n");
 				GameAudio::play(GameSounds::CAR_CRASH);
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
@@ -257,7 +257,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					eng1.mPeakTorque = 2000;
 					State::vehicles[3]->mDriveSimData.setEngineData(eng1);
 				}
-				printf("Car 0 and Car 3 have hit\n");
+				fmt::print("Car 0 and Car 3 have hit\n");
 				GameAudio::play(GameSounds::CAR_CRASH);
 			}
 			if ((pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor())) {
@@ -283,7 +283,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					eng1.mPeakTorque = 2000;
 					State::vehicles[2]->mDriveSimData.setEngineData(eng1);
 				}
-				printf("Car 1 and Car 2 have hit\n");
+				fmt::print("Car 1 and Car 2 have hit\n");
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor())) {
 
@@ -308,7 +308,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					eng1.mPeakTorque = 2000;
 					State::vehicles[3]->mDriveSimData.setEngineData(eng1);
 				}
-				printf("Car 1 and Car 3 have hit\n");
+				fmt::print("Car 1 and Car 3 have hit\n");
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor())){
 
@@ -333,7 +333,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					eng1.mPeakTorque = 2000;
 					State::vehicles[3]->mDriveSimData.setEngineData(eng1);
 				}
-				printf("Car 2 and Car 3 have hit\n");
+				fmt::print("Car 2 and Car 3 have hit\n");
 			}
 
 			// Handle collisions between vehicles and the projectile
@@ -374,11 +374,11 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 			{
 				if ((pairHeader.actors[0] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::redDoorBody) || (pairHeader.actors[1] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::redDoorBody)) {
 					if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) GameAudio::play(GameSounds::COLLISION);
-					printf("hit red arena\n");
+					fmt::print("hit red arena\n");
 				}
 				if ((pairHeader.actors[0] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::blueDoorBody) || (pairHeader.actors[1] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::blueDoorBody)) {
 					if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) GameAudio::play(GameSounds::COLLISION);
-					printf("hit blue arena\n");
+					fmt::print("hit blue arena\n");
 				}
 			}
 		}

@@ -3,9 +3,8 @@
 #include <string>
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
-#include <memory>
 #include <openal/alc.h>
+#include <fmt/core.h>
 
 // Source: https://gist.github.com/mudream4869/34541dfbd12a747b027e
 
@@ -365,10 +364,10 @@ bool AudioEngine::loadWavFile(const char* filename, ALuint* buffer)
 		delete[] data;
 		return true;
 	}
-	catch (std::string error)
+	catch (std::string& error)
 	{
 		//our catch statement for if we throw a string
-		std::cout << error << std::endl;
+		fmt::print("{}\n", error);
 		//clean up memory if wave loading fails
 		if (soundFile != nullptr)
 			fclose(soundFile);

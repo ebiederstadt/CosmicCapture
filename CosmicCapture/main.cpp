@@ -1,7 +1,6 @@
 #include <memory>
 #include <GL/glew.h>
 #include <SDL/SDL.h>
-#include <iostream>
 
 #include "graphics/Window.h"
 #include "graphics/ShaderProgram.h"
@@ -315,7 +314,7 @@ int main(int, char**) {
 			v.processInput(*info);
 		else if (v.useController)
 		{
-			const auto controllerInfo = input.getInfo(v.controllerNumber);
+			const InputInfo* controllerInfo = input.getInfo(v.controllerNumber);
 			v.processInput(*controllerInfo);
 		}
 	};
@@ -326,14 +325,14 @@ int main(int, char**) {
 			powerUpManager.use(physics, *info, playerNum);
 		else if (v.useController)
 		{
-			const auto controllerInfo = input.getInfo(v.controllerNumber);
+			const InputInfo* controllerInfo = input.getInfo(v.controllerNumber);
 			powerUpManager.use(physics, *controllerInfo, playerNum);
 		}
 	};
 
 	auto preLoop = [&]()
 	{
-		auto controllerInfo= input.getAllControllerInfo();
+		const auto controllerInfo= input.getAllControllerInfo();
 		bool controllerPressed = false;
 		for (auto& [id, c_info] : *controllerInfo)
 		{
@@ -587,7 +586,7 @@ int main(int, char**) {
 			State::startPickupFlagTimer = true;
 			car.getVehicle()->getRigidDynamicActor()->release();
 			car.attachPhysics(physics);
-			std::cout << "Respawning player" << std::endl;
+			fmt::print("Respawning player\n");
 			State::killCars[0] = false;
 			if (State::slowCar == 0)
 				State::slowCar.reset();
@@ -599,7 +598,7 @@ int main(int, char**) {
 			State::startPickupFlagTimer = true;
 			opponentCar1.getVehicle()->getRigidDynamicActor()->release();
 			opponentCar1.attachPhysics(physics);
-			std::cout << "Respawning opponent 1" << std::endl;
+			fmt::print("Respawning opponent 1\n");
 			State::killCars[1] = false;
 			if (State::slowCar == 1)
 				State::slowCar.reset();
@@ -611,7 +610,7 @@ int main(int, char**) {
 			State::startPickupFlagTimer = true;
 			opponentCar2.getVehicle()->getRigidDynamicActor()->release();
 			opponentCar2.attachPhysics(physics);
-			std::cout << "Respawning opponent 2" << std::endl;
+			fmt::print("Respawning opponent 2\n");
 			State::killCars[2] = false;
 			if (State::slowCar == 2)
 				State::slowCar.reset();
@@ -623,7 +622,7 @@ int main(int, char**) {
 			State::startPickupFlagTimer = true;
 			opponentCar3.getVehicle()->getRigidDynamicActor()->release();
 			opponentCar3.attachPhysics(physics);
-			std::cout << "Respawning opponent 3" << std::endl;
+			fmt::print("Respawning opponent 3\n");
 			State::killCars[3] = false;
 			if (State::slowCar == 3)
 				State::slowCar.reset();
