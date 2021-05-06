@@ -10,7 +10,7 @@ class TextureAPI
 public:
 	// No copying is allowed
 	TextureAPI(TextureAPI& other) = delete;
-	// No copy asssignment
+	// No copy assignment
 	void operator=(const TextureAPI&) = delete;
 
 	// Singleton method
@@ -21,7 +21,6 @@ public:
 	using TextureName = std::string;
 
 	void create(const TextureName& name, unsigned int interpolation = GL_LINEAR, bool flip = false, bool repeat = false);
-
 	void bind(const TextureName& name) { mTextures.at(name).bind(); }
 
 private:

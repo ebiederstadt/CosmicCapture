@@ -24,8 +24,6 @@ float gSteerVsForwardSpeedData3B = 0.3f;
 float gSteerVsForwardSpeedData4A = 120.0f;
 float gSteerVsForwardSpeedData4B = 0.1f;
 
-
-// TODO: Might want to think about a better place to store these definitions (so they are not longer globals)
 inline PxVehicleKeySmoothingData gKeySmoothingData =
 {
 	{
@@ -74,20 +72,6 @@ inline PxF32 gSteerVsForwardSpeedData[2 * 8] =
 	PX_MAX_F32, PX_MAX_F32
 };
 inline PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedData, 4);
-/*
-inline PxF32 gSteerVsForwardSpeedData[2 * 8] =
-{
-	0.0f, 0.75f,
-	5.0f, 0.75f,
-	30.0f, 0.125f,
-	120.0f, 0.1f,
-	PX_MAX_F32, PX_MAX_F32,
-	PX_MAX_F32, PX_MAX_F32,
-	PX_MAX_F32, PX_MAX_F32,
-	PX_MAX_F32, PX_MAX_F32
-};
-inline PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedData, 4);
-*/
 
 Vehicle::Vehicle(int playerNum, std::string modelPath, std::string bodyTexturePath, std::string tireTexturePath) :
 

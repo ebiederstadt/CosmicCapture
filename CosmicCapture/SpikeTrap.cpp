@@ -102,7 +102,6 @@ bool SpikeTrap::processInput(const std::map<MovementFlags, bool>& inputs, Physic
 			fmt::print("Placed the spike trap!\n");
 			active = true;
 			return true;
-
 		}
 	}
 

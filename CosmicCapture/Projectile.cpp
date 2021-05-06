@@ -1,4 +1,5 @@
 #include "Projectile.h"
+#include "physics/VehicleFilterShader.h"
 
 extern float scalingFactor;
 
@@ -29,7 +30,7 @@ void Projectile::attachPhysics(Physics& instance) {
 	State::projectileStates[mID].body = instance.gPhysics->createRigidDynamic(PxTransform(pos + dir.getNormalized() * 3.0f));
 	State::projectileStates[mID].body->attachShape(*projectile);
 	projectile->release();
-	State::projectileStates[mID].body->setAngularDamping(0.0f); //I failed highschool physics idk what this means
+	State::projectileStates[mID].body->setAngularDamping(0.0f);
 	State::projectileStates[mID].body->setLinearVelocity(PxVec3(dir.x * scalingFactor, dir.y * scalingFactor, dir.z * scalingFactor));
 	instance.gScene->addActor(*State::projectileStates[mID].body);
 }

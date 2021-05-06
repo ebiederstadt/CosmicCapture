@@ -3,7 +3,6 @@
 #include "GlobalState.h"
 #include "Input.h"
 #include "physics/Physics.h"
-#include "physics/VehicleFilterShader.h"
 
 class SpeedBoost : public Entity{
 public:

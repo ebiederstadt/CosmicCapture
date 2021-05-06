@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Entity.h"
+#include "input.h"
 
 #include <optional>
 
-#include "./input.h"
 
 class SpikeTrap : public Entity
 {

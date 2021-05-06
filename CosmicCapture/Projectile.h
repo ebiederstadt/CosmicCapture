@@ -2,7 +2,6 @@
 #include "Entity.h"
 #include "GlobalState.h"
 #include "physics/Physics.h"
-#include "physics/VehicleFilterShader.h"
 
 
 class Projectile : public Entity
