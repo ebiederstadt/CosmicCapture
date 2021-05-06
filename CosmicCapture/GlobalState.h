@@ -96,11 +96,7 @@ struct State
 	inline static bool startPickupFlagTimer = false;
 	inline static float flagTimer = 0.0f;
 
-	inline static bool slowCar0 = false;
-	inline static bool slowCar1 = false;
-	inline static bool slowCar2 = false;
-	inline static bool slowCar3 = false;
-
+	inline static std::optional<int> slowCar;
 };
 
 struct Audio

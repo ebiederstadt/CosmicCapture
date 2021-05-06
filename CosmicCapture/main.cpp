@@ -593,56 +593,29 @@ int main(int, char**) {
 
 		powerUpManager.simulate(physics);
 
-		if (State::slowCar0) {
-			PxVehicleEngineData eng1;
-			eng1.mMaxOmega = 800;
-			eng1.mPeakTorque = 2000;
-			car.getVehicle()->mDriveSimData.setEngineData(eng1);
-		}
-		else {
-			PxVehicleEngineData eng1;
-			eng1.mMaxOmega = 2000;
-			eng1.mPeakTorque = 2000;
-			car.getVehicle()->mDriveSimData.setEngineData(eng1);
-		}
-		if (State::slowCar1) {
-			PxVehicleEngineData eng1;
-			eng1.mMaxOmega = 800;
-			eng1.mPeakTorque = 2000;
-			opponentCar1.getVehicle()->mDriveSimData.setEngineData(eng1);
-		}
-		else {
-			PxVehicleEngineData eng1;
-			eng1.mMaxOmega = 2000;
-			eng1.mPeakTorque = 2000;
-			opponentCar1.getVehicle()->mDriveSimData.setEngineData(eng1);
-		}
-		if (State::slowCar2) {
-			PxVehicleEngineData eng1;
-			eng1.mMaxOmega = 800;
-			eng1.mPeakTorque = 2000;
-			opponentCar2.getVehicle()->mDriveSimData.setEngineData(eng1);
-		}
-		else {
-			PxVehicleEngineData eng1;
-			eng1.mMaxOmega = 2000;
-			eng1.mPeakTorque = 2000;
-			opponentCar2.getVehicle()->mDriveSimData.setEngineData(eng1);
-		}
-		if (State::slowCar3) {
-			PxVehicleEngineData eng1;
-			eng1.mMaxOmega = 800;
-			eng1.mPeakTorque = 2000;
-			opponentCar3.getVehicle()->mDriveSimData.setEngineData(eng1);
-		}
-		else {
-			PxVehicleEngineData eng1;
-			eng1.mMaxOmega = 2000;
-			eng1.mPeakTorque = 2000;
-			opponentCar3.getVehicle()->mDriveSimData.setEngineData(eng1);
+		if (State::slowCar.has_value())
+		{
+			int slowCar = State::slowCar.value();
+
+			PxVehicleEngineData eng;
+			eng.mMaxOmega = 800.f;
+			eng.mPeakTorque = 2000.f;
+
+			cars[slowCar]->getVehicle()->mDriveSimData.setEngineData(eng);
+		} else
+		{
+			for (int c = 0; c < 4; ++c)
+			{
+				if (cars[c]->getVehicle()->mDriveSimData.getEngineData().mMaxOmega != 2000.f)
+				{
+					PxVehicleEngineData eng;
+					eng.mMaxOmega = 2000.f;
+					eng.mPeakTorque = 2000.f;
+					cars[c]->getVehicle()->mDriveSimData.setEngineData(eng);
+				}
+			}
 		}
 		
-
 		if (State::killCars[0]) {
 			State::flagPickedUpBy[0] = false;
 			State::flagPickedUp = false;
@@ -652,7 +625,8 @@ int main(int, char**) {
 			car.attachPhysics(physics);
 			std::cout << "Respawning player" << std::endl;
 			State::killCars[0] = false;
-			State::slowCar0 = false;
+			if (State::slowCar == 0)
+				State::slowCar.reset();
 		}
 		if (State::killCars[1]) {
 			State::flagPickedUpBy[1] = false;
@@ -663,7 +637,8 @@ int main(int, char**) {
 			opponentCar1.attachPhysics(physics);
 			std::cout << "Respawning opponent 1" << std::endl;
 			State::killCars[1] = false;
-			State::slowCar1 = false;
+			if (State::slowCar == 1)
+				State::slowCar.reset();
 		}
 		if (State::killCars[2]) {
 			State::flagPickedUpBy[2] = false;
@@ -674,7 +649,8 @@ int main(int, char**) {
 			opponentCar2.attachPhysics(physics);
 			std::cout << "Respawning opponent 2" << std::endl;
 			State::killCars[2] = false;
-			State::slowCar2 = false;
+			if (State::slowCar == 2)
+				State::slowCar.reset();
 		}
 		if (State::killCars[3]) {
 			State::flagPickedUpBy[3] = false;
@@ -685,7 +661,8 @@ int main(int, char**) {
 			opponentCar3.attachPhysics(physics);
 			std::cout << "Respawning opponent 3" << std::endl;
 			State::killCars[3] = false;
-			State::slowCar3 = false;
+			if (State::slowCar == 3)
+				State::slowCar.reset();
 		}
 		physics.stepPhysics();
 
