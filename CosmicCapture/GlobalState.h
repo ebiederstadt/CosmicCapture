@@ -89,13 +89,8 @@ struct State
 
 	inline static std::array<bool, 4> killCars = { false, false, false, false };
 
-	inline static PxRigidStatic* doorSwitchPickupMarkerBody = nullptr;
-	inline static PxRigidStatic* doorSwitchPickupTriggerBody =  nullptr;
-	inline static bool arenaSwitch = false;
-	inline static bool arenaSwitchReady = true;
 	inline static bool blueArena = false;
 	inline static bool redArena = true;
-	inline static int arenaTimer = 0;
 
 	inline static bool canPickupFlag = true;
 	inline static bool startPickupFlagTimer = false;

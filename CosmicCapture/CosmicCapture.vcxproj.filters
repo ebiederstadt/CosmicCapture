@@ -61,7 +61,7 @@
     <ClCompile Include="InvisibleBarrier.cpp" />
     <ClCompile Include="PowerUpManager.cpp" />
     <ClCompile Include="GameUI.cpp" />
-    <ClCompile Include="DoorSwitchZone.cpp" />
+    <ClCompile Include="DoorManager.cpp" />
     <ClCompile Include="graphics\TextureAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -133,7 +133,7 @@
     <ClInclude Include="InvisibleBarrier.h" />
     <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="GameUI.h" />
-    <ClInclude Include="DoorSwitchZone.h" />
+    <ClInclude Include="DoorManager.h" />
     <ClInclude Include="graphics\TextureAPI.h" />
   </ItemGroup>
   <ItemGroup>

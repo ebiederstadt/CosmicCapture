@@ -2,6 +2,7 @@
 #include <fmt/format.h>
 #include <GL/glew.h>
 #include <SDL/SDL.h>
+#include <iostream>
 
 #include "graphics/Window.h"
 #include "graphics/ShaderProgram.h"
@@ -19,16 +20,13 @@
 #include "Flag.h"
 #include "FlagDropoffZone.h"
 #include "GameUI.h"
-#include "DoorSwitchZone.h"
+#include "DoorManager.h"
 #include "PowerUpManager.h"
-
 
 #include "OpponentInput.h"
 #include "InvisibleBarrier.h"
-#include "GridMarker.h"
 
 #include "GlobalState.h"
-#include "./physics/VehicleCreate.h"
 
 float angle = -0.25f;
 glm::vec2 g_scale = { 1.f, 1.f };
@@ -37,62 +35,21 @@ float scalingFactor = 3.0f;
 
 void initializeGridCenterCoords() {
 	float flatOffset = 10.f; //TUNING POINT
-	float diagonalOffset = 10.f; //TUNING POINT
-	bool shifted = false;
 	for (int i = 0; i < 26; i++) {
 		for (int j = 0; j < 26; j++) {
 			State::worldGridCenterCoords[i][j].first = i * 25.f - 325.f + 12.5f;
 			State::worldGridCenterCoords[i][j].second = j * 25.f - 325.f + 12.5f;
 			if (i == 1 || j == 1 || j == 24 || i == 24) continue;
-			shifted = false;
 			if ((i + 1 < 26) && (i - 1 >= 0) && (j + 1 < 26) && (j - 1 >= 0)) {
-				if (State::worldGrid[i + 1][j] == 0) {
+				if (State::worldGrid[i + 1][j] == 0)
 					State::worldGridCenterCoords[i][j].first -= flatOffset;
-					shifted = true;
-				}
-				if (State::worldGrid[i - 1][j] == 0) {
+				if (State::worldGrid[i - 1][j] == 0)
 					State::worldGridCenterCoords[i][j].first += flatOffset;
-					shifted = true;
-				}
-				if (State::worldGrid[i][j + 1] == 0) {
+				if (State::worldGrid[i][j + 1] == 0)
 					State::worldGridCenterCoords[i][j].second -= flatOffset;
-					shifted = true;
-				}
-				if (State::worldGrid[i][j - 1] == 0) {
+				if (State::worldGrid[i][j - 1] == 0)
 					State::worldGridCenterCoords[i][j].second += flatOffset;
-					shifted = true;
-				}
-
-				/*
-				if (shifted) continue;
-
-				if (State::worldGrid[i - 1][j - 1] == 0) {
-					State::worldGridCenterCoords[i][j].first += diagonalOffset;
-					State::worldGridCenterCoords[i][j].second += diagonalOffset;
-				}
-				if (State::worldGrid[i + 1][j + 1] == 0) {
-					State::worldGridCenterCoords[i][j].first -= diagonalOffset;
-					State::worldGridCenterCoords[i][j].second -= diagonalOffset;
-				}
-				if (State::worldGrid[i + 1][j - 1] == 0) {
-					State::worldGridCenterCoords[i][j].first -= diagonalOffset;
-					State::worldGridCenterCoords[i][j].second += diagonalOffset;
-				}
-				if (State::worldGrid[i - 1][j + 1] == 0) {
-					State::worldGridCenterCoords[i][j].first += diagonalOffset;
-					State::worldGridCenterCoords[i][j].second -= diagonalOffset;
-				}
-
 			}
-
-		}
-	}
-}
-
-				*/
-			}
-			
-			
 		}
 	}
 }
@@ -201,16 +158,16 @@ void updateWorldGridArena1() {
 	State::worldGrid[13][15] = 1;
 }
 
-int main(int argc, char** args) {
+int main(int, char**) {
 	initializeGridCenterCoords();
 	updateWorldGridArena2();
-	// Window Initialization
+
 	const GLint width = 1280, height = 720;
 	Window window("Cosmic Capture", width, height);
 	const float aspect = static_cast<float>(width) / static_cast<float>(height);
 
-	//physics
 	Physics physics = Physics::Instance();
+	physics.Initialize();
 
 	// Cameras for each of the players
 	Camera camera(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
@@ -220,14 +177,11 @@ int main(int argc, char** args) {
 
 	std::array<Camera*, 4> cameras = { &camera, &camera1, &camera2, &camera3 };
 
-	physics.Initialize();
-
 	Input input = Input();
 	OpponentInput opponentBrains[3];
 	opponentBrains[0].setPlayerNum(1);
 	opponentBrains[1].setPlayerNum(2);
 	opponentBrains[2].setPlayerNum(3);
-
 
 	ShaderProgram shaderProgram("shaders/main.vert", "shaders/main.frag");
 	shaderProgram.compile();
@@ -237,18 +191,13 @@ int main(int argc, char** args) {
 
 	// The arena model
 	Model arenaPlane("models/arena_plane.obj", "textures/arena_plane_texture.jpg", GL_DYNAMIC_DRAW);
-	//Model arenaPlane("models/arena_plane.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model centerArea("models/center_area.obj", "textures/center_area_texture.jpg", GL_DYNAMIC_DRAW, true);
 	Model dome("models/dome.obj", "textures/dome.jpg", GL_DYNAMIC_DRAW, true);
-	//Model centerArea("models/center_area.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model innerWalls("models/inner_walls.obj", "textures/pillars_texture.jpg", GL_DYNAMIC_DRAW, true);
-	//Model innerWalls("models/inner_walls.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model walls("models/walls.obj", "textures/pillars_texture.jpg", GL_DYNAMIC_DRAW, true);
-	//Model walls("models/walls.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 	Model redGates("models/red_gates.obj", "textures/red_gates.jpg", GL_DYNAMIC_DRAW);
 	Model blueGates("models/blue_gates.obj", "textures/blue_gates.jpg", GL_DYNAMIC_DRAW);
 	Model skybox("models/skybox.obj", "textures/stars.jpg", GL_DYNAMIC_DRAW, true);
-	//Model skybox("models/skybox.obj", "textures/blank.jpg", sCamera, GL_DYNAMIC_DRAW);
 
 	// Shadow setup start ---------------------------------------------------------------------
 
@@ -285,7 +234,6 @@ int main(int argc, char** args) {
 	glUniform1i(samplerLoc, 0);
 	samplerLoc = glGetUniformLocation(shaderID, "shadowMap");
 	glUniform1i(samplerLoc, 1);
-
 
 	//main loop flag
 	bool quit = false;
@@ -328,8 +276,7 @@ int main(int argc, char** args) {
 	FlagDropoffZone flagDropoffZone3(3);
 	flagDropoffZone3.attachPhysics(physics);
 
-	DoorSwitchZone doorSwitchZone;
-	doorSwitchZone.attachPhysics(physics);
+	DoorManager doorManager;
 
 	std::vector<Entity*> entities;
 	entities.push_back(&car);
@@ -343,14 +290,6 @@ int main(int argc, char** args) {
 	entities.push_back(&opponentCar3);
 
 	PowerUpManager powerUpManager(physics);
-	entities.push_back(&doorSwitchZone);
-
-
-	/*
-	GridMarker grid(sCamera, PxVec3());
-	grid.attachPhysics(physics);
-	entities.push_back(&grid);
-	*/
 
 	// setup audio
 	Audio::soundSystem.initialize();
@@ -376,21 +315,12 @@ int main(int argc, char** args) {
 	Audio::gate_switch = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_GATE_SWITCH);
 	Audio::caught = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_CAUGHT);
 
-	//AudioEngine soundSystem2 = AudioEngine();
-	//soundSystem2.initialize();
-	//soundSystem2.initializeBuffers(true);
 	Audio::engine2 = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE2);
 	Audio::engine2.loop();
 	Audio::engine2.setVolume(0.05f);
-	//AudioEngine soundSystem3 = AudioEngine();
-	//soundSystem3.initialize();
-	//soundSystem3.initializeBuffers(true);
 	Audio::engine3 = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE3);
 	Audio::engine3.loop();
 	Audio::engine3.setVolume(0.05f);
-	//AudioEngine soundSystem4 = AudioEngine();
-	//soundSystem4.initialize();
-	//soundSystem4.initializeBuffers(true);
 	Audio::engine4 = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE4);
 	Audio::engine4.loop();
 	Audio::engine4.setVolume(0.05f);
@@ -451,9 +381,6 @@ int main(int argc, char** args) {
 	auto render = [&](int x, int y, int width, int height, int playerNum, bool isReversing = false)
 	{
 
-		// TESTING ONLY - DO NOT HAVE ON OTHERWISE
-		//State::numHumanPlayers = 2;
-
 		// Engine for non-first players
 		if (!Audio::engine2.isSoundPlaying() && State::numHumanPlayers > 1) {
 			Audio::engine2.playSound();
@@ -481,7 +408,6 @@ int main(int argc, char** args) {
 			if(playerNum == 3) Audio::engine4.setVolume(0.1f + 0.0001f * abs(velocity));
 		}
 		else Audio::engine.setVolume(0.1f + 0.0001f * abs(velocity));
-		//printf("v: %f\n", velocity);
 
 		shaderProgram.use();
 
@@ -492,14 +418,7 @@ int main(int argc, char** args) {
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		float const SWITCH_INTERVAL = 80.f;
-		float const ABS_FRAME_GATE_OFFSET = (120.f / SWITCH_INTERVAL) * 0.3f;  // 120.f because that's what switch interval 0.3f works for
-		float timeDiff = State::arenaTimer - (DoorSwitchZone::AFFECTION_TIME - SWITCH_INTERVAL);
-		float gateDownOffset = -timeDiff * ABS_FRAME_GATE_OFFSET;
-		float gateUpOffset = -(SWITCH_INTERVAL - timeDiff) * ABS_FRAME_GATE_OFFSET;
-
-		// start audio 50 frames before door animation
-		if (timeDiff == -25.f) Audio::gate_switch.playSound();
+		doorManager.simulate();
 
 		// First pass
 		centerArea.draw(simpleDepthShader, camera, true, 1);
@@ -510,16 +429,16 @@ int main(int argc, char** args) {
 		// don't include skybox in depth map
 
 		if (State::redArena) {
-			if (gateDownOffset < 0) {
-				redGates.draw(simpleDepthShader, camera, true, 2, gateDownOffset);
-				blueGates.draw(simpleDepthShader, camera, true, 2, gateUpOffset);
+			if (doorManager.gateDownOffset < 0) {
+				redGates.draw(simpleDepthShader, camera, true, 2, doorManager.gateDownOffset);
+				blueGates.draw(simpleDepthShader, camera, true, 2, doorManager.gateUpOffset);
 			}
 			else redGates.draw(simpleDepthShader, camera, true, 2);
 		}
 		if (State::blueArena) {
-			if (gateDownOffset < 0) {
-				redGates.draw(simpleDepthShader, camera, true, 2, gateUpOffset);
-				blueGates.draw(simpleDepthShader, camera, true, 2, gateDownOffset);
+			if (doorManager.gateDownOffset < 0) {
+				redGates.draw(simpleDepthShader, camera, true, 2, doorManager.gateUpOffset);
+				blueGates.draw(simpleDepthShader, camera, true, 2, doorManager.gateDownOffset);
 			}
 			else blueGates.draw(simpleDepthShader, camera, true, 2);
 		}
@@ -560,16 +479,16 @@ int main(int argc, char** args) {
 		skybox.draw(shaderProgram, *cameras[playerNum], false, 0);
 		
 		if (State::redArena) {
-			if (gateDownOffset < 0) {
-				redGates.draw(shaderProgram, *cameras[playerNum], false, 2, gateDownOffset);
-			    blueGates.draw(shaderProgram, *cameras[playerNum], false, 2, gateUpOffset);
+			if (doorManager.gateDownOffset < 0) {
+				redGates.draw(shaderProgram, *cameras[playerNum], false, 2, doorManager.gateDownOffset);
+			    blueGates.draw(shaderProgram, *cameras[playerNum], false, 2, doorManager.gateUpOffset);
 
 			} else redGates.draw(shaderProgram, *cameras[playerNum], false, 2);
 		}
 		if (State::blueArena) {
-			if (gateDownOffset < 0) {
-				redGates.draw(shaderProgram, *cameras[playerNum], false, 2, gateUpOffset);
-				blueGates.draw(shaderProgram, *cameras[playerNum], false, 2, gateDownOffset);
+			if (doorManager.gateDownOffset < 0) {
+				redGates.draw(shaderProgram, *cameras[playerNum], false, 2, doorManager.gateUpOffset);
+				blueGates.draw(shaderProgram, *cameras[playerNum], false, 2, doorManager.gateDownOffset);
 			}
 			else blueGates.draw(shaderProgram, *cameras[playerNum], false, 2);
 		}
@@ -601,14 +520,14 @@ int main(int argc, char** args) {
 		if (State::numHumanPlayers >= 4) processPowerupInput(opponentCar3, 3);
 
 		//arena door switch
-		if (State::arenaSwitch && !State::arenaSwitchReady) {
+		if (doorManager.arenaSwitch) {
 			if (State::blueArena) {
 				updateWorldGridArena2();
 				physics.generateRedDoor(); //switch from blue doors to red
 				State::redArena = true;
 				State::blueArena = false;
 				//draw red arena
-				fmt::print("Button pressed, doors switching\n");
+				fmt::print("Doors switching\n");
 				fmt::print("Red arena loaded\n");
 			}
 			else if (State::redArena) {
@@ -617,15 +536,13 @@ int main(int argc, char** args) {
 				State::blueArena = true;
 				State::redArena = false;
 				//draw blue arena
-				fmt::print("Button pressed, doors switching\n");
+				fmt::print("Doors switching\n");
 				fmt::print("Blue arena loaded\n");
 			}
-			State::arenaSwitch = false;
-			State::arenaSwitchReady = true;
-			State::arenaTimer = 0;
+			doorManager.arenaSwitch = false;
+			doorManager.arenaTimer = 0;
 		}
 
-		//forgive me--------------------
 		// TODO: Only compute the AI paths that are actually needed
 		if (aiStuffCounter % 3 == 0 && State::numHumanPlayers < 2) { //stagger pathfinding on different frames
 			if (State::flagPickedUpBy[1]) {
@@ -793,18 +710,6 @@ int main(int argc, char** args) {
 			gameFinished = true;
 			gameStarted = false;
 		}
-
-		//scott's debugging prints----------------------------------------------------------------------------------------------
-		//PxVec3 playerPosition = car.getVehicle()->getRigidDynamicActor()->getGlobalPose().p;
-		//PxVec3 playerDir = car.mGeometry->getModelMatrix().column2.getXYZ();
-		//PxVec3 playerToTarget = opponentBrains[0].getPlayerToTargetDir(playerDir, 0, State::flagBody->getGlobalPose().p);
-		//int xIndex = (int)((playerPosition.x + 180.f) / 10.f);
-		//int zIndex = (int)((playerPosition.z + 180.f) / 10.f);;
-		//int dir = opponentBrains[1].getOrientation(playerDir);
-		//printf("%f - %f - %f - %f\n" , State::vehicles[0]->computeForwardSpeed(), State::vehicles[1]->computeForwardSpeed(), State::vehicles[2]->computeForwardSpeed(), State::vehicles[3]->computeForwardSpeed() );
-		//printf("%f, %f, %f (%f) -- %f, %f, %f (%f)\n", playerDir.x, playerDir.y, playerDir.z, atan2(playerDir.z, playerDir.x), playerToTarget.x, playerToTarget.y, playerToTarget.z, atan2(playerToTarget.z, playerToTarget.x));
-		//printf("Coordinates: %f, %f, %f -- %d, %d. DirVector: x: %f, z: %f, dir: %d\n", playerPosition.x, playerPosition.y, playerPosition.z, xIndex, zIndex, playerDir.x, playerDir.z, dir);
-		//-----------------------------------------------------------------------------------------------------------------------
 
 		/*ImGui::Text("Camera Position");
 		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
@@ -1006,6 +911,7 @@ int main(int argc, char** args) {
 		//Window::renderImGuiFrame();
 		window.swap();
 	}
+
 	//cleanup
 	for (const auto& entity : entities)
 		entity->cleanUpPhysics();

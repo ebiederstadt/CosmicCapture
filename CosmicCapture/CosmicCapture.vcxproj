@@ -156,7 +156,7 @@
   <ItemGroup>
     <ClCompile Include="audio\AudioEngine.cpp" />
     <ClCompile Include="audio\AudioInstance.cpp" />
-    <ClCompile Include="DoorSwitchZone.cpp" />
+    <ClCompile Include="DoorManager.cpp" />
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="FlagDropoffZone.cpp" />
     <ClCompile Include="GameUI.cpp" />
@@ -207,7 +207,7 @@
     <ClInclude Include="audio\AudioEngine.h" />
     <ClInclude Include="audio\AudioInstance.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="DoorSwitchZone.h" />
+    <ClInclude Include="DoorManager.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="FlagDropoffZone.h" />
     <ClInclude Include="GameUI.h" />
