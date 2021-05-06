@@ -159,6 +159,7 @@
     <ClCompile Include="DoorManager.cpp" />
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="FlagDropoffZone.cpp" />
+    <ClCompile Include="audio\GameAudio.cpp" />
     <ClCompile Include="GameUI.cpp" />
     <ClCompile Include="InvisibleBarrier.cpp" />
     <ClCompile Include="OpponentInput.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="DoorManager.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="FlagDropoffZone.h" />
+    <ClInclude Include="audio\GameAudio.h" />
     <ClInclude Include="GameUI.h" />
     <ClInclude Include="GlobalState.h" />
     <ClInclude Include="InvisibleBarrier.h" />

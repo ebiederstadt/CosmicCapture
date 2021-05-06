@@ -1,5 +1,4 @@
 #include <memory>
-#include <fmt/format.h>
 #include <GL/glew.h>
 #include <SDL/SDL.h>
 #include <iostream>
@@ -11,7 +10,7 @@
 
 #include "input.h"
 
-#include "./audio/AudioEngine.h"
+#include "audio/GameAudio.h"
 
 #include "./physics/ContactReportCallback.h"
 
@@ -291,39 +290,7 @@ int main(int, char**) {
 
 	PowerUpManager powerUpManager(physics);
 
-	// setup audio
-	Audio::soundSystem.initialize();
-	Audio::soundSystem.initializeBuffers();
-	Audio::music = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
-	Audio::music.loop();
-	Audio::music.playSound();
-	Audio::engine = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
-	Audio::engine.loop();
-	Audio::engine.setVolume(0.1f);
-	Audio::engine.playSound();
-	Audio::collision = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_COLLISION);
-	Audio::projectile = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE);
-	Audio::flag_pickup = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_PICKUP);
-	Audio::projectile_pickup = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE_PICKUP);
-	Audio::spike_trap_pickup = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_SPIKE_TRAP_PICKUP);
-	Audio::speed_boost_pickup = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST_PICKUP);
-	Audio::flag_return = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_RETURN);
-	Audio::speed_boost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST);
-	Audio::projectile_explosion = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_EXPLOSION);
-	Audio::car_crash = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
-	Audio::flag_lost = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
-	Audio::gate_switch = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_GATE_SWITCH);
-	Audio::caught = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_CAUGHT);
-
-	Audio::engine2 = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE2);
-	Audio::engine2.loop();
-	Audio::engine2.setVolume(0.05f);
-	Audio::engine3 = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE3);
-	Audio::engine3.loop();
-	Audio::engine3.setVolume(0.05f);
-	Audio::engine4 = Audio::soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE4);
-	Audio::engine4.loop();
-	Audio::engine4.setVolume(0.05f);
+	GameAudio::initialize();
 
 	InvisibleBarrier barriers(0);
 	barriers.attachPhysics(physics);
@@ -382,19 +349,16 @@ int main(int, char**) {
 	{
 
 		// Engine for non-first players
-		if (!Audio::engine2.isSoundPlaying() && State::numHumanPlayers > 1) {
-			Audio::engine2.playSound();
-		}
+		if (!GameAudio::isSoundPlaying(GameSounds::ENGINE2) && State::numHumanPlayers > 1)
+			GameAudio::play(GameSounds::ENGINE2);
 
 		// Engine for non-first players
-		if (!Audio::engine3.isSoundPlaying() && State::numHumanPlayers > 2) {
-			Audio::engine3.playSound();
-		}
+		if (!GameAudio::isSoundPlaying(GameSounds::ENGINE3) && State::numHumanPlayers > 2)
+			GameAudio::play(GameSounds::ENGINE3);
 
 		// Engine for non-first players
-		if (!Audio::engine4.isSoundPlaying() && State::numHumanPlayers > 3) {
-			Audio::engine4.playSound();
-		}
+		if (!GameAudio::isSoundPlaying(GameSounds::ENGINE4) && State::numHumanPlayers > 3)
+			GameAudio::play(GameSounds::ENGINE4);
 
 		// Update camera
 		float velocity = cars[playerNum]->getVelocity();
@@ -402,12 +366,12 @@ int main(int, char**) {
 
 		//Update sound - lower start, growth and cap of engine volume with multiplayer
 		if (State::numHumanPlayers > 1) {
-			if(playerNum == 0) Audio::engine.setVolume(0.1f + 0.0001f * abs(velocity));
-			if(playerNum == 1) Audio::engine2.setVolume(0.1f + 0.0001f * abs(velocity));
-			if(playerNum == 2) Audio::engine3.setVolume(0.1f + 0.0001f * abs(velocity));
-			if(playerNum == 3) Audio::engine4.setVolume(0.1f + 0.0001f * abs(velocity));
+			if (playerNum == 0) GameAudio::setVolume(GameSounds::ENGINE, 0.1f + 0.0001f * abs(velocity));
+			if (playerNum == 1) GameAudio::setVolume(GameSounds::ENGINE2, 0.1f + 0.0001f * abs(velocity));
+			if (playerNum == 2) GameAudio::setVolume(GameSounds::ENGINE3, 0.1f + 0.0001f * abs(velocity));
+			if (playerNum == 3) GameAudio::setVolume(GameSounds::ENGINE4, 0.1f + 0.0001f * abs(velocity));
 		}
-		else Audio::engine.setVolume(0.1f + 0.0001f * abs(velocity));
+		else GameAudio::setVolume(GameSounds::ENGINE,0.1f + 0.0001f * abs(velocity));
 
 		shaderProgram.use();
 
@@ -894,7 +858,7 @@ int main(int, char**) {
 		entity->cleanUpPhysics();
 	powerUpManager.cleanUp();
 	physics.CleanupPhysics();
-	Audio::soundSystem.killSources();
+	GameAudio::cleanup();
 
 	return 0;
 }

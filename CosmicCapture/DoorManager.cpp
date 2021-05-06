@@ -1,6 +1,6 @@
 #include "DoorManager.h"
 
-#include "GlobalState.h"
+#include "audio/GameAudio.h"
 
 void DoorManager::simulate()
 {
@@ -8,7 +8,7 @@ void DoorManager::simulate()
 	gateDownOffset = -timeDiff * ABS_FRAME_GATE_OFFSET;
 	gateUpOffset = -(SWITCH_INTERVAL - timeDiff) * ABS_FRAME_GATE_OFFSET;
 
-	if (timeDiff == -25.f) Audio::gate_switch.playSound();
+	if (timeDiff == -25.f) GameAudio::play(GameSounds::GATE_SWITCH);
 
 	arenaTimer += 1;
 	if (arenaTimer >= AFFECTION_TIME)

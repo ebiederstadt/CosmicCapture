@@ -5,6 +5,7 @@
 class AudioInstance
 {
 public:
+	AudioInstance() = default;
 	AudioInstance(const ALuint* buffer);
 	void loop() const;
 	void playSound() const;

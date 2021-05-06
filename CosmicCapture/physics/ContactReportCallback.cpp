@@ -1,8 +1,8 @@
 #include "ContactReportCallback.h"
 
 #include "../GlobalState.h"
-#include "../audio/AudioEngine.h"
 #include "Physics.h"
+#include "../audio/GameAudio.h"
 
 
 void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
@@ -16,7 +16,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				State::flagPickedUpBy[0] = true;
 				State::slowCar = 0;
 				fmt::print("player 0 picked up flag\n");
-				Audio::flag_pickup.playSound();
+				GameAudio::play(GameSounds::FLAG_PICKUP);
 				State::flagPickedUp = true;
 				
 			}
@@ -24,21 +24,21 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				State::flagPickedUpBy[1] = true;
 				State::slowCar = 1;
 				fmt::print("player 1 picked up flag\n");
-				if (State::numHumanPlayers > 1) Audio::flag_pickup.playSound();
+				if (State::numHumanPlayers > 1) GameAudio::play(GameSounds::FLAG_PICKUP);
 				State::flagPickedUp = true;
 			}
 			else if (pairs[i].otherActor == State::vehicles[2]->getRigidDynamicActor() && !State::flagPickedUpBy[2] && !State::flagPickedUp) {
 				State::flagPickedUpBy[2] = true;
 				State::slowCar = 2;
 				fmt::print("player 2 picked up flag\n");
-				if (State::numHumanPlayers > 2) Audio::flag_pickup.playSound();
+				if (State::numHumanPlayers > 2) GameAudio::play(GameSounds::FLAG_PICKUP);
 				State::flagPickedUp = true;
 			}
 			else if (pairs[i].otherActor == State::vehicles[3]->getRigidDynamicActor() && !State::flagPickedUpBy[3] && !State::flagPickedUp) {
 				State::flagPickedUpBy[3] = true;
 				State::slowCar = 3;
 				fmt::print("player 3 picked up flag\n");
-				if (State::numHumanPlayers > 3) Audio::flag_pickup.playSound();
+				if (State::numHumanPlayers > 3) GameAudio::play(GameSounds::FLAG_PICKUP);
 				State::flagPickedUp = true;
 			}
 		}
@@ -59,7 +59,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
 			}
-			Audio::flag_return.playSound();
+			GameAudio::play(GameSounds::FLAG_RETURN);
 			State::resetFlag = true;
 		}
 		else if (pairs[i].triggerActor == State::flagDropoffBoxes[1] && pairs[i].otherActor == State::vehicles[1]->getRigidDynamicActor() && State::flagPickedUpBy[1])
@@ -77,7 +77,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
 			}
-			if(State::numHumanPlayers > 1) Audio::flag_return.playSound();
+			if (State::numHumanPlayers > 1) GameAudio::play(GameSounds::FLAG_RETURN);
 			State::resetFlag = true;
 		}
 		else if (pairs[i].triggerActor == State::flagDropoffBoxes[2] && pairs[i].otherActor == State::vehicles[2]->getRigidDynamicActor() && State::flagPickedUpBy[2])
@@ -95,7 +95,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
 			}
-			if (State::numHumanPlayers > 2) Audio::flag_return.playSound();
+			if (State::numHumanPlayers > 2) GameAudio::play(GameSounds::FLAG_RETURN);
 			State::resetFlag = true;
 		}
 		else if (pairs[i].triggerActor == State::flagDropoffBoxes[3] && pairs[i].otherActor == State::vehicles[3]->getRigidDynamicActor() && State::flagPickedUpBy[3])
@@ -112,7 +112,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 			for (int j = 0; j < 4; j++) {
 				State::killCars[j] = true;
 			}
-			if (State::numHumanPlayers > 3) Audio::flag_return.playSound();
+			if (State::numHumanPlayers > 3) GameAudio::play(GameSounds::FLAG_RETURN);
 			State::resetFlag = true;
 		}
 
@@ -126,7 +126,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 					if (pairs[i].triggerActor == geom)
 					{
 						fmt::print("Player {} picked up projectile.\n", j);
-						if(j == 0 ||(State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) Audio::projectile_pickup.playSound();
+						if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) GameAudio::play(GameSounds::PROJECTILE_PICKUP);
 						State::heldPowerUps[j] = PowerUpOptions::PROJECTILE;
 					}
 				}
@@ -136,7 +136,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 					{
 						fmt::print("Player {} picked up speed boost.\n", j);
 						State::heldPowerUps[j] = PowerUpOptions::SPEED_BOOST;
-						if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) Audio::speed_boost_pickup.playSound();
+						if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) GameAudio::play(GameSounds::SPEED_BOOST_PICKUP);
 					}
 				}
 
@@ -146,7 +146,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 					{
 						fmt::print("Player {} picked up spike trap\n", j);
 						State::heldPowerUps[j] = PowerUpOptions::SPIKE_TRAP;
-						if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) Audio::spike_trap_pickup.playSound();
+						if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) GameAudio::play(GameSounds::SPIKE_TRAP_PICKUP);
 					}
 				}
 			}
@@ -162,7 +162,7 @@ void ContactReportCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 				{
 					if (pairs[i].otherActor == State::vehicles[j]->getRigidDynamicActor())
 					{
-						if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) Audio::caught.playSound();
+						if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) GameAudio::play(GameSounds::CAUGHT);
 						spikeTrapState.actingUpon = j;
 						fmt::print("Ran into spike trap!\n");
 						spikeTrapState.active = false;
@@ -184,12 +184,12 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 			//car hits
 			if ((pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 
-				if (State::numHumanPlayers > 1) Audio::car_crash.playSound();
+				if (State::numHumanPlayers > 1) GameAudio::play(GameSounds::CAR_CRASH);
 				if (State::flagPickedUpBy[0]) {
 					State::killCars[0] = true;
 					State::flagPickedUpBy[0] = false;
 					State::flagPickedUp = false;
-					Audio::flag_lost.playSound();
+					GameAudio::play(GameSounds::FLAG_LOST);
 					PxVehicleEngineData eng1;
 					eng1.mMaxOmega = 2000;
 					eng1.mPeakTorque = 2000;
@@ -199,23 +199,23 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::killCars[1] = true;
 					State::flagPickedUpBy[1] = false;
 					State::flagPickedUp = false;
-					if (State::numHumanPlayers > 1) Audio::flag_lost.playSound();
+					if (State::numHumanPlayers > 1) GameAudio::play(GameSounds::FLAG_LOST);
 					PxVehicleEngineData eng1;
 					eng1.mMaxOmega = 2000;
 					eng1.mPeakTorque = 2000;
 					State::vehicles[1]->mDriveSimData.setEngineData(eng1);
 				}
 				printf("Car 0 and Car 1 have hit\n");
-				Audio::car_crash.playSound();
+				GameAudio::play(GameSounds::CAR_CRASH);
 			}
 			if ((pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor())|| (pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 
-				if (State::numHumanPlayers > 1) Audio::car_crash.playSound();
+				if (State::numHumanPlayers > 1) GameAudio::play(GameSounds::CAR_CRASH);
 				if (State::flagPickedUpBy[0]) {
 					State::killCars[0] = true;
 					State::flagPickedUpBy[0] = false;
 					State::flagPickedUp = false;
-					Audio::flag_lost.playSound();
+					GameAudio::play(GameSounds::FLAG_LOST);
 					PxVehicleEngineData eng1;
 					eng1.mMaxOmega = 2000;
 					eng1.mPeakTorque = 2000;
@@ -225,23 +225,23 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::killCars[2] = true;
 					State::flagPickedUpBy[2] = false;
 					State::flagPickedUp = false;
-					if (State::numHumanPlayers > 2) Audio::flag_lost.playSound();
+					if (State::numHumanPlayers > 2) GameAudio::play(GameSounds::FLAG_LOST);
 					PxVehicleEngineData eng1;
 					eng1.mMaxOmega = 2000;
 					eng1.mPeakTorque = 2000;
 					State::vehicles[2]->mDriveSimData.setEngineData(eng1);
 				}
 				printf("Car 0 and Car 2 have hit\n");
-				Audio::car_crash.playSound();
+				GameAudio::play(GameSounds::CAR_CRASH);
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[0]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[0]->getRigidDynamicActor())) {
 
-				if (State::numHumanPlayers > 1) Audio::car_crash.playSound();
+				if (State::numHumanPlayers > 1) GameAudio::play(GameSounds::CAR_CRASH);
 				if (State::flagPickedUpBy[0]) {
 					State::killCars[0] = true;
 					State::flagPickedUpBy[0] = false;
 					State::flagPickedUp = false;
-					Audio::flag_lost.playSound();
+					GameAudio::play(GameSounds::FLAG_LOST);
 					PxVehicleEngineData eng1;
 					eng1.mMaxOmega = 2000;
 					eng1.mPeakTorque = 2000;
@@ -251,23 +251,23 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::killCars[3] = true;
 					State::flagPickedUpBy[3] = false;
 					State::flagPickedUp = false;
-					if (State::numHumanPlayers > 3) Audio::flag_lost.playSound();
+					if (State::numHumanPlayers > 3) GameAudio::play(GameSounds::FLAG_LOST);
 					PxVehicleEngineData eng1;
 					eng1.mMaxOmega = 2000;
 					eng1.mPeakTorque = 2000;
 					State::vehicles[3]->mDriveSimData.setEngineData(eng1);
 				}
 				printf("Car 0 and Car 3 have hit\n");
-				Audio::car_crash.playSound();
+				GameAudio::play(GameSounds::CAR_CRASH);
 			}
 			if ((pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor())) {
 
-				if (State::numHumanPlayers > 1) Audio::car_crash.playSound();
+				if (State::numHumanPlayers > 1) GameAudio::play(GameSounds::CAR_CRASH);
 				if (State::flagPickedUpBy[1]) {
 					State::killCars[1] = true;
 					State::flagPickedUpBy[1] = false;
 					State::flagPickedUp = false;
-					if (State::numHumanPlayers > 1) Audio::flag_lost.playSound();
+					if (State::numHumanPlayers > 1) GameAudio::play(GameSounds::FLAG_LOST);
 					PxVehicleEngineData eng1;
 					eng1.mMaxOmega = 2000;
 					eng1.mPeakTorque = 2000;
@@ -277,7 +277,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::killCars[2] = true;
 					State::flagPickedUpBy[2] = false;
 					State::flagPickedUp = false;
-					if (State::numHumanPlayers > 2) Audio::flag_lost.playSound();
+					if (State::numHumanPlayers > 2) GameAudio::play(GameSounds::FLAG_LOST);
 					PxVehicleEngineData eng1;
 					eng1.mMaxOmega = 2000;
 					eng1.mPeakTorque = 2000;
@@ -287,12 +287,12 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[1]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[1]->getRigidDynamicActor())) {
 
-				if (State::numHumanPlayers > 1) Audio::car_crash.playSound();
+				if (State::numHumanPlayers > 1) GameAudio::play(GameSounds::CAR_CRASH);
 				if (State::flagPickedUpBy[1]) {
 					State::killCars[1] = true;
 					State::flagPickedUpBy[1] = false;
 					State::flagPickedUp = false;
-					if (State::numHumanPlayers > 1) Audio::flag_lost.playSound();
+					if (State::numHumanPlayers > 1) GameAudio::play(GameSounds::FLAG_LOST);
           PxVehicleEngineData eng1;
 					eng1.mMaxOmega = 2000;
 					eng1.mPeakTorque = 2000;
@@ -302,7 +302,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::killCars[3] = true;
 					State::flagPickedUpBy[3] = false;
 					State::flagPickedUp = false;
-					if (State::numHumanPlayers > 3) Audio::flag_lost.playSound();
+					if (State::numHumanPlayers > 3) GameAudio::play(GameSounds::FLAG_LOST);
 					PxVehicleEngineData eng1;
 					eng1.mMaxOmega = 2000;
 					eng1.mPeakTorque = 2000;
@@ -312,12 +312,12 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 			}
 			if ((pairHeader.actors[0] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[1] == State::vehicles[2]->getRigidDynamicActor()) || (pairHeader.actors[1] == State::vehicles[3]->getRigidDynamicActor() && pairHeader.actors[0] == State::vehicles[2]->getRigidDynamicActor())){
 
-				if (State::numHumanPlayers > 2) Audio::car_crash.playSound();
+				if (State::numHumanPlayers > 2) GameAudio::play(GameSounds::CAR_CRASH);
 				if (State::flagPickedUpBy[2]) {
 					State::killCars[2] = true;
 					State::flagPickedUpBy[2] = false;
 					State::flagPickedUp = false;
-					if (State::numHumanPlayers > 2) Audio::flag_lost.playSound();
+					if (State::numHumanPlayers > 2) GameAudio::play(GameSounds::FLAG_LOST);
 					PxVehicleEngineData eng1;
 					eng1.mMaxOmega = 2000;
 					eng1.mPeakTorque = 2000;
@@ -327,7 +327,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 					State::killCars[3] = true;
 					State::flagPickedUpBy[3] = false;
 					State::flagPickedUp = false;
-					if (State::numHumanPlayers > 3) Audio::flag_lost.playSound();
+					if (State::numHumanPlayers > 3) GameAudio::play(GameSounds::FLAG_LOST);
 					PxVehicleEngineData eng1;
 					eng1.mMaxOmega = 2000;
 					eng1.mPeakTorque = 2000;
@@ -351,7 +351,7 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 						State::killCars[j] = true;
 
 						// Note: as of now no bounds for distance from player etc.
-						Audio::projectile_explosion.playSound();
+						GameAudio::play(GameSounds::PROJECTILE_EXPLOSION);
 
 						if (State::flagPickedUpBy[j])
 						{
@@ -373,11 +373,11 @@ void ContactReportCallback::onContact(const PxContactPairHeader& pairHeader, con
 			for (int j = 0; j < 4; ++j)
 			{
 				if ((pairHeader.actors[0] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::redDoorBody) || (pairHeader.actors[1] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::redDoorBody)) {
-					if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) Audio::collision.playSound();
+					if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) GameAudio::play(GameSounds::COLLISION);
 					printf("hit red arena\n");
 				}
 				if ((pairHeader.actors[0] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[1] == Physics::blueDoorBody) || (pairHeader.actors[1] == State::vehicles[j]->getRigidDynamicActor() && pairHeader.actors[0] == Physics::blueDoorBody)) {
-					if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) Audio::collision.playSound();
+					if (j == 0 || (State::numHumanPlayers > 1 && j == 1) || (State::numHumanPlayers > 2 && j == 2) || (State::numHumanPlayers > 3 && j == 3)) GameAudio::play(GameSounds::COLLISION);
 					printf("hit blue arena\n");
 				}
 			}

@@ -10,7 +10,7 @@
 #include "ProjectilePickupZone.h"
 #include "Projectile.h"
 
-#include "./audio/AudioEngine.h"
+#include "audio/GameAudio.h"
 
 PowerUpManager::PowerUpManager(Physics& instance)
 {
@@ -98,7 +98,7 @@ void PowerUpManager::use(Physics& instance, const InputInfo& inputInfo, int play
 			mDeployedPowerUps.push_back(std::move(powerup));
 			State::heldPowerUps[playerNum].reset();
 
-			if (playerNum == 0 || (State::numHumanPlayers > 1 && playerNum == 1) || (State::numHumanPlayers > 2 && playerNum == 2) || (State::numHumanPlayers > 3 && playerNum == 3)) Audio::projectile.playSound();
+			if (playerNum == 0 || (State::numHumanPlayers > 1 && playerNum == 1) || (State::numHumanPlayers > 2 && playerNum == 2) || (State::numHumanPlayers > 3 && playerNum == 3)) GameAudio::play(GameSounds::PROJECTILE);
 		}
 	} else if (dynamic_cast<SpeedBoost*>(mHeldPowerUps[playerNum].get()))
 	{
@@ -109,7 +109,7 @@ void PowerUpManager::use(Physics& instance, const InputInfo& inputInfo, int play
 			mDeployedPowerUps.push_back(std::move(powerup));
 			State::heldPowerUps[playerNum].reset();
 
-			if (playerNum == 0 || (State::numHumanPlayers > 1 && playerNum == 1) || (State::numHumanPlayers > 2 && playerNum == 2) || (State::numHumanPlayers > 3 && playerNum == 3)) Audio::speed_boost.playSound();
+			if (playerNum == 0 || (State::numHumanPlayers > 1 && playerNum == 1) || (State::numHumanPlayers > 2 && playerNum == 2) || (State::numHumanPlayers > 3 && playerNum == 3)) GameAudio::play(GameSounds::SPEED_BOOST);
 		}
 	} else if (dynamic_cast<SpikeTrap*>(mHeldPowerUps[playerNum].get()))
 	{
@@ -120,7 +120,7 @@ void PowerUpManager::use(Physics& instance, const InputInfo& inputInfo, int play
 			mDeployedPowerUps.push_back(std::move(powerup));
 			State::heldPowerUps[playerNum].reset();
 
-			if (playerNum == 0 || (State::numHumanPlayers > 1 && playerNum == 1) || (State::numHumanPlayers > 2 && playerNum == 2) || (State::numHumanPlayers > 3 && playerNum == 3)) Audio::collision.playSound();
+			if (playerNum == 0 || (State::numHumanPlayers > 1 && playerNum == 1) || (State::numHumanPlayers > 2 && playerNum == 2) || (State::numHumanPlayers > 3 && playerNum == 3)) GameAudio::play(GameSounds::COLLISION);
 		}
 	}
 }
@@ -142,7 +142,7 @@ void PowerUpManager::use(Physics& instance, std::map<MovementFlags, bool> inputS
 			mDeployedPowerUps.push_back(std::move(powerup));
 			State::heldPowerUps[playerNum].reset();
 
-			if (playerNum == 0) Audio::projectile.playSound();
+			if (playerNum == 0) GameAudio::play(GameSounds::PROJECTILE);
 		}
 	}
 	else if (dynamic_cast<SpeedBoost*>(mHeldPowerUps[playerNum].get()))
@@ -154,7 +154,7 @@ void PowerUpManager::use(Physics& instance, std::map<MovementFlags, bool> inputS
 			mDeployedPowerUps.push_back(std::move(powerup));
 			State::heldPowerUps[playerNum].reset();
 
-			if (playerNum == 0) Audio::speed_boost.playSound();
+			if (playerNum == 0) GameAudio::play(GameSounds::SPEED_BOOST);
 		}
 	}
 	else if (dynamic_cast<SpikeTrap*>(mHeldPowerUps[playerNum].get()))
@@ -166,7 +166,7 @@ void PowerUpManager::use(Physics& instance, std::map<MovementFlags, bool> inputS
 			mDeployedPowerUps.push_back(std::move(powerup));
 			State::heldPowerUps[playerNum].reset();
 
-			if (playerNum == 0) Audio::collision.playSound();
+			if (playerNum == 0) GameAudio::play(GameSounds::COLLISION);
 		}
 	}
 }
