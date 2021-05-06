@@ -38,25 +38,16 @@ extern float peakTorque;
 extern float maxOmega;
 extern float gearSwitchTime;
 extern float clutchStrength;
-////////////////////////////////////////////////
 
 PxRigidStatic* createDrivablePlane(const PxFilterData& simFilterData, PxMaterial* material, PxPhysics* physics);
 
-////////////////////////////////////////////////
-
 PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* physics, PxCooking* cooking);
-
-////////////////////////////////////////////////
 
 PxConvexMesh* createChassisMesh(PxVec3 dims, PxPhysics& physics, PxCooking& cooking);
 PxConvexMesh* createWheelMesh(PxF32 width, PxF32 radius, PxPhysics& physics, PxCooking& cooking);
 
-////////////////////////////////////////////////
-
 void customizeVehicleToLengthScale(const PxReal lengthScale, PxRigidDynamic* rigidDynamic, PxVehicleWheelsSimData* wheelsSimData, PxVehicleDriveSimData* driveSimData);
 void customizeVehicleToLengthScale(const PxReal lengthScale, PxRigidDynamic* rigidDynamic, PxVehicleWheelsSimData* wheelsSimData, PxVehicleDriveSimData4W* driveSimData);
-
-////////////////////////////////////////////////
 
 PxRigidDynamic* createVehicleActor
 (const PxVehicleChassisData& chassisData,
@@ -65,7 +56,3 @@ PxRigidDynamic* createVehicleActor
 	PxPhysics& physics);
 
 void configureUserData(PxVehicleWheels* vehicle, ActorUserData* actorUserData, ShapeUserData* shapeUserDatas);
-
-
-
-////////////////////////////////////////////////

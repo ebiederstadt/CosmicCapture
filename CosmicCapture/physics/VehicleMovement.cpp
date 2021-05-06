@@ -1,8 +1,10 @@
 #include "VehicleMovement.h"
-VehicleMovement::VehicleMovement() {}
-VehicleMovement::VehicleMovement(bool flag) {
+
+VehicleMovement::VehicleMovement(bool flag)
+{
 	gMimicKeyInputs = flag;
 }
+
 void VehicleMovement::startAccelerateForwardsMode()
 {
 	if (gMimicKeyInputs)
@@ -132,4 +134,3 @@ void VehicleMovement::releaseAllControls()
 		gVehicleInputData.setAnalogHandbrake(0.0f);
 	}
 }
-

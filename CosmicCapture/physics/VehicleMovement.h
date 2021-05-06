@@ -8,7 +8,7 @@ using namespace physx;
 class VehicleMovement
 {
 public:
-	VehicleMovement();
+	VehicleMovement() = default;
 	VehicleMovement(bool flag);
 
 	void startAccelerateForwardsMode();

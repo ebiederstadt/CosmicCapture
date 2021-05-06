@@ -1,17 +1,26 @@
 #pragma once
 
-#include "ContactReportCallback.h"
-#include "physx/PxPhysicsAPI.h"
-#include "VehicleSceneQuery.h"
 #include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <fmt/format.h>
+#include <fmt/core.h>
 #include <assimp/mesh.h>
 #include <assimp/scene.h>
 #include <vector>
 
-#define PX_RELEASE(x) if(x){x->release();x=NULL;}
-#define PVD_HOST "127.0.0.1"
+#include "ContactReportCallback.h"
+#include "physx/PxPhysicsAPI.h"
+#include "VehicleSceneQuery.h"
+
+template <typename T>
+constexpr void PX_RELEASE(T& x)
+{
+	if (x)
+	{
+		x->release();
+		x = nullptr;
+	}
+}
+
+constexpr char PVD_HOST[] = "127.0.0.1";
 
 using namespace physx;
 
@@ -99,9 +108,6 @@ public:
 	void generateRedDoor();
 	void generateBlueDoor();
 
-	//PxTriangleMeshGeometry arenaMesh = nullptr;
-	//PxShape* arenaShape = nullptr;
-	//PxRigidStatic* arenaBody = nullptr;
 	PxTriangleMeshGeometry redDoorMesh = nullptr;
 	PxTriangleMeshGeometry blueDoorMesh = nullptr;
 	PxShape* blueDoorShape = nullptr;
@@ -131,21 +137,16 @@ public:
 	// Singleton
 	Physics() {}
 
-
 	PxDefaultAllocator gAllocator;
 	PxDefaultErrorCallback gErrorCallback;
 
 	PxFoundation* gFoundation = nullptr;
 	PxPhysics* gPhysics = nullptr;
-
 	PxDefaultCpuDispatcher* gDispatcher = nullptr;
+
 	PxScene* gScene = nullptr;
-
-
 	PxCooking* gCooking = nullptr;
-
 	PxMaterial* gMaterial = nullptr;
-
 	PxPvd* gPvd = nullptr;
 
 	VehicleSceneQueryData* gVehicleSceneQueryData = nullptr;
@@ -163,6 +164,7 @@ public:
 	ContactReportCallback gContactReportCallback{};
 
 	static constexpr PxF32 timestep = 1.0f / 60.0f;
+
 private:
 	// Cooking parameters
 	std::vector<PxVec3> vectorList;

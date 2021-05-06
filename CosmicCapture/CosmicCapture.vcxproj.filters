@@ -38,12 +38,10 @@
     <ClCompile Include="graphics\Model.cpp" />
     <ClCompile Include="graphics\Texture.cpp" />
     <ClCompile Include="physics\Physics.cpp" />
-    <ClCompile Include="physics\TriggerCallback.cpp" />
     <ClCompile Include="physics\VehicleCreate.cpp" />
     <ClCompile Include="physics\VehicleFilterShader.cpp" />
     <ClCompile Include="physics\VehicleSceneQuery.cpp" />
     <ClCompile Include="physics\VehicleTireFriction.cpp" />
-    <ClCompile Include="physics\ContactModification.cpp" />
     <ClCompile Include="physics\VehicleMovement.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Vehicle.cpp" />
@@ -60,7 +58,6 @@
     <ClCompile Include="audio\AudioInstance.cpp" />
     <ClCompile Include="SpikeTrap.cpp" />
     <ClCompile Include="SpikeTrapPickupZone.cpp" />
-    <ClCompile Include="GridMarker.cpp" />
     <ClCompile Include="InvisibleBarrier.cpp" />
     <ClCompile Include="PowerUpManager.cpp" />
     <ClCompile Include="GameUI.cpp" />
@@ -111,13 +108,11 @@
     <ClInclude Include="GlDebug.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="physics\Physics.h" />
-    <ClInclude Include="physics\TriggerCallback.h" />
     <ClInclude Include="physics\VehicleCreate.h" />
     <ClInclude Include="physics\VehicleFilterShader.h" />
     <ClInclude Include="physics\VehicleSceneQuery.h" />
     <ClInclude Include="physics\VehicleTireFriction.h" />
     <ClInclude Include="Conversions.h" />
-    <ClInclude Include="physics\ContactModification.h" />
     <ClInclude Include="physics\VehicleMovement.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Vehicle.h" />
@@ -135,7 +130,6 @@
     <ClInclude Include="audio\AudioInstance.h" />
     <ClInclude Include="SpikeTrap.h" />
     <ClInclude Include="SpikeTrapPickupZone.h" />
-    <ClInclude Include="GridMarker.h" />
     <ClInclude Include="InvisibleBarrier.h" />
     <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="GameUI.h" />
