@@ -8,15 +8,14 @@
 Model::Model(
 	const char* modelPath,
 	const char* texturePath,
-	const unsigned int usage,
-	bool isRepeating
+	const unsigned int usage
 ) :
 	mTexture(texturePath),
 	mUsage(usage),
 	mModel(physx::PxIdentity)
 {
 	api = TextureAPI::instance();
-	api->create(texturePath, GL_LINEAR, false, isRepeating);
+	api->create(texturePath, GL_LINEAR, false);
 
 	readMesh(modelPath);
 }

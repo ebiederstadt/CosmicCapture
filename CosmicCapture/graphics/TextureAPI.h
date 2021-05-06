@@ -20,7 +20,7 @@ public:
 	
 	using TextureName = std::string;
 
-	void create(const TextureName& name, unsigned int interpolation = GL_LINEAR, bool flip = false, bool repeat = false);
+	void create(const TextureName& name, unsigned int interpolation = GL_LINEAR, bool flip = false);
 	void bind(const TextureName& name) { mTextures.at(name).bind(); }
 
 private:

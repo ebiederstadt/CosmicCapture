@@ -26,8 +26,7 @@ public:
 	Model(
 		const char* modelPath,
 		const char* texturePath,
-		unsigned int usage = GL_STATIC_DRAW,
-		bool isRepeating = false
+		unsigned int usage = GL_STATIC_DRAW
 	);
 
 	// Draw things where the position/rotation/scale changes

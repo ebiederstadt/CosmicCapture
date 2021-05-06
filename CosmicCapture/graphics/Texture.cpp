@@ -7,7 +7,7 @@
 #include <stb/stb_image.h>
 
 
-Texture::Texture(const std::string& path, const GLuint interpolation, bool flip, bool repeat)
+Texture::Texture(const std::string& path, const GLuint interpolation, bool flip)
 {
 	int width, height, nrChannels;
 

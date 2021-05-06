@@ -191,13 +191,13 @@ int main(int, char**) {
 
 	// The arena model
 	Model arenaPlane("models/arena_plane.obj", "textures/arena_plane_texture.jpg", GL_DYNAMIC_DRAW);
-	Model centerArea("models/center_area.obj", "textures/center_area_texture.jpg", GL_DYNAMIC_DRAW, true);
-	Model dome("models/dome.obj", "textures/dome.jpg", GL_DYNAMIC_DRAW, true);
-	Model innerWalls("models/inner_walls.obj", "textures/pillars_texture.jpg", GL_DYNAMIC_DRAW, true);
-	Model walls("models/walls.obj", "textures/pillars_texture.jpg", GL_DYNAMIC_DRAW, true);
+	Model centerArea("models/center_area.obj", "textures/center_area_texture.jpg", GL_DYNAMIC_DRAW);
+	Model dome("models/dome.obj", "textures/dome.jpg", GL_DYNAMIC_DRAW);
+	Model innerWalls("models/inner_walls.obj", "textures/pillars_texture.jpg", GL_DYNAMIC_DRAW);
+	Model walls("models/walls.obj", "textures/pillars_texture.jpg", GL_DYNAMIC_DRAW);
 	Model redGates("models/red_gates.obj", "textures/red_gates.jpg", GL_DYNAMIC_DRAW);
 	Model blueGates("models/blue_gates.obj", "textures/blue_gates.jpg", GL_DYNAMIC_DRAW);
-	Model skybox("models/skybox.obj", "textures/stars.jpg", GL_DYNAMIC_DRAW, true);
+	Model skybox("models/skybox.obj", "textures/stars.jpg", GL_DYNAMIC_DRAW);
 
 	// Shadow setup start ---------------------------------------------------------------------
 
