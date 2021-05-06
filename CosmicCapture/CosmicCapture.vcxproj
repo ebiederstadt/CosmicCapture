@@ -162,7 +162,7 @@
     <ClCompile Include="GameUI.cpp" />
     <ClCompile Include="InvisibleBarrier.cpp" />
     <ClCompile Include="OpponentInput.cpp" />
-    <ClCompile Include="Pathfinding.cpp" />
+    <ClCompile Include="PathFinding.cpp" />
     <ClCompile Include="physics\ContactReportCallback.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GlDebug.cpp" />
@@ -207,7 +207,6 @@
     <ClInclude Include="audio\AudioEngine.h" />
     <ClInclude Include="audio\AudioInstance.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Colors.h" />
     <ClInclude Include="DoorSwitchZone.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="FlagDropoffZone.h" />
@@ -215,7 +214,7 @@
     <ClInclude Include="GlobalState.h" />
     <ClInclude Include="InvisibleBarrier.h" />
     <ClInclude Include="OpponentInput.h" />
-    <ClInclude Include="Pathfinding.h" />
+    <ClInclude Include="PathFinding.h" />
     <ClInclude Include="physics\ContactReportCallback.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Conversions.h" />

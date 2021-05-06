@@ -3,7 +3,6 @@
 #include <memory>
 #include "GlobalState.h"
 #include "physics/VehicleFilterShader.h"
-#include "Colors.h"
 
 
 Flag::Flag() :

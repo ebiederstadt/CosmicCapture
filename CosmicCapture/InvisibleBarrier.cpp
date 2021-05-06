@@ -1,10 +1,8 @@
 #include "InvisibleBarrier.h"
 
-#include "Colors.h"
-
 
 InvisibleBarrier::InvisibleBarrier(int type) : 
-	Entity("models/blocking_cube.ply", "textures/blank.jpg")
+	Entity("models/blocking_cube.ply", "textures/white.jpg")
 {
 	barrierType = type;
 }

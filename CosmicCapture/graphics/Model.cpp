@@ -21,16 +21,6 @@ Model::Model(
 	readMesh(modelPath);
 }
 
-Model::Model(const char* modelPath, const glm::vec4& textureColor) :
-	mUsage(GL_STATIC_DRAW),
-	mModel(physx::PxIdentity)
-{
-	api = TextureAPI::instance();
-	mTexture = api->create(textureColor);
-	readMesh(modelPath);
-}
-
-
 void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type)
 {
 	setModel(modelMatrix);

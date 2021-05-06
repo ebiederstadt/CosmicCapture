@@ -51,7 +51,7 @@
     <ClCompile Include="ProjectilePickupZone.cpp" />
     <ClCompile Include="FlagDropoffZone.cpp" />
     <ClCompile Include="OpponentInput.cpp" />
-    <ClCompile Include="Pathfinding.cpp" />
+    <ClCompile Include="PathFinding.cpp" />
     <ClCompile Include="SpeedBoost.cpp" />
     <ClCompile Include="SpeedBoostPickupZone.cpp" />
     <ClCompile Include="audio\AudioEngine.cpp" />
@@ -123,7 +123,7 @@
     <ClInclude Include="ProjectilePickupZone.h" />
     <ClInclude Include="FlagDropoffZone.h" />
     <ClInclude Include="OpponentInput.h" />
-    <ClInclude Include="Pathfinding.h" />
+    <ClInclude Include="PathFinding.h" />
     <ClInclude Include="SpeedBoost.h" />
     <ClInclude Include="SpeedBoostPickupZone.h" />
     <ClInclude Include="audio\AudioEngine.h" />
@@ -133,7 +133,6 @@
     <ClInclude Include="InvisibleBarrier.h" />
     <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="GameUI.h" />
-    <ClInclude Include="Colors.h" />
     <ClInclude Include="DoorSwitchZone.h" />
     <ClInclude Include="graphics\TextureAPI.h" />
   </ItemGroup>

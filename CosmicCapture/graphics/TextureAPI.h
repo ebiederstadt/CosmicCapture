@@ -21,7 +21,6 @@ public:
 	using TextureName = std::string;
 
 	void create(const TextureName& name, unsigned int interpolation = GL_LINEAR, bool flip = false, bool repeat = false);
-	std::string create(const glm::vec4& color);
 
 	void bind(const TextureName& name) { mTextures.at(name).bind(); }
 

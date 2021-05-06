@@ -1,5 +1,7 @@
 #include "PowerUpManager.h"
 
+#include <stdexcept>
+
 #include "GlobalState.h"
 #include "SpikeTrap.h"
 #include "SpeedBoost.h"

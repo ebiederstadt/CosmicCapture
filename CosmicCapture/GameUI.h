@@ -6,33 +6,31 @@
 
 #include <physx/PxPhysicsAPI.h>
 
-#include "Colors.h"
-
 // Wrapper for all the textures we are using
 struct GUITextures
 {
 	GUITextures()
 	{
 		TextureAPI* instance = TextureAPI::instance();
-		blank = instance->create(CLEAR);
-		instance->create("textures/spike_preview.png", GL_LINEAR, false);
-		instance->create("textures/speed_boost.png", GL_LINEAR, false);
-		instance->create("textures/rocket_preview.png", GL_LINEAR, false);
+		instance->create(blank);
+		instance->create(spikeTrapTexture, GL_LINEAR, false);
+		instance->create(speedBoostTexture, GL_LINEAR, false);
+		instance->create(projectileTexture, GL_LINEAR, false);
 
-		instance->create("textures/compass.png", GL_LINEAR, false);
+		instance->create(compassTexture, GL_LINEAR, false);
 
-		instance->create("textures/cosmicLogo.png", GL_LINEAR, false);
-		instance->create("textures/font.bmp", GL_NEAREST, false);
+		instance->create(logo, GL_LINEAR, false);
+		instance->create(font, GL_NEAREST, false);
 
-		instance->create("textures/winscreen.png", GL_NEAREST, false);
-		instance->create("textures/losescreen.png", GL_NEAREST, false);
+		instance->create(winScreen, GL_NEAREST, false);
+		instance->create(loseScreen, GL_NEAREST, false);
 
-		instance->create("textures/playerSelect.png", GL_NEAREST, false);
-		instance->create("textures/notReady.png", GL_NEAREST, false);
-		instance->create("textures/ready.png", GL_NEAREST, false);
+		instance->create(playerSelect, GL_NEAREST, false);
+		instance->create(notReady, GL_NEAREST, false);
+		instance->create(ready, GL_NEAREST, false);
 	}
 	
-	TextureAPI::TextureName blank;
+	TextureAPI::TextureName blank = "textures/blank.png";
 
 	TextureAPI::TextureName spikeTrapTexture = "textures/spike_preview.png";
 	TextureAPI::TextureName speedBoostTexture = "textures/speed_boost.png";

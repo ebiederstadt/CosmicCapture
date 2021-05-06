@@ -29,7 +29,6 @@ public:
 		unsigned int usage = GL_STATIC_DRAW,
 		bool isRepeating = false
 	);
-	Model(const char* modelPath, const glm::vec4& textureColor);
 
 	// Draw things where the position/rotation/scale changes
 	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type);

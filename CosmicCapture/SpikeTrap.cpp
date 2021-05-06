@@ -4,10 +4,8 @@
 #include "physics/VehicleFilterShader.h"
 #include <fmt/format.h>
 
-#include "Colors.h"
-
 SpikeTrap::SpikeTrap(): Entity(
-	"models/spike_trap.obj", WHITE)
+	"models/spike_trap.obj", "textures/white.jpg")
 {
 	spikeTrapState state;
 	m_id = static_cast<int>(State::spike_trap_states.size());

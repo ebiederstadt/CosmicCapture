@@ -10,7 +10,6 @@ class Entity
 public:
 	Entity(std::unique_ptr<Model> model) : mGeometry(std::move(model)) {}
 	Entity(const char* modelPath, const char* texturePath);
-	Entity(const char* modelPath, const glm::vec4& textureColor);
 
 	virtual ~Entity() = default;
 

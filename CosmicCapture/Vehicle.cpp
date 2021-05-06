@@ -102,9 +102,6 @@ Vehicle::Vehicle(int playerNum, std::string modelPath, std::string bodyTexturePa
 		movement = VehicleMovement(false);
 	}
 
-
-	//tireTexturePath = "textures/blank.jpg";
-
 	wheel1 = std::make_unique<Model>("models/frontRight.obj", tireTexturePath.c_str());
 	wheel2 = std::make_unique<Model>("models/frontLeft.obj", tireTexturePath.c_str());
 	wheel3 = std::make_unique<Model>("models/backRight.obj", tireTexturePath.c_str());
