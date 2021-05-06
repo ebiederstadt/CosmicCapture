@@ -164,16 +164,16 @@ int main(int, char**) {
 
 	const GLint width = 1280, height = 720;
 	Window window("Cosmic Capture", width, height);
-	const float aspect = static_cast<float>(width) / static_cast<float>(height);
 
 	Physics physics = Physics::Instance();
 	physics.Initialize();
 
 	// Cameras for each of the players
-	Camera camera(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
-	Camera camera1(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
-	Camera camera2(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
-	Camera camera3(PxVec3(0.0f, 7.0f, -13.0f), PxVec3(-0.6f, -0.2f, -0.7f), aspect);
+	const float aspect = static_cast<float>(width) / static_cast<float>(height);
+	Camera camera(aspect);
+	Camera camera1(aspect);
+	Camera camera2(aspect);
+	Camera camera3(aspect);
 
 	std::array<Camera*, 4> cameras = { &camera, &camera1, &camera2, &camera3 };
 

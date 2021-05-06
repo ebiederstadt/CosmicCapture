@@ -42,11 +42,7 @@ class Camera
 {
 public:
 	Camera(const physx::PxVec3& eye, const physx::PxVec3& dir, float aspect);
-
-	void				handleMouse(int button, int state, int x, int y);
-	bool				handleKey(unsigned char key, int x, int y, float speed = 1.0f);
-	void				handleMotion(int x, int y);
-	void				handleAnalogMove(float x, float y);
+	Camera(float aspect);
 
 	[[nodiscard]] glm::mat4 getViewMatrix() const;
 	void updateCamera(const physx::PxMat44& model, float speed, bool isReversing, bool reverseCamera);
@@ -65,7 +61,5 @@ private:
 	std::vector<physx::PxVec3>	lagEyes;
 	physx::PxVec3	mEye;
 	physx::PxVec3	mDir;
-	int				mMouseX;
-	int				mMouseY;
 };
 
