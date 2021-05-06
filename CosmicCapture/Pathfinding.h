@@ -1,13 +1,10 @@
 #pragma once
+
 #include <utility>
 #include <stack>
-#include <set>
-#include <math.h>
-#include <fmt/format.h>
-#include "GlobalState.h"
 
-#define ROW 26
-#define COL 26
+constexpr int ROW = 26;
+constexpr int COL = 26;
 
 // Creating a shortcut for int, int pair type
 typedef std::pair<int, int> Pair;
@@ -20,18 +17,16 @@ struct Cell {
 	double f, g, h;
 };
 
-class Pathfinding
+class PathFinding
 {
 public:
-	Pathfinding();
-	std::stack<Pair> ehStarSearch(int grid[][COL], Pair src, Pair dest);
+	std::stack<Pair> aStarSearch(int grid[][COL], Pair src, Pair dest) const;
+
 private:
-	bool isValid(int row, int col);
-	bool isUnBlocked(int grid[][COL], int row, int col);
-	bool isDestination(int row, int col, Pair dest);
-	double calculateHValue(int row, int col, Pair dest);
-	std::stack<Pair> tracePath(Cell cellDetails[][COL], Pair dest);
+	static bool isValid(int row, int col);
+	static bool isUnBlocked(int grid[][COL], int row, int col);
+	static bool isDestination(int row, int col, Pair dest);
+	double calculateHValue(int row, int col, Pair dest) const;
+	static std::stack<Pair> tracePath(Cell cellDetails[][COL], Pair dest);
 };
-
-
 
