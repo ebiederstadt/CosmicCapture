@@ -1,5 +1,7 @@
 #include "SpeedBoostPickupZone.h"
 
+#include "physics/VehicleFilterShader.h"
+
 SpeedBoostPickupZone::SpeedBoostPickupZone(const PxVec3& location) :
 	Entity("models/powerup_stand.obj", "textures/speed_boost_white.png"),
 	mLocation(location)

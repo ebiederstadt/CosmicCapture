@@ -1,4 +1,6 @@
 #include "InvisibleBarrier.h"
+
+#include "OpponentInput.h"
 #include "physics/VehicleFilterShader.h"
 
 
@@ -16,7 +18,7 @@ void InvisibleBarrier::attachPhysics(Physics& instance)
 		{
 			for (int j = 0; j < 26; j++)
 			{
-				if (State::worldGrid[i][j] == 0)
+				if (worldGrid[i][j] == 0)
 				{
 					PxShape* barrier = instance.gPhysics->createShape(PxBoxGeometry(12.5f, 12.5f, 12.5f),
 					                                                  *instance.gMaterial, true);
