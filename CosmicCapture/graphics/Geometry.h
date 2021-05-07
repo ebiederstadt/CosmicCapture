@@ -56,11 +56,7 @@ class GpuGeometry : Geometry
 public:
 	GpuGeometry();
 	
-	/// <summary>
-	/// Upload data to openGL Buffers on the GPU
-	/// </summary>
-	/// <param name="cpuGeom">CPU Geometry to use</param>
-	void uploadData(const CpuGeometry& cpuGeom);
+	void uploadData(const CpuGeometry&);
 	void drawData() const override;
 
 private:
@@ -80,7 +76,7 @@ class GUIGPUGeometry : Geometry
 public:
 	GUIGPUGeometry();
 
-	void uploadData(const GUIGeometry& geom) const;
+	void uploadData(const GUIGeometry&) const;
 	void drawData() const override;
 
 private:
@@ -93,7 +89,7 @@ class FontGpuGeometry : Geometry
 public:
 	FontGpuGeometry();
 
-	void uploadData(const FontGeometry& geom) const;
+	void uploadData(const FontGeometry&) const;
 	void drawData() const override;
 
 private:

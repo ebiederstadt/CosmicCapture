@@ -9,7 +9,7 @@ class TextureAPI
 {
 public:
 	// No copying is allowed
-	TextureAPI(TextureAPI& other) = delete;
+	TextureAPI(TextureAPI&) = delete;
 	// No copy assignment
 	void operator=(const TextureAPI&) = delete;
 
@@ -20,7 +20,7 @@ public:
 	
 	using TextureName = std::string;
 
-	void create(const TextureName& name, unsigned int interpolation = GL_LINEAR, bool flip = false);
+	void create(const TextureName&, unsigned int interpolation = GL_LINEAR, bool flip = false);
 	void bind(const TextureName& name) { mTextures.at(name).bind(); }
 
 private:

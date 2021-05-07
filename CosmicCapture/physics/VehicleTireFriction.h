@@ -48,4 +48,4 @@ enum
 	MAX_NUM_TIRE_TYPES
 };
 
-PxVehicleDrivableSurfaceToTireFrictionPairs* createFrictionPairs(const PxMaterial* defaultMaterial);
+PxVehicleDrivableSurfaceToTireFrictionPairs* createFrictionPairs(const PxMaterial*);

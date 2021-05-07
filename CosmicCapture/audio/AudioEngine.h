@@ -39,13 +39,13 @@ class AudioEngine
 	public:
 		void initialize();
 		void initializeBuffers(bool engineOnly = false);
-		AudioInstance& createInstance(int soundFile);
+		AudioInstance& createInstance(int);
 		void killSources() const;
 
 	private:
 		static void CheckError();
-		static bool _strcmp(const char* bse, const char* cp);
-		static bool loadWavFile(const char* filename, ALuint* buffer);
+		static bool _strcmp(const char*, const char*);
+		static bool loadWavFile(const char*, ALuint*);
 
 		static const int NUM_TOTAL = 18;
 		static const int NUM_EFFECTS = 17;

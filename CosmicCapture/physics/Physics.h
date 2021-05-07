@@ -119,20 +119,14 @@ public:
 
 	void stepPhysics() const;
 
-	PxTriangleMesh* readMesh(std::string modelPath);
+	PxTriangleMesh* readMesh(std::string);
 
-	void processNodeS(aiNode* node, const aiScene* scene);
-	void processVerticesIndices(aiMesh* mesh);
+	void processNodeS(aiNode*, const aiScene*);
+	void processVerticesIndices(aiMesh*);
 
 	//SnippetVehicle4WCreate
-	static void computeWheelCenterActorOffsets4W(PxF32 wheelFrontZ, PxF32 wheelRearZ, const PxVec3& chassisDims,
-	                                             PxF32 wheelWidth, PxF32 wheelRadius, PxU32 numWheels,
-	                                             PxVec3* wheelCentreOffsets);
-	static void setupWheelsSimulationData
-	(PxF32 wheelMass, PxF32 wheelMOI, PxF32 wheelRadius, PxF32 wheelWidth,
-	 PxU32 numWheels, const PxVec3* wheelCenterActorOffsets,
-	 const PxVec3& chassisCMOffset, PxF32 chassisMass,
-	 PxVehicleWheelsSimData* wheelsSimData);
+	static void computeWheelCenterActorOffsets4W(PxF32, PxF32, const PxVec3&, PxF32, PxF32, PxU32, PxVec3*);
+	static void setupWheelsSimulationData(PxF32, PxF32, PxF32, PxF32, PxU32, const PxVec3*, const PxVec3&, PxF32, PxVehicleWheelsSimData*);
 
 	// Singleton
 	Physics() {}
@@ -170,6 +164,5 @@ private:
 	std::vector<PxVec3> vectorList;
 	std::vector<unsigned int> indicesList;
 
-	static PxTriangleMesh* createTriangleMesh32(PxPhysics* physics, PxCooking* cooking, const PxVec3* verts,
-	                                            PxU32 vertCount, const PxU32* indices32, PxU32 triCount, bool insert);
+	static PxTriangleMesh* createTriangleMesh32(PxPhysics*, PxCooking*, const PxVec3*, PxU32, const PxU32*, PxU32, bool);
 };

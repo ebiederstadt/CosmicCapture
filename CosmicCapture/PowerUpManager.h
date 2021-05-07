@@ -13,10 +13,10 @@ public:
 	PowerUpManager(Physics& instance);
 	
 	void pickup(Physics&);
-	void use(Physics& instance, const InputInfo& inputInfo, int playerNum);
-	void use(Physics& instance, std::map<MovementFlags, bool> inputState, int playerNum);
+	void use(Physics&, const InputInfo&, int);
+	void use(Physics&, std::map<MovementFlags, bool>, int);
 	void simulate(Physics& instance);
-	void draw(Physics& instance, const ShaderProgram& texture, const Camera& camera, bool depth);
+	void draw(Physics&, const ShaderProgram&, const Camera&, bool);
 	void cleanUp();
 
 private:

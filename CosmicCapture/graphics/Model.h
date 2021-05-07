@@ -28,10 +28,10 @@ public:
 	);
 
 	// Draw things where the position/rotation/scale changes
-	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type);
+	void draw(const physx::PxMat44&, const ShaderProgram&, const Camera&, bool, int);
 
 	// Draw things that stay in the same place
-	void draw(const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type, int offset = 0);
+	void draw(const ShaderProgram&, const Camera&, bool, int, int offset = 0);
 
 	[[nodiscard]] physx::PxMat44 getModelMatrix() const { return mModel; }
 
@@ -44,9 +44,9 @@ private:
 	physx::PxMat44 mModel;
 	void setModel(const physx::PxMat44& m) { mModel = m; }
 
-	void readMesh(const char* modelPath);
+	void readMesh(const char*);
 
-	void processNode(aiNode* node, const aiScene* scene);
-	void processMesh(aiMesh* mesh);
+	void processNode(aiNode*, const aiScene*);
+	void processMesh(aiMesh*);
 };
 

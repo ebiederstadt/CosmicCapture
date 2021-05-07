@@ -39,15 +39,15 @@ extern float maxOmega;
 extern float gearSwitchTime;
 extern float clutchStrength;
 
-PxRigidStatic* createDrivablePlane(const PxFilterData& simFilterData, PxMaterial* material, PxPhysics* physics);
+PxRigidStatic* createDrivablePlane(const PxFilterData&, PxMaterial*, PxPhysics*);
 
-PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* physics, PxCooking* cooking);
+PxVehicleDrive4W* createVehicle4W(const VehicleDesc&, PxPhysics*, PxCooking*);
 
-PxConvexMesh* createChassisMesh(PxVec3 dims, PxPhysics& physics, PxCooking& cooking);
-PxConvexMesh* createWheelMesh(PxF32 width, PxF32 radius, PxPhysics& physics, PxCooking& cooking);
+PxConvexMesh* createChassisMesh(PxVec3, PxPhysics&, PxCooking&);
+PxConvexMesh* createWheelMesh(PxF32, PxF32, PxPhysics&, PxCooking&);
 
-void customizeVehicleToLengthScale(const PxReal lengthScale, PxRigidDynamic* rigidDynamic, PxVehicleWheelsSimData* wheelsSimData, PxVehicleDriveSimData* driveSimData);
-void customizeVehicleToLengthScale(const PxReal lengthScale, PxRigidDynamic* rigidDynamic, PxVehicleWheelsSimData* wheelsSimData, PxVehicleDriveSimData4W* driveSimData);
+void customizeVehicleToLengthScale(PxReal, PxRigidDynamic*, PxVehicleWheelsSimData*, PxVehicleDriveSimData*);
+void customizeVehicleToLengthScale(PxReal, PxRigidDynamic*, PxVehicleWheelsSimData*, PxVehicleDriveSimData4W*);
 
 PxRigidDynamic* createVehicleActor
 (const PxVehicleChassisData& chassisData,

@@ -8,21 +8,21 @@ class OpponentInput
 {
 public:
 	OpponentInput();
-	OpponentInput(int playerNumber);
-	std::map<MovementFlags, bool> getInput(PxVec3 playerPos, PxVec3 playerDir);
-	void updatePath(PxVec3 playerPos, PxVec3 targetPos);
-	static PxVec3 getPlayerToTargetDir(int playerVehicleRDIndex, PxVec3 targetGlobalPos);
-	PxVec3 getPlayerToTargetDir(int playerVehicleRDIndex) const;
-	int dirsToCommand(PxVec3 playerDirVec, PxVec3 targetDirVec, bool* sharpTurnFlag) const;
-	void setPlayerNum(int num);
+	OpponentInput(int);
+	std::map<MovementFlags, bool> getInput(PxVec3, PxVec3);
+	void updatePath(PxVec3, PxVec3);
+	static PxVec3 getPlayerToTargetDir(int, PxVec3);
+	PxVec3 getPlayerToTargetDir(int) const;
+	int dirsToCommand(PxVec3, PxVec3, bool*) const;
+	void setPlayerNum(int);
 	void attachVehicle(PxVehicleDrive4W* vehicle) { mVehicles.push_back(vehicle); }
 
 private:
 	std::vector<PxVehicleDrive4W*> mVehicles;
 	static std::map<MovementFlags, bool> followPath();
-	std::pair<int, int> getGridCoordinates(float globalPosX, float globalPosZ) const;
-	std::map<MovementFlags, bool> getCommand(int commandNum);
-	bool pointingAtGoal(PxVec3 playerDirVec, PxVec3 targetDirVec) const;
+	std::pair<int, int> getGridCoordinates(float, float) const;
+	std::map<MovementFlags, bool> getCommand(int);
+	bool pointingAtGoal(PxVec3, PxVec3) const;
 
 	int playerNum;
 	int counter;

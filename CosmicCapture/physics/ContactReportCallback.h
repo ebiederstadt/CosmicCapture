@@ -26,8 +26,8 @@ public:
 		PX_UNUSED(count);
 	}
 
-	void onTrigger(PxTriggerPair* pairs, PxU32 count) override;
+	void onTrigger(PxTriggerPair*, PxU32) override;
 	void onAdvance(const PxRigidBody* const*, const PxTransform*, const PxU32) override {}
-	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override;
+	void onContact(const PxContactPairHeader&, const PxContactPair*, PxU32) override;
 };
 

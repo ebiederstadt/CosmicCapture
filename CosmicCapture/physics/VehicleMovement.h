@@ -9,7 +9,7 @@ class VehicleMovement
 {
 public:
 	VehicleMovement() = default;
-	VehicleMovement(bool flag);
+	VehicleMovement(bool);
 
 	void startAccelerateForwardsMode();
 	void startAccelerateReverseMode();

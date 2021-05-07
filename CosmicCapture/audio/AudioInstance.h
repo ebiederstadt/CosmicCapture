@@ -6,10 +6,10 @@ class AudioInstance
 {
 public:
 	AudioInstance() = default;
-	AudioInstance(const ALuint* buffer);
+	AudioInstance(const ALuint*);
 	void loop() const;
 	void playSound() const;
-	void setVolume(float volume) const;
+	void setVolume(float) const;
 	void stopSound() const;
 	bool isSoundPlaying();
 	static void cleanup() {}

@@ -29,7 +29,7 @@ struct GUITextures
 		instance->create(notReady, GL_NEAREST, false);
 		instance->create(ready, GL_NEAREST, false);
 	}
-	
+
 	TextureAPI::TextureName blank = "textures/blank.png";
 
 	TextureAPI::TextureName spikeTrapTexture = "textures/spike_preview.png";
@@ -52,11 +52,11 @@ struct GUITextures
 struct ScoreDisplay
 {
 	ScoreDisplay();
-	
+
 	std::array<FontGpuGeometry, 4> scoreDisplays;
 	std::array<GUIGPUGeometry, 4> playerDisplays;
 	std::array<FontGeometry, 4> scoreGeometry;
-	std::array<int, 4> playerScores = { 0, 0, 0, 0 };
+	std::array<int, 4> playerScores = {0, 0, 0, 0};
 
 	Texture score = Texture("textures/font.bmp", GL_NEAREST, false);
 
@@ -73,16 +73,16 @@ class GameUI
 {
 public:
 	GameUI();
-	void render(int playerNum);
+	void render(int);
 	void renderMenu() const;
-	void renderEndScreen(int playerNum) const;
+	void renderEndScreen(int) const;
 
-	void renderPlayerSelect(bool selected, bool ready = false) const;
+	void renderPlayerSelect(bool, bool ready = false) const;
 
-	void setCompassDirection(const physx::PxMat44& carMatrix, const physx::PxMat44& targetMatrix);
-	void setCompassDirection(const physx::PxMat44& carMatrix, const physx::PxVec3& targetPos);
+	void setCompassDirection(const physx::PxMat44&, const physx::PxMat44&);
+	void setCompassDirection(const physx::PxMat44&, const physx::PxVec3&);
 
-	static std::array<glm::vec2, 4> generateTexCoordsForNum(unsigned int num);
+	static std::array<glm::vec2, 4> generateTexCoordsForNum(unsigned int);
 
 private:
 	ShaderProgram mShader;
@@ -104,7 +104,7 @@ private:
 
 	ScoreDisplay mScoreDisplay;
 
-	void renderPowerUpDisplay(unsigned int shaderID, int playerNum) const;
-	void renderCompassDisplay(unsigned int shaderID) const;
-	void renderScores(unsigned int shaderID, int offset);
+	void renderPowerUpDisplay(unsigned int, int) const;
+	void renderCompassDisplay(unsigned int) const;
+	void renderScores(unsigned int, int);
 };

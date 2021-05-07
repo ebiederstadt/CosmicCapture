@@ -6,7 +6,7 @@
 class Mesh
 {
 public:
-	Mesh(const CpuGeometry& cpuGeometry);
+	Mesh(const CpuGeometry&);
 
 	void draw() const;
 

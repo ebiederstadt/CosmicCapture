@@ -41,11 +41,11 @@
 class Camera
 {
 public:
-	Camera(const physx::PxVec3& eye, const physx::PxVec3& dir, float aspect);
-	Camera(float aspect);
+	Camera(const physx::PxVec3&, const physx::PxVec3&, float);
+	Camera(float);
 
 	[[nodiscard]] glm::mat4 getViewMatrix() const;
-	void updateCamera(const physx::PxMat44& model, float speed, bool isReversing, bool reverseCamera);
+	void updateCamera(const physx::PxMat44&, float, bool, bool);
 
 	void setEye(const physx::PxVec3& vec) { mEye = vec; }
 

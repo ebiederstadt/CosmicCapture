@@ -18,10 +18,10 @@ public:
 	static void initialize();
 	static void cleanup();
 
-	static void play(const GameSounds& sound);
-	static bool isSoundPlaying(const GameSounds& sound);
-	static void setVolume(const GameSounds& sound, float amount);
-	static void loop(const GameSounds& sound);
+	static void play(const GameSounds&);
+	static bool isSoundPlaying(const GameSounds&);
+	static void setVolume(const GameSounds&, float);
+	static void loop(const GameSounds&);
 
 private:
 	inline static AudioEngine soundSystem;

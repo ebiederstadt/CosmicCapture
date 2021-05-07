@@ -1,7 +1,4 @@
-#ifndef __INPUT_H__
-#define __INPUT_H__
 #pragma once
-///////////////////////////////
 
 #include <map>
 #include <vector>
@@ -54,12 +51,11 @@ public:
     /// <summary>
     /// Process input
     /// </summary>
-    /// <param name="event">The input event to process</param>
     /// <returns>True if the user wants to quit. False otherwise</returns>
     bool HandleInput();
 
     [[nodiscard]] InputInfo* getInfo();
-    [[nodiscard]] InputInfo* getInfo(int controllerID);
+    [[nodiscard]] InputInfo* getInfo(int);
     [[nodiscard]] std::map<int, InputInfo>* getAllControllerInfo() { return &mControllerInfo; }
 
 	// Mouse stuff
@@ -86,5 +82,3 @@ private:
     void HandleMouse();
     void HandleMouseMove();
 };
-///////////////////////////////
-#endif   //__INPUT_H__

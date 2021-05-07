@@ -2,7 +2,6 @@
 
 #include "Entity.h"
 #include "GlobalState.h"
-#include "physics/VehicleFilterShader.h"
 
 
 class Flag : public Entity
@@ -10,8 +9,8 @@ class Flag : public Entity
 public:
 	Flag();
 
-	void attachPhysics(Physics& instance) override;
-	void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
+	void attachPhysics(Physics&) override;
+	void draw(Physics&, const ShaderProgram&, const Camera&, bool) override;
 	void simulate(Physics& instance) override;
 	void cleanUpPhysics() override;
 	void resetLastPos();

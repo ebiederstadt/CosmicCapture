@@ -13,15 +13,15 @@ public:
 
 	// No copying allowed
 	ElementBuffer(const ElementBuffer&) = delete;
-	ElementBuffer operator=(ElementBuffer other) = delete;
+	ElementBuffer operator=(ElementBuffer) = delete;
 
 	// Moving is allowed
-	ElementBuffer(ElementBuffer&& other) noexcept;
+	ElementBuffer(ElementBuffer&&) noexcept;
 
 	explicit operator unsigned int() const { return mID; }
 
 	void bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mID); }
-	void uploadData(GLsizeiptr size, void* data) const;
+	void uploadData(GLsizeiptr, void*) const;
 
 private:
 	unsigned int mID{};

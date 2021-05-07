@@ -20,13 +20,13 @@ struct Cell {
 class PathFinding
 {
 public:
-	std::stack<Pair> aStarSearch(int grid[][COL], Pair src, Pair dest) const;
+	std::stack<Pair> aStarSearch(int grid[][COL], Pair, Pair) const;
 
 private:
-	static bool isValid(int row, int col);
-	static bool isUnBlocked(int grid[][COL], int row, int col);
-	static bool isDestination(int row, int col, Pair dest);
-	double calculateHValue(int row, int col, Pair dest) const;
-	static std::stack<Pair> tracePath(Cell cellDetails[][COL], Pair dest);
+	static bool isValid(int, int);
+	static bool isUnBlocked(int grid[][COL], int, int);
+	static bool isDestination(int, int, Pair);
+	double calculateHValue(int, int, Pair) const;
+	static std::stack<Pair> tracePath(Cell [][COL], Pair);
 };
 

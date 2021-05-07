@@ -48,7 +48,4 @@ enum
 	COLLISION_FLAG_SCENERY_AGAINST = NULL
 };
 
-PxFilterFlags VehicleFilterShader
-(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
-	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
-	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize);
+PxFilterFlags VehicleFilterShader(PxFilterObjectAttributes, PxFilterData, PxFilterObjectAttributes, PxFilterData, PxPairFlags&, const void*, PxU32);
