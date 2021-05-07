@@ -27,25 +27,11 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GlDebug.cpp" />
-    <ClCompile Include="graphics\ElementBuffer.cpp" />
     <ClCompile Include="graphics\Geometry.cpp" />
     <ClCompile Include="graphics\Shader.cpp" />
     <ClCompile Include="graphics\ShaderProgram.cpp" />
-    <ClCompile Include="graphics\VertexArray.cpp" />
-    <ClCompile Include="graphics\VertexBuffer.cpp" />
-    <ClCompile Include="graphics\Window.cpp" />
-    <ClCompile Include="graphics\Mesh.cpp" />
-    <ClCompile Include="graphics\Model.cpp" />
-    <ClCompile Include="graphics\Texture.cpp" />
-    <ClCompile Include="physics\Physics.cpp" />
-    <ClCompile Include="physics\VehicleCreate.cpp" />
-    <ClCompile Include="physics\VehicleFilterShader.cpp" />
-    <ClCompile Include="physics\VehicleSceneQuery.cpp" />
-    <ClCompile Include="physics\VehicleTireFriction.cpp" />
-    <ClCompile Include="physics\VehicleMovement.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Vehicle.cpp" />
-    <ClCompile Include="physics\ContactReportCallback.cpp" />
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="ProjectilePickupZone.cpp" />
@@ -54,20 +40,82 @@
     <ClCompile Include="PathFinding.cpp" />
     <ClCompile Include="SpeedBoost.cpp" />
     <ClCompile Include="SpeedBoostPickupZone.cpp" />
-    <ClCompile Include="audio\AudioEngine.cpp" />
-    <ClCompile Include="audio\AudioInstance.cpp" />
     <ClCompile Include="SpikeTrap.cpp" />
     <ClCompile Include="SpikeTrapPickupZone.cpp" />
     <ClCompile Include="InvisibleBarrier.cpp" />
     <ClCompile Include="PowerUpManager.cpp" />
     <ClCompile Include="GameUI.cpp" />
     <ClCompile Include="DoorManager.cpp" />
-    <ClCompile Include="graphics\TextureAPI.cpp" />
-    <ClCompile Include="audio\GameAudio.cpp" />
+    <ClCompile Include="audio\AudioEngine.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="audio\AudioInstance.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="audio\GameAudio.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\ContactReportCallback.cpp">
+      <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\ElementBuffer.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Mesh.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Model.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\Physics.cpp">
+      <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Texture.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\TextureAPI.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\VehicleCreate.cpp">
+      <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\VehicleFilterShader.cpp">
+      <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\VehicleMovement.cpp">
+      <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\VehicleSceneQuery.cpp">
+      <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\VehicleTireFriction.cpp">
+      <Filter>physics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\VertexArray.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\VertexBuffer.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Window.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
       <UniqueIdentifier>{37343344-2a0d-4fb1-96e8-87a751a7421b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="audio">
+      <UniqueIdentifier>{3c67216e-979a-450e-8a2a-6322ad836299}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics">
+      <UniqueIdentifier>{5ae303e5-07dc-4e2b-80d8-130ef134d874}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="physics">
+      <UniqueIdentifier>{493e3717-2538-4af6-a2c8-cd734a1dd4d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{6f897a50-f75e-4308-8c0d-722bd8fa1475}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -96,28 +144,14 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="graphics\ElementBuffer.h" />
     <ClInclude Include="graphics\Geometry.h" />
-    <ClInclude Include="graphics\Mesh.h" />
-    <ClInclude Include="graphics\Model.h" />
     <ClInclude Include="graphics\Shader.h" />
     <ClInclude Include="graphics\ShaderProgram.h" />
-    <ClInclude Include="graphics\Texture.h" />
-    <ClInclude Include="graphics\VertexArray.h" />
-    <ClInclude Include="graphics\VertexBuffer.h" />
-    <ClInclude Include="graphics\Window.h" />
     <ClInclude Include="GlDebug.h" />
     <ClInclude Include="input.h" />
-    <ClInclude Include="physics\Physics.h" />
-    <ClInclude Include="physics\VehicleCreate.h" />
-    <ClInclude Include="physics\VehicleFilterShader.h" />
-    <ClInclude Include="physics\VehicleSceneQuery.h" />
-    <ClInclude Include="physics\VehicleTireFriction.h" />
     <ClInclude Include="Conversions.h" />
-    <ClInclude Include="physics\VehicleMovement.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Vehicle.h" />
-    <ClInclude Include="physics\ContactReportCallback.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="GlobalState.h" />
     <ClInclude Include="Projectile.h" />
@@ -127,22 +161,80 @@
     <ClInclude Include="PathFinding.h" />
     <ClInclude Include="SpeedBoost.h" />
     <ClInclude Include="SpeedBoostPickupZone.h" />
-    <ClInclude Include="audio\AudioEngine.h" />
-    <ClInclude Include="audio\AudioInstance.h" />
     <ClInclude Include="SpikeTrap.h" />
     <ClInclude Include="SpikeTrapPickupZone.h" />
     <ClInclude Include="InvisibleBarrier.h" />
     <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="GameUI.h" />
     <ClInclude Include="DoorManager.h" />
-    <ClInclude Include="graphics\TextureAPI.h" />
-    <ClInclude Include="audio\GameAudio.h" />
+    <ClInclude Include="audio\AudioEngine.h">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="audio\AudioInstance.h">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="audio\GameAudio.h">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\ContactReportCallback.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\ElementBuffer.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Mesh.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Model.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\Physics.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Texture.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\TextureAPI.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\VehicleCreate.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\VehicleFilterShader.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\VehicleMovement.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\VehicleSceneQuery.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\VehicleTireFriction.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\VertexArray.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\VertexBuffer.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Window.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
-    <None Include="shaders\main.frag" />
-    <None Include="shaders\main.vert" />
-    <None Include="shaders\simple.frag" />
-    <None Include="shaders\simple.vert" />
+    <None Include="shaders\main.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\main.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\simple.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\simple.frag">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
