@@ -102,11 +102,9 @@ int main(int, char**) {
 	// Set sampler aliases
 	shaderProgram.use();
 
-	auto shaderID = static_cast<unsigned int>(shaderProgram);
-	auto samplerLoc = glGetUniformLocation(shaderID, "textureSampler");
-	glUniform1i(samplerLoc, 0);
-	samplerLoc = glGetUniformLocation(shaderID, "shadowMap");
-	glUniform1i(samplerLoc, 1);
+
+	shaderProgram.setInt("textureSampler", 0);
+	shaderProgram.setInt("shadowMap", 1);
 
 	//main loop flag
 	bool quit = false;
@@ -294,11 +292,8 @@ int main(int, char**) {
 
 		float near_plane = 100.f, far_plane = 800.f;
 
-		auto nearLoc = glGetUniformLocation(shaderID, "near_plane");
-		glUniform1f(nearLoc, near_plane);
-
-		auto farLoc = glGetUniformLocation(shaderID, "far_plane");
-		glUniform1f(farLoc, far_plane);
+		shaderProgram.setFloat("near_plane", near_plane);
+		shaderProgram.setFloat("far_plane", far_plane);
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, depthMap);
