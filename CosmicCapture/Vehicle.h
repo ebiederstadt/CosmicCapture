@@ -32,18 +32,18 @@ class Vehicle : public Entity
 {
 public:
 
-	Vehicle(int playerNum, std::string modelPath, std::string bodyTexturePath, std::string tireTexturePath);
+	Vehicle(int, std::string, std::string, std::string );
 
-	void attachPhysics(Physics& instance) override;
+	void attachPhysics(Physics&) override;
 
-	void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
-	void simulate(Physics& instance) override;
+	void draw(Physics&, const ShaderProgram&, const Camera&, bool) override;
+	void simulate(Physics&) override;
 
 	// General input method
-	void processInput(const InputInfo& inputInfo);
+	void processInput(const InputInfo&);
 
 	// AI input method
-	void processInput(const std::map<MovementFlags, bool>& inputs);
+	void processInput(const std::map<MovementFlags, bool>&);
 
 	float getVelocity() const;
 	bool isReversing() const;
@@ -51,7 +51,7 @@ public:
 	void cleanUpPhysics() override;
 	[[nodiscard]] PxVehicleDrive4W* getVehicle() const { return mVehicle4W; }
 
-	void setHuman(bool useKeyboard, int controllerNum = 0);
+	void setHuman(bool, int controllerNum = 0);
 	bool isHuman = false;
 	bool useKeyboard = false;
 	bool useController = false;
@@ -60,7 +60,7 @@ public:
 	bool ready = false;
 
 private:
-	void moveVehicle(const std::map<MovementFlags, bool>& inputs);
+	void moveVehicle(const std::map<MovementFlags, bool>&);
 
 	PxVehicleDrive4W* mVehicle4W;
 	bool mIsVehicleInAir = true;

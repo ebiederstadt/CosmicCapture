@@ -34,15 +34,15 @@ GpuGeometry::GpuGeometry():
 	mTextureBuffer(2, 2)
 {}
 
-void GpuGeometry::uploadData(const CpuGeometry& cpuGeom, const unsigned int usage)
+void GpuGeometry::uploadData(const CpuGeometry& cpuGeom)
 {
 	bind();
 	
-	mVertBuffer.uploadData(sizeof(vec3) * cpuGeom.vertices.size(), cpuGeom.vertices.data(), usage);
-	mNormBuffer.uploadData(sizeof(vec3) * cpuGeom.normals.size(), cpuGeom.normals.data(), usage);
-	mTextureBuffer.uploadData(sizeof(vec2) * cpuGeom.texCoords.size(), cpuGeom.texCoords.data(), usage);
+	mVertBuffer.uploadData(sizeof(vec3) * cpuGeom.vertices.size(), cpuGeom.vertices.data());
+	mNormBuffer.uploadData(sizeof(vec3) * cpuGeom.normals.size(), cpuGeom.normals.data());
+	mTextureBuffer.uploadData(sizeof(vec2) * cpuGeom.texCoords.size(), cpuGeom.texCoords.data());
 
-	mElementArray.uploadData(sizeof(int) * cpuGeom.indices.size(), (void *) cpuGeom.indices.data(), usage);
+	mElementArray.uploadData(sizeof(int) * cpuGeom.indices.size(), (void *) cpuGeom.indices.data());
 
 	mNumElements = static_cast<int>(cpuGeom.indices.size());
 }
@@ -61,7 +61,7 @@ GUIGPUGeometry::GUIGPUGeometry() :
 void GUIGPUGeometry::uploadData(const GUIGeometry& geom) const
 {
 	bind();
-	mVertexBuffer.uploadData(sizeof(vec2) * geom.vertices.size(), geom.vertices.data(), GL_STATIC_DRAW);
+	mVertexBuffer.uploadData(sizeof(vec2) * geom.vertices.size(), geom.vertices.data());
 }
 
 void GUIGPUGeometry::drawData() const
@@ -80,8 +80,8 @@ FontGpuGeometry::FontGpuGeometry() :
 void FontGpuGeometry::uploadData(const FontGeometry& geom) const
 {
 	bind();
-	mVertBuffer.uploadData(sizeof(vec2) * geom.vertices.size(), geom.vertices.data(), GL_STATIC_DRAW);
-	mTextureBuffer.uploadData(sizeof(vec2) * geom.texCoords.size(), geom.texCoords.data(), GL_STATIC_DRAW);
+	mVertBuffer.uploadData(sizeof(vec2) * geom.vertices.size(), geom.vertices.data());
+	mTextureBuffer.uploadData(sizeof(vec2) * geom.texCoords.size(), geom.texCoords.data());
 }
 
 void FontGpuGeometry::drawData() const

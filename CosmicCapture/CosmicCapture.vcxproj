@@ -142,6 +142,7 @@
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -155,17 +156,16 @@
   <ItemGroup>
     <ClCompile Include="audio\AudioEngine.cpp" />
     <ClCompile Include="audio\AudioInstance.cpp" />
-    <ClCompile Include="DoorSwitchZone.cpp" />
+    <ClCompile Include="DoorManager.cpp" />
     <ClCompile Include="Flag.cpp" />
     <ClCompile Include="FlagDropoffZone.cpp" />
+    <ClCompile Include="audio\GameAudio.cpp" />
     <ClCompile Include="GameUI.cpp" />
-    <ClCompile Include="GridMarker.cpp" />
     <ClCompile Include="InvisibleBarrier.cpp" />
     <ClCompile Include="OpponentInput.cpp" />
-    <ClCompile Include="Pathfinding.cpp" />
+    <ClCompile Include="PathFinding.cpp" />
     <ClCompile Include="physics\ContactReportCallback.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="physics\ContactModification.cpp" />
     <ClCompile Include="GlDebug.cpp" />
     <ClCompile Include="graphics\ElementBuffer.cpp" />
     <ClCompile Include="graphics\Geometry.cpp" />
@@ -189,7 +189,6 @@
     <ClCompile Include="format.cc" />
     <ClCompile Include="physics\Physics.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="physics\TriggerCallback.cpp" />
     <ClCompile Include="physics\VehicleCreate.cpp" />
     <ClCompile Include="physics\VehicleFilterShader.cpp" />
     <ClCompile Include="physics\VehicleSceneQuery.cpp" />
@@ -203,25 +202,24 @@
     <ClCompile Include="SpikeTrap.cpp" />
     <ClCompile Include="SpikeTrapPickupZone.cpp" />
     <ClCompile Include="graphics\TextureAPI.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Vehicle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\AudioEngine.h" />
     <ClInclude Include="audio\AudioInstance.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Colors.h" />
-    <ClInclude Include="DoorSwitchZone.h" />
+    <ClInclude Include="DoorManager.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="FlagDropoffZone.h" />
+    <ClInclude Include="audio\GameAudio.h" />
     <ClInclude Include="GameUI.h" />
     <ClInclude Include="GlobalState.h" />
-    <ClInclude Include="GridMarker.h" />
     <ClInclude Include="InvisibleBarrier.h" />
     <ClInclude Include="OpponentInput.h" />
-    <ClInclude Include="Pathfinding.h" />
+    <ClInclude Include="PathFinding.h" />
     <ClInclude Include="physics\ContactReportCallback.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="physics\ContactModification.h" />
     <ClInclude Include="Conversions.h" />
     <ClInclude Include="GlDebug.h" />
     <ClInclude Include="graphics\ElementBuffer.h" />
@@ -244,7 +242,6 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="physics\Physics.h" />
-    <ClInclude Include="physics\TriggerCallback.h" />
     <ClInclude Include="physics\VehicleCreate.h" />
     <ClInclude Include="physics\VehicleFilterShader.h" />
     <ClInclude Include="physics\VehicleSceneQuery.h" />
@@ -258,6 +255,7 @@
     <ClInclude Include="SpikeTrap.h" />
     <ClInclude Include="SpikeTrapPickupZone.h" />
     <ClInclude Include="graphics\TextureAPI.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Vehicle.h" />
   </ItemGroup>
   <ItemGroup>

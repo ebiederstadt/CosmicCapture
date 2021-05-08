@@ -13,10 +13,10 @@ public:
 
 	// No copies allowed (copies of the class don't make sense)
 	VertexArray(const VertexArray&) = delete;
-	VertexArray operator=(const VertexArray) = delete;
+	VertexArray operator=(VertexArray) = delete;
 
 	// Moving is allowed
-	VertexArray(VertexArray&& other) noexcept;
+	VertexArray(VertexArray&&) noexcept;
 
 	void bind() const { glBindVertexArray(mID); }
 

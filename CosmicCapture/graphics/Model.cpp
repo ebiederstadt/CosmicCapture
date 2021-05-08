@@ -7,35 +7,20 @@
 
 Model::Model(
 	const char* modelPath,
-	const char* texturePath,
-	const unsigned int usage,
-	bool isRepeating
+	const char* texturePath
 ) :
 	mTexture(texturePath),
-	mUsage(usage),
 	mModel(physx::PxIdentity)
 {
 	api = TextureAPI::instance();
-	api->create(texturePath, GL_LINEAR, false, isRepeating);
+	api->create(texturePath, GL_LINEAR, false);
 
 	readMesh(modelPath);
 }
-
-Model::Model(const char* modelPath, const glm::vec4& textureColor) :
-	mUsage(GL_STATIC_DRAW),
-	mModel(physx::PxIdentity)
-{
-	api = TextureAPI::instance();
-	mTexture = api->create(textureColor);
-	readMesh(modelPath);
-}
-
 
 void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type)
 {
 	setModel(modelMatrix);
-
-	unsigned int shaderID = static_cast<unsigned int>(shaderProgram);
 
 	if (!depth) {
 		glActiveTexture(GL_TEXTURE0);
@@ -43,40 +28,25 @@ void Model::draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderP
 	}
 
 	// Placing lights at opposite ends of x-axis
-	glm::vec3 purpleLight = glm::vec3(-400.0f, 400.0f, 0.0f);
-	glm::vec3 orangeLight = glm::vec3(400.0f, 400.0f, 0.0f);
+	const glm::vec3 purpleLight = glm::vec3(-400.0f, 400.0f, 0.0f);
+	const glm::vec3 orangeLight = glm::vec3(400.0f, 400.0f, 0.0f);
 
 	if (!depth) {
-
-		// View pipeline
-		const auto purpleLightLoc = glGetUniformLocation(shaderID, "purpleLight");
-		const auto orangeLightLoc = glGetUniformLocation(shaderID, "orangeLight");
-
-		glUniform3fv(purpleLightLoc, 1, value_ptr(purpleLight));
-		glUniform3fv(orangeLightLoc, 1, value_ptr(orangeLight));
-
-		const auto viewLoc = glGetUniformLocation(shaderID, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(camera.getViewMatrix()));
-
-		const auto projectionLoc = glGetUniformLocation(shaderID, "projection");
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(camera.perspectiveMatrix));
-
-		const auto typeLoc = glGetUniformLocation(shaderID, "type");
-		glUniform1i(typeLoc, type);
+		shaderProgram.setVec3("purpleLight", purpleLight);
+		shaderProgram.setVec3("orangeLight", orangeLight);
+		shaderProgram.setMat4("view", camera.getViewMatrix());
+		shaderProgram.setMat4("projection", camera.perspectiveMatrix);
+		shaderProgram.setInt("type", type);
 	}
 
-	float near_plane = 100.f, far_plane = 800.f;
-	glm::mat4 lightProjection = glm::ortho(-500.f, 500.f, -500.f, 700.f, near_plane, far_plane);
+	const float near_plane = 100.f;
+	const float far_plane = 800.f;
+	const glm::mat4 lightProjection = glm::ortho(-500.f, 500.f, -500.f, 700.f, near_plane, far_plane);
+	const glm::mat4 lightView = lookAt(orangeLight, glm::vec3(-500.0f, -10.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
+	const glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 
-	glm::mat4 lightView = lookAt(orangeLight, glm::vec3(-500.0f, -10.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f));
-
-	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-
-	auto lightSpaceLoc = glGetUniformLocation(shaderID, "lightSpaceMatrix");
-	glUniformMatrix4fv(lightSpaceLoc, 1, GL_FALSE, value_ptr(lightSpaceMatrix));
-
-	const auto modelLoc = glGetUniformLocation(shaderID, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelMatrix.column0.x);
+	shaderProgram.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+	shaderProgram.setMat4("model", modelMatrix);
 
 	for (const auto& mesh : mMeshes)
 		mesh.draw();
@@ -177,5 +147,5 @@ void Model::processMesh(aiMesh* mesh)
 	// TODO: material stuff :)
 
 	// Move into a vector, without copying it
-	mMeshes.emplace_back(geometry,mUsage);
+	mMeshes.emplace_back(geometry);
 }

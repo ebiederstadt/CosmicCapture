@@ -2,16 +2,15 @@
 #include "Entity.h"
 #include "GlobalState.h"
 #include "physics/Physics.h"
-#include "physics/VehicleFilterShader.h"
 
 
 class Projectile : public Entity
 {
 	public:
 		Projectile();
-		void attachPhysics(Physics& instance) override;
-		void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
-		void simulate(Physics& instance) override;
+		void attachPhysics(Physics&) override;
+		void draw(Physics&, const ShaderProgram&, const Camera&, bool) override;
+		void simulate(Physics&) override;
 		void cleanUpPhysics() override;
 
 		void attachVehicle(PxVehicleDrive4W* vehicle) { mVehicle = vehicle; }

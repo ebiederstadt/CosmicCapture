@@ -1,5 +1,7 @@
 #include "SpeedBoostPickupZone.h"
 
+#include "physics/VehicleFilterShader.h"
+
 SpeedBoostPickupZone::SpeedBoostPickupZone(const PxVec3& location) :
 	Entity("models/powerup_stand.obj", "textures/speed_boost_white.png"),
 	mLocation(location)
@@ -17,7 +19,6 @@ void SpeedBoostPickupZone::attachPhysics(Physics& instance) {
 	instance.gScene->addActor(*pickupBody);
 
 	PxShape* speedboostPickupTriggerShape = instance.gPhysics->createShape(PxBoxGeometry(1.1f, 2.f, 1.1f), *instance.gMaterial, true);
-	//trigger box for picking up the flag
 	speedboostPickupTriggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	speedboostPickupTriggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 	PxRigidStatic* body = instance.gPhysics->createRigidStatic(PxTransform(PxVec3(mLocation.x, 2.f, mLocation.z)));

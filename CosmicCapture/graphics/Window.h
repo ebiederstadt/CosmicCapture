@@ -20,7 +20,7 @@ struct WindowDeleter
 class Window
 {
 public:
-	Window(const std::string& windowName, int width, int height);
+	Window(const std::string&, int, int);
 	~Window();
 
 	void swap() const { SDL_GL_SwapWindow(mWindow.get()); }

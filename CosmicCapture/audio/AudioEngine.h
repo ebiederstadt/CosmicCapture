@@ -1,13 +1,10 @@
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS
-#include "AudioInstance.h"
-#include <string>
-#include <cstdio>
-#include <cstdlib>
-#include <iostream>
-#include <cstring> 
+
 #include <vector>
 #include <memory>
+#include <openal/alc.h>
+
+#include "AudioInstance.h"
 
 namespace audioConstants
 {
@@ -40,17 +37,15 @@ namespace audioConstants
 class AudioEngine
 {
 	public:
-		AudioEngine();
-		~AudioEngine();
 		void initialize();
 		void initializeBuffers(bool engineOnly = false);
-		AudioInstance& createInstance(int soundFile);
-		void killSources();
+		AudioInstance& createInstance(int);
+		void killSources() const;
 
 	private:
-		void CheckError();
-		bool _strcmp(const char* bse, const char* cp);
-		bool loadWavFile(const char* filename, ALuint* buffer);
+		static void CheckError();
+		static bool _strcmp(const char*, const char*);
+		static bool loadWavFile(const char*, ALuint*);
 
 		static const int NUM_TOTAL = 18;
 		static const int NUM_EFFECTS = 17;
@@ -64,5 +59,4 @@ class AudioEngine
 
 		ALCdevice* device;
 		ALCcontext* context;
-
 };

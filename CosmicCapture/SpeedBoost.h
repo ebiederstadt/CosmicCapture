@@ -3,14 +3,13 @@
 #include "GlobalState.h"
 #include "Input.h"
 #include "physics/Physics.h"
-#include "physics/VehicleFilterShader.h"
 
 class SpeedBoost : public Entity{
 public:
 	SpeedBoost();
-	void attachPhysics(Physics& instance) override;
-	void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
-	void simulate(Physics& instance) override;
+	void attachPhysics(Physics&) override;
+	void draw(Physics&, const ShaderProgram&, const Camera&, bool) override;
+	void simulate(Physics&) override;
 	void cleanUpPhysics() override;
 
 	void attachVehicle(PxVehicleDrive4W* vehicle) { mVehicles.push_back(vehicle); }

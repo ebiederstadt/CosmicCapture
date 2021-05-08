@@ -4,8 +4,6 @@
 #include <optional>
 #include <array>
 #include <map>
-#include "./audio/AudioEngine.h"
-
 
 using namespace physx;
 
@@ -31,37 +29,6 @@ struct projectileState
 
 struct State 
 {
-	inline static int worldGrid[26][26] = {
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0,
-		0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0,
-		0, 1, 1, 0, 1, 9, 9, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9, 9, 1, 0, 1, 1, 0,
-		0, 1, 1, 0, 1, 9, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 9, 1, 0, 1, 1, 0,
-		0, 1, 1, 1, 1, 9, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 9, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 9, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 9, 1, 1, 1, 1, 0,
-		0, 1, 1, 0, 1, 9, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 9, 1, 0, 1, 1, 0,
-		0, 1, 1, 0, 1, 9, 9, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9, 9, 1, 0, 1, 1, 0,
-		0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0,
-		0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-		0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-
-	};
-	inline static std::pair<float, float> worldGridCenterCoords[26][26];
-
 
 	inline static bool flagPickedUp = false;
 	inline static std::array<bool, 4> flagPickedUpBy = { false, false, false, false };
@@ -89,46 +56,13 @@ struct State
 
 	inline static std::array<bool, 4> killCars = { false, false, false, false };
 
-	inline static PxRigidStatic* doorSwitchPickupMarkerBody = nullptr;
-	inline static PxRigidStatic* doorSwitchPickupTriggerBody =  nullptr;
-	inline static bool arenaSwitch = false;
-	inline static bool arenaSwitchReady = true;
 	inline static bool blueArena = false;
 	inline static bool redArena = true;
-	inline static int arenaTimer = 0;
 
 	inline static bool canPickupFlag = true;
 	inline static bool startPickupFlagTimer = false;
 	inline static float flagTimer = 0.0f;
 
-	inline static bool slowCar0 = false;
-	inline static bool slowCar1 = false;
-	inline static bool slowCar2 = false;
-	inline static bool slowCar3 = false;
-
+	inline static std::optional<int> slowCar;
 };
 
-struct Audio
-{
-	inline static AudioEngine soundSystem = AudioEngine();
-	inline static AudioInstance music = soundSystem.createInstance(audioConstants::SOUND_FILE_MAIN_TRACK);
-	inline static AudioInstance engine = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE);
-	inline static AudioInstance collision = soundSystem.createInstance(audioConstants::SOUND_FILE_COLLISION);
-	inline static AudioInstance projectile = soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE);
-	inline static AudioInstance flag_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_PICKUP);
-	inline static AudioInstance projectile_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_PROJECTILE_PICKUP);
-	inline static AudioInstance spike_trap_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_SPIKE_TRAP_PICKUP);
-	inline static AudioInstance speed_boost_pickup = soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST_PICKUP);
-	inline static AudioInstance flag_return = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_RETURN);
-	inline static AudioInstance speed_boost = soundSystem.createInstance(audioConstants::SOUND_FILE_SPEED_BOOST);
-	inline static AudioInstance projectile_explosion = soundSystem.createInstance(audioConstants::SOUND_FILE_EXPLOSION);
-	inline static AudioInstance car_crash = soundSystem.createInstance(audioConstants::SOUND_FILE_CRASH);
-	inline static AudioInstance flag_lost = soundSystem.createInstance(audioConstants::SOUND_FILE_FLAG_LOST);
-	inline static AudioInstance gate_switch = soundSystem.createInstance(audioConstants::SOUND_FILE_GATE_SWITCH);
-	inline static AudioInstance caught = soundSystem.createInstance(audioConstants::SOUND_FILE_CAUGHT);
-
-	inline static AudioInstance engine2 = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE2);
-	inline static AudioInstance engine3 = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE3);
-	inline static AudioInstance engine4 = soundSystem.createInstance(audioConstants::SOUND_FILE_ENGINE4);
-
-};

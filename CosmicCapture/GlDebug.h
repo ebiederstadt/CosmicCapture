@@ -16,12 +16,12 @@
 namespace GLDebug {
 
 	void debugOutputHandler(
-		GLenum source,
-		GLenum type,
-		GLuint id,
-		GLenum severity,
+		GLenum,
+		GLenum,
+		GLuint,
+		GLenum,
 		GLsizei,
-		const GLchar* message,
+		const GLchar*,
 		const void*
 	);
 

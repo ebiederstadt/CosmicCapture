@@ -1,8 +1,8 @@
 #include "Mesh.h"
 
-Mesh::Mesh(const CpuGeometry& cpuGeometry, const unsigned int usage)
+Mesh::Mesh(const CpuGeometry& cpuGeometry)
 {
-	mGeometry.uploadData(cpuGeometry, usage);
+	mGeometry.uploadData(cpuGeometry);
 }
 
 

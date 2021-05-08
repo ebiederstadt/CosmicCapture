@@ -9,8 +9,8 @@
 class VertexBuffer
 {
 public:
-	explicit VertexBuffer(GLuint index);
-	VertexBuffer(GLuint index, int componentSize);
+	explicit VertexBuffer(GLuint);
+	VertexBuffer(GLuint, int);
 	~VertexBuffer() { glDeleteBuffers(1, &mID); }
 
 	// No copying allowed
@@ -18,10 +18,10 @@ public:
 	VertexBuffer operator=(VertexBuffer other) = delete;
 
 	// Moving is allowed
-	VertexBuffer(VertexBuffer&& other) noexcept;
+	VertexBuffer(VertexBuffer&&) noexcept;
 
 	void bind() const { glBindBuffer(GL_ARRAY_BUFFER, mID); }
-	void uploadData(GLsizeiptr size, const void* data, GLenum usage) const;
+	void uploadData(GLsizeiptr, const void*) const;
 
 private:
 	unsigned int mID{};

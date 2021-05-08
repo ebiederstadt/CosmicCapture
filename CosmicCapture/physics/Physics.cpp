@@ -1,8 +1,10 @@
 #include "Physics.h"
 
-#include <iostream>
+
+#include <stdexcept>
 #include <physx/vehicle/PxVehicleUtil.h>
 #include <physx/PxPhysicsAPI.h>
+#include <assimp/postprocess.h>
 
 #include "VehicleTireFriction.h"
 #include "VehicleSceneQuery.h"
@@ -30,8 +32,6 @@ Physics& Physics::Instance()
 	return instance;
 }
 
-//------------------------------------------------------
-
 void Physics::Initialize()
 {
 	gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
@@ -50,9 +50,7 @@ void Physics::Initialize()
 	sceneDesc.filterShader = VehicleFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 
-
 	gScene = gPhysics->createScene(sceneDesc);
-
 
 	PxPvdSceneClient* pvdClient = gScene->getScenePvdClient();
 	if (pvdClient)
@@ -63,11 +61,7 @@ void Physics::Initialize()
 	}
 
 	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
-
 	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(PxTolerancesScale()));
-
-
-	///////////////////////////////////////////////////
 
 	PxInitVehicleSDK(*gPhysics);
 	PxVehicleSetBasisVectors(PxVec3(0, 1, 0), PxVec3(0, 0, 1));
@@ -105,13 +99,8 @@ void Physics::Initialize()
 	redDoorBody->attachShape(*redDoorShape); //stick shape on rigid body
 	redDoorShape->release(); //free shape 
 	gScene->addActor(*redDoorBody); //add rigid body to scene
-	//generateRedDoor();
 
-	
-
-	//----------------------------------------------------------*/
-
-	printf("Physx initialized\n");
+	fmt::print("Physx initialized\n");
 }
 
 void Physics::processNodeS(aiNode* node, const aiScene* scene)
@@ -163,13 +152,8 @@ PxTriangleMesh* Physics::readMesh(std::string modelPath) {
 	}
 	vectorList.clear();
 	indicesList.clear();
-	std::cout << vectorList.size() << std::endl;
-	std::cout << indicesList.size() << std::endl;
 
 	processNodeS(scene->mRootNode, scene);
-
-	std::cout << vectorList.size() << std::endl;
-	std::cout << indicesList.size() << std::endl;
 
 	PxTriangleMesh* triangleMesh = createTriangleMesh32(
 		gPhysics,
@@ -186,7 +170,7 @@ PxTriangleMesh* Physics::readMesh(std::string modelPath) {
 	meshBody->attachShape(*meshShape); //stick shape on rigid body
 	meshShape->release(); //free shape 
 	gScene->addActor(*meshBody);
-	PX_RELEASE(meshBody)
+	PX_RELEASE(meshBody);
 
 	return triangleMesh;
 }
@@ -200,8 +184,6 @@ void Physics::generateRedDoor() {
 	redDoorBody->attachShape(*redDoorShape); //stick shape on rigid body
 	redDoorShape->release(); //free shape 
 	gScene->addActor(*redDoorBody); //add rigid body to scene
-
-
 }
 
 void Physics::generateBlueDoor() {
@@ -479,7 +461,7 @@ PxTriangleMesh* Physics::createTriangleMesh32(PxPhysics* physics, PxCooking* coo
 	meshDesc.triangles.data = indices32;
 
 #ifdef _DEBUG
-	// Mesh should be validated before cooking wihtout the mesh cleaning
+	// Mesh should be validated before cooking without the mesh cleaning
 	bool res = cooking->validateTriangleMesh(meshDesc);
 	PX_ASSERT(res);
 #endif // _DEBUG

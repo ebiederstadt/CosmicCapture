@@ -8,8 +8,8 @@ ElementBuffer::ElementBuffer(ElementBuffer&& other) noexcept :
 }
 
 
-void ElementBuffer::uploadData(const GLsizeiptr size, void* data, const GLenum usage) const
+void ElementBuffer::uploadData(const GLsizeiptr size, void* data) const
 {
 	bind();
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, usage);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }

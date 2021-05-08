@@ -1,38 +1,34 @@
 #pragma once
 #include "Input.h"
-#include "Pathfinding.h"
+#include "PathFinding.h"
 #include "GlobalState.h"
 #include "PowerUpManager.h"
-#include <algorithm>
 
 class OpponentInput
 {
 public:
 	OpponentInput();
-	OpponentInput(int playerNumber);
-	std::map<MovementFlags, bool> getInput(PxVec3 playerPos, PxVec3 playerDir);
-	//int getOrientation(PxVec3 dirVec);
-	void updatePath(PxVec3 playerPos, PxVec3 targetPos);
-	PxVec3 getPlayerToTargetDir(PxVec3 playerDirVec, int playerVehicleRDIndex, PxVec3 targetGlobalPos);
-	PxVec3 getPlayerToTargetDir(PxVec3 playerDirVec, int playerVehicleRDIndex);
-	int dirsToCommand(PxVec3 playerDirVec, PxVec3 targetDirVec, bool* sharpTurnFlag);
-	void setPlayerNum(int num);
+	OpponentInput(int);
+	std::map<MovementFlags, bool> getInput(PxVec3, PxVec3);
+	void updatePath(PxVec3, PxVec3);
+	static PxVec3 getPlayerToTargetDir(int, PxVec3);
+	PxVec3 getPlayerToTargetDir(int) const;
+	int dirsToCommand(PxVec3, PxVec3, bool*) const;
+	void setPlayerNum(int);
 	void attachVehicle(PxVehicleDrive4W* vehicle) { mVehicles.push_back(vehicle); }
+
 private:
 	std::vector<PxVehicleDrive4W*> mVehicles;
-	std::map<MovementFlags, bool> followPath();
-	std::pair<int, int> getGridCoordinates(float globalPosX, float globalPosZ);
-	//std::map<MovementFlags, bool> getCommand(int playerDir, int targetDir);
-	std::map<MovementFlags, bool> getCommand(int commandNum);
-	//int getTargetDirection(std::pair<int, int> playerCoords, std::pair<int, int> targetCoords);
-	//int checkDiagonals(std::pair<int, int> currentPos, int targetDir);
-	bool pointingAtGoal(PxVec3 playerDirVec, PxVec3 targetDirVec);
+	static std::map<MovementFlags, bool> followPath();
+	std::pair<int, int> getGridCoordinates(float, float) const;
+	std::map<MovementFlags, bool> getCommand(int);
+	bool pointingAtGoal(PxVec3, PxVec3) const;
 
 	int playerNum;
 	int counter;
 	std::stack<std::pair<int, int>> path;
 	std::pair<int, int> target;
-	Pathfinding pathfinder;
+	PathFinding pathfinder;
 
 	bool subTargetting = false;
 	bool reversing = false;
@@ -49,4 +45,41 @@ private:
 	std::pair<int, int> lastPosition;
 	PxVec3 goalPos;
 };
+
+// World grid
+inline static int worldGrid[26][26] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0,
+	0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0,
+	0, 1, 1, 0, 1, 9, 9, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9, 9, 1, 0, 1, 1, 0,
+	0, 1, 1, 0, 1, 9, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 9, 1, 0, 1, 1, 0,
+	0, 1, 1, 1, 1, 9, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 9, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 9, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 9, 1, 1, 1, 1, 0,
+	0, 1, 1, 0, 1, 9, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 9, 1, 0, 1, 1, 0,
+	0, 1, 1, 0, 1, 9, 9, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9, 9, 1, 0, 1, 1, 0,
+	0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0,
+	0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+};
+inline static std::pair<float, float> worldGridCenterCoords[26][26];
+
+// Free functions
+void initializeGridCenterCoords();
+void updateWorldGridArenaToRedArena();
+void updateWorldGridArenaToBlueArena();
 

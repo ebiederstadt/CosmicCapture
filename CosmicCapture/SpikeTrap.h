@@ -1,24 +1,24 @@
 #pragma once
 
 #include "Entity.h"
+#include "input.h"
 
 #include <optional>
 
-#include "./input.h"
 
 class SpikeTrap : public Entity
 {
 public:
 	SpikeTrap();
 
-	void attachPhysics(Physics& instance) override {}
-	void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
-	void simulate(Physics& instance) override;
+	void attachPhysics(Physics&) override {}
+	void draw(Physics&, const ShaderProgram&, const Camera&, bool) override;
+	void simulate(Physics&) override;
 	void cleanUpPhysics() override;
 
 	void attachOwningVehicle(PxVehicleDrive4W* vehicle) { mOwnerVehicle = vehicle; }
 	void attachAffectedVehicle(PxVehicleDrive4W* vehicle) { mAffectedVehicle = vehicle; }
-	bool processInput(const std::map<MovementFlags, bool>& inputs, Physics& instance);
+	bool processInput(const std::map<MovementFlags, bool>&, Physics&);
 
 	[[nodiscard]] bool hasOwningVehicle() const { return mOwnerVehicle.has_value(); }
 	[[nodiscard]] bool hasAffectedVehicle() const { return mAffectedVehicle.has_value(); }

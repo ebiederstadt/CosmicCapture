@@ -9,9 +9,6 @@
 
 using namespace glm;
 
-// extern vec2 g_scale;
-// extern vec2 g_pos;
-
 ScoreDisplay::ScoreDisplay()
 {
 	GUIGeometry quad;
@@ -52,13 +49,23 @@ void GameUI::render(int playerNum)
 
 void GameUI::renderMenu() const
 {
-	unsigned int shaderID = static_cast<unsigned int>(mShader);
 	mShader.use();
 
 	api->bind(mTextures.logo);
 	mat4 model(1.0f);
-	const auto modelLoc = glGetUniformLocation(shaderID, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+	mShader.setMat4("model", model);
+	mLogoDisplay.drawData();
+
+	Texture::unbind();
+}
+
+void GameUI::renderControls() const
+{
+	mShader.use();
+
+	api->bind(mTextures.controls);
+	mat4 model(1.0f);
+	mShader.setMat4("model", model);
 	mLogoDisplay.drawData();
 
 	Texture::unbind();
@@ -74,8 +81,7 @@ void GameUI::renderEndScreen(int playerNum) const
 		api->bind(mTextures.loseScreen);
 
 	mat4 model(1.0f);
-	const auto modelLoc = glGetUniformLocation(static_cast<unsigned int>(mShader), "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+	mShader.setMat4("model", model);
 
 	mLogoDisplay.drawData();
 
@@ -97,9 +103,7 @@ void GameUI::renderPlayerSelect(bool selected, bool ready) const
 	}
 
 	mat4 model(1.0f);
-	const auto modelLoc = glGetUniformLocation(static_cast<unsigned int>(mShader), "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-
+	mShader.setMat4("model", model);
 	mLogoDisplay.drawData();
 
 	Texture::unbind();
@@ -116,7 +120,7 @@ void GameUI::setCompassDirection(const PxMat44& carMatrix, const PxVec3& targetP
 	// Heading vector for the car
 	const auto carDirection = carMatrix.column2.getXYZ().getNormalized();
 
-	// Don't car about y axis
+	// Don't care about y axis
 	auto target = targetPos;
 	target.y = 0.0f;
 	carLoc.y = 0.0f;
@@ -143,9 +147,7 @@ void GameUI::renderPowerUpDisplay(unsigned int shaderID, int playerNum) const
 	mat4 model = translate(mat4{ 1.0f }, { -0.85f, -0.85f, 0.0f });
 	model = scale(model, { 0.25f, 0.25f, 0.0f });
 
-	const auto modelLoc = glGetUniformLocation(shaderID, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-
+	mShader.setMat4("model", model);
 	mPowerupDisplay.drawData();
 
 	Texture::unbind();
@@ -161,9 +163,7 @@ void GameUI::renderCompassDisplay(unsigned int shaderID) const
 
 	model = rotate(model, mCompassAngle, { 0.0f, 0.0f, 1.0f });
 
-	const auto modelLoc = glGetUniformLocation(shaderID, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-
+	mShader.setMat4("model", model);
 	mCompassDisplay.drawData();
 
 	Texture::unbind();
@@ -194,8 +194,7 @@ void GameUI::renderScores(unsigned int shaderID, int offset)
 	{
 		mat4 model = translate(mat4{ 1.f }, { x, yPos, 0.0f });
 		model = scale(model, { 0.15f, 0.2f , 0.0f });
-		auto modelLoc = glGetUniformLocation(shaderID, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+		mShader.setMat4("model", model);
 
 		mScoreDisplay.scoreDisplays[i].drawData();
 
@@ -205,11 +204,7 @@ void GameUI::renderScores(unsigned int shaderID, int offset)
 		model = scale(model, { 0.78f, 0.66f, 0.0f });
 		model = translate(model, { -1.62f, 0.3f, 0.f });
 
-		/*model = scale(model, { g_scale.x, g_scale.y, 0.0f });
-		model = translate(model, { g_pos.x, g_pos.y, 0.f });*/
-
-		modelLoc = glGetUniformLocation(shaderID, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+		mShader.setMat4("model", model);
 
 		mScoreDisplay.carTextures[i].bind();
 		mScoreDisplay.playerDisplays[i].drawData();

@@ -1,5 +1,7 @@
 #include "ProjectilePickupZone.h"
 
+#include "physics/VehicleFilterShader.h"
+
 ProjectilePickupZone::ProjectilePickupZone(const PxVec3& location) :
 	Entity("models/powerup_stand.obj", "textures/rocket_preview_white.png"),
 	mLocation(location)

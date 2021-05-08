@@ -1,17 +1,26 @@
 #pragma once
 
-#include "ContactReportCallback.h"
-#include "physx/PxPhysicsAPI.h"
-#include "VehicleSceneQuery.h"
 #include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <fmt/format.h>
+#include <fmt/core.h>
 #include <assimp/mesh.h>
 #include <assimp/scene.h>
 #include <vector>
 
-#define PX_RELEASE(x) if(x){x->release();x=NULL;}
-#define PVD_HOST "127.0.0.1"
+#include "ContactReportCallback.h"
+#include "physx/PxPhysicsAPI.h"
+#include "VehicleSceneQuery.h"
+
+template <typename T>
+constexpr void PX_RELEASE(T& x)
+{
+	if (x)
+	{
+		x->release();
+		x = nullptr;
+	}
+}
+
+constexpr char PVD_HOST[] = "127.0.0.1";
 
 using namespace physx;
 
@@ -99,9 +108,6 @@ public:
 	void generateRedDoor();
 	void generateBlueDoor();
 
-	//PxTriangleMeshGeometry arenaMesh = nullptr;
-	//PxShape* arenaShape = nullptr;
-	//PxRigidStatic* arenaBody = nullptr;
 	PxTriangleMeshGeometry redDoorMesh = nullptr;
 	PxTriangleMeshGeometry blueDoorMesh = nullptr;
 	PxShape* blueDoorShape = nullptr;
@@ -113,39 +119,28 @@ public:
 
 	void stepPhysics() const;
 
-	PxTriangleMesh* readMesh(std::string modelPath);
+	PxTriangleMesh* readMesh(std::string);
 
-	void processNodeS(aiNode* node, const aiScene* scene);
-	void processVerticesIndices(aiMesh* mesh);
+	void processNodeS(aiNode*, const aiScene*);
+	void processVerticesIndices(aiMesh*);
 
 	//SnippetVehicle4WCreate
-	static void computeWheelCenterActorOffsets4W(PxF32 wheelFrontZ, PxF32 wheelRearZ, const PxVec3& chassisDims,
-	                                             PxF32 wheelWidth, PxF32 wheelRadius, PxU32 numWheels,
-	                                             PxVec3* wheelCentreOffsets);
-	static void setupWheelsSimulationData
-	(PxF32 wheelMass, PxF32 wheelMOI, PxF32 wheelRadius, PxF32 wheelWidth,
-	 PxU32 numWheels, const PxVec3* wheelCenterActorOffsets,
-	 const PxVec3& chassisCMOffset, PxF32 chassisMass,
-	 PxVehicleWheelsSimData* wheelsSimData);
+	static void computeWheelCenterActorOffsets4W(PxF32, PxF32, const PxVec3&, PxF32, PxF32, PxU32, PxVec3*);
+	static void setupWheelsSimulationData(PxF32, PxF32, PxF32, PxF32, PxU32, const PxVec3*, const PxVec3&, PxF32, PxVehicleWheelsSimData*);
 
 	// Singleton
 	Physics() {}
-
 
 	PxDefaultAllocator gAllocator;
 	PxDefaultErrorCallback gErrorCallback;
 
 	PxFoundation* gFoundation = nullptr;
 	PxPhysics* gPhysics = nullptr;
-
 	PxDefaultCpuDispatcher* gDispatcher = nullptr;
+
 	PxScene* gScene = nullptr;
-
-
 	PxCooking* gCooking = nullptr;
-
 	PxMaterial* gMaterial = nullptr;
-
 	PxPvd* gPvd = nullptr;
 
 	VehicleSceneQueryData* gVehicleSceneQueryData = nullptr;
@@ -163,11 +158,11 @@ public:
 	ContactReportCallback gContactReportCallback{};
 
 	static constexpr PxF32 timestep = 1.0f / 60.0f;
+
 private:
 	// Cooking parameters
 	std::vector<PxVec3> vectorList;
 	std::vector<unsigned int> indicesList;
 
-	static PxTriangleMesh* createTriangleMesh32(PxPhysics* physics, PxCooking* cooking, const PxVec3* verts,
-	                                            PxU32 vertCount, const PxU32* indices32, PxU32 triCount, bool insert);
+	static PxTriangleMesh* createTriangleMesh32(PxPhysics*, PxCooking*, const PxVec3*, PxU32, const PxU32*, PxU32, bool);
 };

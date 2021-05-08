@@ -3,15 +3,14 @@
 #include "Entity.h"
 #include "GlobalState.h"
 #include "physics/Physics.h"
-#include "physics/VehicleFilterShader.h"
 
 class ProjectilePickupZone : public Entity
 {
 public:
-	ProjectilePickupZone(const PxVec3& location);
-	void attachPhysics(Physics& instance) override;
-	void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
-	void simulate(Physics& instance) override;
+	ProjectilePickupZone(const PxVec3&);
+	void attachPhysics(Physics&) override;
+	void draw(Physics&, const ShaderProgram&, const Camera&, bool) override;
+	void simulate(Physics&) override;
 	void cleanUpPhysics() override;
 
 private:

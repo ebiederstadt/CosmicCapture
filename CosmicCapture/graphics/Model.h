@@ -22,20 +22,16 @@ public:
 	/// </summary>
 	/// <param name="modelPath">Path to a file representing the 3D model</param>
 	/// <param name="texturePath">Path to the image texture to use with the model</param>
-	/// <param name="usage">openGL Usage type. Default is GL_STATIC_DRAW</param>
 	Model(
 		const char* modelPath,
-		const char* texturePath,
-		unsigned int usage = GL_STATIC_DRAW,
-		bool isRepeating = false
+		const char* texturePath
 	);
-	Model(const char* modelPath, const glm::vec4& textureColor);
 
 	// Draw things where the position/rotation/scale changes
-	void draw(const physx::PxMat44& modelMatrix, const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type);
+	void draw(const physx::PxMat44&, const ShaderProgram&, const Camera&, bool, int);
 
 	// Draw things that stay in the same place
-	void draw(const ShaderProgram& shaderProgram, const Camera& camera, bool depth, int type, int offset = 0);
+	void draw(const ShaderProgram&, const Camera&, bool, int, int offset = 0);
 
 	[[nodiscard]] physx::PxMat44 getModelMatrix() const { return mModel; }
 
@@ -45,14 +41,12 @@ private:
 	TextureAPI* api;
 	TextureAPI::TextureName mTexture; // Assuming that each texture is unique to each model (may need to rework)
 
-	unsigned int mUsage;
-
 	physx::PxMat44 mModel;
 	void setModel(const physx::PxMat44& m) { mModel = m; }
 
-	void readMesh(const char* modelPath);
+	void readMesh(const char*);
 
-	void processNode(aiNode* node, const aiScene* scene);
-	void processMesh(aiMesh* mesh);
+	void processNode(aiNode*, const aiScene*);
+	void processMesh(aiMesh*);
 };
 

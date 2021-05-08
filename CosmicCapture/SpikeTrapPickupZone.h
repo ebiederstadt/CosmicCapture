@@ -7,11 +7,11 @@ using namespace physx;
 class SpikeTrapPickupZone : public Entity
 {
 public:
-	SpikeTrapPickupZone(const PxVec3& location);
+	SpikeTrapPickupZone(const PxVec3&);
 
-	void attachPhysics(Physics& instance) override;
-	void draw(Physics& instance, const ShaderProgram& shader, const Camera& camera, bool depth) override;
-	void simulate(Physics& instance) override;
+	void attachPhysics(Physics&) override;
+	void draw(Physics&, const ShaderProgram&, const Camera&, bool) override;
+	void simulate(Physics&) override;
 	void cleanUpPhysics() override;
 
 private:

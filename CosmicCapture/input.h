@@ -1,7 +1,4 @@
-#ifndef __INPUT_H__
-#define __INPUT_H__
 #pragma once
-///////////////////////////////
 
 #include <map>
 #include <vector>
@@ -10,7 +7,7 @@
 
 enum class MovementFlags
 {
-    LEFT, RIGHT, UP, DOWN, ACTION, ENTER, RESET
+    LEFT, RIGHT, UP, DOWN, ACTION, ENTER, RESET, OTHER_ACTION
 };
 
 // Information about the input
@@ -25,6 +22,7 @@ struct InputInfo
 		inputState[MovementFlags::ACTION] = true;
 		inputState[MovementFlags::ENTER] = true;
 		inputState[MovementFlags::RESET] = true;
+        inputState[MovementFlags::OTHER_ACTION] = true;
 
         prevInputState = inputState;
     }
@@ -54,12 +52,11 @@ public:
     /// <summary>
     /// Process input
     /// </summary>
-    /// <param name="event">The input event to process</param>
     /// <returns>True if the user wants to quit. False otherwise</returns>
     bool HandleInput();
 
     [[nodiscard]] InputInfo* getInfo();
-    [[nodiscard]] InputInfo* getInfo(int controllerID);
+    [[nodiscard]] InputInfo* getInfo(int);
     [[nodiscard]] std::map<int, InputInfo>* getAllControllerInfo() { return &mControllerInfo; }
 
 	// Mouse stuff
@@ -86,5 +83,3 @@ private:
     void HandleMouse();
     void HandleMouseMove();
 };
-///////////////////////////////
-#endif   //__INPUT_H__

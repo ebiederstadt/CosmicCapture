@@ -15,7 +15,7 @@ enum class shaderTypes {
 class Shader
 {
 public:
-	Shader(const char* path, shaderTypes type);
+	Shader(const char*, shaderTypes);
 	Shader() : mID(0), mType(shaderTypes::VERTEX) {}
 
 	[[nodiscard]] unsigned int getID() const { return mID; }
