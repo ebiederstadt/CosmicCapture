@@ -7,7 +7,7 @@
 
 enum class MovementFlags
 {
-    LEFT, RIGHT, UP, DOWN, ACTION, ENTER, RESET
+    LEFT, RIGHT, UP, DOWN, ACTION, ENTER, RESET, OTHER_ACTION
 };
 
 // Information about the input
@@ -22,6 +22,7 @@ struct InputInfo
 		inputState[MovementFlags::ACTION] = true;
 		inputState[MovementFlags::ENTER] = true;
 		inputState[MovementFlags::RESET] = true;
+        inputState[MovementFlags::OTHER_ACTION] = true;
 
         prevInputState = inputState;
     }

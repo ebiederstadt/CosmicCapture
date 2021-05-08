@@ -21,6 +21,7 @@ struct GUITextures
 
 		instance->create(logo, GL_LINEAR, false);
 		instance->create(font, GL_NEAREST, false);
+		instance->create(controls, GL_LINEAR, false);
 
 		instance->create(winScreen, GL_NEAREST, false);
 		instance->create(loseScreen, GL_NEAREST, false);
@@ -40,6 +41,7 @@ struct GUITextures
 
 	TextureAPI::TextureName logo = "textures/cosmicLogo.png";
 	TextureAPI::TextureName font = "textures/font.bmp";
+	TextureAPI::TextureName controls = "textures/controls.png";
 
 	TextureAPI::TextureName winScreen = "textures/winscreen.png";
 	TextureAPI::TextureName loseScreen = "textures/losescreen.png";
@@ -75,6 +77,7 @@ public:
 	GameUI();
 	void render(int);
 	void renderMenu() const;
+	void renderControls() const;
 	void renderEndScreen(int) const;
 
 	void renderPlayerSelect(bool, bool ready = false) const;

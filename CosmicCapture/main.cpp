@@ -176,6 +176,7 @@ int main(int, char**) {
 
 	GameUI gameUI;
 	bool gameStarted = false;
+	bool showControls = false;
 	bool playersSelected = false;
 	bool gameFinished = false;
 
@@ -211,18 +212,43 @@ int main(int, char**) {
 		}
 	};
 
+	// Display the logo and wait for the user to enter into the game
 	auto preLoop = [&]()
 	{
 		const auto controllerInfo= input.getAllControllerInfo();
 		bool controllerPressed = false;
+		bool controls = false;
 		for (auto& [id, c_info] : *controllerInfo)
 		{
 			if (c_info.inputReleased(MovementFlags::ENTER))
 				controllerPressed = true;
+			if (c_info.inputReleased(MovementFlags::OTHER_ACTION))
+			{
+				fmt::print("pressed back\n");
+				controls = true;
+			}
 		}
 		gameUI.renderMenu();
 		if (!info->inputState[MovementFlags::ENTER] || controllerPressed)
 			gameStarted = true;
+		if (!info->inputState[MovementFlags::OTHER_ACTION] || controls)
+			showControls = true;
+	};
+
+	auto controlLoop = [&]()
+	{
+		auto* const controllerInfo = input.getAllControllerInfo();
+		bool returnToGame = false;
+		for (auto& [id, c_info] : *controllerInfo)
+		{
+			if (c_info.inputReleased(MovementFlags::ENTER))
+				returnToGame = true;
+		}
+		
+		gameUI.renderControls();
+
+		// Continue to show the controls until enter is pressed (either on the gamepad or on the keyboard)
+		showControls = !info->inputState[MovementFlags::ENTER] || !returnToGame;
 	};
 
 	auto render = [&](int x, int y, int width, int height, int playerNum, bool isReversing = false)
@@ -601,8 +627,10 @@ int main(int, char**) {
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 #endif
 
-		if (!gameStarted && !gameFinished)
+		if (!gameStarted && !gameFinished && !showControls)
 			preLoop();
+		if (showControls)
+			controlLoop();
 		else if (gameStarted && !playersSelected)
 		{
 			auto controllerInfo = input.getAllControllerInfo();

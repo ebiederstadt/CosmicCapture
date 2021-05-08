@@ -102,6 +102,9 @@ void Input::HandleKeys()
     case SDLK_r:
         mKeyboardInfo.inputState[MovementFlags::RESET] = keyReleased;
         break;
+    case SDLK_QUESTION:
+        mKeyboardInfo.inputState[MovementFlags::OTHER_ACTION] = keyReleased;
+        break;
 	default:
 		break;
 	}
@@ -139,9 +142,12 @@ void Input::HandleButtons()
 		break;
 	case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
 		break;
-	case SDL_CONTROLLER_BUTTON_START:
+	case SDL_CONTROLLER_BUTTON_LEFTSTICK:
         info.inputState[MovementFlags::ENTER] = buttonReleased;
 		break;
+    case SDL_CONTROLLER_BUTTON_START:
+        info.inputState[MovementFlags::OTHER_ACTION] = buttonReleased;
+        break;
 	default:
 		return;
     }

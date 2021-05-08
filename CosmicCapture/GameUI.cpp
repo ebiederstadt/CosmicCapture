@@ -59,6 +59,18 @@ void GameUI::renderMenu() const
 	Texture::unbind();
 }
 
+void GameUI::renderControls() const
+{
+	mShader.use();
+
+	api->bind(mTextures.controls);
+	mat4 model(1.0f);
+	mShader.setMat4("model", model);
+	mLogoDisplay.drawData();
+
+	Texture::unbind();
+}
+
 void GameUI::renderEndScreen(int playerNum) const
 {
 	mShader.use();
