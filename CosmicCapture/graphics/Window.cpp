@@ -40,7 +40,6 @@ Window::Window(const std::string& windowName, const int width, const int height)
 	// Setup the OpenGL context
 	mContext = SDL_GL_CreateContext(mWindow.get());
 	SDL_GL_MakeCurrent(mWindow.get(), mContext);
-	SDL_GL_SetSwapInterval(1); // Enable vsync
 
 	// Initialize GLEW
 	const auto err = glewInit();

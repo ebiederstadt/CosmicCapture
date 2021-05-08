@@ -100,6 +100,7 @@
     <ClCompile Include="graphics\Window.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -221,6 +222,7 @@
     <ClInclude Include="graphics\Window.h">
       <Filter>graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

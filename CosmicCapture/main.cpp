@@ -11,8 +11,6 @@
 
 #include "audio/GameAudio.h"
 
-#include "./physics/ContactReportCallback.h"
-
 #include "Camera.h"
 #include "Vehicle.h"
 #include "Flag.h"
@@ -25,6 +23,8 @@
 #include "InvisibleBarrier.h"
 
 #include "GlobalState.h"
+#include "Timer.h"
+#include "physics/VehicleCreate.h"
 
 float angle = -0.25f;
 glm::vec2 g_scale = { 1.f, 1.f };
@@ -180,6 +180,14 @@ int main(int, char**) {
 	bool gameFinished = false;
 
 	InputInfo* info;
+
+	// Frame rate control
+	Timer fpsTimer;
+	Timer capTimer;
+	int countedFrames = 0;
+	fpsTimer.start();
+	constexpr int SCREEN_FPS = 60;
+	constexpr int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
 	auto processVehicleInput = [&input, &info](Vehicle& v)
 	{
@@ -521,7 +529,8 @@ int main(int, char**) {
 			gameStarted = false;
 		}
 
-		/*ImGui::Text("Camera Position");
+#ifdef _DEBUG
+		ImGui::Text("Camera Position");
 		ImGui::SliderFloat("Camera angle", &angle, -2.0f * M_PI, 2.0f * M_PI);
 		ImGui::SliderFloat("x Scale", &g_scale.x, 0.01f, 3.0f);
 		ImGui::SliderFloat("y Scale", &g_scale.y, 0.01f, 3.0f);
@@ -565,7 +574,8 @@ int main(int, char**) {
 		ImGui::SliderFloat("gSteerVsForwardSpeedData3A", &gSteerVsForwardSpeedData3A, 0.f, 100.f);
 		ImGui::SliderFloat("gSteerVsForwardSpeedData3B", &gSteerVsForwardSpeedData3B, 0.f, 10.f);
 		ImGui::SliderFloat("gSteerVsForwardSpeedData4A", &gSteerVsForwardSpeedData4A, 0.f, 500.f);
-		ImGui::SliderFloat("gSteerVsForwardSpeedData4B", &gSteerVsForwardSpeedData4B, 0.f, 10.f); */
+		ImGui::SliderFloat("gSteerVsForwardSpeedData4B", &gSteerVsForwardSpeedData4B, 0.f, 10.f); 
+#endif
 	};
 	bool keyboardUsed = false;
 	std::vector<int> controllerNumbersUsed;
@@ -573,15 +583,23 @@ int main(int, char**) {
 	// Loop until the user closes the window
 	while (!quit)
 	{
+		capTimer.start();
+
 		quit = input.HandleInput();
 		info = input.getInfo(); // Get the keyboard info
 
+		float averageFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
+		if (averageFPS > 2000000.f)
+			averageFPS = 0;
+
 		// Render
-		//window.startImGuiFrame();
+		window.startImGuiFrame();
 		Window::clear();
 
-		//ImGui::Begin("Framerate Counter!");
-		//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+#ifdef _DEBUG
+		ImGui::Begin("Framerate Counter!");
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+#endif
 
 		if (!gameStarted && !gameFinished)
 			preLoop();
@@ -716,10 +734,17 @@ int main(int, char**) {
 		}
 
 
-		//ImGui::End();
-
-		//Window::renderImGuiFrame();
+#ifdef _DEBUG
+		ImGui::End();
+		Window::renderImGuiFrame();
+#endif
 		window.swap();
+
+		countedFrames += 1;
+
+		int frameTicks = capTimer.getTicks();
+		if (frameTicks < SCREEN_TICKS_PER_FRAME)
+			SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
 	}
 
 	//cleanup
