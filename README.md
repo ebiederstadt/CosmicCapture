@@ -26,10 +26,14 @@ The game is built using `C++`, `OpenGL` for graphics, and `NVIDIA PHYSX` for dri
 
 <img src="screenshots\gameplay.png" alt="Gameplay" style="zoom:75%;" />
 
-**Local Multiplayer**
+**Local Multiplayer Gameplay**
 
-<img src="screenshots\multiplayer.png" alt="Multiplayer" style="zoom:75%;" /><img src="screenshots\start-screen.png" alt="Start Screen" style="zoom:100%;" />
+<img src="screenshots\multiplayer.png" alt="Multiplayer" style="zoom:75%;" />
+
+**Start Screen**
+
+<img src="screenshots\start-screen.PNG" alt="Start Screen" style="zoom:75%;" />
 
 **Player Select**
 
-![Player Select](screenshots\player-select.PNG)
+<img src="screenshots\player-select.PNG" alt="Player Select" style="zoom:100%;" />
